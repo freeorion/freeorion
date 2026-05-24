@@ -945,47 +945,67 @@ namespace {
         return buffer;
     }
 
-    template <uint8_t NumInts>
-    CONSTEXPR_FROM_CHARS auto ExtractIntsAndRestFromString(const std::string& buffer) {
-        std::array<int, NumInts> i{};
-        std::string str;
+    template <std::size_t N>
+    CONSTEXPR_FROM_CHARS auto ExtractIntsAndRestFromString(std::string buffer_in)
+    {
+        // template lambda magic to get a tuple<int0, int1, ..., IntN, std::string>
+        static constexpr auto make_tuple_Nint0_string = []<std::size_t... Is>(std::index_sequence<Is...>, std::string buffer)
+        { return std::tuple_cat(std::tuple{(static_cast<void>(Is), int{})}..., std::tuple{std::move(buffer)}); };
 
-        if (buffer.empty())
-            return std::pair(i, str);
+        auto retval = make_tuple_Nint0_string(std::make_index_sequence<N>{}, std::move(buffer_in));
+        std::string& buffer_out = std::get<N>(retval);
 
-        const auto* const buffer_end = buffer.c_str() + buffer.size();
+        if (buffer_out.empty())
+            return retval;
+
+        const auto* next = buffer_out.c_str();
+        const auto* const buffer_end = next + buffer_out.size();
+
         const auto get_next_int = [buffer_end](const char* next) -> std::tuple<int, bool, const char*>
         { return GetIntFromChars<int>(buffer_end, next, 0); };
 
-        const auto* next = buffer.c_str();
         bool success = true;
 
-        for (std::size_t idx = 0; success && idx < NumInts; ++idx)
-            std::tie(i[idx], success, next) = get_next_int(next);
+        // template lambda magic to get ints and put into tuple parts
+        const auto get_mth_int = [&]<std::size_t M>() { 
+            if (!success) return;
+            int& mth_int = std::get<M>(retval);
+            std::tie(mth_int, success, next) = get_next_int(next);
+        };
 
-        if (!success)
-            return std::pair(i, str);
+        // more template magic...
+        const auto get_N_ints = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+        { (get_mth_int.template operator()<Is>(), ...); };
+
+        // get up to N ints, or until parsing doesn't succeed
+        get_N_ints(std::make_index_sequence<N>{});
 
         // skip whitespace
         while (next != buffer_end && *next == ' ')
             ++next;
 
-        const auto next_offset = static_cast<std::size_t>(std::distance(buffer.data(), next));
-        if (next_offset > buffer.size())
-            return std::pair(i, str);
+        const auto next_offset = static_cast<std::size_t>(std::distance(buffer_out.c_str(), next));
+        if (next_offset > buffer_out.size())
+            return retval;
 
-        // use find remaining chars as string
-        str = buffer.substr(next_offset);
+        // use remaining chars as string
+        buffer_out.erase(0, next_offset);
 
-        return std::pair(i, str);
+        return retval;
     }
 
 #if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
-    static_assert(std::get<0>(ExtractIntsAndRestFromString<4>("1 2 3 4 a").first) == 1);
-    static_assert(std::get<1>(ExtractIntsAndRestFromString<9>("  1 2  ").first) == 2);
-    static_assert(ExtractIntsAndRestFromString<16>("  1 2  ").second.empty());
-    static_assert(std::get<3>(ExtractIntsAndRestFromString<5>("1  2   3 4 6  a  ").first) == 4);
-    static_assert(ExtractIntsAndRestFromString<4>("1 2 3 4 -abcdef axx").second == "-abcdef axx");
+    static_assert(std::tuple_size_v<decltype(ExtractIntsAndRestFromString<4>(""))> == 5);
+    static_assert(std::get<1>(ExtractIntsAndRestFromString<3>("haha")) == 0);
+    static_assert(std::get<0>(ExtractIntsAndRestFromString<0>("haha")) == "haha");
+    static_assert(std::get<1>(ExtractIntsAndRestFromString<1>("12345 haha ")) == "haha ");
+    static_assert(std::get<0>(ExtractIntsAndRestFromString<2>("12345 haha ")) == 12345);
+    static_assert(std::get<1>(ExtractIntsAndRestFromString<3>("12345 haha ")) == 0);
+    static_assert(std::get<4>(ExtractIntsAndRestFromString<4>("1 2 3 4 -haha haha")) == "-haha haha");
+    static_assert(std::get<0>(ExtractIntsAndRestFromString<4>("1 2 3 4 haha")) == 1);
+    static_assert(std::get<1>(ExtractIntsAndRestFromString<9>("  1 2  ")) == 2);
+    static_assert(std::get<16>(ExtractIntsAndRestFromString<16>("  1 2  ")).empty());
+    static_assert(std::get<3>(ExtractIntsAndRestFromString<5>("1  2   3 4 5 6")) == 4);
 #endif
 
     static_assert([]() {
@@ -1028,14 +1048,13 @@ void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
         ar  & make_nvp("m_created_on_turn", o.m_created_on_turn);
 
     } else if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
-        std::string str;
-        ar >> make_nvp("info", str)
+        std::string info_str;
+        ar >> make_nvp("info", info_str)
            >> make_nvp("x", o.m_x)
            >> make_nvp("y", o.m_y);
 
-        auto [i, name_str] = ExtractIntsAndRestFromString<4>(str);
-        std::tie(o.m_id, o.m_owner_empire_id, o.m_system_id, o.m_created_on_turn) = i;
-        o.m_name = std::move(name_str);
+        std::tie(o.m_id, o.m_owner_empire_id, o.m_system_id,
+                 o.m_created_on_turn, o.m_name) = ExtractIntsAndRestFromString<4>(std::move(info_str));
 
         Serialize(ar, o.m_meters, version);
 
@@ -1511,11 +1530,12 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
 
         Serialize(ar, "buildings", obj.m_buildings);
 
-        auto [i, rest_str] = ExtractIntsAndRestFromString<16>(info_str);
         int f0 = 0;
         int f1 = 0;
         int f2 = 0;
         int f3 = 0;
+        std::string rest_str;
+
         std::tie(obj.m_last_turn_focus_changed,
                  obj.m_last_turn_focus_changed_turn_initial,
                  obj.m_turn_last_annexed,
@@ -1528,7 +1548,8 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
                  obj.m_last_invaded_by_empire_id,
                  obj.m_last_colonized_by_empire_id,
                  obj.m_last_annexed_by_empire_id,
-                 f0, f1, f2, f3) = i;
+                 f0, f1, f2, f3, rest_str) = ExtractIntsAndRestFromString<16>(std::move(info_str));
+
         obj.m_orbital_period = Meter::FromFloat(f0);
         obj.m_initial_orbital_position = Meter::FromFloat(f1);
         obj.m_rotational_period = Meter::FromFloat(f2);
@@ -1539,7 +1560,7 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
                  obj.m_size,
                  obj.m_is_about_to_be_colonized,
                  obj.m_is_about_to_be_invaded,
-                 obj.m_is_about_to_be_bombarded) = ExtractPtPtPsBBBFromString(rest_str);
+                 obj.m_is_about_to_be_bombarded) = ExtractPtPtPsBBBFromString(rest_str); // no need to move into a string_view
 
     } else if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
         std::string info_str = ToString(obj.m_last_turn_focus_changed,
@@ -1719,13 +1740,14 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
 
         std::string route_str;
         std::string info_str;
+        std::string rest_str;
         ar  >> make_nvp("route", route_str)
             >> make_nvp("info", info_str);
         FillIntContainer(obj.m_travel_route, route_str);
-        auto [i, rest_str] = ExtractIntsAndRestFromString<5>(info_str);
-        std::tie(obj.m_prev_system, obj.m_next_system, obj.m_ordered_given_to_empire_id,
-                 obj.m_last_turn_move_ordered, obj.m_arrival_starlane) = i;
-        std::tie(obj.m_aggression, obj.m_arrived_this_turn) = ExtractAggressionAndBool(rest_str);
+        std::tie(obj.m_prev_system, obj.m_next_system,
+                 obj.m_ordered_given_to_empire_id, obj.m_last_turn_move_ordered,
+                 obj.m_arrival_starlane, rest_str) = ExtractIntsAndRestFromString<5>(std::move(info_str));
+        std::tie(obj.m_aggression, obj.m_arrived_this_turn) = ExtractAggressionAndBool(rest_str); // no need to move into a string_view
 
     } else if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
         Serialize(ar, "ships", obj.m_ships);
@@ -1777,12 +1799,15 @@ namespace {
     CONSTEXPR_STRING std::pair<bool, std::string> ExtractBoolAndRest(std::string buffer) {
         const auto not_ws_idx = buffer.find_first_not_of(' ');
         if (not_ws_idx != buffer.npos)
-            buffer = buffer.substr(not_ws_idx);
+            buffer.erase(0, not_ws_idx);
 
-        if (buffer.empty())
-            return {false, buffer};
-        else
-            return {buffer.front() == 't', buffer.substr(1)};
+        if (buffer.empty()) {
+            return {false, std::move(buffer)};
+        } else {
+            bool tf = (buffer.front() == 't');
+            buffer.erase(0, 1);
+            return {tf, std::move(buffer)};
+        }
     }
 
     namespace TestExtract {
@@ -1852,12 +1877,13 @@ void serialize(Archive& ar, Ship& obj, unsigned int const version)
         if (version >= 4) {
             std::string info_str;
             ar  >> make_nvp("info", info_str);
-            auto [i, rest_str] = ExtractIntsAndRestFromString<9>(info_str);
+            std::string rest_str;
             std::tie(obj.m_design_id, obj.m_fleet_id, obj.m_ordered_colonize_planet_id,
                      obj.m_ordered_invade_planet_id, obj.m_ordered_bombard_planet_id,
                      obj.m_produced_by_empire_id, obj.m_arrived_on_turn, 
-                     obj.m_last_turn_active_in_combat, obj.m_last_resupplied_on_turn) = i;
-            std::tie(obj.m_ordered_scrapped, obj.m_species_name) = ExtractBoolAndRest(rest_str);
+                     obj.m_last_turn_active_in_combat, obj.m_last_resupplied_on_turn,
+                     rest_str) = ExtractIntsAndRestFromString<9>(std::move(info_str));
+            std::tie(obj.m_ordered_scrapped, obj.m_species_name) = ExtractBoolAndRest(std::move(rest_str));
             Serialize(ar, obj.m_part_meters, version);
         } else {
             serialize_flat(ar, obj, version);
