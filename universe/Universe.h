@@ -16,10 +16,12 @@
 #include <boost/thread/shared_mutex.hpp>
 #include "ConstantsFwd.h"
 #include "EnumsFwd.h"
+#include "FleetPlan.h"
 #include "ObjectMap.h"
 #include "Pathfinder.h"
 #include "UnlockableItem.h"
 #include "UniverseObject.h"
+#include "ValueRef.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
@@ -30,8 +32,6 @@ class XMLElement;
 class ShipDesign;
 class System;
 class IDAllocator;
-class FleetPlan;
-class MonsterFleetPlan;
 struct ScriptingContext;
 
 
@@ -49,11 +49,6 @@ namespace Effect {
     using AccountingMap = std::unordered_map<int, boost::container::flat_map<MeterType, std::vector<AccountingInfo>>>;
     using SourcesEffectsTargetsAndCause = std::pair<SourcedEffectsGroup, TargetsAndCause>;
     using SourcesEffectsTargetsAndCausesVec = std::vector<SourcesEffectsTargetsAndCause>;
-}
-
-namespace ValueRef {
-    template <typename T>
-    struct ValueRef;
 }
 
 

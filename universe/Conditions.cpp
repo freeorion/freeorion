@@ -220,6 +220,19 @@ bool Condition::operator==(const Condition& rhs) const {
     }
 }
 
+void Condition::Eval(const ScriptingContext& parent_context,
+                     ObjectSet& matches, ObjectSet& non_matches,
+                     SearchDomain search_domain) const
+{
+    const auto match_one_candidate = [cond{this}, &parent_context](const auto* candidate) -> bool {
+        static constexpr ScriptingContext::LocalCandidate lc;
+        const ScriptingContext candidate_context{parent_context, lc, candidate};
+        return cond->Match(candidate_context); // this requies a derived Condition class to override either this Eval or Match
+    };
+
+    EvalImpl(matches, non_matches, search_domain, match_one_candidate);
+}
+
 bool Condition::EvalAny(const ScriptingContext& parent_context,
                         std::span<const UniverseObjectCXBase*> candidates) const
 {
@@ -244,6 +257,13 @@ bool Condition::EvalAny(const ScriptingContext& parent_context,
         this->Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
         return !matches.empty();
     }
+}
+
+bool Condition::EvalAny(const ScriptingContext& parent_context,
+                        std::span<const int> candidate_ids) const
+{
+    auto objs = parent_context.ContextObjects().findRaw<UniverseObjectCXBase>(candidate_ids);
+    return EvalAny(parent_context, objs);
 }
 
 namespace {

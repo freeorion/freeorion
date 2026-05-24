@@ -1,5 +1,6 @@
 #include "Field.h"
 
+#include "Effect.h"
 #include "Enums.h"
 #include "FieldType.h"
 #include "Meter.h"

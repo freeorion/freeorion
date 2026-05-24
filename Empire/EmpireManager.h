@@ -6,7 +6,9 @@
 #include "../util/AppInterface.h"
 #include "../util/Export.h"
 
+#include <filesystem>
 #include <fstream>
+#include <boost/container/flat_map.hpp>
 #include <boost/signals2/signal.hpp>
 
 #include <map>

@@ -1,6 +1,8 @@
 #include "TechTreeLayout.h"
 
 #include "../universe/Tech.h"
+#include "../universe/UnlockableItem.h"
+#include "../universe/ValueRef.h"
 #include "../util/Logger.h"
 #include <algorithm>
 #include <cmath>
