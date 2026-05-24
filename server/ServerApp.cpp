@@ -965,7 +965,7 @@ namespace {
         // Adds \p subdir to the list
         auto add_to_list = [&list, &server_dir_str](const fs::path& subdir) {
             auto subdir_str = PathToString(fs::canonical(subdir));
-            auto rel_path = subdir_str.substr(server_dir_str.length());
+            auto rel_path = subdir_str.substr(server_dir_str.length()); // .erase(0, server_dir_str.length()) might avoid an allocation, but I suppose this is safer...
             TraceLogger() << "Added relative path " << rel_path << " in " << subdir
                           << " to save preview directories";
             list.push_back(std::move(rel_path));
