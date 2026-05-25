@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include <boost/container/flat_set.hpp>
 #include <boost/container/flat_map.hpp>
+#include "EmpireManager.h"
 #include "InfluenceQueue.h"
 #include "PopulationPool.h"
 #include "ProductionQueue.h"
