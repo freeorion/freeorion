@@ -2,11 +2,11 @@
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
-#include <boost/graph/connected_components.hpp>
 #include "Empire.h"
 #include "EmpireManager.h"
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
+#include "../universe/ScriptingContext.h"
 #include "../universe/System.h"
 #include "../universe/Universe.h"
 #include "../universe/UniverseObject.h"

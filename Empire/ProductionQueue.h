@@ -1,22 +1,27 @@
 #ifndef _ProductionQueue_h_
 #define _ProductionQueue_h_
 
+#include "../util/Enum.h"
 #include "../util/Export.h"
 #include "../universe/ConstantsFwd.h"
-#include "../universe/Enums.h"
-#include "../universe/ScriptingContext.h"
+#include "../universe/EnumsFwd.h"
 
 #include <deque>
 #include <map>
 #include <memory>
 #include <set>
 #include <string>
+#include <boost/container/flat_set.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
 
+class ObjectMap;
 class ResourcePool;
+class Universe;
+struct ScriptingContext;
+
 
 //! The general type of production being done at a ProdCenter.  Within each
 //! valid type, a specific kind of item is being built, e.g. under BT_BUILDING

@@ -1,5 +1,6 @@
 #include "CombatEvents.h"
 
+#include "../universe/ScriptingContext.h"
 #include "../universe/Universe.h"
 
 #include "../util/i18n.h"

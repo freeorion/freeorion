@@ -4,6 +4,7 @@
 #include "Logger.h"
 #include "../universe/Building.h"
 #include "../universe/Planet.h"
+#include "../universe/ScriptingContext.h"
 #include "../universe/System.h"
 #include "../universe/Ship.h"
 #include "../universe/Fleet.h"

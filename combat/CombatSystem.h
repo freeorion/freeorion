@@ -1,10 +1,11 @@
 #ifndef _CombatSystem_h_
 #define _CombatSystem_h_
 
+#include "../universe/EnumsFwd.h"
 #include "../universe/Universe.h"
-#include "../universe/ScriptingContext.h"
 #include "CombatEvent.h"
 
+using DiploStatusMap = boost::container::flat_map<std::pair<int, int>, DiplomaticStatus>;
 
 /** Contains information about the state of a combat before or after the combat occurs. */
 struct CombatInfo {

@@ -4,12 +4,13 @@
 
 #include "Meter.h"
 #include "ConstantsFwd.h"
-#include "ScriptingContext.h"
+#include "EnumsFwd.h"
 #include "UniverseObject.h"
 #include "../util/Export.h"
 
 class ShipDesign;
 class ShipPart;
+class SpeciesManager;
 
 /** a class representing a single FreeOrion ship */
 class FO_COMMON_API Ship final : public UniverseObject {
