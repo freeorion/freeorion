@@ -103,7 +103,7 @@ namespace {
     {
         const auto& empires = IApp::GetApp()->Empires();
         const auto is_hostile = [empire_id, &empires](const UniverseObject* obj)
-        { return !obj || obj->HostileToEmpire(empire_id, empires); };
+        { return !obj || obj->HostileToEmpire(EmpireID(empire_id), empires); };
 
         auto path = universe.GetPathfinder().ShortestPath(
             start_sys, end_sys, is_hostile, universe.EmpireKnownObjects(empire_id)).first;
