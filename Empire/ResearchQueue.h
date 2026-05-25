@@ -18,11 +18,11 @@ struct FO_COMMON_API ResearchQueue {
     struct Element {
 #if !defined(_MSC_VER)
         Element() = default;
-        Element(std::string name_, int empire_id_, float alloc, int turns, bool p) :
+        Element(std::string name_, EmpireID empire_id_, float alloc, int turns, bool p) :
             name(std::move(name_)),
-            empire_id(empire_id_),
             allocated_rp(alloc),
             turns_left(turns),
+            empire_id(empire_id_),
             paused(p)
         {}
 #endif
@@ -30,9 +30,9 @@ struct FO_COMMON_API ResearchQueue {
         [[nodiscard]] std::string Dump() const;
 
         std::string name;
-        int         empire_id = ALL_EMPIRES;
         float       allocated_rp = 0.0f;
         int         turns_left = 0;
+        EmpireID    empire_id = ALL_EMPIRES;
         bool        paused = false;
 
     private:
@@ -49,7 +49,7 @@ struct FO_COMMON_API ResearchQueue {
     typedef QueueType::const_iterator const_iterator;
 
     ResearchQueue() = default;
-    explicit ResearchQueue(int empire_id) :
+    explicit ResearchQueue(EmpireID empire_id) :
         m_empire_id(empire_id)
     {}
 
@@ -58,7 +58,7 @@ struct FO_COMMON_API ResearchQueue {
     [[nodiscard]] bool                     Paused(int idx) const;                      ///< Returns true iff there are at least \a idx - 1 items in the queue and item with index \a idx is paused
     [[nodiscard]] int                      ProjectsInProgress() const noexcept { return m_projects_in_progress; }
     [[nodiscard]] float                    TotalRPsSpent() const noexcept { return m_total_RPs_spent; }
-    [[nodiscard]] int                      EmpireID() const noexcept { return m_empire_id; }
+    [[nodiscard]] auto                     EmpireID() const noexcept { return m_empire_id; }
     [[nodiscard]] std::vector<std::string> AllEnqueuedProjects() const;
     [[nodiscard]] std::string              Dump() const;
 
@@ -95,7 +95,7 @@ private:
     QueueType   m_queue;
     int         m_projects_in_progress = 0;
     float       m_total_RPs_spent = 0.0f;
-    int         m_empire_id = ALL_EMPIRES;
+    ::EmpireID  m_empire_id = ALL_EMPIRES;
 
     friend class boost::serialization::access;
     template <typename Archive>
