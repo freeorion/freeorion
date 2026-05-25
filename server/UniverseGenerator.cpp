@@ -9,8 +9,10 @@
 #include "../Empire/EmpireManager.h"
 
 #include "../universe/Planet.h"
+#include "../universe/ScriptingContext.h"
 #include "../universe/System.h"
 #include "../universe/Species.h"
+#include "../universe/Universe.h"
 
 #include "../util/ScopedTimer.h"
 

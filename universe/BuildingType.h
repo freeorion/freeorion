@@ -3,7 +3,6 @@
 
 
 #include "CommonParams.h"
-#include "ScriptingContext.h"
 #include "../util/AppInterface.h"
 #include "../util/Enum.h"
 #include "../util/Export.h"
@@ -21,6 +20,7 @@ namespace ValueRef {
     struct ValueRef;
 }
 
+struct ScriptingContext;
 
 //! Possible results of a Building being captured by other empires, or an
 //! Planet containing the Building being captured.

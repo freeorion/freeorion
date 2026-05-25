@@ -5,9 +5,11 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "../universe/Condition.h"
 #include "../util/Export.h"
 
+namespace Condition {
+    struct Condition;
+}
 
 //! Prepopulated Fleet, consisting of a name and list of ShipDesign names.
 //!
@@ -41,9 +43,10 @@ protected:
 //! Spawning instruction for Monster Fleets during universe generation.
 class FO_COMMON_API MonsterFleetPlan final : public FleetPlan {
 public:
+    template<typename TCond = Condition::Condition> // template to avoid including Condition.h unless actually used
     MonsterFleetPlan(std::string fleet_name, std::vector<std::string> ship_design_names,
                      double spawn_rate = 1.0, int spawn_limit = 9999,
-                     std::unique_ptr<Condition::Condition>&& location = nullptr,
+                     std::unique_ptr<TCond>&& location = nullptr,
                      bool lookup_name_userstring = false) :
         FleetPlan(std::move(fleet_name), std::move(ship_design_names), lookup_name_userstring),
         m_spawn_rate(spawn_rate),
