@@ -36,7 +36,7 @@ public:
     };
 
     constexpr DiplomaticMessage() noexcept = default;
-    constexpr DiplomaticMessage(int sender_empire_id, int recipient_empire_id, Type type) noexcept :
+    constexpr DiplomaticMessage(EmpireID sender_empire_id, EmpireID recipient_empire_id, Type type) noexcept :
         m_sender_empire(sender_empire_id),
         m_recipient_empire(recipient_empire_id),
         m_type(type)
@@ -52,9 +52,9 @@ public:
     constexpr auto operator<=>(const DiplomaticMessage&) const noexcept = default;
 
 private:
-    int  m_sender_empire = ALL_EMPIRES;
-    int  m_recipient_empire = ALL_EMPIRES;
-    Type m_type = Type::INVALID;
+    EmpireID m_sender_empire = ALL_EMPIRES;
+    EmpireID m_recipient_empire = ALL_EMPIRES;
+    Type     m_type = Type::INVALID;
 
     friend class boost::serialization::access;
     template <typename Archive>
@@ -63,14 +63,14 @@ private:
 
 struct FO_COMMON_API DiplomaticStatusUpdateInfo {
     constexpr DiplomaticStatusUpdateInfo() noexcept = default;
-    constexpr DiplomaticStatusUpdateInfo(int empire1_id_, int empire2_id_, DiplomaticStatus status) noexcept :
+    constexpr DiplomaticStatusUpdateInfo(EmpireID empire1_id_, EmpireID empire2_id_, DiplomaticStatus status) noexcept :
         empire1_id(empire1_id_),
         empire2_id(empire2_id_),
         diplo_status(status)
     {}
     constexpr auto operator<=>(const DiplomaticStatusUpdateInfo&) const noexcept = default;
-    int                 empire1_id = ALL_EMPIRES;
-    int                 empire2_id = ALL_EMPIRES;
+    EmpireID            empire1_id = ALL_EMPIRES;
+    EmpireID            empire2_id = ALL_EMPIRES;
     DiplomaticStatus    diplo_status = DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
 };
 
