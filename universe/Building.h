@@ -20,39 +20,39 @@ public:
     [[nodiscard]] bool               IsShipYard() const;
     [[nodiscard]] const std::string& SpeciesName() const; // species name of building's type, relevant for colony buildings
 
-    [[nodiscard]] bool        HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
-    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    [[nodiscard]] int         ContainerObjectID() const noexcept override { return m_planet_id; }
-    [[nodiscard]] bool        ContainedBy(int object_id) const noexcept override;
+    [[nodiscard]] bool              HostileToEmpire(EmpireID empire_id, const EmpireManager& empires) const override;
+    [[nodiscard]] std::string       Dump(uint8_t ntabs = 0) const override;
+    [[nodiscard]] UniverseObjectID  ContainerObjectID() const noexcept override { return m_planet_id; }
+    [[nodiscard]] bool              ContainedBy(UniverseObjectID object_id) const noexcept override;
 
-    [[nodiscard]] const auto& BuildingTypeName() const noexcept   { return m_building_type; };
-    [[nodiscard]] int         PlanetID() const noexcept           { return m_planet_id; }             ///< returns the ID number of the planet this building is on
-    [[nodiscard]] int         ProducedByEmpireID() const noexcept { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this building
-    [[nodiscard]] bool        OrderedScrapped() const noexcept    { return m_ordered_scrapped; }
+    [[nodiscard]] const auto&       BuildingTypeName() const noexcept   { return m_building_type; };
+    [[nodiscard]] UniverseObjectID  PlanetID() const noexcept           { return m_planet_id; }             ///< returns the ID number of the planet this building is on
+    [[nodiscard]] EmpireID          ProducedByEmpireID() const noexcept { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this building
+    [[nodiscard]] bool              OrderedScrapped() const noexcept    { return m_ordered_scrapped; }
 
     [[nodiscard]] std::size_t SizeInMemory() const override;
 
-    void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;
-    void Copy(const Building& copied_building, const Universe& universe, int empire_id);
+    void Copy(const UniverseObject& copied_object, const Universe& universe, EmpireID empire_id = ALL_EMPIRES) override;
+    void Copy(const Building& copied_building, const Universe& universe, EmpireID empire_id);
 
-    void SetPlanetID(int planet_id);         ///< sets the planet on which the building is located
-    void Reset();                            ///< resets any building state, and removes owners
-    void SetOrderedScrapped(bool b = true);  ///< flags building for scrapping
+    void SetPlanetID(UniverseObjectID planet_id);   ///< sets the planet on which the building is located
+    void Reset();                                   ///< resets any building state, and removes owners
+    void SetOrderedScrapped(bool b = true);         ///< flags building for scrapping
     void ResetTargetMaxUnpairedMeters() override;
 
-    Building(int empire_id, std::string building_type, int produced_by_empire_id, int creation_turn);
+    Building(EmpireID empire_id, std::string building_type, EmpireID produced_by_empire_id, int creation_turn);
     Building() : UniverseObject(UniverseObjectType::OBJ_BUILDING) {}
 
 private:
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
     /** Returns new copy of this Building. */
-    [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
+    [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, EmpireID empire_id = ALL_EMPIRES) const override;
 
-    std::string m_building_type;
-    int         m_planet_id = INVALID_OBJECT_ID;
-    bool        m_ordered_scrapped = false;
-    int         m_produced_by_empire_id = ALL_EMPIRES;
+    std::string         m_building_type;
+    UniverseObjectID    m_planet_id = INVALID_OBJECT_ID;
+    bool                m_ordered_scrapped = false;
+    EmpireID            m_produced_by_empire_id = ALL_EMPIRES;
 
     template <typename Archive>
     friend void serialize(Archive&, Building&, unsigned int const);
