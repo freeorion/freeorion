@@ -1,8 +1,8 @@
 #ifndef _Fleet_h_
 #define _Fleet_h_
 
+#include "EnumsFwd.h"
 #include "UniverseObject.h"
-#include "ScriptingContext.h"
 #include "../util/AppInterface.h"
 #include "../util/Enum.h"
 #include "../util/Export.h"

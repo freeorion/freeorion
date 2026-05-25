@@ -3,10 +3,11 @@
 
 
 #include "CommonParams.h"
-#include "ScriptingContext.h"
+#include "ConstantsFwd.h"
 #include "../util/Enum.h"
 #include "../util/Pending.h"
 
+struct ScriptingContext;
 
 //! Types of slots in ShipHull%s
 //! Parts may be restricted to only certain slot types

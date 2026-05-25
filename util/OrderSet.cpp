@@ -2,6 +2,7 @@
 #include "Logger.h"
 
 #include "Order.h"
+#include "../universe/ScriptingContext.h"
 
 
 std::string OrderSet::Dump() const {

@@ -14,7 +14,7 @@
 #include "../universe/System.h"
 #include "../universe/Species.h"
 #include "../universe/Conditions.h"
-#include "../universe/ValueRefs.h"
+#include "../universe/ValueRef.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 

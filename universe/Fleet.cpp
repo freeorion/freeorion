@@ -1,6 +1,7 @@
 #include "Fleet.h"
 
 #include "Pathfinder.h"
+#include "ScriptingContext.h"
 #include "ShipDesign.h"
 #include "Ship.h"
 #include "System.h"

@@ -499,8 +499,7 @@ namespace {
                 designs.push_back(py::extract<std::string>(py_designs[i]));
 
             m_monster_fleet_plan =
-                std::make_shared<MonsterFleetPlan>(std::move(fleet_name), designs, spawn_rate,
-                                                   spawn_limit, nullptr, false);
+                std::make_shared<MonsterFleetPlan>(std::move(fleet_name), designs, spawn_rate, spawn_limit);
         }
 
         // name accessors

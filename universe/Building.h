@@ -6,6 +6,7 @@
 #include "UniverseObject.h"
 #include "../util/Export.h"
 
+struct ScriptingContext;
 
 /** A Building UniverseObject type. */
 class FO_COMMON_API Building final : public UniverseObject {
