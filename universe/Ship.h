@@ -44,10 +44,10 @@ public:
     void ClampMeters() override;
 
     /** Returns new copy of this Ship. */
-    [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
+    [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, EmpireID empire_id = ALL_EMPIRES) const override;
 
-    void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;
-    void Copy(const Ship& copied_ship, const Universe& universe, int empire_id = ALL_EMPIRES);
+    void Copy(const UniverseObject& copied_object, const Universe& universe, EmpireID empire_id = ALL_EMPIRES) override;
+    void Copy(const Ship& copied_ship, const Universe& universe, EmpireID empire_id = ALL_EMPIRES);
 
     [[nodiscard]] int   DesignID() const noexcept             { return m_design_id; }             ///< returns the design id of the ship
     [[nodiscard]] int   FleetID() const noexcept              { return m_fleet_id; }              ///< returns the ID of the fleet the ship is residing in

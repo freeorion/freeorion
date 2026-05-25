@@ -38,13 +38,13 @@ class Field;
 class FO_COMMON_API ObjectMap {
 public:
     template <typename T = UniverseObject>
-    using container_type = std::map<int, std::shared_ptr<T>>;
+    using container_type = std::map<UniverseObjectID, std::shared_ptr<T>>;
 
 
     /** Copies contents of this ObjectMap to a new ObjectMap, which is
       * returned.  Copies are limited to only duplicate information that the
       * empire with id \a empire_id would know about the copied objects. */
-    [[nodiscard]] std::unique_ptr<ObjectMap> Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const;
+    [[nodiscard]] std::unique_ptr<ObjectMap> Clone(const Universe& universe, EmpireID empire_id = ALL_EMPIRES) const;
 
     /** Returns the number of objects of the specified class in this ObjectMap. */
     template <typename T = UniverseObject, bool only_existing = false>
@@ -61,7 +61,7 @@ public:
       * Returns a nullptr if none exists or the object with
       * ID \a id is not of type T. */
     template <typename T = UniverseObject, bool only_existing = false>
-    [[nodiscard]] std::shared_ptr<const std::decay_t<T>> get(int id) const;
+    [[nodiscard]] std::shared_ptr<const std::decay_t<T>> get(UniverseObjectID id) const;
     template <typename T = UniverseObject, bool only_existing = false>
     [[nodiscard]] const std::decay_t<T>* getRaw(int id) const;
 
@@ -76,7 +76,7 @@ public:
       * Returns a null std::shared_ptr if none exists or the object with
       * ID \a id is not of type T. */
     template <typename T = UniverseObject, bool only_existing = false>
-    [[nodiscard]] std::shared_ptr<std::decay_t<T>> get(int id);
+    [[nodiscard]] std::shared_ptr<std::decay_t<T>> get(UniverseObjectID id);
     template <typename T = UniverseObject, bool only_existing = false>
     [[nodiscard]] std::decay_t<T>* getRaw(int id);
 
@@ -237,7 +237,7 @@ public:
     /** Returns IDs of all the objects that match \a pred when applied as a visitor
       * or predicate filter or range of object ids */
     template <typename T = UniverseObject, typename Pred, bool only_existing = false>
-    [[nodiscard]] std::vector<int> findIDs(Pred pred) const;
+    [[nodiscard]] std::vector<UniverseObjectID> findIDs(Pred pred) const;
 
     /** Returns how many objects match \a pred when applied as a visitor or predicate
       * filter or range of object ids */
@@ -250,9 +250,9 @@ public:
     [[nodiscard]] bool check_if_any(Pred pred) const;
     template <typename T = UniverseObject, typename Pred, typename IDs, bool only_existing = false>
 #if !defined(FREEORION_ANDROID)
-        requires requires(IDs ids) { ids.begin(); ids.end(); {*ids.begin()} -> std::convertible_to<int>; }
+        requires requires(IDs ids) { ids.begin(); ids.end(); {*ids.begin()} -> std::convertible_to<UniverseObjectID>; }
 #else
-        requires requires(IDs ids) { ids.begin(); ids.end(); {static_cast<int>(*ids.begin())}; }
+        requires requires(IDs ids) { ids.begin(); ids.end(); {static_cast<UniverseObjectID>(*ids.begin())}; }
 #endif
     [[nodiscard]] bool check_if_any(Pred pred, IDs&& ids) const;
 

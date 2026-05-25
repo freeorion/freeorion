@@ -114,10 +114,10 @@ public:
     void UpdatePartialOrders(int empire_id, OrderSet added, const std::set<int>& deleted);
 
     /** Revokes turn order's ready state for the given empire. */
-    void RevokeEmpireTurnReadyness(int empire_id);
+    void RevokeEmpireTurnReadyness(EmpireID empire_id);
 
     /** Sets all empire turn orders to an empty set. */
-    void ClearEmpireTurnOrders(int empire_id = ALL_EMPIRES);
+    void ClearEmpireTurnOrders(EmpireID empire_id = ALL_EMPIRES);
 
     /** Determines if all empired have submitted their orders for this turn It
       * will loop the turn squence vector and check for a set order_set. A
@@ -293,21 +293,21 @@ private:
 
     /** Called when this server's EmpireManager changes the diplomatic status
       * between two empires. Updates those empires of the change. */
-    void HandleDiplomaticStatusChange(int empire1_id, int empire2_id);
+    void HandleDiplomaticStatusChange(EmpireID empire1_id, EmpireID empire2_id);
 
     /** Called when this sever's EmpireManager changes the diplmatic message
       * between two empires. Updates those empires of the change. */
-    void HandleDiplomaticMessageChange(int empire1_id, int empire2_id);
+    void HandleDiplomaticMessageChange(EmpireID empire1_id, EmpireID empire2_id);
 
     /** Removes an empire from turn processing. This is most likely called when
       * an empire is eliminated from the game */
-    void RemoveEmpireData(int empire_id);
+    void RemoveEmpireData(EmpireID empire_id);
 
     /** Called when asyncio timer ends. Executes Python asyncio callbacks if any was generated. */
     void AsyncIOTimedoutHandler(const boost::system::error_code& error);
 
     /** Called when new \a turn state received by player playing \a empire_id. */
-    void UpdateEmpireTurnReceived(bool success, int empire_id, int turn);
+    void UpdateEmpireTurnReceived(bool success, EmpireID empire_id, int turn);
 
     boost::asio::io_context m_io_context;
     boost::asio::signal_set m_signals;
@@ -323,8 +323,10 @@ private:
 
     ServerFSM        m_fsm;
 
+    using EmpireID = ::EmpireID;
+
     PythonServer            m_python_server;
-    std::map<int, int>      m_player_empire_ids;                ///< map from player id to empire id that the player controls.
+    std::map<int, EmpireID> m_player_empire_ids;                ///< map from player id to empire id that the player controls.
     int                     m_current_turn = INVALID_GAME_TURN; ///< current turn number
     bool                    m_turn_expired = false;             ///< true when turn exceeds its timeout
     bool                    m_single_player_game = false;       ///< true when the game being played is single-player
@@ -341,7 +343,7 @@ private:
         std::string player_name;
         std::string empire_name;
         int         player_id = Networking::INVALID_PLAYER_ID;
-        int         empire_id = ALL_EMPIRES;
+        EmpireID    empire_id = ALL_EMPIRES;
 
         static_assert(__cpp_impl_three_way_comparison);
 #if !defined(__cpp_lib_three_way_comparison)

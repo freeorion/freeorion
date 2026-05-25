@@ -1353,7 +1353,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
 
         // get the player's saved game data
-        int empire_id = ALL_EMPIRES;
+        EmpireID empire_id = ALL_EMPIRES;
         try {
             const PlayerSaveGameData& psgd = player_save_game_data.at(player_save_game_data_index);
             empire_id = psgd.empire_id;               // can't use GetPlayerEmpireID here because m_player_empire_ids hasn't been set up yet.
@@ -1883,9 +1883,9 @@ namespace {
     }
 }
 
-int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, int target_empire_id) {
+int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, EmpireID target_empire_id) {
     std::shared_ptr<Empire> empire;
-    int empire_id = ALL_EMPIRES;
+    EmpireID empire_id = ALL_EMPIRES;
     auto delegation = GetPlayerDelegation(player_connection->PlayerName());
     if (GetOptionsDB().Get<bool>("network.server.take-over-ai")) {
         for (auto& [loop_empire_id, loop_empire] : m_empires) {

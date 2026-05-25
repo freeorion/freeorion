@@ -6516,7 +6516,7 @@ std::string EmpireMeterValue::Dump(uint8_t ntabs) const {
 }
 
 bool EmpireMeterValue::Match(const ScriptingContext& local_context) const {
-    int empire_id = ALL_EMPIRES;
+    EmpireID empire_id = ALL_EMPIRES;
     const auto* candidate = local_context.condition_local_candidate;
     // if m_empire_id not set, default to candidate object's owner
     if (!m_empire_id && !candidate) {
@@ -6696,7 +6696,7 @@ std::string EmpireStockpileValue::Dump(uint8_t ntabs) const {
 }
 
 bool EmpireStockpileValue::Match(const ScriptingContext& local_context) const {
-    int empire_id = ALL_EMPIRES;
+    EmpireID empire_id = ALL_EMPIRES;
     const auto* candidate = local_context.condition_local_candidate;
     // if m_empire_id not set, default to candidate object's owner
     if (!m_empire_id && !candidate) {
@@ -6838,7 +6838,7 @@ std::string EmpireHasAdoptedPolicy::Dump(uint8_t ntabs) const {
 }
 
 bool EmpireHasAdoptedPolicy::Match(const ScriptingContext& local_context) const {
-    int empire_id = ALL_EMPIRES;
+    EmpireID empire_id = ALL_EMPIRES;
     const auto* candidate = local_context.condition_local_candidate;
     // if m_empire_id not set, default to candidate object's owner
     if (!m_empire_id && !candidate) {

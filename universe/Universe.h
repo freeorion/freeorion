@@ -108,8 +108,8 @@ public:
       * id \a empire_id or the true / complete state of all objects in this
       * Universe (the same as calling Objects()) if \a empire_id is
       * ALL_EMPIRES*/
-    [[nodiscard]] const ObjectMap& EmpireKnownObjects(int empire_id = ALL_EMPIRES) const;
-    [[nodiscard]] ObjectMap&       EmpireKnownObjects(int empire_id = ALL_EMPIRES);
+    [[nodiscard]] const ObjectMap& EmpireKnownObjects(EmpireID empire_id = ALL_EMPIRES) const;
+    [[nodiscard]] ObjectMap&       EmpireKnownObjects(EmpireID empire_id = ALL_EMPIRES);
 
     /** Returns IDs of objects that the Empire with id \a empire_id has vision
       * of on the current turn, or objects that at least one empire has vision
@@ -118,18 +118,18 @@ public:
 
     /** Returns IDs of objects that have been destroyed. */
     [[nodiscard]] auto& DestroyedObjectIds() const noexcept { return m_destroyed_object_ids; }
-    [[nodiscard]] int   HighestDestroyedObjectID() const;
+    [[nodiscard]] UniverseObjectID HighestDestroyedObjectID() const;
 
     /** Returns IDs of objects that the Empire with id \a empire_id knows have
       * been destroyed.  Each empire's latest known objects data contains the
       * last known information about each object, whether it has been destroyed
       * or not. */
-    [[nodiscard]] const std::unordered_set<int>& EmpireKnownDestroyedObjectIDs(int empire_id) const;
+    [[nodiscard]] const std::unordered_set<UniverseObjectID>& EmpireKnownDestroyedObjectIDs(EmpireID empire_id) const;
 
     /** Returns IDs of objects that the Empire with id \a empire_id has stale
       * knowledge of in its latest known objects.  The latest known data about
       * these objects suggests that they should be visible, but they are not. */
-    [[nodiscard]] const std::unordered_set<int>& EmpireStaleKnowledgeObjectIDs(int empire_id) const;
+    [[nodiscard]] const std::unordered_set<UniverseObjectID>& EmpireStaleKnowledgeObjectIDs(EmpireID empire_id) const;
 
     [[nodiscard]] const ShipDesign* GetShipDesign(int ship_design_id) const;    ///< returns the ship design with id \a ship_design id, or 0 if non exists
 
@@ -142,12 +142,12 @@ public:
     /** Returns IDs of ship designs that the Empire with id \a empire_id has
       * seen during the game.  If \a empire_id = ALL_EMPIRES an empty set of
       * ids is returned */
-    [[nodiscard]] const std::set<int>& EmpireKnownShipDesignIDs(int empire_id) const;
+    [[nodiscard]] const std::set<UniverseObjectID>& EmpireKnownShipDesignIDs(EmpireID empire_id) const;
 
     /** Returns the Visibility level of empire with id \a empire_id of UniverseObject with
       * id \a object_id as determined by calling UpdateEmpireObjectVisibilities.
       * Monsters/neutrals are treated as an empire with id ALL_EMPIRES. */
-    [[nodiscard]] Visibility GetObjectVisibilityByEmpire(int object_id, int empire_id) const;
+    [[nodiscard]] Visibility GetObjectVisibilityByEmpire(UniverseObjectID object_id, EmpireID empire_id) const;
 
     /* Return the map from empire id to (map from id to that empire's current
      * visibility of that object) */
@@ -162,29 +162,29 @@ public:
       * \a object_id at basic/partial/full visibility. Returned value may
       * be INVALID_OBJECT_ID/INVALID_GAME_TURN if the empire has not seen
       * the object at one or more visibility levels yet. */
-    [[nodiscard]] const ObjVisTurns& GetObjectVisibilityTurnsByEmpire(int object_id, int empire_id) const;
+    [[nodiscard]] const ObjVisTurns& GetObjectVisibilityTurnsByEmpire(UniverseObjectID object_id, EmpireID empire_id) const;
 
     /** Returns the turn on which empire \a empire_id last saw the object
       * \a object_id at visibility \a vis. If \a vis is not one of
       * FULL/PARTIAL/BASIC visibility, returns the turn for VIS_BASIC_VISIBILTY.
       * If that empire has not seen that object, returns INVALID_GAME_TURN. */
-    [[nodiscard]] int GetObjectVisibilityTurnByEmpire(int object_id, int empire_id, Visibility vis = Visibility::VIS_BASIC_VISIBILITY) const;
+    [[nodiscard]] int GetObjectVisibilityTurnByEmpire(UniverseObjectID object_id, EmpireID empire_id, Visibility vis = Visibility::VIS_BASIC_VISIBILITY) const;
 
     /** Returns true if the empire \a empire_id has ever detected the object
       * \a object_id at visibility \a vis or higher. If \a vis is not one of
       * FULL/PARTIAL/BASIC visibility, returns as if for VIS_BASIC_VISIBILITY. */
-    [[nodiscard]] bool EmpireHasEverDetectedObjectAtVisibility(int object_id, int empire_id, Visibility vis) const;
-    [[nodiscard]] bool EmpireHasEverDetectedObject(int object_id, int empire_id) const
+    [[nodiscard]] bool EmpireHasEverDetectedObjectAtVisibility(UniverseObjectID object_id, EmpireID empire_id, Visibility vis) const;
+    [[nodiscard]] bool EmpireHasEverDetectedObject(UniverseObjectID object_id, EmpireID empire_id) const
     { return EmpireHasEverDetectedObjectAtVisibility(object_id, empire_id, Visibility::VIS_BASIC_VISIBILITY); }
 
 
     /** Sets latest visibility turn for \a empire_id of object \a object_id
       * to \a turn for visibility level \a vis and below. */
-    void SetObjectVisibilityTurnsByEmpire(int object_id, int empire_id, Visibility vis, int turn);
+    void SetObjectVisibilityTurnsByEmpire(UniverseObjectID object_id, EmpireID empire_id, Visibility vis, int turn);
 
     /** Returns the set of specials attached to the object with id \a object_id
       * that the empire with id \a empire_id can see this turn. */
-    [[nodiscard]] std::set<std::string> GetObjectVisibleSpecialsByEmpire(int object_id, int empire_id) const;
+    [[nodiscard]] std::set<std::string> GetObjectVisibleSpecialsByEmpire(UniverseObjectID object_id, EmpireID empire_id) const;
 
     /** Returns map from empire ID to map from location (X, Y) to detection range
       * that empire has at that location. */

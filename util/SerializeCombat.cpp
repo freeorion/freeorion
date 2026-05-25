@@ -774,7 +774,7 @@ namespace {
         events.reserve(empire_count);
 
         for (std::size_t empire_idx = 0; empire_idx < empire_count && next != buffer_end; ++empire_idx) {
-            int empire_id = ALL_EMPIRES;
+            EmpireID empire_id = ALL_EMPIRES;
             std::tie(empire_id, success, next) = get_next_int(next, ALL_EMPIRES);
             if (!success)
                 return;
@@ -942,8 +942,8 @@ namespace {
         events.reserve(empire_count);
 
         for (std::size_t empire_idx = 0; empire_idx < empire_count && next != buffer_end; ++empire_idx) {
-            int empire_id = ALL_EMPIRES;
-            std::tie(empire_id, success, next) = get_next_int(next, ALL_EMPIRES);
+            int empire_id = Value(ALL_EMPIRES);
+            std::tie(empire_id, success, next) = get_next_int(next, Value(ALL_EMPIRES));
             if (!success)
                 return false;
             std::tie(count_ui, success, next) = get_next_uint(next, 0u);
@@ -957,8 +957,8 @@ namespace {
             from_id_counts_vec.reserve(from_id_count_count);
 
             for (std::size_t obj_id_idx = 0; obj_id_idx < from_id_count_count && next != buffer_end; ++obj_id_idx) {
-                int object_id = INVALID_OBJECT_ID;
-                std::tie(object_id, success, next) = get_next_int(next, INVALID_OBJECT_ID);
+                int object_id = Value(INVALID_OBJECT_ID);
+                std::tie(object_id, success, next) = get_next_int(next, Value(INVALID_OBJECT_ID));
                 if (!success)
                     return false;
                 int count = 0;

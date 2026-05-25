@@ -84,19 +84,19 @@ using EmpireObjectVisibilityMap = std::map<int, Visibilities>; ///< map from emp
 
 
 struct ObjVisTurns {
-    int obj_id = INVALID_OBJECT_ID;
+    UniverseObjectID obj_id = INVALID_OBJECT_ID;
     int basic = INVALID_GAME_TURN;
     int partial = INVALID_GAME_TURN;
     int full = INVALID_GAME_TURN;
 
     constexpr ObjVisTurns() noexcept = default;
-    constexpr explicit ObjVisTurns(int obj_id_) noexcept :
+    constexpr explicit ObjVisTurns(UniverseObjectID obj_id_) noexcept :
         obj_id(obj_id_)
     {}
-    constexpr ObjVisTurns(int obj_id_, int basic_turn, int partial_turn, int full_turn) noexcept :
+    constexpr ObjVisTurns(UniverseObjectID obj_id_, int basic_turn, int partial_turn, int full_turn) noexcept :
         obj_id(obj_id_), basic(basic_turn), partial(partial_turn), full(full_turn)
     {}
-    constexpr ObjVisTurns(int obj_id_, Visibility vis, int turn) noexcept :
+    constexpr ObjVisTurns(UniverseObjectID obj_id_, Visibility vis, int turn) noexcept :
         obj_id(obj_id_),
         basic(vis >= Visibility::VIS_BASIC_VISIBILITY ? turn : INVALID_GAME_TURN),
         partial(vis >= Visibility::VIS_PARTIAL_VISIBILITY ? turn : INVALID_GAME_TURN),
@@ -134,6 +134,6 @@ struct ObjVisTurns {
         }
     }
 };
-using EmpireObjectVisibilityTurnsVecMap = std::map<int, std::vector<ObjVisTurns>>;
+using EmpireObjectVisibilityTurnsVecMap = std::map<EmpireID, std::vector<ObjVisTurns>>;
 
 #endif

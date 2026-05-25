@@ -43,8 +43,8 @@ public:
     {}
 
     [[nodiscard]] constexpr auto GetType() const noexcept { return m_type; }
-    [[nodiscard]] constexpr int  SenderEmpireID() const noexcept { return m_sender_empire; }
-    [[nodiscard]] constexpr int  RecipientEmpireID() const noexcept { return m_recipient_empire; }
+    [[nodiscard]] constexpr auto SenderEmpireID() const noexcept { return m_sender_empire; }
+    [[nodiscard]] constexpr auto RecipientEmpireID() const noexcept { return m_recipient_empire; }
 
     [[nodiscard]] std::string    Dump() const;
     [[nodiscard]] bool           IsAllowed() const; ///< Tells if this dimplomatic message allowed by game rules
