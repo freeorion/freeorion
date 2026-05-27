@@ -6,7 +6,7 @@ add_subdirectory(util)
 if (BUILD_SERVER)
     add_subdirectory(save)
 endif ()
-if (BUILD_AI AND BUILD_SERVER)
+if (BUILD_AI AND BUILD_SERVER AND BUILD_PARSERS)
     add_subdirectory(system)
 endif ()
 
