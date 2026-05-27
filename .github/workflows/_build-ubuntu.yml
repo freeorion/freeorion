@@ -116,7 +116,7 @@ jobs:
           cd build
           cmake --build . --config ${{ matrix.build-type }} --target unittest
       - name: Run Godot unit tests
-        if: matrix.client-godot == 'ON'
+        if: matrix.client-godot == 'ON' && matrix.build-parsers == 'ON'
         env:
           ASAN_OPTIONS: ${{ matrix.compiler == 'gcc-asan' && 'detect_leaks=0:abort_on_error=1' || ''}}
           LD_PRELOAD: ${{ matrix.compiler == 'gcc-asan' && '/usr/lib/gcc/x86_64-linux-gnu/13/libasan.so' || '' }}
