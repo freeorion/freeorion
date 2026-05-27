@@ -14,11 +14,18 @@ jobs:
         compiler: [gcc, clang]
         client-godot: ["ON"]
         build-type: [Release]
+        build-parsers: ["ON"]
         include:
           - os: ubuntu-24.04
             compiler: gcc-asan
             client-godot: "ON"
             build-type: RelWithDebInfo
+            build-parsers: "ON"
+          - os: ubuntu-24.04
+            compiler: gcc
+            client-godot: "ON"
+            build-type: Release
+            build-parsers: "OFF"
     env:
       CACHE_NAME: linux
     steps:
@@ -64,7 +71,7 @@ jobs:
           CXX: ${{ matrix.os == 'ubuntu-22.04' && 'g++-12' || 'g++-14' }}
         run: |
           cd build
-          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} ..
+          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} -DBUILD_PARSERS=${{ matrix.build-parsers }} ..
       - name: Configure for clang
         if: ${{ matrix.compiler == 'clang' }}
         env:
