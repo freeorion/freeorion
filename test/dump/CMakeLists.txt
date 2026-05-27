@@ -5,7 +5,7 @@ add_executable(fo_unittest_dump
     $<TARGET_OBJECTS:freeorionparseobj>
 )
 
-target_compile_definitions(fo_unittest_parse
+target_compile_definitions(fo_unittest_dump
     PRIVATE
         -DFREEORION_BUILD_SERVER
 )
