@@ -104,9 +104,8 @@ template FO_PARSE_API TechManager::TechParseTuple parse::techs<TechManager::Tech
 
 template FO_PARSE_API std::vector<Policy> parse::policies<std::vector<Policy>>(const std::filesystem::path& path);
 
-PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& scripting_dir) :
-    m_python(_python),
-    m_scripting_dir(scripting_dir)
+PythonParser::PythonParser(PythonCommon& _python) :
+    m_python(_python)
 { }
 
 PythonParser::~PythonParser() = default;
