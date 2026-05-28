@@ -25,6 +25,7 @@ from focs._value_refs import (
     SpecialCapacity,
     Statistic,
     StatisticCount,
+    StatisticIf,
     Value,
 )
 from macros.priorities import (
