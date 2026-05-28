@@ -12,15 +12,52 @@
 #include "../universe/ValueRef.h"
 #include "../util/Directories.h"
 
+#include <boost/python/class.hpp>
+#include <boost/python/def.hpp>
+#include <boost/python/docstring_options.hpp>
 #include <boost/python/import.hpp>
+#include <boost/python/module.hpp>
 #include <boost/python/raw_function.hpp>
+#include <boost/python/scope.hpp>
+
+
+extern "C" BOOST_SYMBOL_EXPORT PyObject* PyInit__buildings();
 
 namespace {
     DeclareThreadSafeLogger(parsing);
 
     using start_rule_payload = std::map<std::string, std::unique_ptr<BuildingType>, std::less<>>;
 
-    boost::python::object py_insert_buildings_(start_rule_payload& buildings_, const boost::python::tuple& args,
+    struct py_grammar {
+        boost::python::dict globals;
+        const PythonParser& parser;
+        boost::python::object module;
+        start_rule_payload& buildings;
+
+        py_grammar(const PythonParser& parser_, start_rule_payload& buildings_) :
+            globals(boost::python::import("builtins").attr("__dict__")),
+            parser(parser_),
+            module(parser_.LoadModule(&PyInit__buildings)),
+            buildings(buildings_)
+        {
+            RegisterGlobalsEffects(globals);
+            RegisterGlobalsConditions(globals);
+            RegisterGlobalsSources(globals);
+            RegisterGlobalsEnums(globals);
+
+            parser.LoadValueRefsModule();
+
+            module.attr("__grammar") = boost::cref(*this);
+        }
+
+        ~py_grammar() {
+            parser.UnloadModule(module);
+        }
+
+        boost::python::dict operator()() const { return globals; }
+    };
+
+    boost::python::object py_insert_buildings_(boost::python::object scope, const boost::python::tuple& args,
                                              const boost::python::dict& kw)
     {
         auto name = boost::python::extract<std::string>(kw["name"])();
@@ -122,32 +159,24 @@ namespace {
             std::move(species)
         );
 
-        buildings_.emplace(std::move(name), std::move(building_type));
+        py_grammar& p = boost::python::extract<py_grammar&>(scope.attr("__grammar"))();
+
+        p.buildings.emplace(std::move(name), std::move(building_type));
 
         return boost::python::object();
     }
+}
 
-    struct py_grammar {
-        boost::python::dict globals;
+BOOST_PYTHON_MODULE(_buildings) {
+    boost::python::docstring_options doc_options(true, true, false);
 
-        py_grammar(const PythonParser& parser_, start_rule_payload& buildings_) :
-            globals(boost::python::import("builtins").attr("__dict__"))
-        {
-            RegisterGlobalsEffects(globals);
-            RegisterGlobalsConditions(globals);
-            RegisterGlobalsValueRefs(globals);
-            RegisterGlobalsSources(globals);
-            RegisterGlobalsEnums(globals);
+    boost::python::class_<py_grammar, boost::python::bases<>, py_grammar, boost::noncopyable>("__Grammar", boost::python::no_init);
 
-            parser_.LoadValueRefsModule();
+    boost::python::object current_module = boost::python::scope();
 
-            globals["BuildingType"] = boost::python::raw_function(
-                [&buildings_](const boost::python::tuple& args, const boost::python::dict& kw)
-                { return py_insert_buildings_(buildings_, args, kw); });
-        }
-
-        boost::python::dict operator()() const { return globals; }
-    };
+    boost::python::def("BuildingType", boost::python::raw_function(
+        [current_module](const boost::python::tuple& args, const boost::python::dict& kw)
+        { return py_insert_buildings_(current_module, args, kw); }));
 }
 
 namespace parse {

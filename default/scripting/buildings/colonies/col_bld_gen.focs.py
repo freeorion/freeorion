@@ -1,23 +1,37 @@
-"""col_bld_gen.py
-
-Utility script to generate consistent colony building definitions for each species.
-This script is not utilized by the game.
-
-When executed, definition files will be generated in the current working directory.
-
-Run black and ruff to fix formatting.
-"""
-
+from focs._buildings import BuildingType
+from focs._effects import (
+    Contains,
+    Destroy,
+    EffectsGroup,
+    Enqueued,
+    GenerateSitRepMessage,
+    Happiness,
+    HasSpecial,
+    HasSpecies,
+    IsBuilding,
+    IsSource,
+    IsTarget,
+    LocalCandidate,
+    MaxOf,
+    Min,
+    Object,
+    OwnedBy,
+    OwnerHasTech,
+    Planet,
+    Population,
+    ResourceSupplyConnected,
+    ShortestPath,
+    Source,
+    Statistic,
+    StatisticIf,
+    Target,
+    Turn,
+    Uninhabitable,
+)
 from focs._value_refs import GameRule
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.misc import LIFECYCLE_MANIP_POPULATION_EFFECTS, MIN_RECOLONIZING_SIZE
 from macros.upkeep import COLONIZATION_POLICY_MULTIPLIER, COLONY_UPKEEP_MULTIPLICATOR
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
-
 
 # List of all colonizable species in game: definition key, graphic file(relative to default/data/art)
 
