@@ -165,7 +165,6 @@ PythonParser::PythonParser(PythonCommon& _python) :
         m_python.SetPopulateGlobalsFunc([](py::dict& globals) {
             RegisterGlobalsEffects(globals);
             RegisterGlobalsConditions(globals);
-            RegisterGlobalsValueRefs(globals);
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
         });

@@ -79,7 +79,3 @@ condition_wrapper operator!=(const value_ref_wrapper<PlanetSize>& lhs, const val
         Condition::ComparisonType::NOT_EQUAL,
         std::make_unique<ValueRef::StaticCast<PlanetSize, int>>(ValueRef::CloneUnique(rhs.value_ref))));
 }
-
-void RegisterGlobalsValueRefs(boost::python::dict& globals) {
-
-}
