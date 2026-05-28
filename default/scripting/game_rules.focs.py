@@ -1,3 +1,5 @@
+from focs._game_rules import GameRule
+
 # comments hold info about internal engine rules defined in c++ side, but this was manually created in some effort to bring the two together
 # and holds no power over what is on the C++ side
 # for proper ordering ranks need to make sense together with GameRuleRanks.h
