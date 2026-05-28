@@ -11,18 +11,6 @@
 #include <boost/python/import.hpp>
 #include <boost/python/raw_function.hpp>
 
-#define DEBUG_PARSERS 0
-
-#if DEBUG_PARSERS
-namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<UnlockableItem>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::set<std::string>&) { return os; }
-    inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
-    inline ostream& operator<<(ostream& os, const Tech::TechInfo&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<TechCategory>>&) { return os; }
-}
-#endif
-
 namespace {
     std::set<std::string>* g_categories_seen = nullptr;
     std::map<std::string, std::unique_ptr<TechCategory>, std::less<>>* g_categories = nullptr;
@@ -170,7 +158,6 @@ namespace {
         {
             RegisterGlobalsEffects(globals);
             RegisterGlobalsConditions(globals);
-            RegisterGlobalsValueRefs(globals);
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
 

@@ -140,7 +140,6 @@ namespace parse {
             globals(boost::python::import("builtins").attr("__dict__"))
         {
             RegisterGlobalsConditions(globals);
-            RegisterGlobalsValueRefs(globals);
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
 
