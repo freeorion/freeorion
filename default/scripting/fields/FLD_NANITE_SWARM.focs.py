@@ -2,11 +2,8 @@ from focs._effects import (
     Destroy,
     EffectsGroup,
     IsSource,
-    MaxOf,
-    MinOf,
     Monster,
     MoveTowards,
-    NamedReal,
     Number,
     SetSize,
     SetSpeed,
@@ -14,13 +11,21 @@ from focs._effects import (
     Ship,
     Size,
     Source,
-    StatisticCount,
-    Value,
     WithinDistance,
 )
 from focs._effects_new import MoveInOrbit
 from focs._fields import FieldType
-from focs._value_refs import RandomNumber, UniverseCentreX, UniverseCentreY, UniverseWidth
+from focs._value_refs import (
+    MaxOf,
+    MinOf,
+    NamedReal,
+    RandomNumber,
+    StatisticCount,
+    UniverseCentreX,
+    UniverseCentreY,
+    UniverseWidth,
+    Value,
+)
 from macros.misc import SHIP_STRUCTURE_FACTOR
 
 FieldType(

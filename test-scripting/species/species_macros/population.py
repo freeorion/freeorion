@@ -1,3 +1,11 @@
+from focs._value_refs import (
+    Abs,
+    CurrentTurn,
+    MaxOf,
+    MinOf,
+    StatisticIf,
+    Value,
+)
 from macros.priorities import (
     POPULATION_FIRST_PRIORITY,
     TARGET_POPULATION_AFTER_SCALING_PRIORITY,
@@ -9,12 +17,10 @@ from macros.priorities import (
 
 try:
     from focs._effects import (
-        Abs,
         AnyEmpire,
         BlackHole,
         Blue,
         Contains,
-        CurrentTurn,
         EffectsGroup,
         EmpireHasAdoptedPolicy,
         Focus,
@@ -27,8 +33,6 @@ try:
         IsSource,
         IsTarget,
         LocalCandidate,
-        MaxOf,
-        MinOf,
         Neutron,
         NoStar,
         Orange,
@@ -42,12 +46,10 @@ try:
         SetTargetPopulation,
         Source,
         Star,
-        StatisticIf,
         Target,
         TargetPopulation,
         Turn,
         Uninhabitable,
-        Value,
         White,
         Yellow,
     )

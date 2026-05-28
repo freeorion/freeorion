@@ -1,13 +1,15 @@
 from focs._effects import (
-    CurrentTurn,
     EffectsGroup,
     IsSource,
     LocalCandidate,
-    MinOf,
     Planet,
     SetMaxSupply,
     SetSupply,
     Target,
+)
+from focs._value_refs import (
+    CurrentTurn,
+    MinOf,
     Value,
 )
 from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY

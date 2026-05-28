@@ -11,7 +11,6 @@ from focs._effects import (
     Happiness,
     HasSpecies,
     IsBuilding,
-    NamedReal,
     Number,
     NumberOf,
     Object,
@@ -25,8 +24,11 @@ from focs._effects import (
     Source,
     System,
     Target,
-    Value,
     WithinStarlaneJumps,
+)
+from focs._value_refs import (
+    NamedReal,
+    Value,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET

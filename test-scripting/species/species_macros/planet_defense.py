@@ -18,24 +18,26 @@ from macros.priorities import (
 
 try:
     from focs._effects import (
-        CurrentTurn,
         EffectsGroup,
         Focus,
         IsSource,
         LocalCandidate,
-        MinOf,
         Planet,
         SetDefense,
         SetMaxDefense,
         SetTargetHappiness,
         Target,
         Unowned,
-        Value,
     )
 except ModuleNotFoundError:
     pass
 
-from focs._value_refs import GameRule
+from focs._value_refs import (
+    CurrentTurn,
+    GameRule,
+    MinOf,
+    Value,
+)
 
 STANDARD_DEFENSE_GROWTH = EffectsGroup(  # increase 1 per turn, up to max
     scope=IsSource,

@@ -11,7 +11,6 @@ from focs._effects import (
     IsSource,
     IsTarget,
     LocalCandidate,
-    NamedReal,
     Number,
     Object,
     OwnedBy,
@@ -29,15 +28,18 @@ from focs._effects import (
     Source,
     SpeciesDislikes,
     SpeciesLikes,
-    StatisticCount,
-    StatisticIf,
     Target,
     TargetPopulation,
     UniqueNumberOf,
     Unowned,
+)
+from focs._value_refs import (
+    GameRule,
+    NamedReal,
+    StatisticCount,
+    StatisticIf,
     Value,
 )
-from focs._value_refs import GameRule
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.misc import PLANET_DEFENSE_FACTOR
 from macros.priorities import TARGET_AFTER_SCALING_PRIORITY

@@ -7,11 +7,13 @@ from focs._effects import (
     Poor,
     SetTargetPopulation,
     Source,
-    StatisticIf,
     Target,
-    Value,
 )
 from focs._tech import *
+from focs._value_refs import (
+    StatisticIf,
+    Value,
+)
 from macros.base_prod import TECH_COST_MULTIPLIER
 from macros.priorities import TARGET_POPULATION_BEFORE_SCALING_PRIORITY
 

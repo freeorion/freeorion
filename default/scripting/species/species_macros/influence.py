@@ -1,10 +1,8 @@
 from focs._effects import (
-    Abs,
     Capital,
     EffectsGroup,
     EmpireHasAdoptedPolicy,
     Focus,
-    GalaxyMaxAIAggression,
     Happiness,
     HasSpecies,
     HasTag,
@@ -13,17 +11,21 @@ from focs._effects import (
     IsHuman,
     IsSource,
     LocalCandidate,
-    NamedReal,
     OwnedBy,
     Planet,
     ResourceSupplyConnected,
     SetTargetInfluence,
     Ship,
     Source,
-    StatisticCount,
     Target,
     Turn,
     Unowned,
+)
+from focs._value_refs import (
+    Abs,
+    GalaxyMaxAIAggression,
+    NamedReal,
+    StatisticCount,
     Value,
 )
 from macros.misc import (

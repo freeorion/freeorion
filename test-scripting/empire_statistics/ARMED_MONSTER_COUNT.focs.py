@@ -1,3 +1,5 @@
+from focs._value_refs import StatisticCount
+
 try:
     from focs._effects import *
 except ModuleNotFoundError:

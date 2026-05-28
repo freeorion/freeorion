@@ -1,15 +1,17 @@
 from focs._effects import (
     EffectsGroup,
     Focus,
-    GalaxyMaxAIAggression,
     Happiness,
     IsHuman,
     IsSource,
-    NamedReal,
     Planet,
     SetTargetIndustry,
     Target,
     TargetIndustry,
+)
+from focs._value_refs import (
+    GalaxyMaxAIAggression,
+    NamedReal,
     Value,
 )
 from macros.base_prod import INDUSTRY_PER_POP

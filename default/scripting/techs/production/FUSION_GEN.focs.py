@@ -3,16 +3,18 @@ from focs._effects import (
     EmpireHasAdoptedPolicy,
     Focus,
     Happiness,
-    NamedReal,
     OwnedBy,
     Planet,
     SetTargetIndustry,
     Source,
-    StatisticIf,
     Target,
-    Value,
 )
 from focs._tech import *
+from focs._value_refs import (
+    NamedReal,
+    StatisticIf,
+    Value,
+)
 from macros.base_prod import INDUSTRY_PER_POP, TECH_COST_MULTIPLIER
 
 Tech(

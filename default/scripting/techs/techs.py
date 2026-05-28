@@ -1,5 +1,14 @@
 # In typical usage this is used as a plain macro, not a substitution macro; the substitution is instead done within the calling macro
-from focs._effects import DesignHasPart, LocalCandidate, OwnedBy, Ship, Source, TurnTechResearched
+from focs._effects import (
+    DesignHasPart,
+    LocalCandidate,
+    OwnedBy,
+    Ship,
+    Source,
+)
+from focs._value_refs import (
+    TurnTechResearched,
+)
 
 
 def EMPIRE_OWNED_SHIP_WITH_PART(part_name: str):

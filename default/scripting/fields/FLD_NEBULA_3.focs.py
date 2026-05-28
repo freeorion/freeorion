@@ -8,12 +8,8 @@ from focs._effects import (
     EffectsGroup,
     GenerateSitRepMessage,
     IsSource,
-    MaxOf,
-    MinOf,
-    NamedRealLookup,
     NoStar,
     Object,
-    OneOf,
     SetDetection,
     SetSize,
     SetSpeed,
@@ -24,13 +20,19 @@ from focs._effects import (
     Source,
     Star,
     System,
-    Value,
     White,
     WithinDistance,
     Yellow,
 )
 from focs._fields import FieldType
-from focs._value_refs import RandomNumber
+from focs._value_refs import (
+    MaxOf,
+    MinOf,
+    NamedRealLookup,
+    OneOf,
+    RandomNumber,
+    Value,
+)
 
 FieldType(
     name="FLD_NEBULA_3",

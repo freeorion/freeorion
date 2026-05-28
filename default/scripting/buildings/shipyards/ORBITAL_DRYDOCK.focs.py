@@ -10,8 +10,6 @@ from focs._effects import (
     IsBuilding,
     LocalCandidate,
     MaximumNumberOf,
-    MaxOf,
-    MinOf,
     Object,
     OwnedBy,
     Planet,
@@ -22,6 +20,10 @@ from focs._effects import (
     Structure,
     Target,
     Turn,
+)
+from focs._value_refs import (
+    MaxOf,
+    MinOf,
     Value,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER

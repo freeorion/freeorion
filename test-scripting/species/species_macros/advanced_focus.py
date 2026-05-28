@@ -1,3 +1,7 @@
+from focs._value_refs import (
+    DirectDistanceBetween,
+    Value,
+)
 from macros.priorities import (
     POPULATION_DEFAULT_PRIORITY,
     POPULATION_FIRST_PRIORITY,
@@ -12,7 +16,6 @@ try:
         Contains,
         DesignHasPart,
         Destroy,
-        DirectDistanceBetween,
         EffectsGroup,
         EnemyOf,
         Fleet,
@@ -41,7 +44,6 @@ try:
         Target,
         Turn,
         Unowned,
-        Value,
         WithinDistance,
         WithinStarlaneJumps,
     )

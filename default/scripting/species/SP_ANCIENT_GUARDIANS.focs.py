@@ -9,7 +9,6 @@ from focs._effects import (
     Good,
     Inferno,
     IsSource,
-    NamedReal,
     Ocean,
     OwnedBy,
     Planet,
@@ -24,9 +23,12 @@ from focs._effects import (
     Toxic,
     Tundra,
     Turn,
-    Value,
 )
 from focs._species import *
+from focs._value_refs import (
+    NamedReal,
+    Value,
+)
 from macros.misc import PLANET_SHIELD_FACTOR
 from macros.priorities import POPULATION_OVERRIDE_PRIORITY
 from species.species_macros.empire_opinions import FIXED_OPINION_EFFECTS

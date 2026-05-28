@@ -5,7 +5,6 @@ from focs._effects import (
     Conditional,
     Desert,
     EffectsGroup,
-    GalaxyPlanetDensity,
     GasGiantSize,
     GasGiantType,
     Inferno,
@@ -13,7 +12,6 @@ from focs._effects import (
     Medium,
     Object,
     Ocean,
-    OneOf,
     Radiated,
     Random,
     Size,
@@ -27,6 +25,10 @@ from focs._effects import (
     Tundra,
 )
 from focs._effects_new import CreatePlanet
+from focs._value_refs import (
+    GalaxyPlanetDensity,
+    OneOf,
+)
 
 EFFECT_CREATE_PLANET = CreatePlanet(
     type=OneOf("PlanetType", Barren, Desert, Inferno, Ocean, Radiated, Swamp, Terran, Toxic, Tundra),

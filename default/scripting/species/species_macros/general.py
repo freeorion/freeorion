@@ -1,12 +1,8 @@
 from focs._effects import (
-    Abs,
-    CurrentTurn,
     EffectsGroup,
     Focus,
     IsSource,
     LocalCandidate,
-    MaxOf,
-    MinOf,
     Planet,
     Population,
     SetConstruction,
@@ -21,6 +17,12 @@ from focs._effects import (
     Ship,
     Target,
     TargetPopulation,
+)
+from focs._value_refs import (
+    Abs,
+    CurrentTurn,
+    MaxOf,
+    MinOf,
     Value,
 )
 from macros.misc import DESCRIPTION_EFFECTSGROUP_MACRO

@@ -110,7 +110,6 @@ value_ref_wrapper<std::string> operator+(const std::string&, const value_ref_wra
 condition_wrapper operator!=(const value_ref_wrapper<PlanetType>&, const value_ref_wrapper<PlanetType>&);
 condition_wrapper operator!=(const value_ref_wrapper<PlanetSize>&, const value_ref_wrapper<PlanetSize>&);
 
-void RegisterGlobalsValueRefs(boost::python::dict& globals);
+[[deprecated]] void RegisterGlobalsValueRefs(boost::python::dict& globals);
 
 #endif // _ValueRefPythonParser_h_
-

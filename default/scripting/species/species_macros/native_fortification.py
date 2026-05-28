@@ -4,17 +4,19 @@ from focs._effects import (
     ContainedBy,
     Contains,
     EffectsGroup,
-    GalaxyMaxAIAggression,
     HasSpecial,
     HasSpecies,
     HasTag,
     IsSource,
-    MaxOf,
-    OneOf,
     Planet,
     Random,
     Source,
     Turn,
+)
+from focs._value_refs import (
+    GalaxyMaxAIAggression,
+    MaxOf,
+    OneOf,
 )
 from macros.misc import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
 from species.species_macros.detection import NATIVE_PLANETARY_DETECTION

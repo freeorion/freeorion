@@ -12,7 +12,6 @@ from focs._effects import (
     IsBuilding,
     IsSource,
     LocalCandidate,
-    MinOf,
     Number,
     NumberOf,
     Object,
@@ -29,6 +28,9 @@ from focs._effects import (
     SetTargetResearch,
     Source,
     Target,
+)
+from focs._value_refs import (
+    MinOf,
     Value,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER

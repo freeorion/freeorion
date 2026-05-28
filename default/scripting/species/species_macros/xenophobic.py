@@ -9,12 +9,7 @@ from focs._effects import (
     IsBuilding,
     IsSource,
     IsTarget,
-    JumpsBetween,
     LocalCandidate,
-    MaxOf,
-    NamedIntegerLookup,
-    NamedReal,
-    NamedRealLookup,
     Number,
     OwnedBy,
     Planet,
@@ -22,14 +17,21 @@ from focs._effects import (
     SetTargetHappiness,
     SetTargetPopulation,
     Source,
-    Statistic,
-    StatisticCount,
     Sum,
     Target,
     Turn,
-    Value,
     VisibleToEmpire,
     WithinStarlaneJumps,
+)
+from focs._value_refs import (
+    JumpsBetween,
+    MaxOf,
+    NamedIntegerLookup,
+    NamedReal,
+    NamedRealLookup,
+    Statistic,
+    StatisticCount,
+    Value,
 )
 from macros.priorities import TARGET_AFTER_SCALING_PRIORITY, TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY
 

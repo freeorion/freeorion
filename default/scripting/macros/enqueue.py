@@ -1,7 +1,17 @@
 # Only check for own buildings. The client may have seen a building once, which has been
 # destroyed while outside vision range. In this case the building remains forever in the
 # client's context, but it should not stop a player from rebuilding the same type.
-from focs._effects import BuildBuilding, Contains, CurrentContent, Enqueued, IsBuilding, OwnedBy, Source
+from focs._effects import (
+    BuildBuilding,
+    Contains,
+    Enqueued,
+    IsBuilding,
+    OwnedBy,
+    Source,
+)
+from focs._value_refs import (
+    CurrentContent,
+)
 
 ENQUEUE_BUILD_ONE_PER_PLANET = (
     # Only check for own buildings. The client may have seen a building once, which has been

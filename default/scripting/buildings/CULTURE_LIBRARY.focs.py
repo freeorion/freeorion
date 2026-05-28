@@ -6,12 +6,14 @@ from focs._effects import (
     Happiness,
     IsAnyObject,
     IsSource,
-    NamedReal,
     Object,
     Planet,
     Population,
     SetTargetResearch,
     Source,
+)
+from focs._value_refs import (
+    NamedReal,
     Value,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER

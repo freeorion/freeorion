@@ -1,3 +1,9 @@
+from focs._value_refs import (
+    Abs,
+    CurrentTurn,
+    MinOf,
+    Value,
+)
 from macros.base_prod import STOCKPILE_PER_POP
 from macros.priorities import (
     AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
@@ -6,15 +12,12 @@ from macros.priorities import (
 
 try:
     from focs._effects import (
-        Abs,
-        CurrentTurn,
         EffectsGroup,
         Focus,
         HasSpecies,
         Homeworld,
         IsSource,
         LocalCandidate,
-        MinOf,
         OwnedBy,
         Planet,
         SetMaxStockpile,
@@ -22,7 +25,6 @@ try:
         Source,
         Target,
         TargetPopulation,
-        Value,
     )
 except ModuleNotFoundError:
     pass

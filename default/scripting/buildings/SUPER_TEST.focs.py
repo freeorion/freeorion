@@ -3,7 +3,6 @@ from focs._effects import (
     EffectsGroup,
     HasSpecies,
     IsSource,
-    MaxOf,
     Object,
     Planet,
     SetPopulation,
@@ -11,7 +10,10 @@ from focs._effects import (
     Source,
     Target,
 )
-from focs._value_refs import GameRule
+from focs._value_refs import (
+    GameRule,
+    MaxOf,
+)
 from macros.priorities import POPULATION_OVERRIDE_PRIORITY
 
 try:

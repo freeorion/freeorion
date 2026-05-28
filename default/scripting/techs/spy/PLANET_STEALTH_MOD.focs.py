@@ -1,5 +1,14 @@
-from focs._effects import EffectsGroup, IsBuilding, NamedReal, Planet, SetStealth, Value
+from focs._effects import (
+    EffectsGroup,
+    IsBuilding,
+    Planet,
+    SetStealth,
+)
 from focs._tech import *
+from focs._value_refs import (
+    NamedReal,
+    Value,
+)
 
 Tech(
     name="SPY_PLANET_STEALTH_MOD",

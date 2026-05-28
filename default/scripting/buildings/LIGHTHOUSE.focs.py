@@ -8,8 +8,6 @@ from focs._effects import (
     IsSource,
     LocalCandidate,
     Max,
-    MinOf,
-    NamedReal,
     OwnedBy,
     Planet,
     SetSpeed,
@@ -17,10 +15,14 @@ from focs._effects import (
     Ship,
     Source,
     Speed,
-    Statistic,
     Unowned,
-    Value,
     WithinDistance,
+)
+from focs._value_refs import (
+    MinOf,
+    NamedReal,
+    Statistic,
+    Value,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET

@@ -7,7 +7,6 @@ from focs._effects import (
     IsBuilding,
     IsSource,
     LocalCandidate,
-    MaxOf,
     Object,
     OwnedBy,
     Partial,
@@ -18,6 +17,9 @@ from focs._effects import (
     SetVisibility,
     Source,
     Target,
+)
+from focs._value_refs import (
+    MaxOf,
     ThisBuilding,
     Value,
     ValueVisibility,

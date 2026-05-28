@@ -1,11 +1,14 @@
+from focs._value_refs import (
+    CurrentTurn,
+    GalaxyMaxAIAggression,
+    Value,
+)
 from macros.misc import SHIP_SHIELD_FACTOR
 from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY, DEFAULT_PRIORITY
 
 try:
     from focs._effects import (
-        CurrentTurn,
         EffectsGroup,
-        GalaxyMaxAIAggression,
         IsHuman,
         IsSource,
         LocalCandidate,
@@ -13,7 +16,6 @@ try:
         SetShield,
         Ship,
         Target,
-        Value,
     )
 except ModuleNotFoundError:
     pass

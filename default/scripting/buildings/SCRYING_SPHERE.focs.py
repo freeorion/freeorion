@@ -5,7 +5,6 @@ from focs._effects import (
     Contains,
     EffectsGroup,
     IsBuilding,
-    MaxOf,
     OwnedBy,
     Partial,
     Planet,
@@ -14,9 +13,12 @@ from focs._effects import (
     Source,
     System,
     Unowned,
+    WithinStarlaneJumps,
+)
+from focs._value_refs import (
+    MaxOf,
     Value,
     ValueVisibility,
-    WithinStarlaneJumps,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 

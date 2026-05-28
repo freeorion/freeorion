@@ -5,9 +5,7 @@ from focs._effects import (
     ContainedBy,
     Contains,
     ContentFocus,
-    CurrentTurn,
     EffectsGroup,
-    EmpireMeterValue,
     EnemyOf,
     Enqueued,
     Fleet,
@@ -19,8 +17,6 @@ from focs._effects import (
     LocalCandidate,
     Location,
     Number,
-    NumPoliciesAdopted,
-    OneOf,
     OwnedBy,
     OwnerHasTech,
     Planet,
@@ -31,13 +27,17 @@ from focs._effects import (
     System,
     Target,
     Turn,
-    TurnTechResearched,
     Unowned,
-    UserString,
     VisibleToEmpire,
 )
 from focs._value_refs import (
+    CurrentTurn,
     EmpireAdoptedPolicies,
+    EmpireMeterValue,
+    NumPoliciesAdopted,
+    OneOf,
+    TurnTechResearched,
+    UserString,
     VectorCount,
 )
 from macros.priorities import END_CLEANUP_PRIORITY

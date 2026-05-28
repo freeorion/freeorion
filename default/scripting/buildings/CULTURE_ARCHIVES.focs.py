@@ -5,7 +5,6 @@ from focs._effects import (
     EffectsGroup,
     Happiness,
     IsAnyObject,
-    NamedReal,
     Object,
     OwnedBy,
     Planet,
@@ -16,6 +15,9 @@ from focs._effects import (
     Source,
     Target,
     Unowned,
+)
+from focs._value_refs import (
+    NamedReal,
     Value,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER, INDUSTRY_PER_POP

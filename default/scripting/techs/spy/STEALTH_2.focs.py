@@ -8,9 +8,11 @@ from focs._effects import (
     Planet,
     RemoveSpecial,
     Source,
-    StatisticIf,
 )
 from focs._tech import *
+from focs._value_refs import (
+    StatisticIf,
+)
 from macros.base_prod import TECH_COST_MULTIPLIER
 
 Tech(

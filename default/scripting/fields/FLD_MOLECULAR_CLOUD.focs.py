@@ -3,22 +3,27 @@ from focs._effects import (
     EffectsGroup,
     IsSource,
     LocalCandidate,
-    MaxOf,
-    MinOf,
     MoveTowards,
-    NamedReal,
     SetMaxShield,
     SetSize,
     SetSpeed,
     Ship,
     Size,
     Source,
-    Value,
     WithinDistance,
 )
 from focs._effects_new import MoveInOrbit
 from focs._fields import FieldType
-from focs._value_refs import RandomNumber, UniverseCentreX, UniverseCentreY, UniverseWidth
+from focs._value_refs import (
+    MaxOf,
+    MinOf,
+    NamedReal,
+    RandomNumber,
+    UniverseCentreX,
+    UniverseCentreY,
+    UniverseWidth,
+    Value,
+)
 from macros.misc import SHIP_SHIELD_FACTOR
 
 FieldType(

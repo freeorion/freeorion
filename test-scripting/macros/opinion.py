@@ -1,8 +1,16 @@
+from focs._value_refs import (
+    StatisticIf,
+)
+
 # Policy Liberty doubles the stability malus from disliked buildings, policies and planetary foci
 # Policy Conformance halves it
 # Values are declared in macros/named_values.focs.txt
 try:
-    from focs._effects import EmpireHasAdoptedPolicy, IsSource, StatisticIf, Target
+    from focs._effects import (
+        EmpireHasAdoptedPolicy,
+        IsSource,
+        Target,
+    )
 except ModuleNotFoundError:
     pass
 

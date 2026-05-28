@@ -5,12 +5,14 @@ from focs._effects import (
     Focus,
     Happiness,
     IsBuilding,
-    NamedReal,
     OwnedBy,
     Planet,
     SetTargetResearch,
     Source,
     Target,
+)
+from focs._value_refs import (
+    NamedReal,
     Value,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER, RESEARCH_PER_POP

@@ -2,14 +2,16 @@ from focs._effects import (
     DesignHasPart,
     EffectsGroup,
     OwnedBy,
-    PartsInShipDesign,
     SetMaxCapacity,
     Ship,
     Source,
     Target,
-    Value,
 )
 from focs._tech import *
+from focs._value_refs import (
+    PartsInShipDesign,
+    Value,
+)
 from macros.base_prod import TECH_COST_MULTIPLIER
 from techs.ship_weapons.ship_weapons import HANGAR_UPGRADE_SECONDARY_STAT_EFFECT
 
