@@ -181,7 +181,7 @@ jobs:
           disable-animations: false
           working-directory: ./
           channel: beta
-          script: bash .github/android-apk-launch.sh
+          script: bash .github/android-apk-launch.sh 2>&1 | grep -v vqParseGuestToHostRequestLocked
       - name: Upload logs
         if: always()
         uses: actions/upload-artifact@v7

@@ -22,7 +22,7 @@ adb exec-out run-as org.godotengine.freeoriongodotclient cat files/freeorion-god
 echo "::endgroup::"
 
 echo "::group::Checking errors"
-ERRORS=$(grep -B1 "\[error\] godot : \(PythonParser\|Parse\|ReportParseError\)" freeorion-godot.log || true)
+ERRORS=$(grep -B1 "\[error\] godot : \(PythonParser\|Parse\|ReportParseError\|PythonCommon\)" freeorion-godot.log || true)
 if [ -n "$ERRORS" ]; then
   echo "$ERRORS" | while IFS= read -r line; do
     echo "::error title=Parser::$line"
