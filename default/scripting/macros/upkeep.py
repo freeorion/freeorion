@@ -2,6 +2,8 @@ from focs._effects import (
     EmpireHasAdoptedPolicy,
     IsSource,
     Source,
+)
+from focs._value_refs import (
     SpeciesColoniesOwned,
     StatisticIf,
 )

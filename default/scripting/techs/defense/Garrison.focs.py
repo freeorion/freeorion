@@ -1,9 +1,6 @@
 from focs._effects import (
-    CurrentTurn,
     EffectsGroup,
     LocalCandidate,
-    MinOf,
-    NamedReal,
     OwnedBy,
     Planet,
     Population,
@@ -11,9 +8,14 @@ from focs._effects import (
     SetTroops,
     Source,
     Target,
-    Value,
 )
 from focs._tech import *
+from focs._value_refs import (
+    CurrentTurn,
+    MinOf,
+    NamedReal,
+    Value,
+)
 from macros.base_prod import TECH_COST_MULTIPLIER, TROOPS_PER_POP
 from macros.priorities import (
     AFTER_ALL_TARGET_MAX_METERS_PRIORITY,

@@ -1,3 +1,10 @@
+from focs._value_refs import (
+    Abs,
+    CurrentTurn,
+    MaxOf,
+    MinOf,
+    Value,
+)
 from macros.priorities import (
     AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
     END_CLEANUP_PRIORITY,
@@ -7,14 +14,10 @@ from macros.priorities import (
 
 try:
     from focs._effects import (
-        Abs,
-        CurrentTurn,
         EffectsGroup,
         Focus,
         IsSource,
         LocalCandidate,
-        MaxOf,
-        MinOf,
         Planet,
         Population,
         SetConstruction,
@@ -29,7 +32,6 @@ try:
         Ship,
         Target,
         TargetPopulation,
-        Value,
     )
 except ModuleNotFoundError:
     pass

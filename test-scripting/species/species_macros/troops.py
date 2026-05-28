@@ -1,3 +1,13 @@
+from focs._value_refs import (
+    Abs,
+    CurrentTurn,
+    EmpireStockpile,
+    GalaxyMaxAIAggression,
+    MaxOf,
+    MinOf,
+    StatisticCount,
+    Value,
+)
 from macros.base_prod import TROOPS_PER_POP
 from macros.priorities import (
     AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
@@ -8,14 +18,10 @@ from macros.priorities import (
 
 try:
     from focs._effects import (
-        Abs,
         Adequate,
         Capital,
-        CurrentTurn,
         EffectsGroup,
-        EmpireStockpile,
         Focus,
-        GalaxyMaxAIAggression,
         Happiness,
         HasEmpireStockpile,
         HasSpecies,
@@ -24,8 +30,6 @@ try:
         IsHuman,
         IsSource,
         LocalCandidate,
-        MaxOf,
-        MinOf,
         OwnedBy,
         Planet,
         Poor,
@@ -36,10 +40,8 @@ try:
         SetTargetInfluence,
         SetTroops,
         Source,
-        StatisticCount,
         Target,
         Unowned,
-        Value,
     )
 except ModuleNotFoundError:
     pass

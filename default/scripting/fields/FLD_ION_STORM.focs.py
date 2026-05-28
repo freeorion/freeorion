@@ -4,22 +4,27 @@ from focs._effects import (
     IsField,
     IsSource,
     LocalCandidate,
-    MaxOf,
-    MinOf,
     MoveTowards,
-    NamedReal,
     SetDetection,
     SetSize,
     SetSpeed,
     SetStealth,
     Size,
     Source,
-    Value,
     WithinDistance,
 )
 from focs._effects_new import MoveInOrbit
 from focs._fields import FieldType
-from focs._value_refs import RandomNumber, UniverseCentreX, UniverseCentreY, UniverseWidth
+from focs._value_refs import (
+    MaxOf,
+    MinOf,
+    NamedReal,
+    RandomNumber,
+    UniverseCentreX,
+    UniverseCentreY,
+    UniverseWidth,
+    Value,
+)
 
 FieldType(
     name="FLD_ION_STORM",

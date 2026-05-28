@@ -5,13 +5,15 @@
 from focs._effects import (
     DesignHasPart,
     EffectsGroup,
-    NamedReal,
     OwnedBy,
-    PartsInShipDesign,
     SetMaxFuel,
     Ship,
     Source,
     Target,
+)
+from focs._value_refs import (
+    NamedReal,
+    PartsInShipDesign,
     Value,
 )
 

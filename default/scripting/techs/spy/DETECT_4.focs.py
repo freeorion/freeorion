@@ -1,16 +1,18 @@
 from focs._effects import (
     EffectsGroup,
     IsSource,
-    NamedReal,
     OwnedBy,
     OwnerHasTech,
     Planet,
     SetDetection,
     SetEmpireMeter,
     Source,
-    Value,
 )
 from focs._tech import *
+from focs._value_refs import (
+    NamedReal,
+    Value,
+)
 from macros.base_prod import TECH_COST_MULTIPLIER
 
 Tech(

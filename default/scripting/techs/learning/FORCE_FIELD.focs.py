@@ -1,13 +1,15 @@
 from focs._effects import (
     EffectsGroup,
-    NamedReal,
     OwnedBy,
     Planet,
     SetMaxShield,
     Source,
-    Value,
 )
 from focs._tech import *
+from focs._value_refs import (
+    NamedReal,
+    Value,
+)
 from macros.base_prod import TECH_COST_MULTIPLIER
 from macros.misc import PLANET_SHIELD_FACTOR
 from macros.priorities import DEFAULT_PRIORITY

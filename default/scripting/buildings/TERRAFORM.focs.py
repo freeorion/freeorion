@@ -17,16 +17,13 @@ from focs._effects import (
     IsBuilding,
     IsSource,
     LocalCandidate,
-    MaxOf,
     Object,
     Ocean,
     OwnedBy,
     Planet,
-    PlanetTypeDifference,
     Radiated,
     SetPlanetType,
     Source,
-    StatisticIf,
     Swamp,
     Target,
     TargetPopulation,
@@ -34,6 +31,11 @@ from focs._effects import (
     Toxic,
     Tundra,
     Uninhabitable,
+)
+from focs._value_refs import (
+    MaxOf,
+    PlanetTypeDifference,
+    StatisticIf,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import (

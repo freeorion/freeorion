@@ -1,3 +1,7 @@
+from focs._value_refs import (
+    GalaxyMaxAIAggression,
+    Value,
+)
 from macros.base_prod import INDUSTRY_PER_POP
 from macros.priorities import (
     TARGET_AFTER_SCALING_PRIORITY,
@@ -10,7 +14,6 @@ try:
     from focs._effects import (
         EffectsGroup,
         Focus,
-        GalaxyMaxAIAggression,
         Happiness,
         IsHuman,
         IsSource,
@@ -18,7 +21,6 @@ try:
         SetTargetIndustry,
         Target,
         TargetIndustry,
-        Value,
     )
 except ModuleNotFoundError:
     pass

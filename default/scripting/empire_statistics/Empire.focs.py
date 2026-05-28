@@ -1,19 +1,24 @@
 from focs._effects import (
-    BuildingTypesProduced,
-    BuildingTypesScrapped,
     LocalCandidate,
-    NumPoliciesAdopted,
     OwnedBy,
     Planet,
     Source,
+    Sum,
+)
+from focs._empire_statistics import EmpireStatistic
+from focs._value_refs import (
+    BuildingTypesProduced,
+    BuildingTypesScrapped,
+    EmpireShipsDestroyed,
+    NumPoliciesAdopted,
+    ShipDesignsLost,
+    ShipDesignsProduced,
+    ShipDesignsScrapped,
     SpeciesPlanetsBombed,
     SpeciesPlanetsDepoped,
     SpeciesPlanetsInvaded,
     Statistic,
-    Sum,
 )
-from focs._empire_statistics import EmpireStatistic
-from focs._value_refs import EmpireShipsDestroyed, ShipDesignsLost, ShipDesignsProduced, ShipDesignsScrapped
 
 EmpireStatistic(name="POLICIES_ADOPTED", value=NumPoliciesAdopted(empire=Source.Owner))
 

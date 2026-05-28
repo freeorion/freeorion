@@ -6,9 +6,11 @@ from focs._effects import (
     SetPopulation,
     Source,
     Target,
-    Value,
 )
 from focs._species import *
+from focs._value_refs import (
+    Value,
+)
 from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS
 from species.species_macros.env import GASEOUS_NARROW_EP, NARROW_EP
 from species.species_macros.focus import (

@@ -7,9 +7,11 @@ from focs._effects import (
     SetMaxStockpile,
     Source,
     Target,
-    Value,
 )
 from focs._tech import *
+from focs._value_refs import (
+    Value,
+)
 from macros.base_prod import STOCKPILE_PER_POP, TECH_COST_MULTIPLIER
 
 Tech(

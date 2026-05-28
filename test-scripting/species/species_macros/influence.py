@@ -1,3 +1,9 @@
+from focs._value_refs import (
+    Abs,
+    GalaxyMaxAIAggression,
+    StatisticCount,
+    Value,
+)
 from macros.misc import SUPPLY_DISCONNECTED_INFLUENCE_MALUS
 from macros.priorities import (
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
@@ -7,12 +13,10 @@ from macros.priorities import (
 
 try:
     from focs._effects import (
-        Abs,
         Capital,
         EffectsGroup,
         EmpireHasAdoptedPolicy,
         Focus,
-        GalaxyMaxAIAggression,
         Happiness,
         HasSpecies,
         HasTag,
@@ -25,10 +29,8 @@ try:
         ResourceSupplyConnected,
         SetTargetInfluence,
         Source,
-        StatisticCount,
         Target,
         Unowned,
-        Value,
     )
 except ModuleNotFoundError:
     pass

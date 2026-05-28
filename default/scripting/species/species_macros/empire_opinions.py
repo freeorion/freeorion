@@ -3,21 +3,23 @@ from focs._effects import (
     EffectsGroup,
     HasSpecies,
     LocalCandidate,
-    MaxOf,
-    MinOf,
     Planet,
     Population,
     SetSpeciesOpinion,
     SetSpeciesTargetOpinion,
+    Target,
+)
+from focs._value_refs import (
+    GameRule,
+    MaxOf,
+    MinOf,
     SpeciesEmpireTargetOpinion,
     SpeciesShipsDestroyed,
     SpeciesShipsLost,
     StatisticCount,
-    Target,
     ThisSpecies,
     Value,
 )
-from focs._value_refs import GameRule
 
 
 def FIXED_OPINION_EFFECTS(name: str, value: float):

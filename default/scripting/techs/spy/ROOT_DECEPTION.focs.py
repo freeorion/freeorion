@@ -6,10 +6,7 @@ from focs._effects import (
     IsTarget,
     LocalCandidate,
     Min,
-    MinOf,
-    NamedReal,
     Neutron,
-    NoOpValue,
     NoStar,
     OwnedBy,
     Red,
@@ -17,14 +14,19 @@ from focs._effects import (
     SetStealth,
     Ship,
     Source,
-    SpecialCapacity,
     Star,
-    Statistic,
-    StatisticCount,
     Target,
-    Value,
 )
 from focs._tech import *
+from focs._value_refs import (
+    MinOf,
+    NamedReal,
+    NoOpValue,
+    SpecialCapacity,
+    Statistic,
+    StatisticCount,
+    Value,
+)
 from macros.priorities import (
     AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
     LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY,

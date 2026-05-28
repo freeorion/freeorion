@@ -11,7 +11,6 @@
 #   SYS_DEF_MINES_2
 #   FORTRESS_SPECIAL
 #   SYS_DEF_MINES_1
-
 from focs._effects import (
     ContainedBy,
     Contains,
@@ -31,8 +30,10 @@ from focs._effects import (
     System,
     Target,
     Unowned,
-    Value,
     VisibleToEmpire,
+)
+from focs._value_refs import (
+    Value,
 )
 
 

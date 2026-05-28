@@ -1,26 +1,28 @@
 from focs._effects import (
     Contains,
-    DirectDistanceBetween,
     EffectsGroup,
     Focus,
     Happiness,
     IsSource,
     LocalCandidate,
     Max,
-    MaxOf,
-    MinOf,
-    NamedReal,
     OwnedBy,
     Planet,
     SetEmpireMeter,
     SetTargetResearch,
     Source,
-    Statistic,
     System,
     Target,
-    Value,
 )
 from focs._tech import *
+from focs._value_refs import (
+    DirectDistanceBetween,
+    MaxOf,
+    MinOf,
+    NamedReal,
+    Statistic,
+    Value,
+)
 from macros.base_prod import TECH_COST_MULTIPLIER
 from macros.priorities import TARGET_AFTER_2ND_SCALING_PRIORITY
 

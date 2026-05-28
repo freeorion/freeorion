@@ -5,9 +5,11 @@ from focs._effects import (
     SetTargetPopulation,
     Source,
     Target,
-    Value,
 )
 from focs._tech import *
+from focs._value_refs import (
+    Value,
+)
 from macros.base_prod import TECH_COST_MULTIPLIER
 from macros.priorities import TARGET_POPULATION_AFTER_SCALING_PRIORITY
 

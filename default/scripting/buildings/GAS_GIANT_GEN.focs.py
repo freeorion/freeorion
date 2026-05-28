@@ -10,13 +10,15 @@ from focs._effects import (
     InSystem,
     IsBuilding,
     IsSource,
-    NamedReal,
     Object,
     OwnedBy,
     Planet,
     Population,
     SetTargetIndustry,
     Source,
+)
+from focs._value_refs import (
+    NamedReal,
     Value,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER, INDUSTRY_PER_POP

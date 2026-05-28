@@ -1,14 +1,10 @@
 from focs._effects import (
-    Abs,
     EffectsGroup,
     EmpireHasAdoptedPolicy,
     HasEmpireStockpile,
     HasSpecies,
     IsSource,
     IsTarget,
-    MaxOf,
-    MinOf,
-    NumPoliciesAdopted,
     OwnedBy,
     Planet,
     Population,
@@ -19,11 +15,17 @@ from focs._effects import (
     SetMaxTroops,
     SetTargetConstruction,
     Source,
-    StatisticIf,
     Target,
-    Value,
 )
 from focs._tech import *
+from focs._value_refs import (
+    Abs,
+    MaxOf,
+    MinOf,
+    NumPoliciesAdopted,
+    StatisticIf,
+    Value,
+)
 from macros.priorities import (
     AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
     METER_OVERRIDE_PRIORITY,

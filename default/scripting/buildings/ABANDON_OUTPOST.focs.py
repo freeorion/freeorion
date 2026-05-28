@@ -5,7 +5,6 @@ from focs._effects import (
     IsBuilding,
     IsSource,
     LocalCandidate,
-    MaxOf,
     Object,
     OwnedBy,
     Partial,
@@ -15,8 +14,11 @@ from focs._effects import (
     SetVisibility,
     Source,
     Target,
-    ThisBuilding,
     Turn,
+)
+from focs._value_refs import (
+    MaxOf,
+    ThisBuilding,
     ValueVisibility,
 )
 from macros.misc import UNOWNED_EMPIRE_ID

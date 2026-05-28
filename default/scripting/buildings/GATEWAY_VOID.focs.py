@@ -7,7 +7,6 @@ from focs._effects import (
     GenerateSitRepMessage,
     InSystem,
     IsBuilding,
-    MinOf,
     OwnedBy,
     Planet,
     SetMaxSupply,
@@ -18,6 +17,9 @@ from focs._effects import (
     Source,
     Target,
     Turn,
+)
+from focs._value_refs import (
+    MinOf,
     Value,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER

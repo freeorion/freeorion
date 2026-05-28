@@ -3,12 +3,14 @@ from focs._effects import (
     Contains,
     EffectsGroup,
     IsBuilding,
-    NamedReal,
     Object,
     OwnedBy,
     Planet,
     SetDetection,
     Source,
+)
+from focs._value_refs import (
+    NamedReal,
     Value,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER

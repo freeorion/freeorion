@@ -9,9 +9,11 @@ from focs._effects import (
     Planet,
     ProducedByEmpire,
     Source,
-    StatisticCount,
     Unowned,
     WithinStarlaneJumps,
+)
+from focs._value_refs import (
+    StatisticCount,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET

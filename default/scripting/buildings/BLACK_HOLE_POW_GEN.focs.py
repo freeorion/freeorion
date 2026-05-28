@@ -8,16 +8,18 @@ from focs._effects import (
     Happiness,
     IsBuilding,
     IsSource,
-    NamedReal,
-    NamedRealLookup,
     OwnedBy,
     Planet,
     ResourceSupplyConnected,
     SetTargetIndustry,
     Source,
     Star,
-    StatisticIf,
     Target,
+)
+from focs._value_refs import (
+    NamedReal,
+    NamedRealLookup,
+    StatisticIf,
     Value,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER, INDUSTRY_PER_POP

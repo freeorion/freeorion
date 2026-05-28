@@ -8,8 +8,6 @@ from focs._effects import (
     Happiness,
     IsBuilding,
     IsSource,
-    NamedReal,
-    NamedRealLookup,
     Neutron,
     NoStar,
     Orange,
@@ -21,9 +19,13 @@ from focs._effects import (
     Source,
     Star,
     Target,
-    Value,
     White,
     Yellow,
+)
+from focs._value_refs import (
+    NamedReal,
+    NamedRealLookup,
+    Value,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER, INDUSTRY_PER_POP
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET

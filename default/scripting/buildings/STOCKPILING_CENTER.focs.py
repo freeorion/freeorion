@@ -12,8 +12,10 @@ from focs._effects import (
     Planet,
     SetMaxStockpile,
     Source,
-    Statistic,
     Sum,
+)
+from focs._value_refs import (
+    Statistic,
     Value,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER

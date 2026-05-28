@@ -12,7 +12,6 @@ from focs._effects import (
     IsSource,
     IsTarget,
     LocalCandidate,
-    MaxOf,
     Min,
     Object,
     OwnedBy,
@@ -20,15 +19,18 @@ from focs._effects import (
     Planet,
     Population,
     ResourceSupplyConnected,
-    ShortestPath,
     Source,
-    Statistic,
-    StatisticIf,
     Target,
     Turn,
     Uninhabitable,
 )
-from focs._value_refs import GameRule
+from focs._value_refs import (
+    GameRule,
+    MaxOf,
+    ShortestPath,
+    Statistic,
+    StatisticIf,
+)
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.misc import LIFECYCLE_MANIP_POPULATION_EFFECTS, MIN_RECOLONIZING_SIZE
 from macros.upkeep import COLONIZATION_POLICY_MULTIPLIER, COLONY_UPKEEP_MULTIPLICATOR

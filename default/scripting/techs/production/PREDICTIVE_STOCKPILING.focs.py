@@ -1,5 +1,15 @@
-from focs._effects import EffectsGroup, Focus, OwnedBy, Planet, SetMaxStockpile, Source, Value
+from focs._effects import (
+    EffectsGroup,
+    Focus,
+    OwnedBy,
+    Planet,
+    SetMaxStockpile,
+    Source,
+)
 from focs._tech import *
+from focs._value_refs import (
+    Value,
+)
 
 Tech(
     name="PRO_PREDICTIVE_STOCKPILING",

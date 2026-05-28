@@ -1,17 +1,19 @@
 from focs._effects import (
-    CurrentTurn,
     EffectsGroup,
     Focus,
     IsSource,
     LocalCandidate,
-    MinOf,
-    NamedRealLookup,
     Planet,
     SetDefense,
     SetMaxDefense,
     SetTargetHappiness,
     Target,
     Unowned,
+)
+from focs._value_refs import (
+    CurrentTurn,
+    MinOf,
+    NamedRealLookup,
     Value,
 )
 from macros.misc import PLANET_DEFENSE_FACTOR

@@ -6,16 +6,18 @@ from focs._effects import (
     Focus,
     Happiness,
     IsSource,
-    NamedReal,
     OwnedBy,
     Planet,
     SetTargetIndustry,
     Source,
     System,
     Target,
-    Value,
 )
 from focs._species import *
+from focs._value_refs import (
+    NamedReal,
+    Value,
+)
 from macros.base_prod import INDUSTRY_PER_POP
 from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS
 from species.species_macros.env import RADIATED_STANDARD_EP

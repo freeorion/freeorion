@@ -1,11 +1,13 @@
 from focs._effects import (
     AnyEmpire,
     Contains,
-    NamedIntegerLookup,
     OwnedBy,
     Planet,
     System,
     WithinStarlaneJumps,
+)
+from focs._value_refs import (
+    NamedIntegerLookup,
 )
 
 MINIMUM_DISTANCE_EMPIRE_CHECK = ~WithinStarlaneJumps(

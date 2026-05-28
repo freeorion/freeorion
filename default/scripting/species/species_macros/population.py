@@ -1,10 +1,8 @@
 from focs._effects import (
-    Abs,
     AnyEmpire,
     BlackHole,
     Blue,
     Contains,
-    CurrentTurn,
     EffectsGroup,
     Focus,
     GasGiantType,
@@ -15,8 +13,6 @@ from focs._effects import (
     Hostile,
     IsSource,
     LocalCandidate,
-    MaxOf,
-    MinOf,
     Neutron,
     NoStar,
     Orange,
@@ -34,9 +30,15 @@ from focs._effects import (
     TargetPopulation,
     Turn,
     Uninhabitable,
-    Value,
     White,
     Yellow,
+)
+from focs._value_refs import (
+    Abs,
+    CurrentTurn,
+    MaxOf,
+    MinOf,
+    Value,
 )
 from macros.misc import GROWTH_RATE_FACTOR
 from macros.priorities import (

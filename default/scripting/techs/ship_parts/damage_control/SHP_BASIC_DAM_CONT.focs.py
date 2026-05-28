@@ -8,9 +8,11 @@ from focs._effects import (
     Source,
     Structure,
     Turn,
-    Value,
 )
 from focs._tech import *
+from focs._value_refs import (
+    Value,
+)
 from macros.base_prod import TECH_COST_MULTIPLIER
 from macros.misc import SHIP_STRUCTURE_FACTOR
 

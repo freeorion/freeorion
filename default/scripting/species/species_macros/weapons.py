@@ -3,10 +3,12 @@ from focs._effects import (
     DesignHasPart,
     EffectsGroup,
     IsSource,
-    NamedReal,
     SetMaxDamage,
     SetMaxSecondaryStat,
     Ship,
+)
+from focs._value_refs import (
+    NamedReal,
     Value,
 )
 from macros.misc import FIGHTER_DAMAGE_FACTOR, SHIP_WEAPON_DAMAGE_FACTOR

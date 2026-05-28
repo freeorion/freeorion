@@ -23,11 +23,13 @@ from focs._effects import (
     Stationary,
     Structure,
     Target,
-    ThisSpecies,
     Turn,
-    Value,
 )
 from focs._species import *
+from focs._value_refs import (
+    ThisSpecies,
+    Value,
+)
 from species.species_macros.detection import GOOD_DETECTION
 from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS
 from species.species_macros.env import GASEOUS_STANDARD_EP, NARROW_EP

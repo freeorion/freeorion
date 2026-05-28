@@ -12,9 +12,11 @@ from focs._effects import (
     SetStealth,
     Source,
     Unowned,
-    Value,
 )
 from focs._species import *
+from focs._value_refs import (
+    Value,
+)
 from species.species_macros.empire_opinions import FIXED_OPINION_EFFECTS
 from species.species_macros.env import VERY_TOLERANT_EP
 from species.species_macros.focus import (

@@ -2,18 +2,20 @@ from focs._effects import (
     Conditional,
     EffectsGroup,
     LocalCandidate,
-    MaxOf,
-    MinOf,
-    NamedReal,
-    NamedRealLookup,
     OwnedBy,
     Planet,
     SetInfluence,
     Source,
     Target,
-    Value,
 )
 from focs._tech import *
+from focs._value_refs import (
+    MaxOf,
+    MinOf,
+    NamedReal,
+    NamedRealLookup,
+    Value,
+)
 from macros.base_prod import TECH_COST_MULTIPLIER
 from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 

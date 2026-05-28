@@ -13,9 +13,11 @@ from focs._effects import (
     OwnerHasTech,
     Planet,
     Source,
-    Statistic,
 )
 from focs._species import *
+from focs._value_refs import (
+    Statistic,
+)
 
 HAS_INDUSTRY_FOCUS = FocusType(
     name="FOCUS_INDUSTRY", description="FOCUS_INDUSTRY_DESC", location=Planet(), graphic="icons/focus/industry.png"

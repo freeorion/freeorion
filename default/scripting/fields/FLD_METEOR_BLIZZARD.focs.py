@@ -2,8 +2,6 @@ from focs._effects import (
     Destroy,
     EffectsGroup,
     IsSource,
-    MaxOf,
-    MinOf,
     Monster,
     MoveTowards,
     Number,
@@ -13,13 +11,20 @@ from focs._effects import (
     Ship,
     Size,
     Source,
-    StatisticCount,
-    Value,
     WithinDistance,
 )
 from focs._effects_new import MoveInOrbit
 from focs._fields import FieldType
-from focs._value_refs import RandomNumber, UniverseCentreX, UniverseCentreY, UniverseWidth
+from focs._value_refs import (
+    MaxOf,
+    MinOf,
+    RandomNumber,
+    StatisticCount,
+    UniverseCentreX,
+    UniverseCentreY,
+    UniverseWidth,
+    Value,
+)
 
 FieldType(
     name="FLD_METEOR_BLIZZARD",

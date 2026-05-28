@@ -3,11 +3,9 @@ from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 
 try:
     from focs._effects import (
-        Abs,
         Adequate,
         Capital,
         Contains,
-        CurrentTurn,
         EffectsGroup,
         EmpireHasAdoptedPolicy,
         GasGiantType,
@@ -20,13 +18,10 @@ try:
         InSystem,
         IsBuilding,
         IsSource,
-        JumpsBetween,
         Large,
         LocalCandidate,
-        MaxOf,
         Medium,
         Min,
-        MinOf,
         OwnedBy,
         Planet,
         Poor,
@@ -38,17 +33,24 @@ try:
         Source,
         SpeciesDislikes,
         SpeciesLikes,
-        Statistic,
         Target,
         Tiny,
         Uninhabitable,
         Unowned,
-        Value,
     )
 except ModuleNotFoundError:
     pass
 
-from focs._value_refs import GameRule
+from focs._value_refs import (
+    Abs,
+    CurrentTurn,
+    GameRule,
+    JumpsBetween,
+    MaxOf,
+    MinOf,
+    Statistic,
+    Value,
+)
 
 STABILITY_PER_LIKED_FOCUS = 2.0
 

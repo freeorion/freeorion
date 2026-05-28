@@ -1,13 +1,15 @@
 from focs._effects import (
     EffectsGroup,
     Focus,
-    GalaxyMaxAIAggression,
     Happiness,
     IsHuman,
     IsSource,
     Planet,
     SetTargetResearch,
     Target,
+)
+from focs._value_refs import (
+    GalaxyMaxAIAggression,
     Value,
 )
 from macros.base_prod import RESEARCH_PER_POP

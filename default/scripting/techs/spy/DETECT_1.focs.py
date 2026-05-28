@@ -3,7 +3,6 @@ from focs._effects import (
     Blue,
     EffectsGroup,
     IsSource,
-    NamedReal,
     Neutron,
     NoStar,
     OwnedBy,
@@ -14,11 +13,14 @@ from focs._effects import (
     Ship,
     Source,
     Star,
-    Value,
     White,
     Yellow,
 )
 from focs._tech import *
+from focs._value_refs import (
+    NamedReal,
+    Value,
+)
 
 Tech(
     name="SPY_DETECT_1",

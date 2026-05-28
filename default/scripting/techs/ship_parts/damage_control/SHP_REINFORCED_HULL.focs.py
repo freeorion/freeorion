@@ -1,13 +1,15 @@
 from focs._effects import (
     EffectsGroup,
-    NamedRealLookup,
     OwnedBy,
     SetMaxStructure,
     Ship,
     Source,
-    Value,
 )
 from focs._tech import *
+from focs._value_refs import (
+    NamedRealLookup,
+    Value,
+)
 from macros.base_prod import TECH_COST_MULTIPLIER
 
 Tech(

@@ -1,16 +1,18 @@
 from focs._effects import (
-    CurrentTurn,
     DesignHasPart,
     EffectsGroup,
-    GalaxyMaxAIAggression,
     IsHuman,
     IsSource,
     LocalCandidate,
     SetMaxShield,
     SetShield,
     Ship,
-    StatisticIf,
     Target,
+)
+from focs._value_refs import (
+    CurrentTurn,
+    GalaxyMaxAIAggression,
+    StatisticIf,
     Value,
 )
 from macros.misc import SHIP_SHIELD_FACTOR

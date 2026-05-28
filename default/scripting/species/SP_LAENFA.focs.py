@@ -1,5 +1,18 @@
-from focs._effects import Blue, EffectsGroup, InSystem, IsSource, SetFuel, Ship, Star, Stationary, Value, White
+from focs._effects import (
+    Blue,
+    EffectsGroup,
+    InSystem,
+    IsSource,
+    SetFuel,
+    Ship,
+    Star,
+    Stationary,
+    White,
+)
 from focs._species import *
+from focs._value_refs import (
+    Value,
+)
 from species.species_macros.detection import GREAT_DETECTION
 from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS
 from species.species_macros.env import BROAD_EP, OCEAN_BROAD_EP

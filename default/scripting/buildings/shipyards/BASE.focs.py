@@ -10,6 +10,8 @@ from focs._effects import (
     SetTargetConstruction,
     Source,
     TargetPopulation,
+)
+from focs._value_refs import (
     Value,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER

@@ -1,9 +1,11 @@
-from focs._effects import (
+from focs._value_refs import (
+    GameRule,
     NamedInteger,
     NamedReal,
+    NumPartClassesInShipDesign,
+    PartOfClassInShipDesign,
     UsedInDesignID,
 )
-from focs._value_refs import GameRule, NumPartClassesInShipDesign, PartOfClassInShipDesign
 from macros.base_prod import RESEARCH_PER_POP
 from macros.misc import MIN_RECOLONIZING_HAPPINESS, MIN_RECOLONIZING_SIZE, SHIP_STRUCTURE_FACTOR
 

@@ -1,27 +1,29 @@
 from typing import Literal
 
 from focs._effects import (
-    CurrentContent,
-    CurrentTurn,
     EffectsGroup,
     GenerateSitRepMessage,
     IsSource,
     LocalCandidate,
     Max,
     MaxSecondaryStat,
-    NamedReal,
     OwnedBy,
-    PartCapacity,
-    PartSecondaryStat,
     SetCapacity,
     SetMaxCapacity,
     SetMaxSecondaryStat,
     SetSecondaryStat,
     Ship,
-    ShipPartMeter,
     Source,
-    Statistic,
     Target,
+)
+from focs._value_refs import (
+    CurrentContent,
+    CurrentTurn,
+    NamedReal,
+    PartCapacity,
+    PartSecondaryStat,
+    ShipPartMeter,
+    Statistic,
     TurnTechResearched,
     Value,
 )

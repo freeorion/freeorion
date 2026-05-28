@@ -4,8 +4,6 @@ from focs._effects import (
     Conditional,
     CreateShip,
     EffectsGroup,
-    GalaxyMaxAIAggression,
-    GalaxyMonsterFrequency,
     IsSource,
     Orange,
     Planet,
@@ -16,6 +14,10 @@ from focs._effects import (
     Yellow,
 )
 from focs._species import *
+from focs._value_refs import (
+    GalaxyMaxAIAggression,
+    GalaxyMonsterFrequency,
+)
 from macros.misc_post import MINIMUM_DISTANCE_EMPIRE_CHECK
 from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS
 from species.species_macros.env import RADIATED_STANDARD_EP

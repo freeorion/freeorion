@@ -7,6 +7,8 @@ from focs._effects import (
     OwnedBy,
     Source,
     Target,
+)
+from focs._value_refs import (
     ThisBuilding,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER

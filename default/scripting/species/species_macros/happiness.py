@@ -1,9 +1,7 @@
 from focs._effects import (
-    Abs,
     Adequate,
     Capital,
     Contains,
-    CurrentTurn,
     EffectsGroup,
     EmpireHasAdoptedPolicy,
     GasGiantType,
@@ -16,14 +14,10 @@ from focs._effects import (
     InSystem,
     IsBuilding,
     IsSource,
-    JumpsBetween,
     Large,
     LocalCandidate,
-    MaxOf,
     Medium,
     Min,
-    MinOf,
-    NamedReal,
     OwnedBy,
     Planet,
     Poor,
@@ -35,14 +29,22 @@ from focs._effects import (
     Source,
     SpeciesDislikes,
     SpeciesLikes,
-    Statistic,
     Target,
     Tiny,
     Uninhabitable,
     Unowned,
+)
+from focs._value_refs import (
+    Abs,
+    CurrentTurn,
+    GameRule,
+    JumpsBetween,
+    MaxOf,
+    MinOf,
+    NamedReal,
+    Statistic,
     Value,
 )
-from focs._value_refs import GameRule
 from macros.misc import DESCRIPTION_EFFECTSGROUP_MACRO
 from macros.opinion import POLICY_DISLIKE_SCALING
 from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY

@@ -8,16 +8,18 @@ from focs._effects import (
     HasSpecies,
     IsBuilding,
     LocalCandidate,
-    NamedReal,
     Object,
     OwnedBy,
     Planet,
     SetEmpireMeter,
     SetTargetInfluence,
     Source,
-    Statistic,
     TargetPopulation,
     Unowned,
+)
+from focs._value_refs import (
+    NamedReal,
+    Statistic,
     Value,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER

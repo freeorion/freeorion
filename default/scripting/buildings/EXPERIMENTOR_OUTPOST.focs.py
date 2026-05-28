@@ -6,11 +6,7 @@ from focs._effects import (
     Contains,
     CreateShip,
     Destroy,
-    DirectDistanceBetween,
     EffectsGroup,
-    GalaxyMaxAIAggression,
-    GalaxyPlanetDensity,
-    GalaxySize,
     GenerateSitRepMessage,
     HasDesign,
     HasSpecies,
@@ -18,7 +14,6 @@ from focs._effects import (
     IsAnyObject,
     IsSource,
     LocalCandidate,
-    MaxOf,
     MinimumNumberOf,
     Monster,
     NumberOf,
@@ -39,11 +34,18 @@ from focs._effects import (
     System,
     Turn,
     Unowned,
-    Value,
     Victory,
     WithinStarlaneJumps,
 )
-from focs._value_refs import GameRule
+from focs._value_refs import (
+    DirectDistanceBetween,
+    GalaxyMaxAIAggression,
+    GalaxyPlanetDensity,
+    GalaxySize,
+    GameRule,
+    MaxOf,
+    Value,
+)
 from macros.misc import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
 
 try:
