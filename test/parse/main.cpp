@@ -1,5 +1,6 @@
 #define BOOST_TEST_MODULE "FreeOrion unit/coverage tests parser"
 
+#define NOMINMAX
 #include <boost/test/unit_test.hpp>
 #include <boost/test/unit_test_monitor.hpp>
 #if defined(_MSC_VER) && _MSC_VER >= 1930
