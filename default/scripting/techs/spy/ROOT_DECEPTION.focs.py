@@ -119,7 +119,8 @@ def min_effective_stealth_of_more_stealthy_ships_valref_other_own_ships_in_targe
     )) * ( SpecialCapacity(name=base_stealth_special, object=Target.ID)
            - SpecialCapacity(name=lower_stealth_count_special, object=Target.ID)
     ) + MinOf(float, Statistic(float,Min,
-            value=stealth_result(LocalCandidate.ID),
+            value=SpecialCapacity(name=base_stealth_special, object=LocalCandidate.ID)
+                  - SpecialCapacity(name=lower_stealth_count_special, object=LocalCandidate.ID),
             condition=Ship & InSystem(id=Target.SystemID) & ~IsTarget
                       & OwnedBy(empire=Source.Owner)
                       & (Value(Target.Stealth) < Value(LocalCandidate.Stealth)),
@@ -190,7 +191,7 @@ Tech(
             priority=LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=[
                 SetStealth(
-                    value=min_effective_stealth_of_more_stealthy_ships_valref_other_own_ships_in_targetz_system
+                    value=min_effective_stealth_of_more_stealthy_ships_valref_other_own_ships_in_targetz_system()
                 ),
             ],
         ),
