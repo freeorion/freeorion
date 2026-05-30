@@ -10,6 +10,9 @@ on:
       snap:
         description: "Snap file"
         value: ${{ jobs.snapcraft.outputs.snap }}
+      screenshot-alt:
+        description: "Alt text for screenshot"
+        value: ${{ jobs.snapcraft.outputs.screenshot-alt }}
 
 jobs:
   snapcraft:
@@ -17,6 +20,7 @@ jobs:
     timeout-minutes: 55
     outputs:
       snap: ${{ steps.snapcraft.outputs.snap }}
+      screenshot-alt: ${{ steps.test-launch.outputs.screenshot-alt }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v6
@@ -31,6 +35,7 @@ jobs:
         sudo apt update -y
         sudo apt install -y mesa-utils libgl1-mesa-dri libglx-mesa0 imagemagick xvfb x11-xserver-utils optipng xdotool
     - name: Test freeorion launch
+      id: test-launch
       run: |
         xvfb-run --auto-servernum --server-args="-screen 0 1280x720x24" /bin/bash .github/snap-xvfb-launch.sh
     - name: Optimize screenshot
