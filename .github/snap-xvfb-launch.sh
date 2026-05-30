@@ -17,11 +17,11 @@ while [ ! -f screenshot.png ]; do
       --setup.ai.player.count 3 \
       -q \
       --network.server.take-over-ai 1 \
-      --network.server.take-over-ai 1 \
       --setup.rules.RULE_TECH_COST_FACTOR 0.1 \
       --setup.rules.RULE_BUILDING_COST_FACTOR 0.1 \
       --setup.rules.RULE_SHIP_PART_COST_FACTOR 0.1 \
       --setup.rules.RULE_SHIP_HULL_COST_FACTOR 0.1 \
+      --setup.star.count 140 \
       --setup.galaxy.shape RANDOM \
       --setup.galaxy.age GALAXY_SETUP_RANDOM \
       --setup.planet.density GALAXY_SETUP_RANDOM \
@@ -49,14 +49,24 @@ while [ ! -f screenshot.png ]; do
     --setup.multiplayer.player.name AI_$(( $RANDOM % 3 + 1 )) &
   FOPID=$!
   echo "FreeOrion started pid ${FOPID}"
-  sleep 10
-  # Sometimes parser thread fails
-  if ! grep --quiet "Checksum received from server does not match client checksum." freeorion.log; then
-    xdotool key ctrl+h
+  if timeout 30s tail -F --retry -n +1 freeorion.log 2>/dev/null | grep -q -m 1 "Checksum received from server matches client checksum."; then
     sleep 5
-    if grep --quiet "Zoomed to capital system " freeorion.log; then
-      import -display :99 -window root $(pwd)/screenshot.png
+    echo "Sending Ctrl+H"
+    FO_WIN_ID=$(xdotool search --name "^FreeOrion" | head -n 1)
+    if [ -n "$FO_WIN_ID" ]; then
+      xdotool key --window "$FO_WIN_ID" --delay 150 ctrl+h
+    else
+      xdotool key --delay 150 ctrl+h
     fi
+    echo "Sent Ctrl+H to window $FO_WIN_ID"
+    if timeout 30s tail -F --retry -n +1 freeorion.log 2>/dev/null | grep -q -m 1 "Zoomed to capital system "; then
+      sleep 10
+      import -display :99 -window root $(pwd)/screenshot.png
+    else
+      echo "::error::Skip screenshot because can't zoom"
+    fi
+  else
+    echo "::error::Skip screenshot because checksum failed"
   fi
   kill -9 ${FOPID}
   wait ${FOPID}
