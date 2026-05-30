@@ -185,7 +185,7 @@ jobs:
   publish-post:
     name: Publish post about weekly test build
     runs-on: ubuntu-latest
-    needs: [merge-binaries-to-sf, to-snap, check-last-post]
+    needs: [merge-binaries-to-sf, linux-snap, to-snap, check-last-post]
     steps:
       - name: Prepare text
         id: prepare-text
@@ -214,7 +214,7 @@ jobs:
             -X POST \
             -H "Authorization: Bearer ${{ secrets.MASTODON_ACCESS_TOKEN }}" \
             -F "file=@screenshot.png" \
-            -F "description=FreeOrion UI Screenshot" \
+            -F "description=FreeOrion UI Screenshot - ${{ needs.linux-snap.outputs.screenshot-alt }}" \
             "https://fosstodon.org/api/v2/media")
 
           HTTP_CODE=$(echo "${RESPONSE}" | tail -n1)
