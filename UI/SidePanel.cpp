@@ -405,15 +405,15 @@ namespace {
 
         const auto& [verts, norms, tex] = SphereVerticesNormalsTexCoords(radius);
 
-        verts.activate();
-        norms.activate();
-        tex.activate();
-
-        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_NORMAL_ARRAY);
         glDisableClientState(GL_COLOR_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        verts.activate();
+        norms.activate();
+        tex.activate();
 
         glDrawArrays(GL_QUAD_STRIP, 0, verts.size());
 
@@ -494,24 +494,28 @@ namespace {
                       double initial_rotation, double RPM, float axial_tilt, float shininess,
                       StarType star_type)
     {
-        glPushAttrib(GL_ENABLE_BIT | GL_PIXEL_MODE_BIT | GL_TEXTURE_BIT | GL_SCISSOR_BIT);
-        GetApp().Exit2DMode();
+        // we change rendering state to render 3D rotating planet, but as long as we fully push the prior state that
+        // we are changing, and pop it later, this is isolated so no need to Exit/Enter 2D mode
+        //GetApp().Exit2DMode();
+        glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_LIGHTING_BIT | GL_TRANSFORM_BIT | GL_COLOR_BUFFER_BIT | GL_POLYGON_BIT | GL_CURRENT_BIT);
 
         // slide the texture coords to simulate a rotating axis
         glMatrixMode(GL_TEXTURE);
+        glPushMatrix();
         glLoadIdentity();
         glTranslated(initial_rotation - GetApp().Ticks() / 1000.0 * RPM / 60.0, 0.0, 0.0);
 
         glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
         glLoadIdentity();
         glOrtho(0.0, Value(GetApp().AppWidth()),
                 Value(GetApp().AppHeight()), 0.0,
                 0.0, Value(GetApp().AppWidth()));
 
         glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
         glLoadIdentity();
 
-        glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
         const auto light_position = GetLightPosition();
         glLightfv(GL_LIGHT0, GL_POSITION, light_position);
         glEnable(GL_LIGHTING);
@@ -543,14 +547,19 @@ namespace {
             glDisable(GL_BLEND);
         }
 
-        glPopAttrib();
+        glMatrixMode(GL_MODELVIEW);
+        glPopMatrix();
+
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
 
         glMatrixMode(GL_TEXTURE);
-        glLoadIdentity();
-        glMatrixMode(GL_MODELVIEW);
+        glPopMatrix();
 
-        GetApp().Enter2DMode();
         glPopAttrib();
+
+        //local rendering state was isolated with pushes and pops, no need to explicitly exit/enter 2D mode
+        //GetApp().Enter2DMode();
     }
 
     int MaxPlanetDiameter()
