@@ -51,7 +51,7 @@ public:
     /** Launches asynchronous parsing of game content, then starts
       * additional content parsing in the calling thread.
       * Requires \a python to be initialized. */
-    virtual void StartBackgroundParsing(const PythonParser& python);
+    static void StartBackgroundParsing(const PythonParser& python, SpeciesManager& species_manager);
 
     [[nodiscard]] virtual ScriptingContext& GetContext() noexcept = 0;
     [[nodiscard]] virtual const ScriptingContext& GetContext() const noexcept = 0;
