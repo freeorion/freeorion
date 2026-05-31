@@ -194,7 +194,7 @@ namespace {
 #endif
 
 void ServerApp::StartBackgroundParsing(const PythonParser& python) {
-    IApp::StartBackgroundParsing(python, GetSpeciesManager());
+    parse::StartBackgroundParsing(python, m_species_manager);
     const auto& rdir = GetResourceDir();
 
     if (fs::exists(rdir / "scripting/starting_unlocks/items.inf"))
