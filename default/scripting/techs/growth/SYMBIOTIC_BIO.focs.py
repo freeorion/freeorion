@@ -3,14 +3,16 @@ from focs._effects import (
     EffectsGroup,
     Good,
     HasTag,
+    Item,
     OwnedBy,
     Planet,
     Poor,
     SetTargetPopulation,
     Source,
     Target,
+    UnlockPolicy,
 )
-from focs._tech import *
+from focs._techs import Tech
 from focs._value_refs import (
     StatisticIf,
     Value,

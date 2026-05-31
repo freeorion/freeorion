@@ -4,7 +4,7 @@ from focs._effects import (
     Planet,
     SetStealth,
 )
-from focs._tech import *
+from focs._techs import Tech
 from focs._value_refs import (
     NamedReal,
     Value,

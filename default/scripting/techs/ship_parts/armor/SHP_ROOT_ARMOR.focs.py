@@ -1,4 +1,5 @@
-from focs._tech import *
+from focs._effects import Item, UnlockShipPart
+from focs._techs import Tech
 
 Tech(
     name="SHP_ROOT_ARMOR",

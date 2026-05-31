@@ -2,13 +2,15 @@ from focs._effects import (
     Adequate,
     EffectsGroup,
     Good,
+    Item,
     OwnedBy,
     OwnerHasTech,
     Planet,
     SetTargetPopulation,
     Source,
+    UnlockBuilding,
 )
-from focs._tech import *
+from focs._techs import Tech
 from focs._value_refs import (
     Value,
 )
