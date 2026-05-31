@@ -20,6 +20,7 @@
 
 
 class OrderSet;
+class PythonParser;
 struct GalaxySetupData;
 struct SaveGameUIData;
 struct ServerFSM;

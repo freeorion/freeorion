@@ -98,6 +98,9 @@ namespace parse {
     bool int_free_variable(std::string& text) { return false; }
     bool double_free_variable(std::string& text) { return false; }
     bool string_free_variable(std::string& text) { return false; }
+
+    void StartBackgroundParsing(const PythonParser& python, SpeciesManager& species_manager)
+    { }
 }
 
 template FO_PARSE_API TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const PythonParser& parser, const std::filesystem::path& path, bool& success);

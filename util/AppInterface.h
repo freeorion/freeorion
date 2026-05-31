@@ -19,7 +19,6 @@ class Ship;
 class Fleet;
 class Building;
 class Field;
-class PythonParser;
 struct GalaxySetupData;
 struct ScriptingContext;
 
@@ -47,11 +46,6 @@ public:
 
     //! Returns objects from the ::Universe known to this application
     [[nodiscard]] ObjectMap& Objects();
-
-    /** Launches asynchronous parsing of game content, then starts
-      * additional content parsing in the calling thread.
-      * Requires \a python to be initialized. */
-    static void StartBackgroundParsing(const PythonParser& python, SpeciesManager& species_manager);
 
     [[nodiscard]] virtual ScriptingContext& GetContext() noexcept = 0;
     [[nodiscard]] virtual const ScriptingContext& GetContext() const noexcept = 0;

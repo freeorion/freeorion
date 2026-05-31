@@ -27,6 +27,7 @@ class ShipPart;
 struct ParsedShipDesign;
 class Special;
 class Species;
+class SpeciesManager;
 struct EncyclopediaArticle;
 struct GameRule;
 struct UnlockableItem;
@@ -93,6 +94,11 @@ namespace parse {
     FO_PARSE_API bool int_free_variable(std::string& text);
     FO_PARSE_API bool double_free_variable(std::string& text);
     FO_PARSE_API bool string_free_variable(std::string& text);
+
+    /** Launches asynchronous parsing of game content, then starts
+      * additional content parsing in the calling thread.
+      * Requires \a python to be initialized. */
+    FO_PARSE_API void StartBackgroundParsing(const PythonParser& python, SpeciesManager& species_manager);
 }
 
 #endif

@@ -81,7 +81,7 @@ void GodotClientApp::StartParsingContent() {
     PythonCommon python;
     python.Initialize();
     python.SetModulesDir(GetResourceDir() / "scripting");
-    StartBackgroundParsing(PythonParser(python), GetSpeciesManager());
+    parse::StartBackgroundParsing(PythonParser(python), GetSpeciesManager());
 }
 
 int GodotClientApp::EffectsProcessingThreads() const
