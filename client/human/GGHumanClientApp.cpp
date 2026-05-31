@@ -439,7 +439,7 @@ void GGHumanClientApp::Initialize() {
         PythonCommon python;
         python.Initialize();
         python.SetModulesDir(GetResourceDir() / "scripting");
-        StartBackgroundParsing(PythonParser(python));
+        StartBackgroundParsing(PythonParser(python), GetSpeciesManager());
         PostDeferredEvent(boost::intrusive_ptr<const ParserCompleted>(new ParserCompleted()));
     });
     background.detach();
@@ -1662,7 +1662,7 @@ void GGHumanClientApp::HandleResoureDirChange() {
             PythonCommon python;
             python.Initialize();
             python.SetModulesDir(GetResourceDir() / "scripting");
-            StartBackgroundParsing(PythonParser(python));
+            StartBackgroundParsing(PythonParser(python), GetSpeciesManager());
             PostDeferredEvent(boost::intrusive_ptr<const ParserCompleted>(new ParserCompleted()));
         });
         background.detach();

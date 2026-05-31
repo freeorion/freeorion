@@ -48,7 +48,7 @@ int IApp::MAX_AI_PLAYERS() noexcept {
     return max_number_AIs;
 }
 
-void IApp::StartBackgroundParsing(const PythonParser& python) {
+void IApp::StartBackgroundParsing(const PythonParser& python, SpeciesManager& species_manager) {
     namespace fs = std::filesystem;
 
     const auto& rdir = GetResourceDir();
@@ -91,7 +91,7 @@ void IApp::StartBackgroundParsing(const PythonParser& python) {
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/specials").string();
 
     if (IsExistingDir(rdir / "scripting/species"))
-        GetSpeciesManager().SetSpeciesTypes(Pending::ParseSynchronously(parse::species, python, rdir / "scripting/species"));
+        species_manager.SetSpeciesTypes(Pending::ParseSynchronously(parse::species, python, rdir / "scripting/species"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/species").string();
 

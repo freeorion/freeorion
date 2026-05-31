@@ -135,7 +135,7 @@ void AIClientApp::Run() {
 
         // Start parsing content
         m_AI->SetModulesDir(GetResourceDir() / "scripting");
-        StartBackgroundParsing(PythonParser(*m_AI));
+        StartBackgroundParsing(PythonParser(*m_AI), GetSpeciesManager());
 
         // Import python main module only after game content has been parsed, allowing
         // python to query e.g. NamedReals during module initialization.

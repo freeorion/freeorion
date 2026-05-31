@@ -97,7 +97,7 @@ public:
     /** initializes app state, then executes main event handler/render loop (Poll()) */
     void Run();
 
-    void StartBackgroundParsing(const PythonParser& python) override;
+    void StartBackgroundParsing(const PythonParser& python);
 
     /** Returns the galaxy setup data used for the current game */
     [[nodiscard]] GalaxySetupData&    GetGalaxySetupData() { return m_galaxy_setup_data; }
