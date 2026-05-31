@@ -8,7 +8,7 @@ from focs._effects import (
     Source,
     Target,
 )
-from focs._tech import *
+from focs._techs import Tech
 from focs._value_refs import (
     CurrentTurn,
     MaxOf,

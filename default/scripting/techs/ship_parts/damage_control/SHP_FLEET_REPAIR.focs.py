@@ -15,7 +15,7 @@ from focs._effects import (
     Target,
     Turn,
 )
-from focs._tech import *
+from focs._techs import Tech
 from focs._value_refs import (
     Value,
 )

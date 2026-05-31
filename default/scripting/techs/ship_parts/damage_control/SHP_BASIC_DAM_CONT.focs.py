@@ -1,6 +1,7 @@
 from focs._effects import (
     EffectsGroup,
     InSystem,
+    Item,
     LocalCandidate,
     OwnedBy,
     SetStructure,
@@ -8,8 +9,9 @@ from focs._effects import (
     Source,
     Structure,
     Turn,
+    UnlockPolicy,
 )
-from focs._tech import *
+from focs._techs import Tech
 from focs._value_refs import (
     Value,
 )

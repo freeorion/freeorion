@@ -1,4 +1,4 @@
-from focs._tech import *
+from focs._techs_categories import Category
 
 Category(
     name="LEARNING_CATEGORY",

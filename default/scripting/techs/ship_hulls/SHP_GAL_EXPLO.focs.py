@@ -6,6 +6,7 @@ from focs._effects import (
     HasSpecies,
     Huge,
     IsSource,
+    Item,
     Large,
     LocalCandidate,
     OwnedBy,
@@ -17,8 +18,9 @@ from focs._effects import (
     Target,
     Tiny,
     Turn,
+    UnlockPolicy,
 )
-from focs._tech import *
+from focs._techs import Tech
 from focs._value_refs import (
     MinOf,
     Value,

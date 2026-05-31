@@ -5,6 +5,7 @@ from focs._effects import (
     HasSpecies,
     IsSource,
     IsTarget,
+    Item,
     OwnedBy,
     Planet,
     Population,
@@ -16,8 +17,9 @@ from focs._effects import (
     SetTargetConstruction,
     Source,
     Target,
+    UnlockBuilding,
 )
-from focs._tech import *
+from focs._techs import Tech
 from focs._value_refs import (
     Abs,
     MaxOf,

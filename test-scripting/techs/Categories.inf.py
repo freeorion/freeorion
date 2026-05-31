@@ -1,7 +1,4 @@
-try:
-    from focs._tech import *
-except ModuleNotFoundError:
-    pass
+from focs._techs_categories import Category
 
 Category(
     name="LEARNING_CATEGORY",

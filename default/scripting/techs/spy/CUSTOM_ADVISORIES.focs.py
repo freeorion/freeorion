@@ -1,5 +1,5 @@
 import custom_sitreps
-from focs._tech import *
+from focs._techs import Tech
 
 Tech(
     name="SPY_CUSTOM_ADVISORIES",

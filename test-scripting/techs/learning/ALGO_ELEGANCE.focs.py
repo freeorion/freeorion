@@ -1,10 +1,6 @@
+from focs._effects import Item, UnlockPolicy
+from focs._techs import Tech
 from macros.base_prod import TECH_COST_MULTIPLIER
-
-try:
-    from focs._tech import *
-except ModuleNotFoundError:
-    pass
-
 
 Tech(
     name="LRN_ALGO_ELEGANCE",

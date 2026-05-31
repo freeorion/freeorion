@@ -1,5 +1,6 @@
 from focs._effects import (
     EffectsGroup,
+    Item,
     LocalCandidate,
     OwnedBy,
     Planet,
@@ -9,8 +10,9 @@ from focs._effects import (
     SetTroops,
     Source,
     Target,
+    UnlockBuilding,
 )
-from focs._tech import *
+from focs._techs import Tech
 from focs._value_refs import (
     CurrentTurn,
     MinOf,

@@ -1,4 +1,5 @@
-from focs._tech import *
+from focs._effects import Item, UnlockBuilding, UnlockShipHull, UnlockShipPart
+from focs._techs import Tech
 from macros.base_prod import TECH_COST_MULTIPLIER
 
 Tech(

@@ -1,11 +1,13 @@
 from focs._effects import (
     EffectsGroup,
+    Item,
     OwnedBy,
     Planet,
     SetMaxShield,
     Source,
+    UnlockShipPart,
 )
-from focs._tech import *
+from focs._techs import Tech
 from focs._value_refs import (
     NamedReal,
     Value,

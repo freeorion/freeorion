@@ -8,12 +8,70 @@
 #include "../universe/Tech.h"
 #include "../util/Directories.h"
 
+#include <boost/python/class.hpp>
+#include <boost/python/def.hpp>
+#include <boost/python/docstring_options.hpp>
 #include <boost/python/import.hpp>
+#include <boost/python/module.hpp>
 #include <boost/python/raw_function.hpp>
+#include <boost/python/scope.hpp>
+
+
+extern "C" BOOST_SYMBOL_EXPORT PyObject* PyInit__techs();
+extern "C" BOOST_SYMBOL_EXPORT PyObject* PyInit__techs_categories();
 
 namespace {
     std::set<std::string>* g_categories_seen = nullptr;
     std::map<std::string, std::unique_ptr<TechCategory>, std::less<>>* g_categories = nullptr;
+
+    struct py_grammar {
+        boost::python::dict globals;
+        const PythonParser& parser;
+        boost::python::object module;
+        TechManager::TechContainer& techs;
+
+        py_grammar(const PythonParser& parser_, TechManager::TechContainer& techs_) :
+            globals(boost::python::import("builtins").attr("__dict__")),
+            parser(parser_),
+            module(parser_.LoadModule(&PyInit__techs)),
+            techs(techs_)
+        {
+            RegisterGlobalsEffects(globals);
+            RegisterGlobalsConditions(globals);
+            RegisterGlobalsSources(globals);
+            RegisterGlobalsEnums(globals);
+
+            parser.LoadConditionsModule();
+            parser.LoadValueRefsModule();
+            parser.LoadEffectsModule();
+
+            module.attr("__grammar") = boost::cref(*this);
+        }
+
+        ~py_grammar() {
+            parser.UnloadModule(module);
+        }
+
+        boost::python::dict operator()() const { return globals; }
+    };
+
+    struct py_grammar_categories {
+        boost::python::dict globals;
+        const PythonParser& parser;
+        boost::python::object module;
+
+        py_grammar_categories(const PythonParser& parser_) :
+            globals(boost::python::import("builtins").attr("__dict__")),
+            parser(parser_),
+            module(parser_.LoadModule(&PyInit__techs_categories))
+        { }
+
+        ~py_grammar_categories() {
+            parser.UnloadModule(module);
+        }
+
+        boost::python::dict operator()() const { return globals; }
+    };
 
     void insert_category(std::map<std::string, std::unique_ptr<TechCategory>, std::less<>>& categories,
                          std::string& name, std::string& graphic, std::array<uint8_t, 4> color)
@@ -42,20 +100,15 @@ namespace {
         return boost::python::object();
     }
 
-    struct py_grammar_category {
-        boost::python::dict operator()(TechManager::TechContainer& techs) const {
-            boost::python::dict globals(boost::python::import("builtins").attr("__dict__"));
-            globals["Category"] = boost::python::raw_function(insert_category_);
-            return globals;
-        }
-    };
-
-    boost::python::object py_insert_tech_(TechManager::TechContainer& techs,
+    boost::python::object py_insert_tech_(boost::python::object scope,
                                           const boost::python::tuple& args,
                                           const boost::python::dict& kw)
     {
         auto name = boost::python::extract<std::string>(kw["name"])();
-        if (techs.contains(name)) {
+
+        py_grammar& p = boost::python::extract<py_grammar&>(scope.attr("__grammar"))();
+
+        if (p.techs.contains(name)) {
             ErrorLogger() <<  "A tech already exists with name " << name;
             return boost::python::object();
         }
@@ -138,40 +191,35 @@ namespace {
         g_categories_seen->emplace(category);
 
         auto name_copy{name};
-        techs.emplace(std::piecewise_construct,
-                      std::forward_as_tuple(std::move(name_copy)),
-                      std::forward_as_tuple(std::move(name), std::move(description),
-                                            std::move(short_description), std::move(category),
-                                            std::move(researchcost), std::move(researchturns),
-                                            researchable, std::move(tags), std::move(effectsgroups),
-                                            std::move(prerequisites), std::move(unlock),
-                                            std::move(graphic)));
+        p.techs.emplace(std::piecewise_construct,
+                        std::forward_as_tuple(std::move(name_copy)),
+                        std::forward_as_tuple(std::move(name), std::move(description),
+                                              std::move(short_description), std::move(category),
+                                              std::move(researchcost), std::move(researchturns),
+                                              researchable, std::move(tags), std::move(effectsgroups),
+                                              std::move(prerequisites), std::move(unlock),
+                                              std::move(graphic)));
 
         return boost::python::object();
     }
+}
 
-    struct py_grammar_techs {
-        boost::python::dict globals;
+BOOST_PYTHON_MODULE(_techs) {
+    boost::python::docstring_options doc_options(true, true, false);
 
-        py_grammar_techs(const PythonParser& parser, TechManager::TechContainer& techs) :
-            globals(boost::python::import("builtins").attr("__dict__"))
-        {
-            RegisterGlobalsEffects(globals);
-            RegisterGlobalsConditions(globals);
-            RegisterGlobalsSources(globals);
-            RegisterGlobalsEnums(globals);
+    boost::python::class_<py_grammar, boost::python::bases<>, py_grammar, boost::noncopyable>("__Grammar", boost::python::no_init);
 
-            parser.LoadConditionsModule();
-            parser.LoadValueRefsModule();
-            parser.LoadEffectsModule();
+    boost::python::object current_module = boost::python::scope();
 
-            globals["Tech"] = boost::python::raw_function(
-                [&techs](const boost::python::tuple& args, const boost::python::dict& kw)
-                { return py_insert_tech_(techs, args, kw); });
-        }
+    def("Tech", boost::python::raw_function(
+        [current_module](const boost::python::tuple& args, const boost::python::dict& kw)
+        { return py_insert_tech_(current_module, args, kw); }));
+}
 
-        boost::python::dict operator()() const { return globals; }
-    };
+BOOST_PYTHON_MODULE(_techs_categories) {
+    boost::python::docstring_options doc_options(true, true, false);
+
+    def("Category", boost::python::raw_function(insert_category_));
 }
 
 namespace parse {
@@ -186,13 +234,13 @@ namespace parse {
 
         ScopedTimer timer("Techs Parsing");
 
-        bool file_success = py_parse::detail::parse_file<py_grammar_category, TechManager::TechContainer>(
-            parser, path / "Categories.inf.py", py_grammar_category(), techs_);
+        bool file_success = py_parse::detail::parse_file<py_grammar_categories>(
+            parser, path / "Categories.inf.py", py_grammar_categories(parser));
 
-        py_grammar_techs p = py_grammar_techs(parser, techs_);
+        py_grammar p = py_grammar(parser, techs_);
 
         for (const auto& file : ListDir(path, IsFOCPyScript))
-            file_success = py_parse::detail::parse_file<py_grammar_techs>(parser, file, p) && file_success;
+            file_success = py_parse::detail::parse_file<py_grammar>(parser, file, p) && file_success;
 
         TechManager::TechCategoryContainer cats;
         cats.reserve(categories.size());
