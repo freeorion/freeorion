@@ -14,9 +14,18 @@
 
 #include <boost/mpl/vector.hpp>
 
+#include <boost/python/class.hpp>
+#include <boost/python/def.hpp>
+#include <boost/python/docstring_options.hpp>
 #include <boost/python/import.hpp>
 #include <boost/python/make_function.hpp>
+#include <boost/python/module.hpp>
 #include <boost/python/raw_function.hpp>
+#include <boost/python/scope.hpp>
+
+
+extern "C" BOOST_SYMBOL_EXPORT PyObject* PyInit__species();
+extern "C" BOOST_SYMBOL_EXPORT PyObject* PyInit__species_census_ordering();
 
 namespace {
     DeclareThreadSafeLogger(parsing);
@@ -28,13 +37,65 @@ namespace {
         std::vector<std::string> // census ordering
     >;
 
-    void insert_species_census_ordering_(const boost::python::list& tags, start_rule_payload::second_type& ordering) {
+    struct py_grammar {
+        boost::python::dict globals;
+        const PythonParser& parser;
+        boost::python::object module;
+        start_rule_payload::first_type& species;
+
+        py_grammar(const PythonParser& parser_, start_rule_payload::first_type& species_) :
+            globals(boost::python::import("builtins").attr("__dict__")),
+            parser(parser_),
+            module(parser_.LoadModule(&PyInit__species)),
+            species(species_)
+        {
+            RegisterGlobalsEffects(globals);
+            RegisterGlobalsConditions(globals);
+            RegisterGlobalsSources(globals);
+            RegisterGlobalsEnums(globals);
+
+            parser.LoadValueRefsModule();
+
+            module.attr("__grammar") = boost::cref(*this);
+        }
+
+        ~py_grammar() {
+            parser.UnloadModule(module);
+        }
+
+        boost::python::dict operator()() const { return globals; }
+    };
+
+    struct py_manifest_grammar {
+        boost::python::dict globals;
+        const PythonParser& parser;
+        boost::python::object module;
+        start_rule_payload::second_type& ordering;
+
+        py_manifest_grammar(const PythonParser& parser_, start_rule_payload::second_type& ordering_) :
+            globals(boost::python::import("builtins").attr("__dict__")),
+            parser(parser_),
+            module(parser_.LoadModule(&PyInit__species_census_ordering)),
+            ordering(ordering_)
+        {
+            module.attr("__grammar") = boost::cref(*this);
+        }
+
+        ~py_manifest_grammar() {
+            parser.UnloadModule(module);
+        }
+
+        boost::python::dict operator()() const { return globals; }
+    };
+
+    void insert_species_census_ordering_(boost::python::object scope, const boost::python::list& tags) {
         boost::python::stl_input_iterator<std::string> tags_begin(tags), tags_end;
+        py_manifest_grammar& p = boost::python::extract<py_manifest_grammar&>(scope.attr("__grammar"))();
         for (auto it = tags_begin; it != tags_end; ++it)
-            ordering.push_back(*it);
+            p.ordering.push_back(*it);
     }
 
-    boost::python::object py_insert_species_(start_rule_payload::first_type& species_, const boost::python::tuple& args,
+    boost::python::object py_insert_species_(boost::python::object scope, const boost::python::tuple& args,
                                              const boost::python::dict& kw)
     {
         const auto species_name{boost::python::extract<std::string>(kw["name"])()};
@@ -99,7 +160,9 @@ namespace {
             ValueRef::CloneUnique(boost::python::extract<value_ref_wrapper<double>>(kw["annexation_cost"])().value_ref) :
             nullptr;
 
-        species_.emplace(std::piecewise_construct,
+        py_grammar& p = boost::python::extract<py_grammar&>(scope.attr("__grammar"))();
+
+        p.species.emplace(std::piecewise_construct,
                          std::forward_as_tuple(species_name),
                          std::forward_as_tuple(std::string{species_name},
                                                std::move(description),
@@ -125,36 +188,30 @@ namespace {
         return boost::python::object();
     }
 
-    struct py_grammar {
-        boost::python::dict globals;
+}
 
-        py_grammar(const PythonParser& parser_, start_rule_payload::first_type& species_) :
-            globals(boost::python::import("builtins").attr("__dict__"))
-        {
-            RegisterGlobalsEffects(globals);
-            RegisterGlobalsConditions(globals);
-            RegisterGlobalsSources(globals);
-            RegisterGlobalsEnums(globals);
+BOOST_PYTHON_MODULE(_species) {
+    boost::python::docstring_options doc_options(true, true, false);
 
-            parser_.LoadValueRefsModule();
+    boost::python::class_<py_grammar, boost::python::bases<>, py_grammar, boost::noncopyable>("__Grammar", boost::python::no_init);
 
-            globals["Species"] = boost::python::raw_function(
-                [&species_](const boost::python::tuple& args, const boost::python::dict& kw)
-                { return py_insert_species_(species_, args, kw); });
-        }
+    boost::python::object current_module = boost::python::scope();
 
-        boost::python::dict operator()() const { return globals; }
-    };
+    def("Species", boost::python::raw_function(
+        [current_module](const boost::python::tuple& args, const boost::python::dict& kw)
+        { return py_insert_species_(current_module, args, kw); }));
+}
 
-    struct py_manifest_grammar {
-        boost::python::dict operator()(start_rule_payload::second_type& ordering) const {
-            boost::python::dict globals(boost::python::import("builtins").attr("__dict__"));
-            globals["SpeciesCensusOrdering"] = boost::python::make_function([&ordering](auto tags) { return insert_species_census_ordering_(tags, ordering); },
-                boost::python::default_call_policies(),
-                boost::mpl::vector<void, const boost::python::list&>());
-            return globals;
-        }
-    };
+BOOST_PYTHON_MODULE(_species_census_ordering) {
+    boost::python::docstring_options doc_options(true, true, false);
+
+    boost::python::class_<py_manifest_grammar, boost::python::bases<>, py_manifest_grammar, boost::noncopyable>("__Grammar", boost::python::no_init);
+
+    boost::python::object current_module = boost::python::scope();
+
+    def("SpeciesCensusOrdering", boost::python::make_function([current_module](auto tags) { return insert_species_census_ordering_(current_module, tags); },
+        boost::python::default_call_policies(),
+        boost::mpl::vector<void, const boost::python::list&>()));
 }
 
 namespace parse {
@@ -184,8 +241,8 @@ namespace parse {
 
         if (!manifest_file.empty()) {
             try {
-                file_success = py_parse::detail::parse_file<py_manifest_grammar, start_rule_payload::second_type>(
-                    parser, manifest_file, py_manifest_grammar(), ordering) && file_success;
+                file_success = py_parse::detail::parse_file<py_manifest_grammar>(
+                    parser, manifest_file, py_manifest_grammar(parser, ordering)) && file_success;
 
             } catch (const std::runtime_error& e) {
                 ErrorLogger() << "Failed to species census manifest in " << manifest_file << " from " << path
