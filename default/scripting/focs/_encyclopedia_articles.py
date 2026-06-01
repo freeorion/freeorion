@@ -1,2 +1,2 @@
-# Placeholder for module
-# See parse/EncyclopediaParser.cpp for implementation
+# Placeholder for module. Don't add anything here.
+# See parse/EncyclopediaParser.cpp for implementation.
