@@ -322,16 +322,16 @@ namespace {
     SphereVerticesNormalsTexCoords(GLfloat radius) {
         static const GG::GLNormalBuffer norms = []() {
             GG::GLNormalBuffer norms;
-            norms.reserve(elevation.size()*azimuth.size()*2);
+            norms.reserve((elevation.size()-1)*azimuth.size()*2);
 
             for (std::size_t lat_idx = 0u; lat_idx < elevation.size() - 1; ++lat_idx) {
                 for (std::size_t long_idx = 0u; long_idx < azimuth.size(); ++long_idx) {
-                    norms.store(azimuth[long_idx].sin * elevation[lat_idx+1].sin,
-                                azimuth[long_idx].cos * elevation[lat_idx+1].sin,
-                                elevation[lat_idx+1].cos);
                     norms.store(azimuth[long_idx].sin * elevation[lat_idx].sin,
                                 azimuth[long_idx].cos * elevation[lat_idx].sin,
                                 elevation[lat_idx].cos);
+                    norms.store(azimuth[long_idx].sin * elevation[lat_idx+1].sin,
+                                azimuth[long_idx].cos * elevation[lat_idx+1].sin,
+                                elevation[lat_idx+1].cos);
                 }
             }
 
@@ -340,16 +340,19 @@ namespace {
 
         static const GG::GLTexCoordBuffer tex = []() {
             GG::GLTexCoordBuffer tex;
-            tex.reserve(elevation.size()*azimuth.size()*2);
+            tex.reserve((elevation.size()-1)*azimuth.size()*2);
 
+            // this loop needs to match the verts/norms loop
+            // while poles are physically one vertex, they are repeated multiple times to sample north/south UV edge in different points
+            // similarly the meridian seam, vertices are physically same in 3D but have different UV coords - east vs west texture's edge
             for (std::size_t lat_idx = 0u; lat_idx < elevation.size() - 1; ++lat_idx) {
-                const float lat1 = 1.0f - static_cast<GLfloat>(lat_idx + 1) / (elevation.size() - 1);
-                const float lat0 = 1.0f - static_cast<GLfloat>(lat_idx) / (elevation.size() - 1);
+                const float lat0 = static_cast<GLfloat>(lat_idx) / (elevation.size() - 1);
+                const float lat1 = static_cast<GLfloat>(lat_idx + 1) / (elevation.size() - 1);
 
                 for (std::size_t long_idx = 0u; long_idx < azimuth.size(); ++long_idx) {
-                    const float long0 = 1.0f - static_cast<GLfloat>(long_idx) / (azimuth.size() - 1);
-                    tex.store(long0, lat1);
+                    const float long0 = static_cast<GLfloat>(long_idx) / (azimuth.size() - 1);
                     tex.store(long0, lat0);
+                    tex.store(long0, lat1);
                 }
             }
 
@@ -369,12 +372,12 @@ namespace {
 
             for (std::size_t lat_idx = 0u; lat_idx < elevation.size() - 1; ++lat_idx) {
                 for (std::size_t long_idx = 0u; long_idx < azimuth.size(); ++long_idx) {
-                    new_verts.store(azimuth[long_idx].sin * elevation[lat_idx+1u].sin * radius,
-                                    azimuth[long_idx].cos * elevation[lat_idx+1u].sin * radius,
-                                    elevation[lat_idx+1u].cos * radius);
                     new_verts.store(azimuth[long_idx].sin * elevation[lat_idx].sin * radius,
                                     azimuth[long_idx].cos * elevation[lat_idx].sin * radius,
                                     elevation[lat_idx].cos * radius);
+                    new_verts.store(azimuth[long_idx].sin * elevation[lat_idx+1u].sin * radius,
+                                    azimuth[long_idx].cos * elevation[lat_idx+1u].sin * radius,
+                                    elevation[lat_idx+1u].cos * radius);
                 }
             }
 
@@ -415,7 +418,7 @@ namespace {
         norms.activate();
         tex.activate();
 
-        glDrawArrays(GL_QUAD_STRIP, 0, verts.size());
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, verts.size());
 
         glPopClientAttrib();
     }
@@ -491,7 +494,7 @@ namespace {
     }
 
     void RenderPlanet(GG::Pt center, int diameter, GLuint texture_id, GLuint overlay_texture_id,
-                      double initial_rotation, double RPM, float axial_tilt, float shininess,
+                      float initial_rotation, float RPM, float axial_tilt, float shininess,
                       StarType star_type)
     {
         // we change rendering state to render 3D rotating planet, but as long as we fully push the prior state that
@@ -503,7 +506,7 @@ namespace {
         glMatrixMode(GL_TEXTURE);
         glPushMatrix();
         glLoadIdentity();
-        glTranslated(initial_rotation - GetApp().Ticks() / 1000.0 * RPM / 60.0, 0.0, 0.0);
+        glTranslatef(initial_rotation - GetApp().Ticks() / 1000.0f * RPM / 60.0f, 0.0f, 0.0f);
 
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
@@ -526,24 +529,24 @@ namespace {
         glLightfv(GL_LIGHT0, GL_SPECULAR, colour.data());
         glEnable(GL_TEXTURE_2D);
 
-        glTranslated(Value(center.x), Value(center.y), GLdouble(-(diameter / 2 + 1)));// relocate to location on screen where planet is to be rendered
-        glRotated(95.0, -1.0, 0.0, 0.0);                                              // make the poles upright, instead of head-on (we go a bit more than 90 degrees, to avoid some artifacting caused by the GLU-supplied texture coords)
-        glRotated(axial_tilt, 0.0, 1.0, 0.0);                                         // axial tilt
+        glTranslatef(Value(center.x), Value(center.y), GLfloat(-(diameter / 2 + 1)));// relocate to location on screen where planet is to be rendered
+        // mesh generation makes North go +Z, and per glOrtho +Z is deep into screen, -Y is up, so we look directly at the south pole
+        // rotate the mesh so north (originally +Z) faces up the screen (-Y), but go slightly more than 90 degrees to hide singularity artefacting on equirectangular UV texture
+        // (north pole will be hidden behind sphere curvature, facing away from us, while south pole will be facing bit towards us but hidden in shadow instead, via lightning)
+        glRotatef(95.0f, 1.0f, 0.0f, 0.0f);
+        glRotatef(axial_tilt, 0.0f, -1.0f, 0.0f); // axial tilt
 
         float intensity = static_cast<float>(GetRotatingPlanetAmbientIntensity());
         GG::Clr ambient = GG::FloatClr(intensity, intensity, intensity, 1.0f);
         intensity = static_cast<float>(GetRotatingPlanetDiffuseIntensity());
         GG::Clr diffuse = GG::FloatClr(intensity, intensity, intensity, 1.0f);
-
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
         RenderSphere(diameter / 2.0, ambient, diffuse, GG::CLR_WHITE, shininess, texture_id);
-
         if (overlay_texture_id != 0) {
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glCullFace(GL_FRONT);
-            glEnable(GL_CULL_FACE);
             RenderSphere(diameter / 2.0 + 0.1, ambient, diffuse, GG::CLR_WHITE, 0.0, overlay_texture_id);
-            glDisable(GL_CULL_FACE);
             glDisable(GL_BLEND);
         }
 
@@ -903,7 +906,7 @@ public:
     RotatingPlanetControl(GG::X x, GG::Y y, int planet_id, StarType star_type) :
         GG::Control(x, y, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
         m_planet_id(planet_id),
-        m_initial_rotation(fmod(planet_id / 7.352535, 1.0)), // arbitrary scale number applied to id to give consistent by varied angles
+        m_initial_rotation(fmod(planet_id / 7.352535f, 1.0f)), // arbitrary scale number applied to id to give consistent by varied angles
         m_star_type(star_type)
     {
         Refresh(GetApp().GetContext(), GetApp().EmpireID());
@@ -945,10 +948,10 @@ public:
         if (!planet) return;
 
         // these values ensure that wierd GLUT-sphere artifacts do not show themselves
-        const double period = static_cast<double>(planet->RotationalPeriod());// gives about one rpm for a 1 "Day" rotational period
-        m_rpm = (std::abs(period) < 0.1) ? 10.0 : (1.0 / period); // prevent divide by zero or extremely fast rotations
+        const float period = planet->RotationalPeriod(); // gives about one rpm for a 1 "Day" rotational period
+        m_rpm = (std::abs(period) < 0.1f) ? 10.0f : (1.0f / period); // prevent divide by zero or extremely fast rotations
         m_diameter = PlanetDiameter(planet->Size());
-        m_axial_tilt = std::max(-30.0, std::min(static_cast<double>(planet->AxialTilt()), 60.0));
+        m_axial_tilt = std::max(-30.0f, std::min(planet->AxialTilt(), 60.0f));
         m_visibility = (client_empire_id == ALL_EMPIRES) ? 
             Visibility::VIS_FULL_VISIBILITY : context.ContextVis(m_planet_id, client_empire_id);
 
@@ -980,17 +983,17 @@ public:
 
 private:
     int                             m_planet_id = INVALID_OBJECT_ID;
-    double                          m_rpm = 1.0;
+    float                           m_rpm = 1.0f;
     int                             m_diameter = 1;
-    double                          m_axial_tilt = 0.0;
+    float                           m_axial_tilt = 0.0f;
     Visibility                      m_visibility = Visibility::VIS_BASIC_VISIBILITY;
     std::shared_ptr<GG::Texture>    m_surface_texture;
-    double                          m_shininess = 0.0;
+    float                           m_shininess = 0.0f;
     std::shared_ptr<GG::Texture>    m_overlay_texture;
     std::shared_ptr<GG::Texture>    m_atmosphere_texture;
     int                             m_atmosphere_alpha = 1;
     GG::Rect                        m_atmosphere_planet_rect;
-    double                          m_initial_rotation = 0.0;
+    float                           m_initial_rotation = 0.0f;
     StarType                        m_star_type = StarType::STAR_WHITE;
 
     static ScanlineRenderer         s_scanline_shader;
