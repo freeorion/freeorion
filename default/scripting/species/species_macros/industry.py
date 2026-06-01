@@ -1,4 +1,4 @@
-from focs._industry import _BASIC_INDUSTRY, _industry
+from macros.industry import _BASIC_INDUSTRY, _industry
 from macros.misc import DESCRIPTION_EFFECTSGROUP_MACRO
 from macros.multiplier import BAD_MULTIPLIER, GOOD_MULTIPLIER, GREAT_MULTIPLIER, VERY_BAD_MULTIPLIER
 
