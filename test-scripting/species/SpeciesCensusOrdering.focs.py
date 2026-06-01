@@ -9,9 +9,6 @@
 
 # The list of species tags provides the order that species are displayed
 # and ordered in the empire Census pop-up.
-try:
-    from focs._species import *
-except ModuleNotFoundError:
-    pass
+from focs._species_census_ordering import SpeciesCensusOrdering
 
 SpeciesCensusOrdering(["LITHIC", "ORGANIC", "PHOTOTROPHIC", "ROBOTIC", "SELF_SUSTAINING", "TELEPATHIC", "GASEOUS"])

@@ -1,8 +1,5 @@
-try:
-    from focs._effects import EffectsGroup, GiveEmpireTech, IsSource, Target, Turn
-    from focs._species import *
-except ModuleNotFoundError:
-    pass
+from focs._effects import EffectsGroup, GiveEmpireTech, IsSource, Target, Turn
+from focs._species import Species
 from species.species_macros.env import BROAD_EP, INFERNO_BROAD_EP
 from species.species_macros.focus import (
     HAS_ADVANCED_FOCI,
