@@ -27,6 +27,12 @@ def generate_natives(native_freq, systems, empire_home_systems):  # noqa: C901
     # select only systems sufficiently far away from player home systems
     # list of systems safe for natives
     EMPIRE_TO_NATIVE_MIN_DIST = 2
+
+    # changing the value to 5 for the MP games
+    # TODO make this a game parameter rather than a hardcoded value
+    EMPIRE_TO_NATIVE_MIN_DIST = 5
+
+
     empire_exclusions = set(
         chain.from_iterable(
             fo.systems_within_jumps_unordered(EMPIRE_TO_NATIVE_MIN_DIST, [e]) for e in empire_home_systems

@@ -1,6 +1,7 @@
 import freeorion as fo
 import random
 from collections import defaultdict
+from itertools import chain
 
 import universe_statistics
 import universe_tables
@@ -15,6 +16,9 @@ import universe_tables
 # four   REPEAT_RATE[0] * REPEAT_RATE[1] * REPEAT_RATE[2]
 REPEAT_RATE = {1: 0.08, 2: 0.05, 3: 0.01, 4: 0.00}
 
+# create a minimum distance from a player's starting position to any Special created at game generation
+# TODO make it a parameter rather than a hardcoded value
+EMPIRE_TO_SPECIALS_MIN_DIST = 5
 
 def calculate_number_of_specials_to_place(objs):
     """Return a list of number of specials to be placed at each obj"""
@@ -61,7 +65,9 @@ def place_special(specials, obj):
 # TODO Bug:  distribute_specials forward checks that a special can be
 # placed, but it doesn't recursively check all previously placed
 # specials against the new special.
-def distribute_specials(specials_freq, universe_objects):  # noqa: C901
+
+# we need to have the list of empire_home_systems as a parameter to this function in order to be able to enforce the EMPIRE_TO_SPECIALS_MIN_DIST rule
+def distribute_specials(specials_freq, universe_objects, empire_home_systems):  # noqa: C901
     """
     Adds start-of-game specials to universe objects.
     """
@@ -88,8 +94,36 @@ def distribute_specials(specials_freq, universe_objects):  # noqa: C901
                 special, fo.special_spawn_rate(special), fo.special_spawn_limit(special)
             )
         )
+    # defining the set of systems that are too close to a player starting position and as thus should not get any Special
+
+    empire_exclusions = set(
+        chain.from_iterable(
+            fo.systems_within_jumps_unordered(EMPIRE_TO_SPECIALS_MIN_DIST, [e]) for e in empire_home_systems
+        )
+    )
+
+    # defining the set of planets that are in the Exclusion zone (too close to starting positions)
+    planets_forbidden_to_get_specials = set(
+        chain.from_iterable([fo.sys_get_planets(s) for s in universe_objects if s in empire_exclusions])
+    )
+
+    # removing the planets in the Exclusion Zone from the Universe Objects that are going to be candidate for  Specials
+    universe_objects = [obj for obj in universe_objects if obj not in list(planets_forbidden_to_get_specials)]
+
 
     objects_needing_specials = [obj for obj in universe_objects if random.random() < base_chance]
+
+
+
+    # adding code for removing all objects too close from any player's starting position from the list of objects needing specials
+    # the following loop removes *systems* from the list of Objects Needing Specials but doesn't remove planets
+    # planets were already removed above, directly from the universe_objects list
+    # this work so I won't touch it but it could probably be done above, removing it from universe_objects too
+
+    for e in empire_home_systems :
+        objects_needing_specials = [obj for obj in objects_needing_specials if (obj not in fo.systems_within_jumps_unordered(EMPIRE_TO_SPECIALS_MIN_DIST, [e]))]
+
+
 
     track_num_placed = {obj: 0 for obj in universe_objects}
 
