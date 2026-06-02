@@ -1,8 +1,6 @@
 from focs._effects import (
-    AddStarlanes,
     ContainedBy,
     Contains,
-    EffectsGroup,
     HasStarlane,
     InSystem,
     IsBuilding,
@@ -15,7 +13,6 @@ from focs._effects import (
     OwnedBy,
     Planet,
     Population,
-    SetTargetHappiness,
     Source,
     SpeciesDislikes,
     SpeciesLikes,
@@ -25,6 +22,7 @@ from focs._effects import (
     System,
     Target,
 )
+from focs._effects_new import AddStarlanes, EffectsGroup, SetTargetHappiness
 from focs._value_refs import (
     DirectDistanceBetween,
     MaxOf,

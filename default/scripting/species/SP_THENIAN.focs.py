@@ -1,12 +1,5 @@
-from focs._effects import (
-    EffectsGroup,
-    GenerateSitRepMessage,
-    IsSource,
-    Population,
-    SetPopulation,
-    Source,
-    Target,
-)
+from focs._effects import IsSource, Population, Source, Target
+from focs._effects_new import EffectsGroup, GenerateSitRepMessage, SetPopulation
 from focs._species import *
 from focs._value_refs import (
     Value,

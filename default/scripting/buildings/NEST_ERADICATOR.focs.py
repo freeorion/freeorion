@@ -1,20 +1,17 @@
 from focs._effects import (
     BuildBuilding,
     Contains,
-    Destroy,
-    EffectsGroup,
     Enqueued,
-    GenerateSitRepMessage,
     HasSpecial,
     IsBuilding,
     IsSource,
     Object,
     OwnedBy,
     Planet,
-    RemoveSpecial,
     Source,
     Target,
 )
+from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, RemoveSpecial
 from macros.priorities import (
     SPECIAL_REMOVAL_PRIORITY,
 )

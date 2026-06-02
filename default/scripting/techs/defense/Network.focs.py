@@ -1,19 +1,12 @@
-from focs._effects import (
-    EffectsGroup,
-    OwnedBy,
-    Planet,
-    SetDefense,
-    SetMaxDefense,
-    Source,
-    Target,
-)
+from focs._effects import OwnedBy, Planet, Source, Target
+from focs._effects_new import EffectsGroup, SetDefense, SetMaxDefense
 from focs._techs import Tech
 from focs._value_refs import (
     MaxOf,
     Value,
 )
 from macros.base_prod import TECH_COST_MULTIPLIER
-from macros.misc import PLANET_DEFENSE_FACTOR
+from macros.misc_pre import PLANET_DEFENSE_FACTOR
 from macros.priorities import DEFAULT_PRIORITY
 
 

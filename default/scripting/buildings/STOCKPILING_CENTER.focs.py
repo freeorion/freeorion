@@ -2,7 +2,6 @@ from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABIL
 from focs._effects import (
     BuildBuilding,
     Capital,
-    EffectsGroup,
     Enqueued,
     IsBuilding,
     LocalCandidate,
@@ -10,10 +9,10 @@ from focs._effects import (
     Object,
     OwnedBy,
     Planet,
-    SetMaxStockpile,
     Source,
     Sum,
 )
+from focs._effects_new import EffectsGroup, SetMaxStockpile
 from focs._value_refs import (
     Statistic,
     Value,

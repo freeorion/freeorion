@@ -4,7 +4,6 @@ from focs._effects import (
     Capital,
     ContainedBy,
     Contains,
-    EffectsGroup,
     Enqueued,
     HasSpecies,
     IsBuilding,
@@ -16,6 +15,16 @@ from focs._effects import (
     OwnedBy,
     Planet,
     ProducedByEmpire,
+    Source,
+    SpeciesDislikes,
+    SpeciesLikes,
+    Target,
+    TargetPopulation,
+    UniqueNumberOf,
+    Unowned,
+)
+from focs._effects_new import (
+    EffectsGroup,
     SetEmpireCapital,
     SetEmpireMeter,
     SetMaxDefense,
@@ -25,13 +34,6 @@ from focs._effects import (
     SetTargetConstruction,
     SetTargetHappiness,
     SetTargetInfluence,
-    Source,
-    SpeciesDislikes,
-    SpeciesLikes,
-    Target,
-    TargetPopulation,
-    UniqueNumberOf,
-    Unowned,
 )
 from focs._value_refs import (
     GameRule,
@@ -41,7 +43,7 @@ from focs._value_refs import (
     Value,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER
-from macros.misc import PLANET_DEFENSE_FACTOR
+from macros.misc_pre import PLANET_DEFENSE_FACTOR
 from macros.priorities import TARGET_AFTER_SCALING_PRIORITY
 
 try:

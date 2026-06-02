@@ -55,6 +55,7 @@ namespace {
             RegisterGlobalsEnums(globals);
 
             parser.LoadValueRefsModule();
+            parser.LoadEffectsModule();
 
             module.attr("__grammar") = boost::cref(*this);
         }
@@ -188,6 +189,17 @@ namespace {
         return boost::python::object();
     }
 
+    FocusType insert_focus_type_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto name = boost::python::extract<std::string>(kw["name"])();
+        auto description = boost::python::extract<std::string>(kw["description"])();
+        auto location = boost::python::extract<condition_wrapper>(kw["location"])();
+        auto graphic = boost::python::extract<std::string>(kw["graphic"])();
+
+        return {std::move(name),
+            std::move(description),
+            ValueRef::CloneUnique(location.condition),
+            std::move(graphic)};
+    }
 }
 
 BOOST_PYTHON_MODULE(_species) {
@@ -200,6 +212,7 @@ BOOST_PYTHON_MODULE(_species) {
     def("Species", boost::python::raw_function(
         [current_module](const boost::python::tuple& args, const boost::python::dict& kw)
         { return py_insert_species_(current_module, args, kw); }));
+    def("FocusType", boost::python::raw_function(insert_focus_type_));
 }
 
 BOOST_PYTHON_MODULE(_species_census_ordering) {

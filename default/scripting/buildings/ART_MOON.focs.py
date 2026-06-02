@@ -1,17 +1,5 @@
-from focs._effects import (
-    AddSpecial,
-    AsteroidsType,
-    Contains,
-    Destroy,
-    EffectsGroup,
-    HasSpecial,
-    IsBuilding,
-    IsSource,
-    Object,
-    OwnedBy,
-    Planet,
-    Source,
-)
+from focs._effects import AsteroidsType, Contains, HasSpecial, IsBuilding, IsSource, Object, OwnedBy, Planet, Source
+from focs._effects_new import AddSpecial, Destroy, EffectsGroup
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 

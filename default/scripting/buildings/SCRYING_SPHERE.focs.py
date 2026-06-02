@@ -3,18 +3,16 @@ from focs._effects import (
     Capital,
     ContainedBy,
     Contains,
-    EffectsGroup,
     IsBuilding,
     OwnedBy,
     Partial,
     Planet,
-    SetEmpireMeter,
-    SetVisibility,
     Source,
     System,
     Unowned,
     WithinStarlaneJumps,
 )
+from focs._effects_new import EffectsGroup, SetEmpireMeter, SetVisibility
 from focs._value_refs import (
     MaxOf,
     Value,

@@ -10,33 +10,30 @@
 #             effects = SetMaxDefense value = Value + ( @1@ )
 # '''
 
-from macros.misc import PLANET_DEFENSE_FACTOR
-from macros.priorities import (
-    AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
-    TARGET_AFTER_2ND_SCALING_PRIORITY,
+from focs._effects import (
+    Focus,
+    IsSource,
+    LocalCandidate,
+    Planet,
+    Target,
+    Unowned,
 )
-
-try:
-    from focs._effects import (
-        EffectsGroup,
-        Focus,
-        IsSource,
-        LocalCandidate,
-        Planet,
-        SetDefense,
-        SetMaxDefense,
-        SetTargetHappiness,
-        Target,
-        Unowned,
-    )
-except ModuleNotFoundError:
-    pass
-
+from focs._effects_new import (
+    EffectsGroup,
+    SetDefense,
+    SetMaxDefense,
+    SetTargetHappiness,
+)
 from focs._value_refs import (
     CurrentTurn,
     GameRule,
     MinOf,
     Value,
+)
+from macros.misc import PLANET_DEFENSE_FACTOR
+from macros.priorities import (
+    AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
+    TARGET_AFTER_2ND_SCALING_PRIORITY,
 )
 
 STANDARD_DEFENSE_GROWTH = EffectsGroup(  # increase 1 per turn, up to max

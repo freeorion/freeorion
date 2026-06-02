@@ -1,14 +1,6 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
-from focs._effects import (
-    Contains,
-    EffectsGroup,
-    IsBuilding,
-    Object,
-    OwnedBy,
-    Planet,
-    SetDetection,
-    Source,
-)
+from focs._effects import Contains, IsBuilding, Object, OwnedBy, Planet, Source
+from focs._effects_new import EffectsGroup, SetDetection
 from focs._value_refs import (
     NamedReal,
     Value,

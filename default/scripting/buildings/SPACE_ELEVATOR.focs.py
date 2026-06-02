@@ -2,7 +2,6 @@ from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABIL
 from focs._effects import (
     AsteroidsType,
     Contains,
-    EffectsGroup,
     GasGiantType,
     Huge,
     IsBuilding,
@@ -11,12 +10,12 @@ from focs._effects import (
     Object,
     OwnedBy,
     Planet,
-    SetMaxSupply,
     Small,
     Source,
     TargetPopulation,
     Tiny,
 )
+from focs._effects_new import EffectsGroup, SetMaxSupply
 from focs._value_refs import (
     Value,
 )

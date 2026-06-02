@@ -1,22 +1,14 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
-from focs._effects import (
-    Contains,
+from focs._effects import Contains, Fleet, InSystem, IsBuilding, OwnedBy, Planet, Source, Target, Turn
+from focs._effects_new import (
     Destroy,
     EffectsGroup,
-    Fleet,
     GenerateSitRepMessage,
-    InSystem,
-    IsBuilding,
-    OwnedBy,
-    Planet,
     SetMaxSupply,
     SetPopulation,
     SetStealth,
     SetSupply,
     SetTargetPopulation,
-    Source,
-    Target,
-    Turn,
 )
 from focs._value_refs import (
     MinOf,

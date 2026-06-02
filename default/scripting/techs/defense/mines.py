@@ -14,16 +14,12 @@
 from focs._effects import (
     ContainedBy,
     Contains,
-    Destroy,
-    EffectsGroup,
     EnemyOf,
     Fleet,
-    GenerateSitRepMessage,
     HasTag,
     InSystem,
     OwnedBy,
     Planet,
-    SetStructure,
     Ship,
     Source,
     Structure,
@@ -32,6 +28,7 @@ from focs._effects import (
     Unowned,
     VisibleToEmpire,
 )
+from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, SetStructure
 from focs._value_refs import (
     Value,
 )

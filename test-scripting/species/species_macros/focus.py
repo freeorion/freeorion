@@ -1,8 +1,5 @@
-try:
-    from focs._effects import Contains, HasSpecial, HasTag, Homeworld, IsBuilding, OwnerHasTech, Planet, Source
-    from focs._species import *
-except ModuleNotFoundError:
-    pass
+from focs._effects import Contains, HasSpecial, HasTag, Homeworld, IsBuilding, OwnerHasTech, Planet, Source
+from focs._species import FocusType
 
 HAS_INDUSTRY_FOCUS = FocusType(
     name="FOCUS_INDUSTRY", description="FOCUS_INDUSTRY_DESC", location=Planet(), graphic="icons/focus/industry.png"

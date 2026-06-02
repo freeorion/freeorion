@@ -3,9 +3,7 @@ from focs._effects import (
     AllyOf,
     ContainedBy,
     Contains,
-    EffectsGroup,
     EmpireHasAdoptedPolicy,
-    GenerateSitRepMessage,
     InSystem,
     IsBuilding,
     LocalCandidate,
@@ -14,13 +12,13 @@ from focs._effects import (
     OwnedBy,
     Planet,
     Population,
-    SetStructure,
     Ship,
     Source,
     Structure,
     Target,
     Turn,
 )
+from focs._effects_new import EffectsGroup, GenerateSitRepMessage, SetStructure
 from focs._value_refs import (
     MaxOf,
     MinOf,
@@ -28,7 +26,7 @@ from focs._value_refs import (
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET, LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED
-from macros.misc import SHIP_STRUCTURE_FACTOR
+from macros.misc_pre import SHIP_STRUCTURE_FACTOR
 
 try:
     from focs._buildings import *

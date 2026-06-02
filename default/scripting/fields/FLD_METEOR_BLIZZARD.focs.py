@@ -1,19 +1,5 @@
-from focs._effects import (
-    Destroy,
-    EffectsGroup,
-    IsSource,
-    Monster,
-    MoveTowards,
-    Number,
-    SetSize,
-    SetSpeed,
-    SetTargetResearch,
-    Ship,
-    Size,
-    Source,
-    WithinDistance,
-)
-from focs._effects_new import MoveInOrbit
+from focs._effects import IsSource, Monster, Number, Ship, Size, Source, WithinDistance
+from focs._effects_new import Destroy, EffectsGroup, MoveInOrbit, MoveTowards, SetSize, SetSpeed, SetTargetResearch
 from focs._fields import FieldType
 from focs._value_refs import (
     MaxOf,

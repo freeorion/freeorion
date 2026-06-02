@@ -3,11 +3,8 @@ from focs._effects import (
     BuildBuilding,
     Contains,
     Described,
-    Destroy,
-    EffectsGroup,
     Enqueued,
     Focus,
-    GenerateSitRepMessage,
     Happiness,
     HasSpecies,
     IsBuilding,
@@ -18,13 +15,18 @@ from focs._effects import (
     Planet,
     Random,
     RootCandidate,
-    SetMaxStockpile,
-    SetTargetInfluence,
-    SetTargetResearch,
     Source,
     System,
     Target,
     WithinStarlaneJumps,
+)
+from focs._effects_new import (
+    Destroy,
+    EffectsGroup,
+    GenerateSitRepMessage,
+    SetMaxStockpile,
+    SetTargetInfluence,
+    SetTargetResearch,
 )
 from focs._value_refs import (
     NamedReal,

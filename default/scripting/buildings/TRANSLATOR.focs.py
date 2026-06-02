@@ -3,7 +3,6 @@ from focs._effects import (
     Capital,
     Contains,
     CountUnique,
-    EffectsGroup,
     Focus,
     HasSpecies,
     IsBuilding,
@@ -11,12 +10,11 @@ from focs._effects import (
     Object,
     OwnedBy,
     Planet,
-    SetEmpireMeter,
-    SetTargetInfluence,
     Source,
     TargetPopulation,
     Unowned,
 )
+from focs._effects_new import EffectsGroup, SetEmpireMeter, SetTargetInfluence
 from focs._value_refs import (
     NamedReal,
     Statistic,

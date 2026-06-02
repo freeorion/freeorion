@@ -1,10 +1,6 @@
-from focs._effects import (
+from focs._effects import Focus, IsSource, LocalCandidate, Planet, Population, Ship, Target, TargetPopulation
+from focs._effects_new import (
     EffectsGroup,
-    Focus,
-    IsSource,
-    LocalCandidate,
-    Planet,
-    Population,
     SetConstruction,
     SetIndustry,
     SetInfluence,
@@ -14,9 +10,6 @@ from focs._effects import (
     SetTargetIndustry,
     SetTargetInfluence,
     SetTargetResearch,
-    Ship,
-    Target,
-    TargetPopulation,
 )
 from focs._value_refs import (
     Abs,

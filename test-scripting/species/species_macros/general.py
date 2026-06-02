@@ -1,3 +1,25 @@
+from focs._effects import (
+    Focus,
+    IsSource,
+    LocalCandidate,
+    Planet,
+    Population,
+    Ship,
+    Target,
+    TargetPopulation,
+)
+from focs._effects_new import (
+    EffectsGroup,
+    SetConstruction,
+    SetIndustry,
+    SetInfluence,
+    SetResearch,
+    SetStockpile,
+    SetTargetConstruction,
+    SetTargetIndustry,
+    SetTargetInfluence,
+    SetTargetResearch,
+)
 from focs._value_refs import (
     Abs,
     CurrentTurn,
@@ -11,30 +33,6 @@ from macros.priorities import (
     FOCUS_CHANGE_PENALTY_PRIORITY,
     LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
 )
-
-try:
-    from focs._effects import (
-        EffectsGroup,
-        Focus,
-        IsSource,
-        LocalCandidate,
-        Planet,
-        Population,
-        SetConstruction,
-        SetIndustry,
-        SetInfluence,
-        SetResearch,
-        SetStockpile,
-        SetTargetConstruction,
-        SetTargetIndustry,
-        SetTargetInfluence,
-        SetTargetResearch,
-        Ship,
-        Target,
-        TargetPopulation,
-    )
-except ModuleNotFoundError:
-    pass
 
 STANDARD_METER_GROWTH = [
     # increase or decrease towards target meter of planets, when not recently conquered

@@ -1,17 +1,10 @@
-from focs._effects import (
-    Armed,
-    DesignHasPart,
-    EffectsGroup,
-    IsSource,
-    SetMaxDamage,
-    SetMaxSecondaryStat,
-    Ship,
-)
+from focs._effects import Armed, DesignHasPart, IsSource, Ship
+from focs._effects_new import EffectsGroup, SetMaxDamage, SetMaxSecondaryStat
 from focs._value_refs import (
     NamedReal,
     Value,
 )
-from macros.misc import FIGHTER_DAMAGE_FACTOR, SHIP_WEAPON_DAMAGE_FACTOR
+from macros.misc_pre import FIGHTER_DAMAGE_FACTOR, SHIP_WEAPON_DAMAGE_FACTOR
 
 
 def _weapon(*, tag: str, tier_0: int, tier_1: int, tier_2: int, tier_3: int, tier_4: int, hangar: float):

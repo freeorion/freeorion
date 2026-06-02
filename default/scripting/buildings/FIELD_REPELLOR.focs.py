@@ -1,13 +1,5 @@
-from focs._effects import (
-    EffectsGroup,
-    IsBuilding,
-    IsField,
-    MoveTowards,
-    Number,
-    OwnedBy,
-    Source,
-    Target,
-)
+from focs._effects import IsBuilding, IsField, Number, OwnedBy, Source, Target
+from focs._effects_new import EffectsGroup, MoveTowards
 from focs._value_refs import (
     ThisBuilding,
 )

@@ -1,18 +1,13 @@
 from focs._effects import (
     CanColonize,
-    EffectsGroup,
     GasGiantType,
-    GenerateSitRepMessage,
     HasSpecies,
     Huge,
     IsSource,
-    Item,
     Large,
     LocalCandidate,
     OwnedBy,
     Planet,
-    SetMaxSupply,
-    SetSupply,
     Small,
     Source,
     Target,
@@ -20,13 +15,15 @@ from focs._effects import (
     Turn,
     UnlockPolicy,
 )
+from focs._effects_new import EffectsGroup, GenerateSitRepMessage, Item, SetMaxSupply, SetSupply
 from focs._techs import Tech
 from focs._value_refs import (
     MinOf,
     Value,
 )
 from macros.base_prod import TECH_COST_MULTIPLIER
-from macros.misc import GROWTH_RATE_FACTOR, MIN_RECOLONIZING_HAPPINESS, MIN_RECOLONIZING_SIZE
+from macros.misc import GROWTH_RATE_FACTOR, MIN_RECOLONIZING_SIZE
+from macros.misc_pre import MIN_RECOLONIZING_HAPPINESS
 from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 
 Tech(

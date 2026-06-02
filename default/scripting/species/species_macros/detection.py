@@ -1,16 +1,5 @@
-from focs._effects import (
-    EffectsGroup,
-    Full,
-    HasSpecies,
-    IsSource,
-    OwnedBy,
-    Planet,
-    SetDetection,
-    SetVisibility,
-    Ship,
-    Source,
-    Unowned,
-)
+from focs._effects import Full, HasSpecies, IsSource, OwnedBy, Planet, Ship, Source, Unowned
+from focs._effects_new import EffectsGroup, SetDetection, SetVisibility
 from focs._value_refs import (
     Value,
 )

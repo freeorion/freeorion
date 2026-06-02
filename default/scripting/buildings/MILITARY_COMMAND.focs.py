@@ -3,25 +3,22 @@ from focs._effects import (
     Capital,
     ContainedBy,
     Contains,
-    EffectsGroup,
     IsBuilding,
     Number,
     Object,
     OwnedBy,
     Planet,
-    SetEmpireMeter,
-    SetMaxDefense,
-    SetMaxTroops,
     Source,
     TargetPopulation,
 )
+from focs._effects_new import EffectsGroup, SetEmpireMeter, SetMaxDefense, SetMaxTroops
 from focs._value_refs import (
     SpeciesShipsDestroyed,
     Value,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
-from macros.misc import PLANET_DEFENSE_FACTOR
+from macros.misc_pre import PLANET_DEFENSE_FACTOR
 from macros.priorities import TARGET_EARLY_BEFORE_SCALING_PRIORITY
 
 try:

@@ -1,16 +1,13 @@
 from focs._effects import (
     BuildBuilding,
     Capital,
-    Conditional,
     ContainedBy,
     Contains,
     ContentFocus,
-    EffectsGroup,
     EnemyOf,
     Enqueued,
     Fleet,
     GasGiantType,
-    GenerateSitRepMessage,
     InSystem,
     IsBuilding,
     IsSource,
@@ -30,6 +27,7 @@ from focs._effects import (
     Unowned,
     VisibleToEmpire,
 )
+from focs._effects_new import Conditional, EffectsGroup, GenerateSitRepMessage
 from focs._value_refs import (
     CurrentTurn,
     EmpireAdoptedPolicies,

@@ -7,7 +7,7 @@ from focs._value_refs import (
     UsedInDesignID,
 )
 from macros.base_prod import RESEARCH_PER_POP
-from macros.misc import MIN_RECOLONIZING_HAPPINESS, MIN_RECOLONIZING_SIZE, SHIP_STRUCTURE_FACTOR
+from macros.misc_pre import MIN_RECOLONIZING_HAPPINESS, MIN_RECOLONIZING_SIZE, SHIP_STRUCTURE_FACTOR
 
 # Proposed naming convention: <EFFECT_NAME> _ <METER_NAME> _ FLAT/PERPOP/<others>
 # Examples:

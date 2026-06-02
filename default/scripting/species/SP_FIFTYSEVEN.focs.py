@@ -1,12 +1,5 @@
-from focs._effects import (
-    AddSpecial,
-    Conditional,
-    CreateShip,
-    EffectsGroup,
-    IsSource,
-    Planet,
-    Turn,
-)
+from focs._effects import IsSource, Planet, Turn
+from focs._effects_new import AddSpecial, Conditional, CreateShip, EffectsGroup
 from focs._species import *
 from focs._value_refs import (
     GalaxyMaxAIAggression,

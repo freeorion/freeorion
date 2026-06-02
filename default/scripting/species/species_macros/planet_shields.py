@@ -1,20 +1,11 @@
-from focs._effects import (
-    EffectsGroup,
-    Focus,
-    IsSource,
-    LocalCandidate,
-    Planet,
-    SetMaxShield,
-    SetShield,
-    Target,
-    Unowned,
-)
+from focs._effects import Focus, IsSource, LocalCandidate, Planet, Target, Unowned
+from focs._effects_new import EffectsGroup, SetMaxShield, SetShield
 from focs._value_refs import (
     CurrentTurn,
     MinOf,
     Value,
 )
-from macros.misc import PLANET_SHIELD_FACTOR
+from macros.misc_pre import PLANET_SHIELD_FACTOR
 from macros.priorities import (
     AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
     TARGET_AFTER_2ND_SCALING_PRIORITY,

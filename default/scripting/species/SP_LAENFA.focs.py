@@ -1,14 +1,5 @@
-from focs._effects import (
-    Blue,
-    EffectsGroup,
-    InSystem,
-    IsSource,
-    SetFuel,
-    Ship,
-    Star,
-    Stationary,
-    White,
-)
+from focs._effects import Blue, InSystem, IsSource, Ship, Star, Stationary, White
+from focs._effects_new import EffectsGroup, SetFuel
 from focs._species import *
 from focs._value_refs import (
     Value,

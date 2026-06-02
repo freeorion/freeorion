@@ -1,18 +1,5 @@
-from focs._effects import (
-    Destroy,
-    EffectsGroup,
-    IsSource,
-    LocalCandidate,
-    MoveTowards,
-    SetMaxShield,
-    SetSize,
-    SetSpeed,
-    Ship,
-    Size,
-    Source,
-    WithinDistance,
-)
-from focs._effects_new import MoveInOrbit
+from focs._effects import IsSource, LocalCandidate, Ship, Size, Source, WithinDistance
+from focs._effects_new import Destroy, EffectsGroup, MoveInOrbit, MoveTowards, SetMaxShield, SetSize, SetSpeed
 from focs._fields import FieldType
 from focs._value_refs import (
     MaxOf,
@@ -24,7 +11,7 @@ from focs._value_refs import (
     UniverseWidth,
     Value,
 )
-from macros.misc import SHIP_SHIELD_FACTOR
+from macros.misc_pre import SHIP_SHIELD_FACTOR
 
 FieldType(
     name="FLD_MOLECULAR_CLOUD",

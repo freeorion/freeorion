@@ -2,7 +2,6 @@ from focs._effects import (
     Adequate,
     Capital,
     DesignHasPart,
-    EffectsGroup,
     Focus,
     Happiness,
     HasEmpireStockpile,
@@ -16,16 +15,19 @@ from focs._effects import (
     Planet,
     Poor,
     ResourceInfluence,
+    Ship,
+    Source,
+    Target,
+    Unowned,
+)
+from focs._effects_new import (
+    EffectsGroup,
     SetCapacity,
     SetMaxTroops,
     SetRebelTroops,
     SetTargetHappiness,
     SetTargetInfluence,
     SetTroops,
-    Ship,
-    Source,
-    Target,
-    Unowned,
 )
 from focs._value_refs import (
     Abs,

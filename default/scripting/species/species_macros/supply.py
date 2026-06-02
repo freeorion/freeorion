@@ -1,12 +1,5 @@
-from focs._effects import (
-    EffectsGroup,
-    IsSource,
-    LocalCandidate,
-    Planet,
-    SetMaxSupply,
-    SetSupply,
-    Target,
-)
+from focs._effects import IsSource, LocalCandidate, Planet, Target
+from focs._effects_new import EffectsGroup, SetMaxSupply, SetSupply
 from focs._value_refs import (
     CurrentTurn,
     MinOf,

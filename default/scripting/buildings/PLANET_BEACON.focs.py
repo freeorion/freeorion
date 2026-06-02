@@ -1,8 +1,6 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
 from focs._effects import (
     Contains,
-    Destroy,
-    EffectsGroup,
     Focus,
     InSystem,
     IsBuilding,
@@ -14,6 +12,7 @@ from focs._effects import (
     Source,
     WithinStarlaneJumps,
 )
+from focs._effects_new import Destroy, EffectsGroup
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 
 try:

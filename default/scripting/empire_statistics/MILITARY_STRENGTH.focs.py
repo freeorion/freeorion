@@ -10,7 +10,7 @@ from focs._value_refs import (
     MaxOf,
     Statistic,
 )
-from macros.misc import FIGHTER_DAMAGE_FACTOR
+from macros.misc_pre import FIGHTER_DAMAGE_FACTOR
 
 EmpireStatistic(
     name="MILITARY_STRENGTH_STAT",

@@ -3,7 +3,6 @@ from focs._effects import (
     BlackHole,
     Blue,
     Contains,
-    EffectsGroup,
     Focus,
     Happiness,
     IsBuilding,
@@ -15,13 +14,13 @@ from focs._effects import (
     Planet,
     Red,
     ResourceSupplyConnected,
-    SetTargetIndustry,
     Source,
     Star,
     Target,
     White,
     Yellow,
 )
+from focs._effects_new import EffectsGroup, SetTargetIndustry
 from focs._value_refs import (
     NamedReal,
     NamedRealLookup,

@@ -3,10 +3,7 @@ from focs._effects import (
     BuildBuilding,
     ContainedBy,
     Contains,
-    Destroy,
-    EffectsGroup,
     Enqueued,
-    GenerateSitRepMessage,
     HasSpecial,
     HasSpecies,
     IsBuilding,
@@ -19,6 +16,13 @@ from focs._effects import (
     Planet,
     Population,
     ResourceSupplyConnected,
+    Source,
+    Target,
+)
+from focs._effects_new import (
+    Destroy,
+    EffectsGroup,
+    GenerateSitRepMessage,
     SetIndustry,
     SetInfluence,
     SetPopulation,
@@ -26,8 +30,6 @@ from focs._effects import (
     SetTargetIndustry,
     SetTargetInfluence,
     SetTargetResearch,
-    Source,
-    Target,
 )
 from focs._value_refs import (
     MinOf,

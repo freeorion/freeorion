@@ -3,7 +3,6 @@ from focs._effects import (
     BlackHole,
     Blue,
     Contains,
-    EffectsGroup,
     Focus,
     GasGiantType,
     Good,
@@ -21,9 +20,6 @@ from focs._effects import (
     Poor,
     Red,
     ResourceSupplyConnected,
-    SetPopulation,
-    SetStarType,
-    SetTargetPopulation,
     Source,
     Star,
     Target,
@@ -33,6 +29,7 @@ from focs._effects import (
     White,
     Yellow,
 )
+from focs._effects_new import EffectsGroup, SetPopulation, SetStarType, SetTargetPopulation
 from focs._value_refs import (
     Abs,
     CurrentTurn,

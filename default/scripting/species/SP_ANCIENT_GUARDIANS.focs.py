@@ -3,9 +3,7 @@ from focs._effects import (
     AsteroidsType,
     Barren,
     Desert,
-    EffectsGroup,
     GasGiantType,
-    GenerateSitRepMessage,
     Good,
     Inferno,
     IsSource,
@@ -13,9 +11,6 @@ from focs._effects import (
     OwnedBy,
     Planet,
     Radiated,
-    SetMaxShield,
-    SetMaxTroops,
-    SetPopulation,
     Source,
     Swamp,
     Target,
@@ -24,12 +19,13 @@ from focs._effects import (
     Tundra,
     Turn,
 )
+from focs._effects_new import EffectsGroup, GenerateSitRepMessage, SetMaxShield, SetMaxTroops, SetPopulation
 from focs._species import *
 from focs._value_refs import (
     NamedReal,
     Value,
 )
-from macros.misc import PLANET_SHIELD_FACTOR
+from macros.misc_pre import PLANET_SHIELD_FACTOR
 from macros.priorities import POPULATION_OVERRIDE_PRIORITY
 from species.species_macros.empire_opinions import FIXED_OPINION_EFFECTS
 from species.species_macros.focus import HAS_ADVANCED_FOCI

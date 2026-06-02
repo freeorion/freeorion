@@ -14,7 +14,7 @@ from focs._effects import (
     Planet,
     Source,
 )
-from focs._species import *
+from focs._species import FocusType
 from focs._value_refs import (
     Statistic,
 )

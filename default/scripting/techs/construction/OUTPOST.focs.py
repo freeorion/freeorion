@@ -1,23 +1,25 @@
 from focs._effects import (
-    EffectsGroup,
     EmpireHasAdoptedPolicy,
     HasEmpireStockpile,
     HasSpecies,
     IsSource,
     IsTarget,
-    Item,
     OwnedBy,
     Planet,
     Population,
     ResourceInfluence,
+    Source,
+    Target,
+    UnlockBuilding,
+)
+from focs._effects_new import (
+    EffectsGroup,
+    Item,
     SetConstruction,
     SetEmpireStockpile,
     SetHappiness,
     SetMaxTroops,
     SetTargetConstruction,
-    Source,
-    Target,
-    UnlockBuilding,
 )
 from focs._techs import Tech
 from focs._value_refs import (
