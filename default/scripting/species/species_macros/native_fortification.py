@@ -1,24 +1,11 @@
-from focs._effects import (
-    AddSpecial,
-    Conditional,
-    ContainedBy,
-    Contains,
-    EffectsGroup,
-    HasSpecial,
-    HasSpecies,
-    HasTag,
-    IsSource,
-    Planet,
-    Random,
-    Source,
-    Turn,
-)
+from focs._effects import ContainedBy, Contains, HasSpecial, HasSpecies, HasTag, IsSource, Planet, Random, Source, Turn
+from focs._effects_new import AddSpecial, Conditional, EffectsGroup
 from focs._value_refs import (
     GalaxyMaxAIAggression,
     MaxOf,
     OneOf,
 )
-from macros.misc import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
+from macros.misc_pre import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
 from species.species_macros.detection import NATIVE_PLANETARY_DETECTION
 from species.species_macros.planet_defense import AVERAGE_PLANETARY_DEFENSE, NATIVE_PLANETARY_DEFENSE
 from species.species_macros.planet_shields import AVERAGE_PLANETARY_SHIELDS, _native_planetary_shields

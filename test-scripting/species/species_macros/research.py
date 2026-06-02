@@ -1,29 +1,26 @@
+from focs._effects import (
+    Focus,
+    Happiness,
+    IsHuman,
+    IsSource,
+    Planet,
+    Target,
+)
+from focs._effects_new import (
+    EffectsGroup,
+    SetTargetResearch,
+)
 from focs._value_refs import (
     GalaxyMaxAIAggression,
     Value,
 )
 from macros.base_prod import RESEARCH_PER_POP
+from macros.multiplier import BAD_MULTIPLIER
 from macros.priorities import (
     TARGET_AFTER_SCALING_PRIORITY,
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
     TARGET_SCALING_PRIORITY,
 )
-
-try:
-    from focs._effects import (
-        EffectsGroup,
-        Focus,
-        Happiness,
-        IsHuman,
-        IsSource,
-        Planet,
-        SetTargetResearch,
-        Target,
-    )
-except ModuleNotFoundError:
-    pass
-
-from macros.multiplier import BAD_MULTIPLIER
 
 # NO_RESEARCH
 # '''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_RESEARCH_DESC)]]'''

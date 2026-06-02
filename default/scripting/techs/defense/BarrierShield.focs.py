@@ -1,13 +1,5 @@
-from focs._effects import (
-    EffectsGroup,
-    LocalCandidate,
-    OwnedBy,
-    Planet,
-    SetMaxShield,
-    SetShield,
-    Source,
-    Target,
-)
+from focs._effects import LocalCandidate, OwnedBy, Planet, Source, Target
+from focs._effects_new import EffectsGroup, SetMaxShield, SetShield
 from focs._techs import Tech
 from focs._value_refs import (
     CurrentTurn,
@@ -17,7 +9,7 @@ from focs._value_refs import (
     Value,
 )
 from macros.base_prod import TECH_COST_MULTIPLIER
-from macros.misc import PLANET_SHIELD_FACTOR
+from macros.misc_pre import PLANET_SHIELD_FACTOR
 from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY, DEFAULT_PRIORITY
 
 Tech(

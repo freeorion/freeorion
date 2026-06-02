@@ -1,3 +1,25 @@
+from focs._effects import (
+    Capital,
+    EmpireHasAdoptedPolicy,
+    Focus,
+    Happiness,
+    HasSpecies,
+    HasTag,
+    Homeworld,
+    IsHuman,
+    IsSource,
+    LocalCandidate,
+    OwnedBy,
+    Planet,
+    ResourceSupplyConnected,
+    Source,
+    Target,
+    Unowned,
+)
+from focs._effects_new import (
+    EffectsGroup,
+    SetTargetInfluence,
+)
 from focs._value_refs import (
     Abs,
     GalaxyMaxAIAggression,
@@ -10,31 +32,6 @@ from macros.priorities import (
     TARGET_LAST_BEFORE_OVERRIDE_PRIORITY,
     TARGET_SCALING_PRIORITY,
 )
-
-try:
-    from focs._effects import (
-        Capital,
-        EffectsGroup,
-        EmpireHasAdoptedPolicy,
-        Focus,
-        Happiness,
-        HasSpecies,
-        HasTag,
-        Homeworld,
-        IsHuman,
-        IsSource,
-        LocalCandidate,
-        OwnedBy,
-        Planet,
-        ResourceSupplyConnected,
-        SetTargetInfluence,
-        Source,
-        Target,
-        Unowned,
-    )
-except ModuleNotFoundError:
-    pass
-
 
 BASE_INFLUENCE_COSTS = [
     EffectsGroup(  # colonies consume influence, proportional to square-root of how many populated planets and non-populated outposts the empire controls

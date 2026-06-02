@@ -1,17 +1,5 @@
-from focs._effects import (
-    Adequate,
-    EffectsGroup,
-    Good,
-    HasTag,
-    Item,
-    OwnedBy,
-    Planet,
-    Poor,
-    SetTargetPopulation,
-    Source,
-    Target,
-    UnlockPolicy,
-)
+from focs._effects import Adequate, Good, HasTag, OwnedBy, Planet, Poor, Source, Target, UnlockPolicy
+from focs._effects_new import EffectsGroup, Item, SetTargetPopulation
 from focs._techs import Tech
 from focs._value_refs import (
     StatisticIf,

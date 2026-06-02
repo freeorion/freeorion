@@ -2,9 +2,7 @@ from focs._effects import (
     AsteroidsSize,
     AsteroidsType,
     Barren,
-    Conditional,
     Desert,
-    EffectsGroup,
     GasGiantSize,
     GasGiantType,
     Inferno,
@@ -24,7 +22,7 @@ from focs._effects import (
     Toxic,
     Tundra,
 )
-from focs._effects_new import CreatePlanet
+from focs._effects_new import Conditional, CreatePlanet, EffectsGroup
 from focs._value_refs import (
     GalaxyPlanetDensity,
     OneOf,

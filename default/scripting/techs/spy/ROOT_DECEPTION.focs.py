@@ -1,7 +1,5 @@
 from focs._effects import (
-    AddSpecial,
     BlackHole,
-    EffectsGroup,
     HasSpecial,
     InSystem,
     IsTarget,
@@ -11,13 +9,12 @@ from focs._effects import (
     NoStar,
     OwnedBy,
     Red,
-    SetSpecialCapacity,
-    SetStealth,
     Ship,
     Source,
     Star,
     Target,
 )
+from focs._effects_new import AddSpecial, EffectsGroup, SetSpecialCapacity, SetStealth
 from focs._techs import Tech
 from focs._value_refs import (
     MinOf,

@@ -1,12 +1,5 @@
-from focs._effects import (
-    EffectsGroup,
-    Happiness,
-    OwnedBy,
-    Planet,
-    SetTargetIndustry,
-    Source,
-    TargetPopulation,
-)
+from focs._effects import Happiness, OwnedBy, Planet, Source, TargetPopulation
+from focs._effects_new import EffectsGroup, SetTargetIndustry
 from focs._techs import Tech
 from focs._value_refs import (
     NamedReal,

@@ -1,14 +1,5 @@
-from focs._effects import (
-    AddSpecial,
-    EffectsGroup,
-    HasTag,
-    Item,
-    OwnedBy,
-    Planet,
-    RemoveSpecial,
-    Source,
-    UnlockShipPart,
-)
+from focs._effects import HasTag, OwnedBy, Planet, Source, UnlockShipPart
+from focs._effects_new import AddSpecial, EffectsGroup, Item, RemoveSpecial
 from focs._techs import Tech
 from focs._value_refs import (
     StatisticIf,

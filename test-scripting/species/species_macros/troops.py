@@ -1,3 +1,31 @@
+from focs._effects import (
+    Adequate,
+    Capital,
+    Focus,
+    Happiness,
+    HasEmpireStockpile,
+    HasSpecies,
+    Homeworld,
+    Hostile,
+    IsHuman,
+    IsSource,
+    LocalCandidate,
+    OwnedBy,
+    Planet,
+    Poor,
+    ResourceInfluence,
+    Source,
+    Target,
+    Unowned,
+)
+from focs._effects_new import (
+    EffectsGroup,
+    SetMaxTroops,
+    SetRebelTroops,
+    SetTargetHappiness,
+    SetTargetInfluence,
+    SetTroops,
+)
 from focs._value_refs import (
     Abs,
     CurrentTurn,
@@ -15,37 +43,6 @@ from macros.priorities import (
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
     TARGET_SCALING_PRIORITY,
 )
-
-try:
-    from focs._effects import (
-        Adequate,
-        Capital,
-        EffectsGroup,
-        Focus,
-        Happiness,
-        HasEmpireStockpile,
-        HasSpecies,
-        Homeworld,
-        Hostile,
-        IsHuman,
-        IsSource,
-        LocalCandidate,
-        OwnedBy,
-        Planet,
-        Poor,
-        ResourceInfluence,
-        SetMaxTroops,
-        SetRebelTroops,
-        SetTargetHappiness,
-        SetTargetInfluence,
-        SetTroops,
-        Source,
-        Target,
-        Unowned,
-    )
-except ModuleNotFoundError:
-    pass
-
 
 UNSTABLE_REBEL_TROOPS = [
     EffectsGroup(

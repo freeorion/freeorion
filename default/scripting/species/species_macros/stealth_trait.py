@@ -1,12 +1,5 @@
-from focs._effects import (
-    EffectsGroup,
-    HasTag,
-    IsSource,
-    OnPlanet,
-    Planet,
-    SetStealth,
-    Source,
-)
+from focs._effects import HasTag, IsSource, OnPlanet, Planet, Source
+from focs._effects_new import EffectsGroup, SetStealth
 from focs._value_refs import (
     Value,
 )

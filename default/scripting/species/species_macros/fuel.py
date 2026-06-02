@@ -1,11 +1,7 @@
 # usually each "level" of fuel allows two jumps fuel
 # (i.e. GREAT_FUEL is similar to GREAT_SUPPLY)
-from focs._effects import (
-    EffectsGroup,
-    IsSource,
-    SetMaxFuel,
-    Ship,
-)
+from focs._effects import IsSource, Ship
+from focs._effects_new import EffectsGroup, SetMaxFuel
 from focs._value_refs import (
     Value,
 )

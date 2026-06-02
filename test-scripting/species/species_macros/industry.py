@@ -1,3 +1,18 @@
+# NO_INDUSTRY
+# '''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_INDUSTRY_DESC)]]'''
+from focs._effects import (
+    Focus,
+    Happiness,
+    IsHuman,
+    IsSource,
+    Planet,
+    Target,
+    TargetIndustry,
+)
+from focs._effects_new import (
+    EffectsGroup,
+    SetTargetIndustry,
+)
 from focs._value_refs import (
     GalaxyMaxAIAggression,
     Value,
@@ -7,24 +22,6 @@ from macros.priorities import (
     TARGET_AFTER_SCALING_PRIORITY,
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
 )
-
-# NO_INDUSTRY
-# '''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_INDUSTRY_DESC)]]'''
-try:
-    from focs._effects import (
-        EffectsGroup,
-        Focus,
-        Happiness,
-        IsHuman,
-        IsSource,
-        Planet,
-        SetTargetIndustry,
-        Target,
-        TargetIndustry,
-    )
-except ModuleNotFoundError:
-    pass
-
 
 BASIC_INDUSTRY = [
     EffectsGroup(

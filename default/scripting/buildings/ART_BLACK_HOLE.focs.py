@@ -1,20 +1,5 @@
-from focs._effects import (
-    BlackHole,
-    Contains,
-    Destroy,
-    EffectsGroup,
-    GenerateSitRepMessage,
-    IsBuilding,
-    IsSource,
-    Object,
-    OwnedBy,
-    Planet,
-    Red,
-    SetStarType,
-    Source,
-    Star,
-    System,
-)
+from focs._effects import BlackHole, Contains, IsBuilding, IsSource, Object, OwnedBy, Planet, Red, Source, Star, System
+from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, SetStarType
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 

@@ -2,26 +2,21 @@ from focs._effects import (
     AnyEmpire,
     Blue,
     Contains,
-    CreateBuilding,
-    CreateShip,
-    EffectsGroup,
     IsSource,
     Object,
     OwnedBy,
     Planet,
-    SetMaxDefense,
-    SetMaxShield,
-    SetStarType,
     Source,
     System,
     Turn,
     WithinStarlaneJumps,
 )
+from focs._effects_new import CreateBuilding, CreateShip, EffectsGroup, SetMaxDefense, SetMaxShield, SetStarType
 from focs._species import *
 from focs._value_refs import (
     Value,
 )
-from macros.misc import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
+from macros.misc_pre import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
 from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS
 from species.species_macros.env import RADIATED_STANDARD_EP
 from species.species_macros.focus import (

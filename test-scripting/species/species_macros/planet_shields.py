@@ -1,14 +1,3 @@
-from focs._value_refs import (
-    CurrentTurn,
-    MinOf,
-    Value,
-)
-from macros.misc import PLANET_SHIELD_FACTOR
-from macros.priorities import (
-    AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
-    TARGET_AFTER_2ND_SCALING_PRIORITY,
-)
-
 # // param1: value
 # NATIVE_PLANETARY_SHIELDS
 # '''EffectsGroup
@@ -20,21 +9,29 @@ from macros.priorities import (
 #             accountinglabel = "NATIVE_PLANETARY_SHIELDS_LABEL"
 #             effects = SetMaxShield value = Value + ( @1@ )
 # '''
-
-try:
-    from focs._effects import (
-        EffectsGroup,
-        Focus,
-        IsSource,
-        LocalCandidate,
-        Planet,
-        SetMaxShield,
-        SetShield,
-        Target,
-        Unowned,
-    )
-except ModuleNotFoundError:
-    pass
+from focs._effects import (
+    Focus,
+    IsSource,
+    LocalCandidate,
+    Planet,
+    Target,
+    Unowned,
+)
+from focs._effects_new import (
+    EffectsGroup,
+    SetMaxShield,
+    SetShield,
+)
+from focs._value_refs import (
+    CurrentTurn,
+    MinOf,
+    Value,
+)
+from macros.misc import PLANET_SHIELD_FACTOR
+from macros.priorities import (
+    AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
+    TARGET_AFTER_2ND_SCALING_PRIORITY,
+)
 
 STANDARD_SHIELD_GROWTH = EffectsGroup(  # increase 1 per turn, up to max
     scope=IsSource,

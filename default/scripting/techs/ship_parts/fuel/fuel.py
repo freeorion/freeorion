@@ -2,15 +2,8 @@
 # Adds the given increase amount times the number of FU_BASIC_TANK parts in the design to the max fuel meter.
 # @1@ Accounting label to present this effect with
 # @2@ Fuel capacity increase per fuel part
-from focs._effects import (
-    DesignHasPart,
-    EffectsGroup,
-    OwnedBy,
-    SetMaxFuel,
-    Ship,
-    Source,
-    Target,
-)
+from focs._effects import DesignHasPart, OwnedBy, Ship, Source, Target
+from focs._effects_new import EffectsGroup, SetMaxFuel
 from focs._value_refs import (
     NamedReal,
     PartsInShipDesign,

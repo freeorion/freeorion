@@ -1,4 +1,5 @@
-from focs._effects import EffectsGroup, Huge, IsSource, Large, Medium, Planet, SetPlanetSize, Small, Tiny, Turn
+from focs._effects import Huge, IsSource, Large, Medium, Planet, Small, Tiny, Turn
+from focs._effects_new import EffectsGroup, SetPlanetSize
 
 LARGE_PLANET = [
     EffectsGroup(scope=IsSource, activation=Planet() & Turn(high=0), effects=SetPlanetSize(planetsize=Large)),

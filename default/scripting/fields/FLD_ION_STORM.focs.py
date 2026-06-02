@@ -1,19 +1,14 @@
-from focs._effects import (
+from focs._effects import IsField, IsSource, LocalCandidate, Size, Source, WithinDistance
+from focs._effects_new import (
     Destroy,
     EffectsGroup,
-    IsField,
-    IsSource,
-    LocalCandidate,
+    MoveInOrbit,
     MoveTowards,
     SetDetection,
     SetSize,
     SetSpeed,
     SetStealth,
-    Size,
-    Source,
-    WithinDistance,
 )
-from focs._effects_new import MoveInOrbit
 from focs._fields import FieldType
 from focs._value_refs import (
     MaxOf,

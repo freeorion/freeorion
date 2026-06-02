@@ -2,7 +2,6 @@ from focs._effects import (
     Adequate,
     Capital,
     Contains,
-    EffectsGroup,
     EmpireHasAdoptedPolicy,
     GasGiantType,
     Good,
@@ -23,8 +22,6 @@ from focs._effects import (
     Poor,
     Population,
     ResourceSupplyConnected,
-    SetHappiness,
-    SetTargetHappiness,
     Small,
     Source,
     SpeciesDislikes,
@@ -34,6 +31,7 @@ from focs._effects import (
     Uninhabitable,
     Unowned,
 )
+from focs._effects_new import EffectsGroup, SetHappiness, SetTargetHappiness
 from focs._value_refs import (
     Abs,
     CurrentTurn,

@@ -1,10 +1,5 @@
-from focs._effects import (
-    EffectsGroup,
-    IsBuilding,
-    OwnedBy,
-    SetStealth,
-    Source,
-)
+from focs._effects import IsBuilding, OwnedBy, Source
+from focs._effects_new import EffectsGroup, SetStealth
 from focs._techs import Tech
 from focs._value_refs import (
     Value,

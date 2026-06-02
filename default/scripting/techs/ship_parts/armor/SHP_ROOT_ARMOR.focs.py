@@ -1,4 +1,5 @@
-from focs._effects import Item, UnlockShipPart
+from focs._effects import UnlockShipPart
+from focs._effects_new import Item
 from focs._techs import Tech
 
 Tech(

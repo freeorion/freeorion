@@ -1,12 +1,18 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
 from focs._effects import (
     Contains,
-    EffectsGroup,
     IsBuilding,
     IsSource,
     Object,
     OwnedBy,
     Planet,
+    Source,
+    Target,
+    TargetPopulation,
+    WithinStarlaneJumps,
+)
+from focs._effects_new import (
+    EffectsGroup,
     SetEmpireCapital,
     SetIndustry,
     SetInfluence,
@@ -14,10 +20,6 @@ from focs._effects import (
     SetMaxTroops,
     SetResearch,
     SetTargetConstruction,
-    Source,
-    Target,
-    TargetPopulation,
-    WithinStarlaneJumps,
 )
 from focs._value_refs import (
     Value,

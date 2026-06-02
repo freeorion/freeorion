@@ -1,8 +1,6 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
 from focs._effects import (
     Contains,
-    Destroy,
-    EffectsGroup,
     IsBuilding,
     IsSource,
     OwnedBy,
@@ -12,6 +10,7 @@ from focs._effects import (
     Unowned,
     WithinStarlaneJumps,
 )
+from focs._effects_new import Destroy, EffectsGroup
 from focs._value_refs import (
     StatisticCount,
 )

@@ -1,10 +1,7 @@
 from focs._buildings import BuildingType
 from focs._effects import (
     Contains,
-    Destroy,
-    EffectsGroup,
     Enqueued,
-    GenerateSitRepMessage,
     Happiness,
     HasSpecial,
     HasSpecies,
@@ -24,6 +21,7 @@ from focs._effects import (
     Turn,
     Uninhabitable,
 )
+from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage
 from focs._value_refs import (
     GameRule,
     MaxOf,

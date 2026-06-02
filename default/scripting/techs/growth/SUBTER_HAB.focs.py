@@ -1,11 +1,5 @@
-from focs._effects import (
-    EffectsGroup,
-    HasSpecies,
-    OwnedBy,
-    SetTargetPopulation,
-    Source,
-    Target,
-)
+from focs._effects import HasSpecies, OwnedBy, Source, Target
+from focs._effects_new import EffectsGroup, SetTargetPopulation
 from focs._techs import Tech
 from focs._value_refs import (
     Value,

@@ -1,8 +1,6 @@
 from focs._effects import (
     Contains,
-    EffectsGroup,
     EmpireHasAdoptedPolicy,
-    GiveEmpireTech,
     Good,
     HasSpecies,
     HasTag,
@@ -14,8 +12,6 @@ from focs._effects import (
     OwnedBy,
     Planet,
     RootCandidate,
-    SetTargetHappiness,
-    SetTargetPopulation,
     Source,
     Sum,
     Target,
@@ -23,6 +19,7 @@ from focs._effects import (
     VisibleToEmpire,
     WithinStarlaneJumps,
 )
+from focs._effects_new import EffectsGroup, GiveEmpireTech, SetTargetHappiness, SetTargetPopulation
 from focs._value_refs import (
     JumpsBetween,
     MaxOf,

@@ -1,9 +1,11 @@
+from focs._effects import *
+from focs._effects_new import (
+    Destroy,
+    EffectsGroup,
+    MoveTowards,
+    SetSize,
+)
 from focs._fields import FieldType
-
-try:
-    from focs._fields import *
-except ModuleNotFoundError:
-    pass
 
 FieldType(
     name="FLD_SUBSPACE_RIFT",

@@ -1,16 +1,5 @@
-from focs._effects import (
-    AddSpecial,
-    EffectsGroup,
-    IsField,
-    IsSource,
-    LocalCandidate,
-    MinimumNumberOf,
-    MoveTowards,
-    NoStar,
-    Source,
-    Star,
-    Turn,
-)
+from focs._effects import IsField, IsSource, LocalCandidate, MinimumNumberOf, NoStar, Source, Star, Turn
+from focs._effects_new import AddSpecial, EffectsGroup, MoveTowards
 from focs._species import *
 from focs._value_refs import (
     DirectDistanceBetween,

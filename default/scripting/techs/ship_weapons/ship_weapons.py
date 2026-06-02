@@ -1,20 +1,13 @@
 from typing import Literal
 
-from focs._effects import (
+from focs._effects import IsSource, LocalCandidate, Max, MaxSecondaryStat, OwnedBy, Ship, Source, Target
+from focs._effects_new import (
     EffectsGroup,
     GenerateSitRepMessage,
-    IsSource,
-    LocalCandidate,
-    Max,
-    MaxSecondaryStat,
-    OwnedBy,
     SetCapacity,
     SetMaxCapacity,
     SetMaxSecondaryStat,
     SetSecondaryStat,
-    Ship,
-    Source,
-    Target,
 )
 from focs._value_refs import (
     CurrentContent,
@@ -27,7 +20,7 @@ from focs._value_refs import (
     TurnTechResearched,
     Value,
 )
-from macros.misc import (
+from macros.misc_pre import (
     FIGHTER_DAMAGE_FACTOR,
     SHIP_WEAPON_DAMAGE_FACTOR,
 )

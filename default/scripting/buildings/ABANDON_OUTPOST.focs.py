@@ -1,7 +1,4 @@
 from focs._effects import (
-    Destroy,
-    EffectsGroup,
-    GenerateSitRepMessage,
     IsBuilding,
     IsSource,
     LocalCandidate,
@@ -10,12 +7,11 @@ from focs._effects import (
     Partial,
     Planet,
     Population,
-    SetOwner,
-    SetVisibility,
     Source,
     Target,
     Turn,
 )
+from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, SetOwner, SetVisibility
 from focs._value_refs import (
     MaxOf,
     ThisBuilding,

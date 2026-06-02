@@ -4,12 +4,9 @@ from focs._effects import (
     BuildBuilding,
     Contains,
     Desert,
-    Destroy,
-    EffectsGroup,
     EmpireHasAdoptedPolicy,
     Enqueued,
     GasGiantType,
-    GenerateSitRepMessage,
     Good,
     HasSpecial,
     HasTag,
@@ -22,7 +19,6 @@ from focs._effects import (
     OwnedBy,
     Planet,
     Radiated,
-    SetPlanetType,
     Source,
     Swamp,
     Target,
@@ -32,6 +28,7 @@ from focs._effects import (
     Tundra,
     Uninhabitable,
 )
+from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, SetPlanetType
 from focs._value_refs import (
     MaxOf,
     PlanetTypeDifference,

@@ -1,6 +1,5 @@
 from focs._effects import (
     Contains,
-    EffectsGroup,
     Focus,
     Happiness,
     IsSource,
@@ -8,12 +7,11 @@ from focs._effects import (
     Max,
     OwnedBy,
     Planet,
-    SetEmpireMeter,
-    SetTargetResearch,
     Source,
     System,
     Target,
 )
+from focs._effects_new import EffectsGroup, SetEmpireMeter, SetTargetResearch
 from focs._techs import Tech
 from focs._value_refs import (
     DirectDistanceBetween,

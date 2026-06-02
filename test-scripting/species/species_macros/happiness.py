@@ -1,46 +1,41 @@
-from macros.opinion import POLICY_DISLIKE_SCALING
-from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
-
-try:
-    from focs._effects import (
-        Adequate,
-        Capital,
-        Contains,
-        EffectsGroup,
-        EmpireHasAdoptedPolicy,
-        GasGiantType,
-        Good,
-        HasSpecies,
-        HasTag,
-        Homeworld,
-        Hostile,
-        Huge,
-        InSystem,
-        IsBuilding,
-        IsSource,
-        Large,
-        LocalCandidate,
-        Medium,
-        Min,
-        OwnedBy,
-        Planet,
-        Poor,
-        Population,
-        ResourceSupplyConnected,
-        SetHappiness,
-        SetTargetHappiness,
-        Small,
-        Source,
-        SpeciesDislikes,
-        SpeciesLikes,
-        Target,
-        Tiny,
-        Uninhabitable,
-        Unowned,
-    )
-except ModuleNotFoundError:
-    pass
-
+from focs._effects import (
+    Adequate,
+    Capital,
+    Contains,
+    EmpireHasAdoptedPolicy,
+    GasGiantType,
+    Good,
+    HasSpecies,
+    HasTag,
+    Homeworld,
+    Hostile,
+    Huge,
+    InSystem,
+    IsBuilding,
+    IsSource,
+    Large,
+    LocalCandidate,
+    Medium,
+    Min,
+    OwnedBy,
+    Planet,
+    Poor,
+    Population,
+    ResourceSupplyConnected,
+    Small,
+    Source,
+    SpeciesDislikes,
+    SpeciesLikes,
+    Target,
+    Tiny,
+    Uninhabitable,
+    Unowned,
+)
+from focs._effects_new import (
+    EffectsGroup,
+    SetHappiness,
+    SetTargetHappiness,
+)
 from focs._value_refs import (
     Abs,
     CurrentTurn,
@@ -51,6 +46,8 @@ from focs._value_refs import (
     Statistic,
     Value,
 )
+from macros.opinion import POLICY_DISLIKE_SCALING
+from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 
 STABILITY_PER_LIKED_FOCUS = 2.0
 

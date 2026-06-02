@@ -1,16 +1,5 @@
-from focs._effects import (
-    Conditional,
-    EffectsGroup,
-    LocalCandidate,
-    OwnedBy,
-    Planet,
-    SetConstruction,
-    SetIndustry,
-    SetResearch,
-    SetStockpile,
-    Source,
-    Target,
-)
+from focs._effects import LocalCandidate, OwnedBy, Planet, Source, Target
+from focs._effects_new import Conditional, EffectsGroup, SetConstruction, SetIndustry, SetResearch, SetStockpile
 from focs._techs import Tech
 from focs._value_refs import (
     MaxOf,

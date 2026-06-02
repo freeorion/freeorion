@@ -1,15 +1,5 @@
-from focs._effects import (
-    EffectsGroup,
-    Focus,
-    Item,
-    OwnedBy,
-    Planet,
-    Population,
-    SetMaxStockpile,
-    Source,
-    Target,
-    UnlockPolicy,
-)
+from focs._effects import Focus, OwnedBy, Planet, Population, Source, Target, UnlockPolicy
+from focs._effects_new import EffectsGroup, Item, SetMaxStockpile
 from focs._techs import Tech
 from focs._value_refs import (
     Value,

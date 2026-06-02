@@ -1,16 +1,6 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
-from focs._effects import (
-    CanProduceShips,
-    Contains,
-    EffectsGroup,
-    IsBuilding,
-    Object,
-    OwnedBy,
-    Planet,
-    SetTargetConstruction,
-    Source,
-    TargetPopulation,
-)
+from focs._effects import CanProduceShips, Contains, IsBuilding, Object, OwnedBy, Planet, Source, TargetPopulation
+from focs._effects_new import EffectsGroup, SetTargetConstruction
 from focs._value_refs import (
     Value,
 )

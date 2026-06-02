@@ -2,8 +2,6 @@ from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABIL
 from focs._effects import (
     ContainedBy,
     Contains,
-    Destroy,
-    EffectsGroup,
     Focus,
     GasGiantType,
     Happiness,
@@ -14,9 +12,9 @@ from focs._effects import (
     OwnedBy,
     Planet,
     Population,
-    SetTargetIndustry,
     Source,
 )
+from focs._effects_new import Destroy, EffectsGroup, SetTargetIndustry
 from focs._value_refs import (
     NamedReal,
     Value,
