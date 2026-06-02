@@ -1,4 +1,5 @@
 from focs._effects import (
+    Adequate,
     AnyEmpire,
     BlackHole,
     Blue,
@@ -17,6 +18,7 @@ from focs._effects import (
     NoStar,
     Orange,
     OwnedBy,
+    OwnerHasTech,
     Planet,
     Poor,
     Red,
@@ -38,6 +40,8 @@ from focs._value_refs import (
     CurrentTurn,
     MaxOf,
     MinOf,
+    NamedIntegerLookup,
+    NamedReal,
     Value,
 )
 from macros.misc import GROWTH_RATE_FACTOR
@@ -111,13 +115,38 @@ _ENVIRONMENT_MODIFIER = [
 
 # This is dependent on current placement in population effects calc,
 # just after Homeworld and Environment
-_SELF_SUSTAINING_BONUS = EffectsGroup(
-    scope=IsSource,
-    activation=Planet(environment=[Good]) & HasTag(name="SELF_SUSTAINING"),
-    accountinglabel="SELF_SUSTAINING_LABEL",
-    priority=TARGET_POPULATION_AFTER_SCALING_PRIORITY,
-    effects=SetTargetPopulation(value=Value + 3 * Target.HabitableSize),  # Gets the same bonus as three growth specials
-)
+_SELF_SUSTAINING_BONUS = [
+    EffectsGroup(
+        scope=IsSource,
+        activation=Planet(environment=[Good]) & HasTag(name="SELF_SUSTAINING"),
+        accountinglabel="SELF_SUSTAINING_LABEL",
+        priority=TARGET_POPULATION_AFTER_SCALING_PRIORITY,
+        effects=SetTargetPopulation(
+            value=Value
+            + NamedReal(
+                name="SELF_SUSTAINING_TARGET_POPULATION_PER_SIZE_BONUS",
+                value=Value
+                + NamedReal(
+                    name="SELF_SUSTAINING_TARGET_POPULATION_PER_SIZE_BONUS",
+                    value=3.0 * NamedIntegerLookup(name="GROWTH_SPECIAL_TARGET_POPULATION_PER_SIZE_BONUS"),
+                )
+                * Target.HabitableSize,
+            )
+        ),  # Gets the same bonus as three growth specials
+    ),
+    EffectsGroup(
+        scope=IsSource,
+        activation=OwnerHasTech(name="GRO_XENO_GENETICS")
+        & Planet(environment=[Adequate])
+        & HasTag(name="SELF_SUSTAINING"),
+        accountinglabel="SELF_SUSTAINING_LABEL",
+        priority=TARGET_POPULATION_AFTER_SCALING_PRIORITY,
+        effects=SetTargetPopulation(
+            value=Value
+            + NamedIntegerLookup(name="GROWTH_SPECIAL_TARGET_POPULATION_PER_SIZE_BONUS") * Target.HabitableSize
+        ),  # Gets the same bonus as one growth specials
+    ),
+]
 
 _PHOTOTROPHIC_BONUS = [
     EffectsGroup(
@@ -187,7 +216,7 @@ _HOMEWORLD_GROWTH_FOCUS_BOOST = EffectsGroup(
 _BASIC_POPULATION = [
     _HOMEWORLD_BONUS_POPULATION,
     *_ENVIRONMENT_MODIFIER,
-    _SELF_SUSTAINING_BONUS,
+    *_SELF_SUSTAINING_BONUS,
     *_PHOTOTROPHIC_BONUS,
     _GASEOUS_BONUS,
     _HOMEWORLD_GROWTH_FOCUS_BOOST,
