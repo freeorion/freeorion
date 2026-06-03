@@ -163,7 +163,6 @@ PythonParser::PythonParser(PythonCommon& _python) :
 
     try {
         m_python.SetPopulateGlobalsFunc([](py::dict& globals) {
-            RegisterGlobalsEffects(globals);
             RegisterGlobalsConditions(globals);
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
