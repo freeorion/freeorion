@@ -1,4 +1,4 @@
-from focs._effects import (
+from focs._conditions import (
     Capital,
     EmpireHasAdoptedPolicy,
     Focus,
@@ -8,14 +8,12 @@ from focs._effects import (
     Homeworld,
     IsHuman,
     IsSource,
-    LocalCandidate,
     OwnedBy,
     Planet,
     ResourceSupplyConnected,
-    Source,
-    Target,
     Unowned,
 )
+from focs._effects import LocalCandidate, Source, Target
 from focs._effects_new import (
     EffectsGroup,
     SetTargetInfluence,

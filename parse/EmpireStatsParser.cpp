@@ -41,6 +41,7 @@ namespace {
             RegisterGlobalsEnums(globals);
 
             parser.LoadValueRefsModule();
+            parser.LoadConditionsModule();
 
             module.attr("__stats") = boost::cref(*this);
         }

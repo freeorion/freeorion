@@ -9,14 +9,8 @@
 #             accountinglabel = "NATIVE_PLANETARY_SHIELDS_LABEL"
 #             effects = SetMaxShield value = Value + ( @1@ )
 # '''
-from focs._effects import (
-    Focus,
-    IsSource,
-    LocalCandidate,
-    Planet,
-    Target,
-    Unowned,
-)
+from focs._conditions import Focus, IsSource, Planet, Unowned
+from focs._effects import LocalCandidate, Target
 from focs._effects_new import (
     EffectsGroup,
     SetMaxShield,

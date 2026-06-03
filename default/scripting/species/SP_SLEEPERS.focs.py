@@ -1,4 +1,5 @@
-from focs._effects import IsSource, NoStar, Star, Turn
+from focs._conditions import IsSource, Star, Turn
+from focs._effects import NoStar
 from focs._effects_new import AddSpecial, EffectsGroup
 from focs._species import *
 from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS

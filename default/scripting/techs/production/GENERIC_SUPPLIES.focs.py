@@ -1,4 +1,5 @@
-from focs._effects import Capital, Focus, HasSpecies, OwnedBy, Planet, Source, Target
+from focs._conditions import Capital, Focus, HasSpecies, OwnedBy, Planet
+from focs._effects import Source, Target
 from focs._effects_new import EffectsGroup, SetMaxStockpile
 from focs._techs import Tech
 from focs._value_refs import (

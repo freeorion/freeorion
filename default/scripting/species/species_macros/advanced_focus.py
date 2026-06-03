@@ -1,30 +1,26 @@
-from focs._effects import (
+from focs._conditions import (
     ContainedBy,
     Contains,
     DesignHasPart,
-    EnemyOf,
     Fleet,
     Focus,
     InSystem,
     IsBuilding,
     IsSource,
-    LocalCandidate,
     Number,
     Object,
     OwnedBy,
     Planet,
     Random,
-    RootCandidate,
     Ship,
-    Source,
     Stationary,
     System,
-    Target,
     Turn,
     Unowned,
     WithinDistance,
     WithinStarlaneJumps,
 )
+from focs._effects import EnemyOf, LocalCandidate, RootCandidate, Source, Target
 from focs._effects_new import (
     AddSpecial,
     Conditional,

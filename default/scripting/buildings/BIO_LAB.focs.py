@@ -1,9 +1,4 @@
-from focs._effects import (
-    Contains,
-    IsBuilding,
-    OwnedBy,
-    Planet,
-)
+from focs._conditions import Contains, IsBuilding, OwnedBy, Planet
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 

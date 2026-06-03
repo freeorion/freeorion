@@ -1,8 +1,5 @@
-from focs._effects import (
-    OwnedBy,
-    Planet,
-    Source,
-)
+from focs._conditions import OwnedBy, Planet
+from focs._effects import Source
 from focs._empire_statistics import EmpireStatistic
 from focs._value_refs import (
     StatisticCount,

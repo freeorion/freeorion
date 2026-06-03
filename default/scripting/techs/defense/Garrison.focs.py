@@ -1,4 +1,5 @@
-from focs._effects import LocalCandidate, OwnedBy, Planet, Population, Source, Target, UnlockPolicy
+from focs._conditions import OwnedBy, Planet, Population
+from focs._effects import LocalCandidate, Source, Target, UnlockPolicy
 from focs._effects_new import EffectsGroup, Item, SetMaxTroops, SetTroops
 from focs._techs import Tech
 from focs._value_refs import (

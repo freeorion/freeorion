@@ -1,19 +1,5 @@
-from focs._effects import (
-    BlackHole,
-    HasSpecial,
-    InSystem,
-    IsTarget,
-    LocalCandidate,
-    Min,
-    Neutron,
-    NoStar,
-    OwnedBy,
-    Red,
-    Ship,
-    Source,
-    Star,
-    Target,
-)
+from focs._conditions import HasSpecial, InSystem, IsTarget, OwnedBy, Ship, Star
+from focs._effects import BlackHole, LocalCandidate, Min, Neutron, NoStar, Red, Source, Target
 from focs._effects_new import AddSpecial, EffectsGroup, SetSpecialCapacity, SetStealth
 from focs._techs import Tech
 from focs._value_refs import (

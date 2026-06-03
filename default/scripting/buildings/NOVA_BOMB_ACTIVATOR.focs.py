@@ -1,4 +1,4 @@
-from focs._effects import IsAnyObject, IsSource
+from focs._conditions import IsAnyObject, IsSource
 from focs._effects_new import Destroy, EffectsGroup
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 

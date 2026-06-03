@@ -1,4 +1,5 @@
-from focs._effects import Contains, IsSource, Size, Source, System, Target, WithinDistance
+from focs._conditions import Contains, IsSource, Size, System, WithinDistance
+from focs._effects import Source, Target
 from focs._effects_new import Destroy, EffectsGroup, MoveTowards, SetSize
 from focs._fields import FieldType
 

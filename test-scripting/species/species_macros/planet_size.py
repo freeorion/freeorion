@@ -7,7 +7,8 @@
 #         ]
 #         effects = SetPlanetSize planetsize = Huge
 # '''
-from focs._effects import IsSource, Large, Planet, Turn
+from focs._conditions import IsSource, Planet, Turn
+from focs._effects import Large
 from focs._effects_new import (
     EffectsGroup,
     SetPlanetSize,

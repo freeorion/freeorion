@@ -1,19 +1,5 @@
-from focs._effects import (
-    AsteroidsType,
-    BuildBuilding,
-    Contains,
-    Enqueued,
-    GasGiantType,
-    Good,
-    HasSpecial,
-    IsBuilding,
-    IsSource,
-    Object,
-    OwnedBy,
-    Planet,
-    Source,
-    Target,
-)
+from focs._conditions import Contains, Enqueued, HasSpecial, IsBuilding, IsSource, Object, OwnedBy, Planet
+from focs._effects import AsteroidsType, BuildBuilding, GasGiantType, Good, Source, Target
 from focs._effects_new import AddSpecial, Destroy, EffectsGroup, GenerateSitRepMessage
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import DO_NOT_CONTAIN_FOR_ALL_TERRAFORM_PLANET_TYPES, ENQUEUE_BUILD_ONE_PER_PLANET

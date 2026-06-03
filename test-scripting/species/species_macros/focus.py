@@ -1,4 +1,5 @@
-from focs._effects import Contains, HasSpecial, HasTag, Homeworld, IsBuilding, OwnerHasTech, Planet, Source
+from focs._conditions import Contains, HasSpecial, HasTag, Homeworld, IsBuilding, OwnerHasTech, Planet
+from focs._effects import Source
 from focs._species import FocusType
 
 HAS_INDUSTRY_FOCUS = FocusType(

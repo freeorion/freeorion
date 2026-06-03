@@ -1,5 +1,4 @@
-from focs._effects import (
-    Adequate,
+from focs._conditions import (
     Capital,
     DesignHasPart,
     Focus,
@@ -7,19 +6,14 @@ from focs._effects import (
     HasEmpireStockpile,
     HasSpecies,
     Homeworld,
-    Hostile,
     IsHuman,
     IsSource,
-    LocalCandidate,
     OwnedBy,
     Planet,
-    Poor,
-    ResourceInfluence,
     Ship,
-    Source,
-    Target,
     Unowned,
 )
+from focs._effects import Adequate, Hostile, LocalCandidate, Poor, ResourceInfluence, Source, Target
 from focs._effects_new import (
     EffectsGroup,
     SetCapacity,

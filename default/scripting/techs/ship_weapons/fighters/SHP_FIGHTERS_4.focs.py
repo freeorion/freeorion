@@ -1,4 +1,5 @@
-from focs._effects import DesignHasPart, OwnedBy, Ship, Source, Target
+from focs._conditions import DesignHasPart, OwnedBy, Ship
+from focs._effects import Source, Target
 from focs._effects_new import EffectsGroup, SetMaxCapacity
 from focs._techs import Tech
 from focs._value_refs import (

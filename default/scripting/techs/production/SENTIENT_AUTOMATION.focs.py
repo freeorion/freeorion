@@ -1,4 +1,5 @@
-from focs._effects import Focus, Happiness, IsSource, OwnedBy, Planet, Source, TargetPopulation
+from focs._conditions import Focus, Happiness, IsSource, OwnedBy, Planet, TargetPopulation
+from focs._effects import Source
 from focs._effects_new import EffectsGroup, SetEmpireMeter, SetTargetIndustry
 from focs._techs import Tech
 from focs._value_refs import (

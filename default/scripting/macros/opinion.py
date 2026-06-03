@@ -1,11 +1,8 @@
 # Policy Liberty doubles the stability malus from disliked buildings, policies and planetary foci
 # Policy Conformance halves it
 # Values are declared in common/named_values.focs.txt
-from focs._effects import (
-    EmpireHasAdoptedPolicy,
-    IsSource,
-    Target,
-)
+from focs._conditions import EmpireHasAdoptedPolicy, IsSource
+from focs._effects import Target
 from focs._value_refs import (
     NamedRealLookup,
     StatisticIf,

@@ -1,4 +1,5 @@
-from focs._effects import Contains, IsBuilding, IsSource, OwnedBy, Planet, Population, Source
+from focs._conditions import Contains, IsBuilding, IsSource, OwnedBy, Planet, Population
+from focs._effects import Source
 from focs._effects_new import CreateShip, Destroy, EffectsGroup
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.misc import MIN_RECOLONIZING_SIZE

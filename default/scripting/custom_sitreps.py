@@ -1,32 +1,26 @@
-from focs._effects import (
-    BuildBuilding,
+from focs._conditions import (
     Capital,
     ContainedBy,
     Contains,
     ContentFocus,
-    EnemyOf,
     Enqueued,
     Fleet,
-    GasGiantType,
     InSystem,
     IsBuilding,
     IsSource,
-    LocalCandidate,
     Location,
     Number,
     OwnedBy,
     OwnerHasTech,
     Planet,
-    RootCandidate,
     Ship,
-    Source,
     Stationary,
     System,
-    Target,
     Turn,
     Unowned,
     VisibleToEmpire,
 )
+from focs._effects import BuildBuilding, EnemyOf, GasGiantType, LocalCandidate, RootCandidate, Source, Target
 from focs._effects_new import Conditional, EffectsGroup, GenerateSitRepMessage
 from focs._value_refs import (
     CurrentTurn,

@@ -1,4 +1,4 @@
-from focs._effects import IsSource
+from focs._conditions import IsSource
 from focs._effects_new import (
     EffectsGroup,
     NoOpEffect,

@@ -1,4 +1,4 @@
-from focs._effects import (
+from focs._conditions import (
     EmpireHasAdoptedPolicy,
     HasEmpireStockpile,
     HasSpecies,
@@ -7,11 +7,8 @@ from focs._effects import (
     OwnedBy,
     Planet,
     Population,
-    ResourceInfluence,
-    Source,
-    Target,
-    UnlockBuilding,
 )
+from focs._effects import ResourceInfluence, Source, Target, UnlockBuilding
 from focs._effects_new import (
     EffectsGroup,
     Item,

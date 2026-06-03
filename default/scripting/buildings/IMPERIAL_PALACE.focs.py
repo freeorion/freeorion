@@ -1,6 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
-from focs._effects import (
-    BuildBuilding,
+from focs._conditions import (
     Capital,
     ContainedBy,
     Contains,
@@ -9,20 +8,18 @@ from focs._effects import (
     IsBuilding,
     IsSource,
     IsTarget,
-    LocalCandidate,
     Number,
     Object,
     OwnedBy,
     Planet,
     ProducedByEmpire,
-    Source,
     SpeciesDislikes,
     SpeciesLikes,
-    Target,
     TargetPopulation,
     UniqueNumberOf,
     Unowned,
 )
+from focs._effects import BuildBuilding, LocalCandidate, Source, Target
 from focs._effects_new import (
     EffectsGroup,
     SetEmpireCapital,

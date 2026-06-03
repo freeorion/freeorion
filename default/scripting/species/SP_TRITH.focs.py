@@ -1,4 +1,4 @@
-from focs._effects import Capital, IsSource, Planet, Unowned
+from focs._conditions import Capital, IsSource, Planet, Unowned
 from focs._effects_new import EffectsGroup, GiveEmpirePolicy
 from focs._species import *
 from species.species_macros.detection import GOOD_DETECTION

@@ -1,6 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
-from focs._effects import (
-    BuildBuilding,
+from focs._conditions import (
     ContainedBy,
     Contains,
     Enqueued,
@@ -8,7 +7,6 @@ from focs._effects import (
     HasSpecies,
     IsBuilding,
     IsSource,
-    LocalCandidate,
     Number,
     NumberOf,
     Object,
@@ -16,9 +14,8 @@ from focs._effects import (
     Planet,
     Population,
     ResourceSupplyConnected,
-    Source,
-    Target,
 )
+from focs._effects import BuildBuilding, LocalCandidate, Source, Target
 from focs._effects_new import (
     Destroy,
     EffectsGroup,

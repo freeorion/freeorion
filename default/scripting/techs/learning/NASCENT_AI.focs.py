@@ -1,4 +1,5 @@
-from focs._effects import Happiness, OwnedBy, Planet, Source, TargetPopulation
+from focs._conditions import Happiness, OwnedBy, Planet, TargetPopulation
+from focs._effects import Source
 from focs._effects_new import EffectsGroup, SetTargetResearch
 from focs._techs import Tech
 from focs._value_refs import (
