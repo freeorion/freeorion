@@ -1,4 +1,5 @@
-from focs._effects import Capital, IsSource, Planet, Target, Turn, Unowned
+from focs._conditions import Capital, IsSource, Planet, Turn, Unowned
+from focs._effects import Target
 from focs._effects_new import EffectsGroup, GiveEmpirePolicy, GiveEmpireTech
 from focs._species import *
 from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS

@@ -1,15 +1,5 @@
-from focs._effects import (
-    AsteroidsType,
-    ContainedBy,
-    Contains,
-    Focus,
-    Happiness,
-    InSystem,
-    OwnedBy,
-    Planet,
-    Population,
-    Source,
-)
+from focs._conditions import ContainedBy, Contains, Focus, Happiness, InSystem, OwnedBy, Planet, Population
+from focs._effects import AsteroidsType, Source
 from focs._effects_new import EffectsGroup, SetTargetIndustry
 from focs._techs import Tech
 from focs._value_refs import (

@@ -1,4 +1,5 @@
-from focs._effects import IsField, IsSource, LocalCandidate, Size, Source, WithinDistance
+from focs._conditions import IsField, IsSource, Size, WithinDistance
+from focs._effects import LocalCandidate, Source
 from focs._effects_new import (
     Destroy,
     EffectsGroup,

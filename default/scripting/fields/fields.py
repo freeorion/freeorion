@@ -1,3 +1,4 @@
+from focs._conditions import Object, Random, Size, System
 from focs._effects import (
     AsteroidsSize,
     AsteroidsType,
@@ -8,15 +9,11 @@ from focs._effects import (
     Inferno,
     Large,
     Medium,
-    Object,
     Ocean,
     Radiated,
-    Random,
-    Size,
     Small,
     Source,
     Swamp,
-    System,
     Terran,
     Tiny,
     Toxic,

@@ -1,4 +1,4 @@
-from focs._effects import (
+from focs._conditions import (
     Capital,
     Contains,
     EmpireHasAdoptedPolicy,
@@ -7,13 +7,11 @@ from focs._effects import (
     HasTag,
     Homeworld,
     IsBuilding,
-    LocalCandidate,
-    Mode,
     OwnedBy,
     OwnerHasTech,
     Planet,
-    Source,
 )
+from focs._effects import LocalCandidate, Mode, Source
 from focs._species import FocusType
 from focs._value_refs import (
     Statistic,

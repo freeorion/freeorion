@@ -1,3 +1,10 @@
+from focs._conditions import (
+    Contains,
+    IsSource,
+    Size,
+    System,
+    WithinDistance,
+)
 from focs._effects import *
 from focs._effects_new import (
     Destroy,

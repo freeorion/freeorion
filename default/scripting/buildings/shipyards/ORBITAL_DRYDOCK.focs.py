@@ -1,23 +1,20 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
-from focs._effects import (
-    AllyOf,
+from focs._conditions import (
     ContainedBy,
     Contains,
     EmpireHasAdoptedPolicy,
     InSystem,
     IsBuilding,
-    LocalCandidate,
     MaximumNumberOf,
     Object,
     OwnedBy,
     Planet,
     Population,
     Ship,
-    Source,
     Structure,
-    Target,
     Turn,
 )
+from focs._effects import AllyOf, LocalCandidate, Source, Target
 from focs._effects_new import EffectsGroup, GenerateSitRepMessage, SetStructure
 from focs._value_refs import (
     MaxOf,

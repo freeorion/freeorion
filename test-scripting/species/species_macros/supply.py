@@ -1,9 +1,5 @@
-from focs._effects import (
-    IsSource,
-    LocalCandidate,
-    Planet,
-    Target,
-)
+from focs._conditions import IsSource, Planet
+from focs._effects import LocalCandidate, Target
 
 # NO_SUPPLY
 # '''

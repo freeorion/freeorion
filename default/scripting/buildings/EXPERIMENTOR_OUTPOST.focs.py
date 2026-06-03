@@ -1,6 +1,5 @@
 from buildings.buildings_macros import CAN_ADD_STARLANE_TO_SOURCE
-from focs._effects import (
-    AnyEmpire,
+from focs._conditions import (
     ContainedBy,
     Contains,
     HasDesign,
@@ -8,7 +7,6 @@ from focs._effects import (
     InSystem,
     IsAnyObject,
     IsSource,
-    LocalCandidate,
     MinimumNumberOf,
     Monster,
     NumberOf,
@@ -17,12 +15,12 @@ from focs._effects import (
     Planet,
     Random,
     Ship,
-    Source,
     System,
     Turn,
     Unowned,
     WithinStarlaneJumps,
 )
+from focs._effects import AnyEmpire, LocalCandidate, Source
 from focs._effects_new import (
     AddStarlanes,
     CreateShip,

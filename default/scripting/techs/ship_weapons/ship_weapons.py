@@ -1,6 +1,7 @@
 from typing import Literal
 
-from focs._effects import IsSource, LocalCandidate, Max, MaxSecondaryStat, OwnedBy, Ship, Source, Target
+from focs._conditions import IsSource, OwnedBy, Ship
+from focs._effects import LocalCandidate, Max, MaxSecondaryStat, Source, Target
 from focs._effects_new import (
     EffectsGroup,
     GenerateSitRepMessage,

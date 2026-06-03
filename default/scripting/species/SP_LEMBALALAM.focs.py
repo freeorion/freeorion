@@ -1,4 +1,5 @@
-from focs._effects import HasSpecial, IsSource, OwnerHasTech, Planet, Source, Target, Turn, Uninhabitable
+from focs._conditions import HasSpecial, IsSource, OwnerHasTech, Planet, Turn
+from focs._effects import Source, Target, Uninhabitable
 from focs._effects_new import (
     AddSpecial,
     EffectsGroup,

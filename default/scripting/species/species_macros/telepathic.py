@@ -1,15 +1,5 @@
-from focs._effects import (
-    AnyEmpire,
-    Basic,
-    HasTag,
-    IsSource,
-    OwnedBy,
-    Planet,
-    Population,
-    Source,
-    VisibleToEmpire,
-    WithinStarlaneJumps,
-)
+from focs._conditions import HasTag, IsSource, OwnedBy, Planet, Population, VisibleToEmpire, WithinStarlaneJumps
+from focs._effects import AnyEmpire, Basic, Source
 from focs._effects_new import EffectsGroup, SetVisibility
 from focs._value_refs import (
     MaxOf,

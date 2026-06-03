@@ -1,4 +1,5 @@
-from focs._effects import Focus, Happiness, IsHuman, IsSource, Planet, Target, TargetIndustry
+from focs._conditions import Focus, Happiness, IsHuman, IsSource, Planet, TargetIndustry
+from focs._effects import Target
 from focs._effects_new import EffectsGroup, SetTargetIndustry
 from focs._value_refs import (
     GalaxyMaxAIAggression,

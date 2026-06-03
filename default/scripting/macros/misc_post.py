@@ -1,11 +1,5 @@
-from focs._effects import (
-    AnyEmpire,
-    Contains,
-    OwnedBy,
-    Planet,
-    System,
-    WithinStarlaneJumps,
-)
+from focs._conditions import Contains, OwnedBy, Planet, System, WithinStarlaneJumps
+from focs._effects import AnyEmpire
 from focs._value_refs import (
     NamedIntegerLookup,
 )

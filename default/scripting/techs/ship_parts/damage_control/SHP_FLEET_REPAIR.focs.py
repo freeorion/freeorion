@@ -1,18 +1,15 @@
-from focs._effects import (
-    AllyOf,
+from focs._conditions import (
     EmpireHasAdoptedPolicy,
     InSystem,
     IsSource,
-    LocalCandidate,
     OwnedBy,
     ResourceSupplyConnected,
     Ship,
-    Source,
     Stationary,
     Structure,
-    Target,
     Turn,
 )
+from focs._effects import AllyOf, LocalCandidate, Source, Target
 from focs._effects_new import EffectsGroup, SetStructure
 from focs._techs import Tech
 from focs._value_refs import (

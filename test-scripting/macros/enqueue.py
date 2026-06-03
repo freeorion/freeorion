@@ -1,10 +1,11 @@
+from focs._conditions import (
+    Contains,
+    Enqueued,
+    IsBuilding,
+    OwnedBy,
+)
+from focs._effects import *
 from focs._value_refs import CurrentContent
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
-
 
 # Only check for own buildings. The client may have seen a building once, which has been
 # destroyed while outside vision range. In this case the building remains forever in the

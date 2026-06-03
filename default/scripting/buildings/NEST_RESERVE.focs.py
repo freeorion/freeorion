@@ -1,13 +1,5 @@
-from focs._effects import (
-    BuildBuilding,
-    Contains,
-    Enqueued,
-    HasSpecial,
-    IsBuilding,
-    OwnedBy,
-    Planet,
-    Source,
-)
+from focs._conditions import Contains, Enqueued, HasSpecial, IsBuilding, OwnedBy, Planet
+from focs._effects import BuildBuilding, Source
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 
 try:

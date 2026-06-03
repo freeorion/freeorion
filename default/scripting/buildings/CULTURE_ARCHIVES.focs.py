@@ -1,17 +1,6 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
-from focs._effects import (
-    Capital,
-    Described,
-    Happiness,
-    IsAnyObject,
-    Object,
-    OwnedBy,
-    Planet,
-    Population,
-    Source,
-    Target,
-    Unowned,
-)
+from focs._conditions import Capital, Described, Happiness, IsAnyObject, Object, OwnedBy, Planet, Population, Unowned
+from focs._effects import Source, Target
 from focs._effects_new import EffectsGroup, SetEmpireMeter, SetTargetIndustry, SetTargetResearch
 from focs._value_refs import (
     NamedReal,

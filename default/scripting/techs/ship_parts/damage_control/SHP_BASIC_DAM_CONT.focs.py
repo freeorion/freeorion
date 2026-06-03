@@ -1,4 +1,5 @@
-from focs._effects import InSystem, LocalCandidate, OwnedBy, Ship, Source, Structure, Turn, UnlockPolicy
+from focs._conditions import InSystem, OwnedBy, Ship, Structure, Turn
+from focs._effects import LocalCandidate, Source, UnlockPolicy
 from focs._effects_new import EffectsGroup, Item, SetStructure
 from focs._techs import Tech
 from focs._value_refs import (

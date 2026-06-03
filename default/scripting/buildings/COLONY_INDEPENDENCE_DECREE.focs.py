@@ -1,17 +1,5 @@
-from focs._effects import (
-    AllyOf,
-    Capital,
-    IsBuilding,
-    IsSource,
-    LocalCandidate,
-    Object,
-    OwnedBy,
-    Partial,
-    Planet,
-    Population,
-    Source,
-    Target,
-)
+from focs._conditions import Capital, IsBuilding, IsSource, Object, OwnedBy, Planet, Population
+from focs._effects import AllyOf, LocalCandidate, Partial, Source, Target
 from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, SetOwner, SetSpecialCapacity, SetVisibility
 from focs._value_refs import (
     MaxOf,

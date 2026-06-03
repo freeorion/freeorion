@@ -1,4 +1,5 @@
-from focs._effects import IsSource, Target, Turn
+from focs._conditions import IsSource, Turn
+from focs._effects import Target
 from focs._effects_new import EffectsGroup, GiveEmpireTech
 from focs._species import *
 from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS

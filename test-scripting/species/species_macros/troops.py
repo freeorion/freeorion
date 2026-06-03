@@ -1,23 +1,17 @@
-from focs._effects import (
-    Adequate,
+from focs._conditions import (
     Capital,
     Focus,
     Happiness,
     HasEmpireStockpile,
     HasSpecies,
     Homeworld,
-    Hostile,
     IsHuman,
     IsSource,
-    LocalCandidate,
     OwnedBy,
     Planet,
-    Poor,
-    ResourceInfluence,
-    Source,
-    Target,
     Unowned,
 )
+from focs._effects import Adequate, Hostile, LocalCandidate, Poor, ResourceInfluence, Source, Target
 from focs._effects_new import (
     EffectsGroup,
     SetMaxTroops,

@@ -1,4 +1,5 @@
-from focs._effects import Focus, IsSource, LocalCandidate, Planet, Population, Ship, Target, TargetPopulation
+from focs._conditions import Focus, IsSource, Planet, Population, Ship, TargetPopulation
+from focs._effects import LocalCandidate, Target
 from focs._effects_new import (
     EffectsGroup,
     SetConstruction,

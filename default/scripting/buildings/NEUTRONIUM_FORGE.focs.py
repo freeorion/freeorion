@@ -1,13 +1,6 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
-from focs._effects import (
-    Contains,
-    IsBuilding,
-    Number,
-    OwnedBy,
-    Planet,
-    Source,
-    TargetPopulation,
-)
+from focs._conditions import Contains, IsBuilding, Number, OwnedBy, Planet, TargetPopulation
+from focs._effects import Source
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET, LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED
 

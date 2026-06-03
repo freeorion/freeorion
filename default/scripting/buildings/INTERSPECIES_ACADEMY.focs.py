@@ -1,6 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
-from focs._effects import (
-    BuildBuilding,
+from focs._conditions import (
     Contains,
     Described,
     Enqueued,
@@ -14,12 +13,10 @@ from focs._effects import (
     OwnedBy,
     Planet,
     Random,
-    RootCandidate,
-    Source,
     System,
-    Target,
     WithinStarlaneJumps,
 )
+from focs._effects import BuildBuilding, RootCandidate, Source, Target
 from focs._effects_new import (
     Destroy,
     EffectsGroup,

@@ -1,4 +1,4 @@
-from focs._effects import Armed, DesignHasPart, IsSource, Ship
+from focs._conditions import Armed, DesignHasPart, IsSource, Ship
 from focs._effects_new import EffectsGroup, SetMaxDamage, SetMaxSecondaryStat
 from focs._value_refs import (
     NamedReal,

@@ -6,11 +6,8 @@ from focs._value_refs import (
 # Policy Conformance halves it
 # Values are declared in macros/named_values.focs.txt
 try:
-    from focs._effects import (
-        EmpireHasAdoptedPolicy,
-        IsSource,
-        Target,
-    )
+    from focs._conditions import EmpireHasAdoptedPolicy, IsSource
+    from focs._effects import Target
 except ModuleNotFoundError:
     pass
 

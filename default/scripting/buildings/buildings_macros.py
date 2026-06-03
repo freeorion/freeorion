@@ -1,4 +1,4 @@
-from focs._effects import (
+from focs._conditions import (
     ContainedBy,
     Contains,
     HasStarlane,
@@ -6,22 +6,20 @@ from focs._effects import (
     IsBuilding,
     IsRootCandidate,
     IsSource,
-    LocalCandidate,
     MinimumNumberOf,
     Number,
     Object,
     OwnedBy,
     Planet,
     Population,
-    Source,
     SpeciesDislikes,
     SpeciesLikes,
     StarlaneToWouldBeAngularlyCloseToExistingStarlane,
     StarlaneToWouldBeCloseToObject,
     StarlaneToWouldCrossExistingStarlane,
     System,
-    Target,
 )
+from focs._effects import LocalCandidate, Source, Target
 from focs._effects_new import AddStarlanes, EffectsGroup, SetTargetHappiness
 from focs._value_refs import (
     DirectDistanceBetween,

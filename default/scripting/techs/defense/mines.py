@@ -11,23 +11,21 @@
 #   SYS_DEF_MINES_2
 #   FORTRESS_SPECIAL
 #   SYS_DEF_MINES_1
-from focs._effects import (
+from focs._conditions import (
     ContainedBy,
     Contains,
-    EnemyOf,
     Fleet,
     HasTag,
     InSystem,
     OwnedBy,
     Planet,
     Ship,
-    Source,
     Structure,
     System,
-    Target,
     Unowned,
     VisibleToEmpire,
 )
+from focs._effects import EnemyOf, Source, Target
 from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, SetStructure
 from focs._value_refs import (
     Value,
