@@ -46,7 +46,4 @@ struct unlockable_item_wrapper {
     const UnlockableItem item;
 };
 
-void RegisterGlobalsEffects(boost::python::dict& globals);
-
 #endif
-

@@ -49,7 +49,6 @@ namespace {
             module(parser_.LoadModule(&PyInit__species)),
             species(species_)
         {
-            RegisterGlobalsEffects(globals);
             RegisterGlobalsConditions(globals);
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
