@@ -196,7 +196,3 @@ condition_wrapper operator~(const value_ref_wrapper<double>& lhs)
 
 condition_wrapper operator~(const value_ref_wrapper<int>& lhs)
 { return ~(lhs.operator condition_wrapper()); }
-
-void RegisterGlobalsConditions(boost::python::dict& globals) {
-
-}

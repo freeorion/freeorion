@@ -34,7 +34,5 @@ condition_wrapper operator~(const condition_wrapper&);
 condition_wrapper operator~(const value_ref_wrapper<double>&);
 condition_wrapper operator~(const value_ref_wrapper<int>&);
 
-void RegisterGlobalsConditions(boost::python::dict& globals);
-
 #endif // _ConditionPythonParser_h_
 

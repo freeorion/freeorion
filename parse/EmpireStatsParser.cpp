@@ -36,7 +36,6 @@ namespace {
             module(parser_.LoadModule(&PyInit__empire_statistics)),
             stats(stats_)
         {
-            RegisterGlobalsConditions(globals);
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
 
