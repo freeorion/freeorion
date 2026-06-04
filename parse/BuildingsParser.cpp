@@ -35,7 +35,6 @@ namespace {
         start_rule_payload& buildings;
 
         py_grammar(const PythonParser& parser_, start_rule_payload& buildings_) :
-            globals(boost::python::import("builtins").attr("__dict__")),
             parser(parser_),
             module(parser_.LoadModule(&PyInit__buildings)),
             buildings(buildings_)

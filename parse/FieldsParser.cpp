@@ -32,7 +32,6 @@ namespace {
         start_rule_payload& field_types;
 
         py_grammar(const PythonParser& parser_, start_rule_payload& field_types_) :
-            globals(boost::python::import("builtins").attr("__dict__")),
             parser(parser_),
             module(parser_.LoadModule(&PyInit__fields)),
             field_types(field_types_)

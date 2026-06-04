@@ -31,7 +31,6 @@ namespace {
         start_rule_payload& stats;
 
         py_grammar(const PythonParser& parser_, start_rule_payload& stats_) :
-            globals(boost::python::import("builtins").attr("__dict__")),
             parser(parser_),
             module(parser_.LoadModule(&PyInit__empire_statistics)),
             stats(stats_)

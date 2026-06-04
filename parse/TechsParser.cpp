@@ -31,7 +31,6 @@ namespace {
         TechManager::TechContainer& techs;
 
         py_grammar(const PythonParser& parser_, TechManager::TechContainer& techs_) :
-            globals(boost::python::import("builtins").attr("__dict__")),
             parser(parser_),
             module(parser_.LoadModule(&PyInit__techs)),
             techs(techs_)
@@ -58,7 +57,6 @@ namespace {
         boost::python::object module;
 
         py_grammar_categories(const PythonParser& parser_) :
-            globals(boost::python::import("builtins").attr("__dict__")),
             parser(parser_),
             module(parser_.LoadModule(&PyInit__techs_categories))
         { }
