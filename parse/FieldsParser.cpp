@@ -37,8 +37,6 @@ namespace {
             module(parser_.LoadModule(&PyInit__fields)),
             field_types(field_types_)
         {
-            RegisterGlobalsEnums(globals);
-
             parser.LoadValueRefsModule();
             parser.LoadEffectsModule();
             parser.LoadConditionsModule();
