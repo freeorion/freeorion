@@ -4,7 +4,6 @@ from focs._conditions import (
     Ship,
     Unowned,
 )
-from focs._effects import *
 from focs._empire_statistics import EmpireStatistic
 from focs._value_refs import StatisticCount
 
