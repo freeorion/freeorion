@@ -40,7 +40,6 @@ namespace {
             module(parser_.LoadModule(&PyInit__buildings)),
             buildings(buildings_)
         {
-            RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
 
             parser.LoadValueRefsModule();
