@@ -1,3 +1,4 @@
+from focs._buildings import BuildingType
 from focs._conditions import Contains, IsBuilding, IsSource, Object, OwnedBy, OwnerHasTech, Planet, Population
 from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, SetPlanetType, SetPopulation, SetSpecies
 from focs._enums import AsteroidsType, Barren, GasGiantType
@@ -8,7 +9,7 @@ from macros.priorities import POPULATION_OVERRIDE_PRIORITY
 from macros.upkeep import COLONY_UPKEEP_MULTIPLICATOR
 
 try:
-    from focs._buildings import *
+    pass
 except ModuleNotFoundError:
     pass
 

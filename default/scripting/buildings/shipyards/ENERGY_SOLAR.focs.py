@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import ContainedBy, Contains, Enqueued, InSystem, IsBuilding, Object, OwnedBy, Planet, Star
 from focs._enums import BlackHole, BuildBuilding, Red
 from focs._sources import RootCandidate, Source
@@ -10,7 +11,7 @@ from macros.enqueue import (
 )
 
 try:
-    from focs._buildings import *
+    pass
 except ModuleNotFoundError:
     pass
 

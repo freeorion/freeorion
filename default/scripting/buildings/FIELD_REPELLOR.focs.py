@@ -1,3 +1,4 @@
+from focs._buildings import BuildingType
 from focs._conditions import IsBuilding, IsField, Number, OwnedBy
 from focs._effects_new import EffectsGroup, MoveTowards
 from focs._sources import Source, Target
@@ -8,7 +9,7 @@ from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 
 try:
-    from focs._buildings import *
+    pass
 except ModuleNotFoundError:
     pass
 

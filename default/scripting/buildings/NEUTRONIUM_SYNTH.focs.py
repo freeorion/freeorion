@@ -1,10 +1,11 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import Contains, IsBuilding, OwnedBy, Planet
 from focs._sources import Source
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 
 try:
-    from focs._buildings import *
+    pass
 except ModuleNotFoundError:
     pass
 

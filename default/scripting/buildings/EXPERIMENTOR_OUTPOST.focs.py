@@ -1,4 +1,5 @@
 from buildings.buildings_macros import CAN_ADD_STARLANE_TO_SOURCE
+from focs._buildings import BuildingType
 from focs._conditions import (
     ContainedBy,
     Contains,
@@ -50,7 +51,7 @@ from focs._value_refs import (
 from macros.misc_pre import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
 
 try:
-    from focs._buildings import *
+    pass
 except ModuleNotFoundError:
     pass
 

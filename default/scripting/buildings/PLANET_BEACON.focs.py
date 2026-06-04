@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import (
     Contains,
     Focus,
@@ -15,7 +16,7 @@ from focs._sources import RootCandidate, Source
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 
 try:
-    from focs._buildings import *
+    pass
 except ModuleNotFoundError:
     pass
 

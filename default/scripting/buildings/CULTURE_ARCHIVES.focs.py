@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import Capital, Described, Happiness, IsAnyObject, Object, OwnedBy, Planet, Population, Unowned
 from focs._effects_new import EffectsGroup, SetEmpireMeter, SetTargetIndustry, SetTargetResearch
 from focs._sources import Source, Target
@@ -10,7 +11,7 @@ from macros.base_prod import BUILDING_COST_MULTIPLIER, INDUSTRY_PER_POP
 from macros.priorities import TARGET_AFTER_2ND_SCALING_PRIORITY
 
 try:
-    from focs._buildings import *
+    pass
 except ModuleNotFoundError:
     pass
 

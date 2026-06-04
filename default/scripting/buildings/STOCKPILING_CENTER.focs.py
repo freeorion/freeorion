@@ -1,5 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
-from focs._buildings import *
+from focs._buildings import BuildingType
 from focs._conditions import Capital, Enqueued, IsBuilding, Number, Object, OwnedBy, Planet
 from focs._effects_new import EffectsGroup, SetMaxStockpile
 from focs._enums import BuildBuilding, DestroyOnCapture, Sum

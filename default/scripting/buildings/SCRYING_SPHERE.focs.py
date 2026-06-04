@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import (
     Capital,
     ContainedBy,
@@ -21,7 +22,7 @@ from focs._value_refs import (
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 
 try:
-    from focs._buildings import *
+    pass
 except ModuleNotFoundError:
     pass
 

@@ -1,3 +1,4 @@
+from focs._buildings import BuildingType
 from focs._conditions import Contains, IsBuilding, IsSource, Object, OwnedBy, OwnerHasTech, Planet, Population
 from focs._effects_new import AddSpecial, Destroy, EffectsGroup, GenerateSitRepMessage, SetPlanetType
 from focs._enums import AsteroidsType, Barren, GasGiantType
@@ -6,7 +7,7 @@ from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_ARTIFICIAL_PLANET_EXCLUSION
 
 try:
-    from focs._buildings import *
+    pass
 except ModuleNotFoundError:
     pass
 
