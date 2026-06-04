@@ -9997,6 +9997,25 @@ WORLDTREE_SPECIAL_DESC
 
 A gigantic tree has grown so large that its crown has left the atmosphere of the planet. Scientists suspect that it was planted by the Caretakers in ancient times.'''
 
+EQUATORIAL_MODONS_SPECIAL
+Equatorial Modons
+
+EQUATORIAL_MODONS_SPECIAL_DESC
+'''This planet's wind regime creates regular coherent large-scale twin cyclones in the equatorial zone. The slow movement of these equatorial modons provides perfect conditions for life.
+
+This Special provides a bonus of [[value EQUATORIAL_MODONS_POPULATION_BONUS]] to the planet's population.
+'''
+
+POLAR_VORTEX_SPECIAL
+Polar Vortex
+
+POLAR_VORTEX_SPECIAL_DESC
+'''This planet has Vortex Crystals at its poles, geometric arrays of like-signed vortices, of great stability.
+That makes them ideal for a Gas Giant Generator.
+
+If a Gas Giant Generator is built on this planet, it will provide an additional bonus of [[value POLAR_VORTEX_INDUSTRY_BONUS]] to the industry of allied industry-focused planets in the system.
+'''
+
 ANCIENT_RUINS_DEPLETED_SPECIAL
 Ancient Ruins (Excavated)
 
