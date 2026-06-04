@@ -69,6 +69,7 @@ Species(
         "BLD_SOL_ORB_GEN",
         "BLD_INDUSTRY_CENTER",
         "KRAKEN_NEST_SPECIAL",
+        "POLAR_VORTEX_SPECIAL",  # does not compute to them
         "WORLDTREE_SPECIAL",
         "HONEYCOMB_SPECIAL",
         "PLC_CONFORMANCE",
