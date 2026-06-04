@@ -50,18 +50,11 @@ unknown-name = "ignore"
     "E402",
     "F401",
 ]
-# Limitations for FOCS skeletons, it would be nice to solve this
-"default/scripting/*" =  ["F403", "F405"]
 
 # one import is used in other species scripts, and don't want to special case the generator script
 "default/scripting/buildings/colonies/SP_EXOBOT.focs.py" = ["F401"]
 
-# Since imports are empty we need to use asterisk import between skeletons
-"default/scripting/focs/*" = ["F405"]
-"default/scripting/game_rules.focs.py"=["F821"]
-"test-scripting/game_rules.focs.py"=["F821"]
 "test-scripting/game_rules_failed.focs.py"=["F821"]
-"test-scripting/*"=["F405", "F403"]
 
 [tool.ruff.lint.isort]
 extra-standard-library=["freeorion", "freeOrionAIInterface"]
