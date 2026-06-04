@@ -49,8 +49,6 @@ public:
 
     void SetModulesDir(const std::filesystem::path& modules_dir);
 
-    void SetPopulateGlobalsFunc(std::function<void(boost::python::dict&)> populate_globals_func);
-
     //! @name Modules finder and loader
     //! Methods exposed to Python as a meta path finder and a loader
     //! @{
@@ -72,7 +70,6 @@ private:
     //! @name Modules finder and loader
     //! Finder and loader implementation properties
     //! @{
-    std::function<void(boost::python::dict&)> m_populate_globals_func;
     std::filesystem::path m_modules_dir;
     boost::optional<boost::python::list> m_meta_path;
     int m_meta_path_len;

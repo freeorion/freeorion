@@ -294,10 +294,6 @@ void PythonCommon::SetModulesDir(const std::filesystem::path& modules_dir) {
     m_modules_dir = modules_dir;
 }
 
-void PythonCommon::SetPopulateGlobalsFunc(std::function<void(boost::python::dict&)> populate_globals_func) {
-    m_populate_globals_func = populate_globals_func;
-}
-
 py::object PythonCommon::find_spec(const std::string& fullname, const py::object& path, const py::object& target) const {
     auto module_path(m_modules_dir);
     std::string parent;
@@ -366,9 +362,6 @@ py::object PythonCommon::exec_module(py::object& module) {
             // and still import will work
             DebugLogger() << "Executing module file " << module_path.string();
             try {
-                if (m_populate_globals_func)
-                    m_populate_globals_func(globals);
-
                 CompileEval(file_contents.c_str(), module_path.native(), globals);
             } catch (const boost::python::error_already_set&) {
                 HandleErrorAlreadySet();
