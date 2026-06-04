@@ -71,6 +71,7 @@ Species(
         "FOCUS_RESEARCH",
         "FOCUS_STOCKPILE",
         "GAIA_SPECIAL",
+        "EQUATORIAL_MODONS_SPECIAL", #calculating their regularity soothes the Fulvers' brain
         "MIMETIC_ALLOY_SPECIAL",
         "PLC_ALGORITHMIC_RESEARCH",
         "PLC_COLONIZATION",

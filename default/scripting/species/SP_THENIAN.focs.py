@@ -56,6 +56,7 @@ Species(
     defaultfocus="FOCUS_GROWTH",
     likes=[
         "FOCUS_RESEARCH",  # arty farty
+        "EQUATORIAL_MODONS_SPECIAL", # helps their sustenance
     ],
     dislikes=[
         "BLD_GAS_GIANT_GEN",  # messes with their habitat
