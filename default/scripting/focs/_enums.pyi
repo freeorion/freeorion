@@ -10,6 +10,7 @@ from focs._types import (
     _PlanetSize,
     _PlanetType,
     _Resource,
+    _ShipPartClass,
     _StarType,
     _Visibility,
 )
@@ -93,3 +94,21 @@ BuildBuilding = _EnqueuedObjectType()
 
 DefaultCaptureResult = _CaptureResult()
 DestroyOnCapture = _CaptureResult()
+
+ShortRangeClass = _ShipPartClass()
+FighterBayClass = _ShipPartClass()
+FighterHangarClass = _ShipPartClass()
+ShieldClass = _ShipPartClass()
+ArmourClass = _ShipPartClass()
+TroopsClass = _ShipPartClass()
+DetectionClass = _ShipPartClass()
+StealthClass = _ShipPartClass()
+FuelClass = _ShipPartClass()
+ColonyClass = _ShipPartClass()
+SpeedClass = _ShipPartClass()
+GeneralClass = _ShipPartClass()
+BombardClass = _ShipPartClass()
+IndustryClass = _ShipPartClass()
+ResearchClass = _ShipPartClass()
+InfluenceClass = _ShipPartClass()
+ProductionLocationClass = _ShipPartClass()

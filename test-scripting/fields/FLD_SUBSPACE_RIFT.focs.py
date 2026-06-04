@@ -5,7 +5,6 @@ from focs._conditions import (
     System,
     WithinDistance,
 )
-from focs._effects import *
 from focs._effects_new import (
     Destroy,
     EffectsGroup,
