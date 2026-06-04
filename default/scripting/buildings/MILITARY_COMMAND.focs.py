@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import *
 from focs._conditions import (
     Capital,
     ContainedBy,
@@ -11,6 +12,7 @@ from focs._conditions import (
     TargetPopulation,
 )
 from focs._effects_new import EffectsGroup, SetEmpireMeter, SetMaxDefense, SetMaxTroops
+from focs._enums import DestroyOnCapture
 from focs._sources import Source
 from focs._value_refs import (
     SpeciesShipsDestroyed,
@@ -20,11 +22,6 @@ from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 from macros.misc_pre import PLANET_DEFENSE_FACTOR
 from macros.priorities import TARGET_EARLY_BEFORE_SCALING_PRIORITY
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_MILITARY_COMMAND",
