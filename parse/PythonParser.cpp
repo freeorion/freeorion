@@ -404,7 +404,6 @@ PythonParser::~PythonParser()
 }
 
 bool PythonParser::ParseFileCommon(const std::filesystem::path& path,
-                                   const boost::python::dict& globals,
                                    std::string& filename, std::string& file_contents) const
 {
     filename = PathToString(path);
@@ -416,6 +415,7 @@ bool PythonParser::ParseFileCommon(const std::filesystem::path& path,
     }
 
     try {
+        boost::python::dict globals;
         PythonCommon::CompileEval(file_contents.c_str(), path, globals);
     } catch (const boost::python::error_already_set&) {
         m_python.HandleErrorAlreadySet();

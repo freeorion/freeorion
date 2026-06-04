@@ -25,7 +25,6 @@ namespace {
     std::map<std::string, std::unique_ptr<TechCategory>, std::less<>>* g_categories = nullptr;
 
     struct py_grammar {
-        boost::python::dict globals;
         const PythonParser& parser;
         boost::python::object module;
         TechManager::TechContainer& techs;
@@ -47,12 +46,9 @@ namespace {
         ~py_grammar() {
             parser.UnloadModule(module);
         }
-
-        boost::python::dict operator()() const { return globals; }
     };
 
     struct py_grammar_categories {
-        boost::python::dict globals;
         const PythonParser& parser;
         boost::python::object module;
 
@@ -64,8 +60,6 @@ namespace {
         ~py_grammar_categories() {
             parser.UnloadModule(module);
         }
-
-        boost::python::dict operator()() const { return globals; }
     };
 
     void insert_category(std::map<std::string, std::unique_ptr<TechCategory>, std::less<>>& categories,

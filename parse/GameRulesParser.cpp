@@ -22,7 +22,6 @@ namespace {
     DeclareThreadSafeLogger(parsing);
 
     struct py_grammar {
-        boost::python::dict globals;
         const PythonParser& parser;
         boost::python::object module;
         GameRulesTypeMap& game_rules;
@@ -39,8 +38,6 @@ namespace {
         ~py_grammar() {
             parser.UnloadModule(module);
         }
-
-        boost::python::dict operator()() const { return globals; }
     };
 
     object insert_rule_(object scope, const tuple& args, const dict& kw) {

@@ -25,7 +25,6 @@ namespace {
                                                        const boost::python::dict& kw);
 
     struct py_grammar {
-        boost::python::dict globals;
         const PythonParser& parser;
         boost::python::object module;
         start_rule_payload& stats;
@@ -46,8 +45,6 @@ namespace {
         ~py_grammar() {
             parser.UnloadModule(module);
         }
-
-        boost::python::dict operator()() const { return globals; }
     };
 
     boost::python::object py_insert_empire_statistics_scoped_(boost::python::object scope, const boost::python::tuple& args,
