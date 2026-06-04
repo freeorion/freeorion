@@ -165,9 +165,7 @@ PythonParser::PythonParser(PythonCommon& _python) :
     }
 
     try {
-        m_python.SetPopulateGlobalsFunc([](py::dict& globals) {
-            RegisterGlobalsEnums(globals);
-        });
+        m_python.SetPopulateGlobalsFunc([](py::dict& globals) {});
         m_python.InitModuleLoader();
 
         // Use wrappers to not collide with types in server and AI
