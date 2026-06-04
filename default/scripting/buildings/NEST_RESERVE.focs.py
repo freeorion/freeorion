@@ -1,10 +1,11 @@
+from focs._buildings import BuildingType
 from focs._conditions import Contains, Enqueued, HasSpecial, IsBuilding, OwnedBy, Planet
 from focs._enums import BuildBuilding
 from focs._sources import Source
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 
 try:
-    from focs._buildings import *
+    pass
 except ModuleNotFoundError:
     pass
 

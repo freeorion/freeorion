@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import (
     Contains,
     Focus,
@@ -25,7 +26,7 @@ from macros.priorities import (
 )
 
 try:
-    from focs._buildings import *
+    pass
 except ModuleNotFoundError:
     pass
 

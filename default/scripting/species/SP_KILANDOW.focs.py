@@ -2,7 +2,7 @@ from focs._conditions import ContainedBy, Contains, Focus, Happiness, IsSource, 
 from focs._effects_new import EffectsGroup, SetTargetIndustry
 from focs._enums import AsteroidsType
 from focs._sources import Source, Target
-from focs._species import *
+from focs._species import Species
 from focs._value_refs import (
     NamedReal,
     Value,

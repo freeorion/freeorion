@@ -1,3 +1,4 @@
+from focs._buildings import BuildingType
 from focs._conditions import ContainedBy, Contains, IsSource, OwnedBy, Planet, Star
 from focs._effects_new import CreateField, Destroy, EffectsGroup
 from focs._enums import BlackHole
@@ -6,7 +7,7 @@ from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 
 try:
-    from focs._buildings import *
+    pass
 except ModuleNotFoundError:
     pass
 

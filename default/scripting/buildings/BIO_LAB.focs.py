@@ -1,4 +1,4 @@
-from focs._buildings import *
+from focs._buildings import BuildingType
 from focs._conditions import Contains, IsBuilding, OwnedBy, Planet
 from focs._sources import Source
 from macros.base_prod import BUILDING_COST_MULTIPLIER

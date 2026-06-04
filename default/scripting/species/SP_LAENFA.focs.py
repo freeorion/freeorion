@@ -1,7 +1,7 @@
 from focs._conditions import InSystem, IsSource, Ship, Star, Stationary
 from focs._effects_new import EffectsGroup, SetFuel
 from focs._enums import Blue, White
-from focs._species import *
+from focs._species import Species
 from focs._value_refs import (
     Value,
 )

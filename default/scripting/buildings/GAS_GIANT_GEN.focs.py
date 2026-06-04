@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import (
     ContainedBy,
     Contains,
@@ -24,7 +25,7 @@ from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 from macros.priorities import TARGET_AFTER_2ND_SCALING_PRIORITY
 
 try:
-    from focs._buildings import *
+    pass
 except ModuleNotFoundError:
     pass
 

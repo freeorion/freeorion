@@ -16,7 +16,7 @@ from focs._enums import (
     Tundra,
 )
 from focs._sources import Source, Target
-from focs._species import *
+from focs._species import Species
 from focs._value_refs import (
     NamedReal,
     Value,

@@ -1,3 +1,4 @@
+from focs._buildings import BuildingType
 from focs._conditions import (
     Contains,
     EmpireHasAdoptedPolicy,
@@ -42,7 +43,7 @@ from macros.enqueue import (
 )
 
 try:
-    from focs._buildings import *
+    pass
 except ModuleNotFoundError:
     pass
 
