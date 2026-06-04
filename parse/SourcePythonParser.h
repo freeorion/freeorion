@@ -23,6 +23,4 @@ struct variable_wrapper {
     const ValueRef::ContainerType m_container;
 };
 
-void RegisterGlobalsSources(boost::python::dict& globals);
-
 #endif // _SourcePythonParser_h_

@@ -15,8 +15,3 @@ ValueRef::ContainerType variable_wrapper::ToContainer(std::string_view s) noexce
            (s == "Fleet") ? ValueRef::ContainerType::FLEET :
            ValueRef::ContainerType::NONE;
 }
-
-void RegisterGlobalsSources(boost::python::dict& globals) {
-
-}
-

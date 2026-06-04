@@ -36,7 +36,6 @@ namespace {
             module(parser_.LoadModule(&PyInit__techs)),
             techs(techs_)
         {
-            RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
 
             parser.LoadConditionsModule();

@@ -139,7 +139,6 @@ namespace parse {
         py_grammar(const PythonParser& parser) :
             globals(boost::python::import("builtins").attr("__dict__"))
         {
-            RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
 
             parser.LoadValueRefsModule();
