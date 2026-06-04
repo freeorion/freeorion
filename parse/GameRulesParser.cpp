@@ -29,7 +29,6 @@ namespace {
         PythonTypes types;
 
         py_grammar(const PythonParser& parser_, GameRulesTypeMap& game_rules_) :
-            globals(boost::python::import("builtins").attr("__dict__")),
             parser(parser_),
             module(parser_.LoadModule(&PyInit__game_rules)),
             game_rules(game_rules_)

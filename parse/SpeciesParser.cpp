@@ -44,7 +44,6 @@ namespace {
         start_rule_payload::first_type& species;
 
         py_grammar(const PythonParser& parser_, start_rule_payload::first_type& species_) :
-            globals(boost::python::import("builtins").attr("__dict__")),
             parser(parser_),
             module(parser_.LoadModule(&PyInit__species)),
             species(species_)
@@ -72,7 +71,6 @@ namespace {
         start_rule_payload::second_type& ordering;
 
         py_manifest_grammar(const PythonParser& parser_, start_rule_payload::second_type& ordering_) :
-            globals(boost::python::import("builtins").attr("__dict__")),
             parser(parser_),
             module(parser_.LoadModule(&PyInit__species_census_ordering)),
             ordering(ordering_)
