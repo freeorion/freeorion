@@ -105,19 +105,6 @@ void PythonBase::Finalize() {
     }
 }
 
-void PythonBase::SetCurrentDir(const fs::path& dir) {
-    if (!fs::exists(dir)) {
-        ErrorLogger() << "Tried setting current dir to non-existing dir: " << PathToString(dir);
-        return;
-    }
-    py::str script = "import os\n"
-        "os.chdir(r'";
-    script += dir.native();
-    script += "')\n"
-        "print ('Python current directory set to', os.getcwd())";
-    exec(script, *m_namespace, *m_namespace);
-}
-
 void PythonBase::AddToSysPath(const fs::path& dir) {
     if (!fs::exists(dir)) {
         ErrorLogger() << "Tried adding non-existing dir to sys.path: " << PathToString(dir);
