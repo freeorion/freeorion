@@ -10,8 +10,8 @@ from focs._conditions import (
     Planet,
     WithinStarlaneJumps,
 )
-from focs._effects import RootCandidate, Source
 from focs._effects_new import Destroy, EffectsGroup
+from focs._sources import RootCandidate, Source
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 
 try:

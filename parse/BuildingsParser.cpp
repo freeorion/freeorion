@@ -46,6 +46,7 @@ namespace {
             parser.LoadValueRefsModule();
             parser.LoadEffectsModule();
             parser.LoadConditionsModule();
+            parser.LoadSourcesModule();
 
             module.attr("__grammar") = boost::cref(*this);
         }

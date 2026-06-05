@@ -1,6 +1,7 @@
 from focs._conditions import HasTag, OwnedBy, Planet
-from focs._effects import Hostile, Poor, Source, Target
+from focs._effects import Hostile, Poor
 from focs._effects_new import EffectsGroup, SetTargetPopulation
+from focs._sources import Source, Target
 from focs._techs import Tech
 from focs._value_refs import (
     StatisticIf,

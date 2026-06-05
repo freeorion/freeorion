@@ -10,8 +10,9 @@ from focs._conditions import (
     Unowned,
     WithinStarlaneJumps,
 )
-from focs._effects import Partial, Source
+from focs._effects import Partial
 from focs._effects_new import EffectsGroup, SetEmpireMeter, SetVisibility
+from focs._sources import Source
 from focs._value_refs import (
     MaxOf,
     Value,

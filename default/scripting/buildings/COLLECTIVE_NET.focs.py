@@ -11,8 +11,8 @@ from focs._conditions import (
     TargetPopulation,
     WithinDistance,
 )
-from focs._effects import Source, Target
 from focs._effects_new import EffectsGroup, SetTargetIndustry, SetTargetResearch
+from focs._sources import Source, Target
 from focs._value_refs import (
     NamedReal,
     NamedRealLookup,

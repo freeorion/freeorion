@@ -1,6 +1,6 @@
 from focs._conditions import IsSource, Turn
-from focs._effects import Target
 from focs._effects_new import EffectsGroup, GiveEmpireTech
+from focs._sources import Target
 from focs._species import *
 from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS
 from species.species_macros.env import BROAD_EP, INFERNO_BROAD_EP

@@ -5,6 +5,7 @@ from focs._conditions import (
     OwnedBy,
 )
 from focs._effects import *
+from focs._sources import Source
 from focs._value_refs import CurrentContent
 
 # Only check for own buildings. The client may have seen a building once, which has been

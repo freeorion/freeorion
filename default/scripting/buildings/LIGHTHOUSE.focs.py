@@ -11,8 +11,9 @@ from focs._conditions import (
     Unowned,
     WithinDistance,
 )
-from focs._effects import EnemyOf, LocalCandidate, Max, Source
+from focs._effects import EnemyOf, Max
 from focs._effects_new import EffectsGroup, SetSpeed, SetStealth
+from focs._sources import LocalCandidate, Source
 from focs._value_refs import (
     MinOf,
     NamedReal,

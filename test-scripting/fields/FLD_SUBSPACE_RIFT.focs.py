@@ -13,6 +13,7 @@ from focs._effects_new import (
     SetSize,
 )
 from focs._fields import FieldType
+from focs._sources import Source, Target
 
 FieldType(
     name="FLD_SUBSPACE_RIFT",

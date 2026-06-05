@@ -15,7 +15,7 @@ from focs._conditions import (
     Population,
     ResourceSupplyConnected,
 )
-from focs._effects import BuildBuilding, LocalCandidate, Source, Target
+from focs._effects import BuildBuilding
 from focs._effects_new import (
     Destroy,
     EffectsGroup,
@@ -28,6 +28,7 @@ from focs._effects_new import (
     SetTargetInfluence,
     SetTargetResearch,
 )
+from focs._sources import LocalCandidate, Source, Target
 from focs._value_refs import (
     MinOf,
     Value,

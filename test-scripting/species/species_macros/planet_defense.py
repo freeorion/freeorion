@@ -11,13 +11,13 @@
 # '''
 
 from focs._conditions import Focus, IsSource, Planet, Unowned
-from focs._effects import LocalCandidate, Target
 from focs._effects_new import (
     EffectsGroup,
     SetDefense,
     SetMaxDefense,
     SetTargetHappiness,
 )
+from focs._sources import LocalCandidate, Target
 from focs._value_refs import (
     CurrentTurn,
     GameRule,

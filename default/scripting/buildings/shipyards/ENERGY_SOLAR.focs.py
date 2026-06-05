@@ -1,6 +1,7 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
 from focs._conditions import ContainedBy, Contains, Enqueued, InSystem, IsBuilding, Object, OwnedBy, Planet, Star
-from focs._effects import BlackHole, BuildBuilding, Red, RootCandidate, Source
+from focs._effects import BlackHole, BuildBuilding, Red
+from focs._sources import RootCandidate, Source
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import (
     ENQUEUE_BUILD_ONE_PER_PLANET,

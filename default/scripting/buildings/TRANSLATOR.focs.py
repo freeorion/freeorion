@@ -11,8 +11,9 @@ from focs._conditions import (
     TargetPopulation,
     Unowned,
 )
-from focs._effects import CountUnique, LocalCandidate, Source
+from focs._effects import CountUnique
 from focs._effects_new import EffectsGroup, SetEmpireMeter, SetTargetInfluence
+from focs._sources import LocalCandidate, Source
 from focs._value_refs import (
     NamedReal,
     Statistic,

@@ -1,6 +1,6 @@
 from focs._conditions import HasSpecies, IsSource, Object, Planet
-from focs._effects import Source, Target
 from focs._effects_new import Destroy, EffectsGroup, SetPopulation, SetSpecies
+from focs._sources import Source, Target
 from focs._value_refs import (
     GameRule,
     MaxOf,

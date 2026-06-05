@@ -23,17 +23,15 @@ from focs._effects import (
     Hostile,
     Huge,
     Large,
-    LocalCandidate,
     Medium,
     Min,
     Poor,
     Small,
-    Source,
-    Target,
     Tiny,
     Uninhabitable,
 )
 from focs._effects_new import EffectsGroup, SetHappiness, SetTargetHappiness
+from focs._sources import LocalCandidate, Source, Target
 from focs._value_refs import (
     Abs,
     CurrentTurn,

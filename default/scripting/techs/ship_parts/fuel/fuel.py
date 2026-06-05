@@ -3,8 +3,8 @@
 # @1@ Accounting label to present this effect with
 # @2@ Fuel capacity increase per fuel part
 from focs._conditions import DesignHasPart, OwnedBy, Ship
-from focs._effects import Source, Target
 from focs._effects_new import EffectsGroup, SetMaxFuel
+from focs._sources import Source, Target
 from focs._value_refs import (
     NamedReal,
     PartsInShipDesign,

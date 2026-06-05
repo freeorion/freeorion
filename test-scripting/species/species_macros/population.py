@@ -21,14 +21,11 @@ from focs._effects import (
     GasGiantType,
     Good,
     Hostile,
-    LocalCandidate,
     Neutron,
     NoStar,
     Orange,
     Poor,
     Red,
-    Source,
-    Target,
     Uninhabitable,
     White,
     Yellow,
@@ -39,6 +36,7 @@ from focs._effects_new import (
     SetStarType,
     SetTargetPopulation,
 )
+from focs._sources import LocalCandidate, Source, Target
 from focs._value_refs import (
     Abs,
     CurrentTurn,

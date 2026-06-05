@@ -1,6 +1,7 @@
 from focs._conditions import OwnedBy
-from focs._effects import LocalCandidate, Source, Sum
+from focs._effects import Sum
 from focs._empire_statistics import EmpireStatistic
+from focs._sources import LocalCandidate, Source
 from focs._value_refs import (
     Statistic,
 )

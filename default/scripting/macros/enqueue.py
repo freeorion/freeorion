@@ -2,7 +2,8 @@
 # destroyed while outside vision range. In this case the building remains forever in the
 # client's context, but it should not stop a player from rebuilding the same type.
 from focs._conditions import Contains, Enqueued, IsBuilding, OwnedBy
-from focs._effects import BuildBuilding, Source
+from focs._effects import BuildBuilding
+from focs._sources import Source
 from focs._value_refs import (
     CurrentContent,
 )

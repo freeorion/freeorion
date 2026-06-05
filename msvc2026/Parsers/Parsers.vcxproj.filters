@@ -192,6 +192,9 @@
     <ClCompile Include="..\..\parse\SourcePythonParser.cpp">
       <Filter>Source Files\parse\python</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\parse\SourcesPythonModuleParser.cpp">
+      <Filter>Source Files\parse\python</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\parse\ValueRefPythonParser.cpp">
       <Filter>Source Files\parse\python</Filter>
     </ClCompile>
@@ -298,6 +301,9 @@
       <Filter>Header Files\parse\python</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\SourcePythonParser.h">
+      <Filter>Header Files\parse\python</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\SourcesPythonModuleParser.h">
       <Filter>Header Files\parse\python</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\ValueRefPythonParser.h">

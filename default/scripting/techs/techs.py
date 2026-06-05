@@ -1,6 +1,6 @@
 # In typical usage this is used as a plain macro, not a substitution macro; the substitution is instead done within the calling macro
 from focs._conditions import DesignHasPart, OwnedBy, Ship
-from focs._effects import LocalCandidate, Source
+from focs._sources import LocalCandidate, Source
 from focs._value_refs import (
     TurnTechResearched,
 )

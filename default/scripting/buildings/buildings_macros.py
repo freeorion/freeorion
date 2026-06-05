@@ -19,8 +19,8 @@ from focs._conditions import (
     StarlaneToWouldCrossExistingStarlane,
     System,
 )
-from focs._effects import LocalCandidate, Source, Target
 from focs._effects_new import AddStarlanes, EffectsGroup, SetTargetHappiness
+from focs._sources import LocalCandidate, Source, Target
 from focs._value_refs import (
     DirectDistanceBetween,
     MaxOf,

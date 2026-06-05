@@ -1,6 +1,7 @@
 from focs._conditions import HasTag, OwnedBy, Planet, Ship
-from focs._effects import Source, UnlockPolicy
+from focs._effects import UnlockPolicy
 from focs._effects_new import Item
+from focs._sources import Source
 from focs._techs import Tech
 from focs._value_refs import (
     StatisticIf,

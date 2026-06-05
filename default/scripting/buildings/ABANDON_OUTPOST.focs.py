@@ -1,6 +1,7 @@
 from focs._conditions import IsBuilding, IsSource, Object, OwnedBy, Planet, Population, Turn
-from focs._effects import LocalCandidate, Partial, Source, Target
+from focs._effects import Partial
 from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, SetOwner, SetVisibility
+from focs._sources import LocalCandidate, Source, Target
 from focs._value_refs import (
     MaxOf,
     ThisBuilding,

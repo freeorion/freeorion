@@ -1,6 +1,7 @@
 from focs._conditions import IsSource
-from focs._effects import Source, UnlockPolicy
+from focs._effects import UnlockPolicy
 from focs._effects_new import EffectsGroup, Item, SetEmpireMeter
+from focs._sources import Source
 from focs._techs import Tech
 from focs._value_refs import (
     Value,

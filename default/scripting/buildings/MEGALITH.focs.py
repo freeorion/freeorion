@@ -9,7 +9,6 @@ from focs._conditions import (
     TargetPopulation,
     WithinStarlaneJumps,
 )
-from focs._effects import Source, Target
 from focs._effects_new import (
     EffectsGroup,
     SetEmpireCapital,
@@ -20,6 +19,7 @@ from focs._effects_new import (
     SetResearch,
     SetTargetConstruction,
 )
+from focs._sources import Source, Target
 from focs._value_refs import (
     Value,
 )

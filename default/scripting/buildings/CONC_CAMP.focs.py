@@ -12,7 +12,6 @@ from focs._conditions import (
     Population,
     ProducedByEmpire,
 )
-from focs._effects import Source, Target
 from focs._effects_new import (
     AddSpecial,
     Destroy,
@@ -23,6 +22,7 @@ from focs._effects_new import (
     SetSpeciesOpinion,
     SetTargetIndustry,
 )
+from focs._sources import Source, Target
 from focs._value_refs import (
     MinOf,
     NamedReal,
