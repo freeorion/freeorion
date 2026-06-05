@@ -1,6 +1,6 @@
 from focs._conditions import Capital, HasSpecies, Planet, Population
-from focs._effects import LocalCandidate, Target
 from focs._effects_new import EffectsGroup, SetSpeciesOpinion, SetSpeciesTargetOpinion
+from focs._sources import LocalCandidate, Target
 from focs._value_refs import (
     GameRule,
     MaxOf,

@@ -25,8 +25,9 @@ from focs._conditions import (
     Unowned,
     VisibleToEmpire,
 )
-from focs._effects import EnemyOf, Source, Target
+from focs._effects import EnemyOf
 from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, SetStructure
+from focs._sources import Source, Target
 from focs._value_refs import (
     Value,
 )

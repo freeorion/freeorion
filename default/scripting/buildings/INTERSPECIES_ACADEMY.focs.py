@@ -16,7 +16,7 @@ from focs._conditions import (
     System,
     WithinStarlaneJumps,
 )
-from focs._effects import BuildBuilding, RootCandidate, Source, Target
+from focs._effects import BuildBuilding
 from focs._effects_new import (
     Destroy,
     EffectsGroup,
@@ -25,6 +25,7 @@ from focs._effects_new import (
     SetTargetInfluence,
     SetTargetResearch,
 )
+from focs._sources import RootCandidate, Source, Target
 from focs._value_refs import (
     NamedReal,
     Value,

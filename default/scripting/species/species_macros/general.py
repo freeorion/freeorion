@@ -1,5 +1,4 @@
 from focs._conditions import Focus, IsSource, Planet, Population, Ship, TargetPopulation
-from focs._effects import LocalCandidate, Target
 from focs._effects_new import (
     EffectsGroup,
     SetConstruction,
@@ -12,6 +11,7 @@ from focs._effects_new import (
     SetTargetInfluence,
     SetTargetResearch,
 )
+from focs._sources import LocalCandidate, Target
 from focs._value_refs import (
     Abs,
     CurrentTurn,

@@ -1,5 +1,4 @@
 from focs._conditions import IsField, IsSource, Size, WithinDistance
-from focs._effects import LocalCandidate, Source
 from focs._effects_new import (
     Destroy,
     EffectsGroup,
@@ -11,6 +10,7 @@ from focs._effects_new import (
     SetStealth,
 )
 from focs._fields import FieldType
+from focs._sources import LocalCandidate, Source
 from focs._value_refs import (
     MaxOf,
     MinOf,

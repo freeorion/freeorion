@@ -1,6 +1,6 @@
 from focs._conditions import IsBuilding, IsField, Number, OwnedBy
-from focs._effects import Source, Target
 from focs._effects_new import EffectsGroup, MoveTowards
+from focs._sources import Source, Target
 from focs._value_refs import (
     ThisBuilding,
 )

@@ -45,6 +45,7 @@ public:
     void LoadConditionsModule() const;
     void LoadValueRefsModule() const;
     void LoadEffectsModule() const;
+    void LoadSourcesModule() const;
 
 private:
     PythonCommon&                  m_python;

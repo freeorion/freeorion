@@ -1,6 +1,6 @@
 from focs._conditions import Capital, IsSource, OwnedBy, Planet, Population, ResourceSupplyConnected, Unowned
-from focs._effects import LocalCandidate, Source
 from focs._effects_new import EffectsGroup, SetDetection, SetEmpireMeter, SetStealth
+from focs._sources import LocalCandidate, Source
 from focs._species import *
 from focs._value_refs import (
     Value,

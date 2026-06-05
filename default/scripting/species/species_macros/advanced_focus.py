@@ -20,7 +20,7 @@ from focs._conditions import (
     WithinDistance,
     WithinStarlaneJumps,
 )
-from focs._effects import EnemyOf, LocalCandidate, RootCandidate, Source, Target
+from focs._effects import EnemyOf
 from focs._effects_new import (
     AddSpecial,
     Conditional,
@@ -34,6 +34,7 @@ from focs._effects_new import (
     SetStealth,
     SetTargetPopulation,
 )
+from focs._sources import LocalCandidate, RootCandidate, Source, Target
 from focs._value_refs import (
     DirectDistanceBetween,
     Value,

@@ -12,7 +12,6 @@ from focs._effects import (
     Ocean,
     Radiated,
     Small,
-    Source,
     Swamp,
     Terran,
     Tiny,
@@ -20,6 +19,7 @@ from focs._effects import (
     Tundra,
 )
 from focs._effects_new import Conditional, CreatePlanet, EffectsGroup
+from focs._sources import Source
 from focs._value_refs import (
     GalaxyPlanetDensity,
     OneOf,

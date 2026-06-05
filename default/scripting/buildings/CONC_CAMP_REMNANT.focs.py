@@ -10,8 +10,8 @@ from focs._conditions import (
     Object,
     Planet,
 )
-from focs._effects import Source, Target
 from focs._effects_new import Destroy, EffectsGroup, SetIndustry
+from focs._sources import Source, Target
 from macros.priorities import (
     CONCENTRATION_CAMP_PRIORITY,
 )

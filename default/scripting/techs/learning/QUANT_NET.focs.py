@@ -1,6 +1,6 @@
 from focs._conditions import Focus, Happiness, OwnedBy, Planet
-from focs._effects import Source, Target
 from focs._effects_new import EffectsGroup, SetTargetResearch
+from focs._sources import Source, Target
 from focs._techs import Tech
 from focs._value_refs import (
     NamedReal,

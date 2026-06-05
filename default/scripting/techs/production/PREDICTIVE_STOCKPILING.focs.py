@@ -1,6 +1,6 @@
 from focs._conditions import Focus, OwnedBy, Planet
-from focs._effects import Source
 from focs._effects_new import EffectsGroup, SetMaxStockpile
+from focs._sources import Source
 from focs._techs import Tech
 from focs._value_refs import (
     Value,

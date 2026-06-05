@@ -10,8 +10,8 @@ from focs._conditions import (
     Population,
     TargetPopulation,
 )
-from focs._effects import Source
 from focs._effects_new import EffectsGroup, SetTargetResearch
+from focs._sources import Source
 from focs._value_refs import (
     NamedReal,
     Value,

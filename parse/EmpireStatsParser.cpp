@@ -41,6 +41,7 @@ namespace {
 
             parser.LoadValueRefsModule();
             parser.LoadConditionsModule();
+            parser.LoadSourcesModule();
 
             module.attr("__stats") = boost::cref(*this);
         }
