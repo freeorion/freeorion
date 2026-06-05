@@ -46,7 +46,7 @@ namespace {
 #endif
     }
 
-    template<typename T>
+    template<typename T = std::filesystem::path::value_type>
     py::object path_to_pyobject(const std::basic_string<T>& filename) {
         PyObject* raw_py_str = nullptr;
         if constexpr (std::is_same_v<T, wchar_t>)
@@ -73,12 +73,6 @@ namespace {
 }
 
 struct module_spec {
-    module_spec(const std::string& name, const std::string& parent_, const PythonCommon& python_) :
-        fullname(name),
-        parent(parent_),
-        python(python_)
-    {}
-
     py::list path;
     py::list uninitialized_submodules;
     std::string fullname;
@@ -321,16 +315,24 @@ py::object PythonCommon::find_spec(const std::string& fullname, const py::object
     }
 
     if (IsExistingDir(module_path)) {
-        return py::object(module_spec(fullname, parent, *this));
+        return py::object(module_spec{
+            .fullname = fullname,
+            .parent = parent,
+            .python = *this
+        });
     } else {
         module_path.replace_extension("py");
-        if (IsExistingFile(module_path))
-            return py::object(module_spec(fullname, parent, *this));
-        else {
-            WarnLogger() << "Couldn't find file for module spec " << fullname;
-            return py::object();
+        if (IsExistingFile(module_path)) {
+            return py::object(module_spec{
+                .fullname = fullname,
+                .parent = parent,
+                .python = *this
+            });
         }
     }
+
+    WarnLogger() << "Couldn't find file for module spec " << fullname;
+    return py::object();
 }
 
 py::object PythonCommon::create_module(const module_spec& spec)
