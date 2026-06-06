@@ -7,16 +7,31 @@ jobs:
     name: MSVS 2022 on Windows CMake
     runs-on: windows-2022
     steps:
+      - name: Cache Mesa for Windows
+        id: cache-mesa
+        uses: actions/cache@v4
+        with:
+          path: ../mesa/
+          key: win64-mesa-latest
+      - name: Download Mesa
+        if: steps.cache-mesa.outputs.cache-hit != 'true'
+        id: download-mesa
+        uses: suisei-cn/actions-download-file@v1.6.1
+        with:
+          url: https://downloads.fdossena.com/geth.php?r=mesa64-latest
+          target: ../mesa/
+          filename: mesa64-latest.7z
+          retry-times: 5
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
       - name: Download SDK
         id: download-sdk
-        uses: suisei-cn/actions-download-file@v1.4.0
+        uses: suisei-cn/actions-download-file@v1.6.1
         with:
           url: https://github.com/freeorion/freeorion-sdk/releases/download/v19/FreeOrionSDK_19_MSVC-v143-x64.zip
           target: ../
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.3.1
+        uses: microsoft/setup-msbuild@v3
         with:
           vs-prerelease: true
       - name: Configure
@@ -47,15 +62,9 @@ jobs:
           fo_unittest_parse.exe --run_test=TestDefaultPythonParser/parse_species_full --log_level=message
       - name: Download Godot
         id: download-godot
-        uses: suisei-cn/actions-download-file@v1.4.0
+        uses: suisei-cn/actions-download-file@v1.6.1
         with:
           url: https://github.com/godotengine/godot-builds/releases/download/3.2.3-stable/Godot_v3.2.3-stable_win64.exe.zip 
-          target: ../
-      - name: Download Mesa
-        id: download-mesa
-        uses: suisei-cn/actions-download-file@v1.4.0
-        with:
-          url: https://downloads.fdossena.com/geth.php?r=mesa64-latest
           target: ../
       - name: Install Godot and dependencies
         shell: pwsh
@@ -63,7 +72,7 @@ jobs:
           unzip -q ../${{ steps.download-godot.outputs.filename }} -d build/Release
           mkdir build/Release/Godot_v3.2.3-stable_win64.exe.local
           pushd build/Release/Godot_v3.2.3-stable_win64.exe.local
-          7z e ../../../../${{ steps.download-mesa.outputs.filename }}
+          7z e "$env:GITHUB_WORKSPACE/../mesa/mesa64-latest.7z"
       - name: Test Godot
         shell: pwsh
         run: |
@@ -71,7 +80,7 @@ jobs:
           .\build\Release\Godot_v3.2.3-stable_win64.exe --no-window --disable-render-loop --video-driver GLES2 --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
       - name: Upload logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: windows-test-logs-${{ github.run_number }}
           path: C:\Users\runneradmin\AppData\Roaming\FreeOrion\*.log
@@ -82,7 +91,7 @@ jobs:
           pushd build
           cpack -V -C Release -G ZIP -D CPACK_ARCHIVE_COMPONENT_INSTALL=ON -D CPACK_MONOLITHIC_INSTALL=OFF -D "CPACK_COMPONENTS_ALL=binaries;binaries-test"
       - name: Upload binaries artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: weekly-artifacts-sf-windows-${{ github.run_number }}
           path: build/FreeOrion_*.zip
