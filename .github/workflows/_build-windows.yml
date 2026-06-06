@@ -7,11 +7,13 @@ jobs:
     name: MSVS 2022 on Windows CMake
     runs-on: windows-2022
     steps:
+      - name: Checkout sources
+        uses: actions/checkout@v6
       - name: Cache Mesa for Windows
         id: cache-mesa
         uses: actions/cache@v4
         with:
-          path: ../mesa/
+          path: mesa/
           key: win64-mesa-latest
       - name: Download Mesa
         if: steps.cache-mesa.outputs.cache-hit != 'true'
@@ -19,11 +21,9 @@ jobs:
         uses: suisei-cn/actions-download-file@v1.6.1
         with:
           url: https://downloads.fdossena.com/geth.php?r=mesa64-latest
-          target: ../mesa/
+          target: mesa/
           filename: mesa64-latest.7z
           retry-times: 5
-      - name: Checkout sources
-        uses: actions/checkout@v6
       - name: Download SDK
         id: download-sdk
         uses: suisei-cn/actions-download-file@v1.6.1
@@ -72,7 +72,7 @@ jobs:
           unzip -q ../${{ steps.download-godot.outputs.filename }} -d build/Release
           mkdir build/Release/Godot_v3.2.3-stable_win64.exe.local
           pushd build/Release/Godot_v3.2.3-stable_win64.exe.local
-          7z e "$env:GITHUB_WORKSPACE/../mesa/mesa64-latest.7z"
+          7z e "$env:GITHUB_WORKSPACE/mesa/mesa64-latest.7z"
       - name: Test Godot
         shell: pwsh
         run: |
