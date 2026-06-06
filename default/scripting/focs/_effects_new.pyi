@@ -1,7 +1,7 @@
 from typing import Any, overload
 
-from focs._effects import _Affilation, _ItemType
 from focs._types import (
+    _Affilation,
     _Condition,
     _Effect,
     _EffectGroup,
@@ -9,6 +9,7 @@ from focs._types import (
     _EmpireId,
     _FloatParam,
     _IntParam,
+    _ItemType,
     _PlanetSize,
     _PlanetType,
     _Resource,

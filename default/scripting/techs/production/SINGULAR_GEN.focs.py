@@ -1,6 +1,6 @@
 from focs._conditions import EmpireHasAdoptedPolicy, IsSource
-from focs._effects import UnlockBuilding
 from focs._effects_new import Item
+from focs._enums import UnlockBuilding
 from focs._sources import Source
 from focs._techs import Tech
 from focs._value_refs import (

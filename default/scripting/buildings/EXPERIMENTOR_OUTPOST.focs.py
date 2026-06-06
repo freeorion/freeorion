@@ -20,7 +20,6 @@ from focs._conditions import (
     Unowned,
     WithinStarlaneJumps,
 )
-from focs._effects import AnyEmpire
 from focs._effects_new import (
     AddStarlanes,
     CreateShip,
@@ -37,6 +36,7 @@ from focs._effects_new import (
     SetStealth,
     Victory,
 )
+from focs._enums import AnyEmpire
 from focs._sources import LocalCandidate, Source
 from focs._value_refs import (
     DirectDistanceBetween,

@@ -1,6 +1,6 @@
 from focs._conditions import Contains, Focus, Happiness, IsSource, OwnedBy, Planet, System
-from focs._effects import Max
 from focs._effects_new import EffectsGroup, SetEmpireMeter, SetTargetResearch
+from focs._enums import Max
 from focs._sources import LocalCandidate, Source, Target
 from focs._techs import Tech
 from focs._value_refs import (

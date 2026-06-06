@@ -1,6 +1,7 @@
+from focs._buildings import *
 from focs._conditions import IsBuilding, IsSource, Object, OwnedBy, Planet, Population, Turn
-from focs._effects import Partial
 from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, SetOwner, SetVisibility
+from focs._enums import DestroyOnCapture, Partial
 from focs._sources import LocalCandidate, Source, Target
 from focs._value_refs import (
     MaxOf,
@@ -9,11 +10,6 @@ from focs._value_refs import (
 )
 from macros.misc import UNOWNED_EMPIRE_ID
 from macros.priorities import POPULATION_OVERRIDE_PRIORITY
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_ABANDON_OUTPOST",

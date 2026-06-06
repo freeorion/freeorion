@@ -1,9 +1,5 @@
-from focs._types import _Condition, _EffectGroup, _FloatParam
-
-class _CaptureResult: ...
-
-DefaultCaptureResult = _CaptureResult()  # TODO get a better name
-DestroyOnCapture = _CaptureResult()
+from focs._enums import DefaultCaptureResult
+from focs._types import _CaptureResult, _Condition, _EffectGroup, _FloatParam
 
 def BuildingType(
     *,

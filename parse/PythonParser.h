@@ -46,6 +46,7 @@ public:
     void LoadValueRefsModule() const;
     void LoadEffectsModule() const;
     void LoadSourcesModule() const;
+    void LoadEnumsModule() const;
 
 private:
     PythonCommon&                  m_python;
