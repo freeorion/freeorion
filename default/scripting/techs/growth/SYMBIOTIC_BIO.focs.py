@@ -1,6 +1,6 @@
 from focs._conditions import HasTag, OwnedBy, Planet
-from focs._effects import Adequate, Good, Poor, UnlockPolicy
 from focs._effects_new import EffectsGroup, Item, SetTargetPopulation
+from focs._enums import Adequate, Good, Poor, UnlockPolicy
 from focs._sources import Source, Target
 from focs._techs import Tech
 from focs._value_refs import (

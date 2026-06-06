@@ -13,7 +13,6 @@ from focs._conditions import (
     Ship,
     Unowned,
 )
-from focs._effects import Adequate, Hostile, Poor, ResourceInfluence
 from focs._effects_new import (
     EffectsGroup,
     SetCapacity,
@@ -23,6 +22,7 @@ from focs._effects_new import (
     SetTargetInfluence,
     SetTroops,
 )
+from focs._enums import Adequate, Hostile, Poor, ResourceInfluence
 from focs._sources import LocalCandidate, Source, Target
 from focs._value_refs import (
     Abs,

@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import *
 from focs._conditions import (
     Contains,
     IsBuilding,
@@ -10,17 +11,13 @@ from focs._conditions import (
     WithinStarlaneJumps,
 )
 from focs._effects_new import Destroy, EffectsGroup
+from focs._enums import DestroyOnCapture
 from focs._sources import Source
 from focs._value_refs import (
     StatisticCount,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_REGIONAL_ADMIN",

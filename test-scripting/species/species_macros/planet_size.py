@@ -8,11 +8,11 @@
 #         effects = SetPlanetSize planetsize = Huge
 # '''
 from focs._conditions import IsSource, Planet, Turn
-from focs._effects import Large
 from focs._effects_new import (
     EffectsGroup,
     SetPlanetSize,
 )
+from focs._enums import Large
 
 LARGE_PLANET = [
     EffectsGroup(scope=IsSource, activation=Planet() & Turn(high=0), effects=SetPlanetSize(planetsize=Large))

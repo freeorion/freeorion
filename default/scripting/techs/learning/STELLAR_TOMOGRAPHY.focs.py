@@ -1,6 +1,6 @@
 from focs._conditions import Focus, Happiness, InSystem, OwnedBy, Planet, Star
-from focs._effects import BlackHole, Blue, Neutron, Orange, Red, White, Yellow
 from focs._effects_new import EffectsGroup, SetTargetResearch
+from focs._enums import BlackHole, Blue, Neutron, Orange, Red, White, Yellow
 from focs._sources import Source, Target
 from focs._techs import Tech
 from focs._value_refs import (

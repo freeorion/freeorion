@@ -11,8 +11,8 @@ from focs._conditions import (
     Star,
     TargetPopulation,
 )
-from focs._effects import BlackHole
 from focs._effects_new import EffectsGroup, SetTargetIndustry, SetTargetPopulation
+from focs._enums import BlackHole
 from focs._sources import Source, Target
 from focs._value_refs import (
     NamedReal,

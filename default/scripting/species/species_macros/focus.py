@@ -11,7 +11,7 @@ from focs._conditions import (
     OwnerHasTech,
     Planet,
 )
-from focs._effects import Mode
+from focs._enums import Mode
 from focs._sources import LocalCandidate, Source
 from focs._species import FocusType
 from focs._value_refs import (

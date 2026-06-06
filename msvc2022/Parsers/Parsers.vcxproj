@@ -216,6 +216,7 @@
     <ClCompile Include="..\..\parse\EncyclopediaParser.cpp" />
     <ClCompile Include="..\..\parse\EnumParser.cpp" />
     <ClCompile Include="..\..\parse\EnumPythonParser.cpp" />
+    <ClCompile Include="..\..\parse\EnumsPythonModuleParser.cpp" />
     <ClCompile Include="..\..\parse\FieldsParser.cpp" />
     <ClCompile Include="..\..\parse\FleetPlansParser.cpp" />
     <ClCompile Include="..\..\parse\GameRulesParser.cpp" />
@@ -331,6 +332,7 @@
     <ClInclude Include="..\..\parse\ConditionPythonParser.h" />
     <ClInclude Include="..\..\parse\EffectPythonParser.h" />
     <ClInclude Include="..\..\parse\EnumPythonParser.h" />
+    <ClInclude Include="..\..\parse\EnumsPythonModuleParser.h" />
     <ClInclude Include="..\..\parse\SourcePythonParser.h" />
     <ClInclude Include="..\..\parse\SourcesPythonModuleParser.h" />
     <ClInclude Include="StdAfx.h" />

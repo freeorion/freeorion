@@ -1,4 +1,4 @@
-from focs._effects import (
+from focs._enums import (
     Adequate,
     AsteroidsType,
     Barren,

@@ -13,8 +13,8 @@ from focs._conditions import (
     VisibleToEmpire,
     WithinStarlaneJumps,
 )
-from focs._effects import Good, Sum
 from focs._effects_new import EffectsGroup, GiveEmpireTech, SetTargetHappiness, SetTargetPopulation
+from focs._enums import Good, Sum
 from focs._sources import LocalCandidate, RootCandidate, Source, Target
 from focs._value_refs import (
     JumpsBetween,

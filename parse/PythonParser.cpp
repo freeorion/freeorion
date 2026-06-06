@@ -19,6 +19,7 @@
 #include "EffectsPythonModuleParser.h"
 #include "ValueRefsPythonModuleParser.h"
 #include "SourcesPythonModuleParser.h"
+#include "EnumsPythonModuleParser.h"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/core/noncopyable.hpp>
@@ -463,3 +464,6 @@ void PythonParser::LoadEffectsModule() const
 
 void PythonParser::LoadSourcesModule() const
 { (void)LoadModule(&PyInit__sources); } // marked [[nodiscard]] but result not needed in this case
+
+void PythonParser::LoadEnumsModule() const
+{ (void)LoadModule(&PyInit__enums); } // marked [[nodiscard]] but result not needed in this case

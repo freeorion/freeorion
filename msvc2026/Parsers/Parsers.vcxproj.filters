@@ -186,6 +186,9 @@
     <ClCompile Include="..\..\parse\EnumPythonParser.cpp">
       <Filter>Source Files\parse\python</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\parse\EnumsPythonModuleParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\parse\PythonParser.cpp">
       <Filter>Source Files\parse\python</Filter>
     </ClCompile>
@@ -296,6 +299,9 @@
     </ClInclude>
     <ClInclude Include="..\..\parse\EnumPythonParser.h">
       <Filter>Header Files\parse\python</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\EnumsPythonModuleParser.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\PythonParser.h">
       <Filter>Header Files\parse\python</Filter>
