@@ -82,8 +82,9 @@ bool PythonCommon::Initialize() {
         DebugLogger() << "Python initialized";
         DebugLogger() << "Python program: " << GetLoggableString(Py_GetProgramFullPath());
         DebugLogger() << "Python version: " << Py_GetVersion();
-        DebugLogger() << "Python prefix: " << GetLoggableString(Py_GetPrefix());
-        DebugLogger() << "Python module search path: " << GetLoggableString(Py_GetPath());
+        auto sys = py::import("sys");
+        DebugLogger() << "Python prefix: " << py::extract<std::string>(sys.attr("base_prefix"))();
+        DebugLogger() << "Python module search path: " << py::extract<std::string>(py::str(sys.attr("path")))();
     }
     catch (...) {
         ErrorLogger() << "Unable to initialize Python interpreter";
