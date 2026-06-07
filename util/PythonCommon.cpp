@@ -148,8 +148,9 @@ bool PythonCommon::Initialize() {
         DebugLogger() << "Python initialized";
         DebugLogger() << "Python program: " << GetPythonExecutable();
         DebugLogger() << "Python version: " << Py_GetVersion();
-        DebugLogger() << "Python prefix: " << GetLoggableString(Py_GetPrefix()); // deprecated. Python 3.14 adds PyConfig_Get("base_prefix") to replace it
-        DebugLogger() << "Python module search path: " << GetLoggableString(Py_GetPath());
+        auto sys = py::import("sys");
+        DebugLogger() << "Python prefix: " << py::extract<std::string>(sys.attr("base_prefix"))();
+        DebugLogger() << "Python module search path: " << py::extract<std::string>(py::str(sys.attr("path")))();
     }
     catch (...) {
         ErrorLogger() << "Unable to initialize Python interpreter";
