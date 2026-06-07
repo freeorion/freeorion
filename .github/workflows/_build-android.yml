@@ -17,7 +17,7 @@ jobs:
         run: |
           timeout 1m godot --no-window --disable-render-loop --video-driver Dummy --gdnative-generate-json-api godot-api.json
       - name: Upload binaries
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: godot-api
           path: godot-api.json
@@ -32,15 +32,15 @@ jobs:
         arch: [x86, x86_64, armeabi-v7a, arm64-v8a]
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Dowload Godot API
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: godot-api
           path: .
       - name: Download SDK
         id: download-sdk
-        uses: suisei-cn/actions-download-file@v1.4.0
+        uses: suisei-cn/actions-download-file@v1
         with:
           url: https://github.com/freeorion/freeorion-sdk/releases/download/v17/FreeOrionSDK_17_Android-${{ matrix.arch }}.zip
           target: ../
@@ -62,7 +62,7 @@ jobs:
           pushd build
           cmake --build . -- -j4
       - name: Upload binaries
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-binaries-${{ matrix.arch }}
           path: godot/bin/
@@ -74,7 +74,7 @@ jobs:
     needs: android
     steps:
       - name: Merge binaries
-        uses: actions/upload-artifact/merge@v4
+        uses: actions/upload-artifact/merge@v7
         with:
           name: android-binaries
           pattern: android-binaries-*
@@ -88,14 +88,14 @@ jobs:
       image: ghcr.io/bend-n/godot:3.5.2
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Setup
         uses: bend-n/godot-actions/.github/actions/setup-godot@main
         env:
           GODOT_VERSION: "3.5.2"
       - name: Download python library
         id: download-python-lib
-        uses: suisei-cn/actions-download-file@v1.3.0
+        uses: suisei-cn/actions-download-file@v1
         with:
           url: https://github.com/freeorion/freeorion-sdk/releases/download/v17/python310.zip
           target: ../
@@ -110,7 +110,7 @@ jobs:
           mv default/scripting godot/default/
           mv default/stringtables godot/default/
       - name: Dowload binaries
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: android-binaries
           path: godot/bin/
@@ -125,7 +125,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs: export-android
     steps:
-      - uses: actions/cache@v3
+      - uses: actions/cache@v5
         id: avd-cache
         with:
           path: |
@@ -142,7 +142,7 @@ jobs:
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
+          api-level: 31
           target: google_apis
           arch: x86_64
           profile: Galaxy Nexus
@@ -157,14 +157,14 @@ jobs:
           channel: beta
           script: echo "Generated AVD snapshot for caching."
       - name: Dowload APK
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: android
           path: .
       - name: run game on emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
+          api-level: 31
           target: google_apis
           arch: x86_64
           profile: Galaxy Nexus
@@ -190,7 +190,7 @@ jobs:
             ! grep "\[error\] godot : \(Parse\|ReportParseError\)" freeorion-godot.log
       - name: Upload logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-test-logs-${{ github.run_number }}
           path: |
