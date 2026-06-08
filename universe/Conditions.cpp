@@ -1446,6 +1446,56 @@ std::unique_ptr<Condition> Source::Clone() const
 { return std::make_unique<Source>(); }
 
 ///////////////////////////////////////////////////////////
+// FocusTarget                                           //
+///////////////////////////////////////////////////////////
+std::string FocusTarget::Description(bool negated) const {
+    return (!negated)
+        ? UserString("DESC_FOCUS_TARGET")
+        : UserString("DESC_FOCUS_TARGET_NOT");
+}
+
+std::string FocusTarget::Dump(uint8_t ntabs) const
+{ return DumpIndent(ntabs) + "FocusTarget\n"; }
+
+ObjectSet FocusTarget::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
+    if(!parent_context.source)
+        return {};
+
+    auto planet_source = dynamic_cast<const Planet*>(parent_context.source);
+    if (!planet_source)
+        return {};
+
+    auto focus_target_id = planet_source->FocusTarget();
+    if(focus_target_id == INVALID_OBJECT_ID)
+        return {};
+
+    const auto* focus_target_object = parent_context.ContextObjects().getRaw<const UniverseObject>(focus_target_id);
+    if (!focus_target_object)
+        return {};
+
+    return { focus_target_object };
+}
+
+std::unique_ptr<Condition> FocusTarget::Clone() const
+{ return std::make_unique<FocusTarget>(); }
+
+bool FocusTarget::Match(const ScriptingContext& local_context) const noexcept{
+    const auto* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        ErrorLogger(conditions) << "FocusTarget::Match passed no candidate object";
+        return false;
+    }
+    if (!local_context.source)
+        return false;
+
+    auto planet_source = dynamic_cast<const Planet*>(local_context.source);
+    if (!planet_source)
+        return false;
+
+    return candidate->ID() == planet_source->FocusTarget();
+}
+
+///////////////////////////////////////////////////////////
 // RootCandidate                                         //
 ///////////////////////////////////////////////////////////
 std::string RootCandidate::Description(bool negated) const {

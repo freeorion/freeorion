@@ -25,6 +25,7 @@ BOOST_CLASS_EXPORT(InvadeOrder)
 BOOST_CLASS_EXPORT(BombardOrder)
 BOOST_CLASS_EXPORT(StopBombardOrder)
 BOOST_CLASS_EXPORT(ChangeFocusOrder)
+BOOST_CLASS_EXPORT(ChangeFocusTargetOrder)
 BOOST_CLASS_EXPORT(PolicyOrder)
 BOOST_CLASS_VERSION(PolicyOrder, 2)
 BOOST_CLASS_EXPORT(ResearchQueueOrder)
@@ -145,6 +146,14 @@ void ChangeFocusOrder::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
         & BOOST_SERIALIZATION_NVP(m_planet)
         & BOOST_SERIALIZATION_NVP(m_focus);
+}
+
+template <typename Archive>
+void ChangeFocusTargetOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_planet)
+        & BOOST_SERIALIZATION_NVP(m_focus_target);
 }
 
 template <typename Archive>

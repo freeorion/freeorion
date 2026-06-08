@@ -1080,6 +1080,7 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["Armed"] = make_wrapped<Condition::Armed>();
 
     globals["IsSource"] = make_wrapped<Condition::Source>();
+    globals["IsFocusTarget"] = make_wrapped<Condition::FocusTarget>();
     globals["IsTarget"] = make_wrapped<Condition::Target>();
     globals["IsRootCandidate"] = make_wrapped<Condition::RootCandidate>();
     globals["IsAnyObject"] = make_wrapped<Condition::All>();

@@ -9,6 +9,7 @@ def FocusType(
     name: str,
     description: str,
     location: _Condition,
+    focus_target: _Condition | None = None,
     graphic: str,
 ) -> _FocusType: ...
 def Species(

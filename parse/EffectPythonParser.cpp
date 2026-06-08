@@ -710,11 +710,18 @@ namespace {
         auto name = boost::python::extract<std::string>(kw["name"])();
         auto description = boost::python::extract<std::string>(kw["description"])();
         auto location = boost::python::extract<condition_wrapper>(kw["location"])();
+        std::unique_ptr<Condition::Condition> focus_target;
+        if (kw.has_key("focus_target")) {
+            auto wrapped = boost::python::extract<condition_wrapper>(kw["focus_target"])();
+            if (wrapped.condition)
+                focus_target = ValueRef::CloneUnique(wrapped.condition);
+        }
         auto graphic = boost::python::extract<std::string>(kw["graphic"])();
 
         return {std::move(name),
             std::move(description),
             ValueRef::CloneUnique(location.condition),
+            std::move(focus_target),
             std::move(graphic)};
     }
 }

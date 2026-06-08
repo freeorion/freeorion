@@ -92,6 +92,9 @@ public:
     [[nodiscard]] bool                          FocusAvailable(std::string_view focus, const ScriptingContext& context) const;
     [[nodiscard]] const std::string&            FocusIcon(std::string_view focus_name, const ScriptingContext& context) const;
 
+    [[nodiscard]] const auto&                   FocusTarget() const noexcept { return m_focus_target; }
+    [[nodiscard]] std::vector<int>              AvailableFocusTargets(const ScriptingContext& context) const;
+
     [[nodiscard]] bool                Populated() const noexcept;
     [[nodiscard]] auto&               SpeciesName() const noexcept { return m_species_name; }
 
@@ -165,6 +168,8 @@ public:
     void SetSpecies(std::string species_name, int turn, const SpeciesManager& sm);
 
     void SetFocus(std::string focus, const ScriptingContext& context);
+    void SetFocusTarget(int target, const ScriptingContext& context);
+    void HandleFocusChanged(const ScriptingContext& context);
     void ClearFocus(int current_turn);
     void UpdateFocusHistory();
 
@@ -247,8 +252,10 @@ private:
     std::string m_species_name;
 
     std::string m_focus;
+    int         m_focus_target = INVALID_OBJECT_ID;
     int         m_last_turn_focus_changed = INVALID_GAME_TURN;
     std::string m_focus_turn_initial;
+    int         m_focus_target_turn_initial = INVALID_OBJECT_ID;
     int         m_last_turn_focus_changed_turn_initial = INVALID_GAME_TURN;
 
     PlanetType  m_type = PlanetType::PT_SWAMP;

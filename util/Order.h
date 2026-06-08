@@ -490,7 +490,7 @@ public:
 
     [[nodiscard]] std::string Dump() const override;
 
-    /* Returns ID of the fleet to be deleted. */
+    /* Returns ID of the planet where to change the focus. */
     [[nodiscard]] int PlanetID() const noexcept { return m_planet; }
 
     static bool Check(int empire_id, int planet_id, const std::string& focus, const ScriptingContext& context);
@@ -509,6 +509,42 @@ private:
 
     int m_planet = INVALID_OBJECT_ID;
     std::string m_focus;
+
+    friend class boost::serialization::access;
+    template <typename Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/////////////////////////////////////////////////////
+// ChangeFocusTargetOrder
+/////////////////////////////////////////////////////
+/** the Order subclass that represents changing a planet focus*/
+class FO_COMMON_API ChangeFocusTargetOrder final : public Order {
+public:
+    ChangeFocusTargetOrder(int empire, int planet, int focus_target,
+                     const ScriptingContext& context);
+
+    [[nodiscard]] std::string Dump() const override;
+
+    /* Returns ID of the planet where to change the focus target. */
+    [[nodiscard]] int PlanetID() const noexcept { return m_planet; }
+
+    static bool Check(int empire_id, int planet_id, int focus_target, const ScriptingContext& context);
+
+private:
+    ChangeFocusTargetOrder() = default;
+
+    /**
+     * Preconditions of execute:
+     *    - the designated planet must exist, be owned by the issuing empire
+     *
+     *  Postconditions:
+     *    - the planet focus target is changed
+     */
+    void ExecuteImpl(ScriptingContext& context) const override;
+
+    int m_planet = INVALID_OBJECT_ID;
+    int m_focus_target = INVALID_OBJECT_ID;
 
     friend class boost::serialization::access;
     template <typename Archive>
