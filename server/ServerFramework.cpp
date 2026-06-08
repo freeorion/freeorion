@@ -90,7 +90,7 @@ auto PythonServer::InitModules() -> bool
     // and add it to Pythons sys.path to make sure Python will find our scripts
     auto python_chat_dir = GetPythonChatDir();
     if (!fs::exists(python_chat_dir)) {
-        ErrorLogger() << "Can't find folder containing auth scripts:" << PathToString(python_chat_dir);
+        ErrorLogger() << "Can't find folder containing chat scripts:" << PathToString(python_chat_dir);
         return false;
     }
 
