@@ -17,11 +17,6 @@ from macros.priorities import (
     CONCENTRATION_CAMP_PRIORITY,
 )
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_CONC_CAMP_REMNANT",
     description="BLD_CONC_CAMP_REMNANT_DESC",

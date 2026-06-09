@@ -23,11 +23,6 @@ from macros.base_prod import BUILDING_COST_MULTIPLIER, INDUSTRY_PER_POP, RESEARC
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 from macros.priorities import TARGET_AFTER_2ND_SCALING_PRIORITY
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_COLLECTIVE_NET",
     description="BLD_COLLECTIVE_NET_DESC",

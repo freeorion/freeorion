@@ -50,11 +50,6 @@ from focs._value_refs import (
 )
 from macros.misc_pre import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 # the highest current MaxAIAggression is 5, so this would range from 0.2 to 1.2
 EXPERIMENTOR_MONSTER_FREQ_FACTOR: float = (1 + GalaxyMaxAIAggression) / 5.0
 

@@ -22,11 +22,6 @@ from macros.priorities import (
     POPULATION_OVERRIDE_PRIORITY,
 )
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_GATEWAY_VOID",
     description="BLD_GATEWAY_VOID_DESC",

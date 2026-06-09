@@ -21,11 +21,6 @@ from focs._value_refs import (
 from macros.base_prod import BUILDING_COST_MULTIPLIER, INDUSTRY_PER_POP
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_INDUSTRY_CENTER",
     description="BLD_INDUSTRY_CENTER_DESC",

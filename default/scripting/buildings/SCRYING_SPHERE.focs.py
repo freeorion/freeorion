@@ -21,11 +21,6 @@ from focs._value_refs import (
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_SCRYING_SPHERE",
     description="BLD_SCRYING_SPHERE_DESC",

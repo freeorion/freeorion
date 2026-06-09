@@ -15,11 +15,6 @@ from focs._effects_new import Destroy, EffectsGroup
 from focs._sources import RootCandidate, Source
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_PLANET_BEACON",
     description="BLD_PLANET_BEACON_DESC",

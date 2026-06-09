@@ -42,11 +42,6 @@ from macros.enqueue import (
     LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED,
 )
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 
 def AGGREGATED_STEPS_FROM_TO(from_, to):
     return (1 + PlanetTypeDifference(from_=from_, to=to)) * (PlanetTypeDifference(from_=from_, to=to) / 2)

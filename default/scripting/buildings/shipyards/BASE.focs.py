@@ -9,11 +9,6 @@ from focs._value_refs import (
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     shipyard=True,
     name="BLD_SHIPYARD_BASE",

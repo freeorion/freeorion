@@ -9,11 +9,6 @@ from macros.enqueue import (
     LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED,
 )
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_SHIPYARD_ORG_XENO_FAC",
     description="BLD_SHIPYARD_ORG_XENO_FAC_DESC",

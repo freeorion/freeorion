@@ -8,11 +8,6 @@ from macros.enqueue import ENQUEUE_ARTIFICIAL_PLANET_EXCLUSION
 from macros.priorities import POPULATION_OVERRIDE_PRIORITY
 from macros.upkeep import COLONY_UPKEEP_MULTIPLICATOR
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_ART_FACTORY_PLANET",
     description="BLD_ART_FACTORY_PLANET_DESC",

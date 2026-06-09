@@ -6,11 +6,6 @@ from focs._sources import Source, Target
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_ARTIFICIAL_PLANET_EXCLUSION
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_ART_PARADISE_PLANET",
     description="BLD_ART_PARADISE_PLANET_DESC",

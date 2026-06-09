@@ -10,11 +10,6 @@ from focs._enums import BuildBuilding
 from focs._sources import Source, Target
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_STARLANE_BORE",
     description="BLD_STARLANE_BORE_DESC",

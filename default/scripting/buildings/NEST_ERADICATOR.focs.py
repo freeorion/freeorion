@@ -7,11 +7,6 @@ from macros.priorities import (
     SPECIAL_REMOVAL_PRIORITY,
 )
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 
 def EG_NEST_REMOVAL(monster_name):
     special_name = f"{monster_name}_NEST_SPECIAL"

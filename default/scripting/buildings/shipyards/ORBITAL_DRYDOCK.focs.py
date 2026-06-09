@@ -27,11 +27,6 @@ from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET, LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED
 from macros.misc_pre import SHIP_STRUCTURE_FACTOR
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 # No repairs below this happiness
 CONST_ORB_DRYDOCK_MIN_HAPPY = 5
 

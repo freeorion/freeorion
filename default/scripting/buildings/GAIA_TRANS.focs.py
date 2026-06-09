@@ -6,11 +6,6 @@ from focs._sources import Source, Target
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import DO_NOT_CONTAIN_FOR_ALL_TERRAFORM_PLANET_TYPES, ENQUEUE_BUILD_ONE_PER_PLANET
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_GAIA_TRANS",
     description="BLD_GAIA_TRANS_DESC",

@@ -4,11 +4,6 @@ from focs._conditions import Contains, IsBuilding, OwnedBy, Planet
 from focs._sources import Source
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_NEUTRONIUM_SYNTH",
     description="BLD_NEUTRONIUM_SYNTH_DESC",

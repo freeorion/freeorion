@@ -5,11 +5,6 @@ from focs._sources import Source
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.misc import MIN_RECOLONIZING_SIZE
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_COLONY_BASE",
     description="BLD_COLONY_BASE_DESC",
