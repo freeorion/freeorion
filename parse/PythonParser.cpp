@@ -165,7 +165,6 @@ PythonParser::PythonParser(PythonCommon& _python) :
     }
 
     try {
-        m_python.SetPopulateGlobalsFunc([](py::dict& globals) {});
         m_python.InitModuleLoader();
 
         // Use wrappers to not collide with types in server and AI
@@ -395,7 +394,6 @@ PythonParser::PythonParser(PythonCommon& _python) :
 
 PythonParser::~PythonParser()
 {
-    m_python.SetPopulateGlobalsFunc(std::function<void(py::dict&)>{});
     // To correctly init it again between sub-interpreters border
     m_python.FinalizeModuleLoader();
 
