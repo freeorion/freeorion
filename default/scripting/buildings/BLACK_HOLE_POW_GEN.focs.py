@@ -27,11 +27,6 @@ from macros.priorities import (
     TARGET_AFTER_SCALING_PRIORITY,
 )
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_BLACK_HOLE_POW_GEN",
     description="BLD_BLACK_HOLE_POW_GEN_DESC",

@@ -5,11 +5,6 @@ from focs._sources import Source
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET, LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_NEUTRONIUM_FORGE",
     description="BLD_NEUTRONIUM_FORGE_DESC",

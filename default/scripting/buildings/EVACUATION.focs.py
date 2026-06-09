@@ -37,11 +37,6 @@ from focs._value_refs import (
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.priorities import CONCENTRATION_CAMP_PRIORITY, END_CLEANUP_PRIORITY, POPULATION_DEFAULT_PRIORITY
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_EVACUATION",
     description="BLD_EVACUATION_DESC",

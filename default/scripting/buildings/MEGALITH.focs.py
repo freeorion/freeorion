@@ -32,11 +32,6 @@ from macros.priorities import (
     TARGET_LAST_BEFORE_OVERRIDE_PRIORITY,
 )
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_MEGALITH",
     description="BLD_MEGALITH_DESC",

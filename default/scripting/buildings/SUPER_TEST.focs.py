@@ -8,11 +8,6 @@ from focs._value_refs import (
 )
 from macros.priorities import POPULATION_OVERRIDE_PRIORITY
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_SUPER_TEST",
     description="BLD_SUPER_TEST_DESC",

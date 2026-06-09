@@ -10,11 +10,6 @@ from focs._value_refs import (
 from macros.base_prod import BUILDING_COST_MULTIPLIER, INDUSTRY_PER_POP
 from macros.priorities import TARGET_AFTER_2ND_SCALING_PRIORITY
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_CULTURE_ARCHIVES",
     description="BLD_CULTURE_ARCHIVES_DESC",

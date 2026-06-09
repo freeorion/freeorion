@@ -3,11 +3,6 @@ from focs._conditions import IsAnyObject, IsSource
 from focs._effects_new import Destroy, EffectsGroup
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_NOVA_BOMB_ACTIVATOR",
     description="BLD_NOVA_BOMB_ACTIVATOR_DESC",

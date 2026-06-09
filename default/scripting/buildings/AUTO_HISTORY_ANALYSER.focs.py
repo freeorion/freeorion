@@ -21,11 +21,6 @@ from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 from macros.priorities import TARGET_AFTER_2ND_SCALING_PRIORITY
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_AUTO_HISTORY_ANALYSER",
     description="BLD_AUTO_HISTORY_ANALYSER_DESC",

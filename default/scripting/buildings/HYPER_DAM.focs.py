@@ -27,11 +27,6 @@ from macros.priorities import (
     TARGET_POPULATION_AFTER_SCALING_PRIORITY,
 )
 
-try:
-    pass
-except ModuleNotFoundError:
-    pass
-
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_HYPER_DAM",
     description="BLD_HYPER_DAM_DESC",
