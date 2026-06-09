@@ -58,6 +58,28 @@ namespace {
         return py::object(py::handle<>(raw_py_str));
     }
 
+    template<typename T = std::filesystem::path::value_type>
+    std::basic_string<T> pyobject_to_path(const py::object& o_filename) {
+        PyObject* raw_obj = o_filename.ptr();
+        if (!raw_obj || !PyUnicode_Check(raw_obj))
+            return {};
+        if constexpr (std::is_same_v<T, wchar_t>) {
+            Py_ssize_t size = 0;
+            wchar_t* buffer = PyUnicode_AsWideCharString(raw_obj, &size);
+            if (!buffer)
+                return {};
+            std::basic_string<T> result(buffer, size);
+            PyMem_Free(buffer);
+            return result;
+        } else {
+            Py_ssize_t size = 0;
+            const char* buffer = PyUnicode_AsUTF8AndSize(raw_obj, &size);
+            if (!buffer)
+                return {};
+            return std::basic_string<T>(buffer, size);
+        }
+    }
+
     auto GetPythonExecutable() // should be the containing C++ binary / .exe file
     { return py::extract<std::string>(py::import("sys").attr("executable"))(); }
 
@@ -360,20 +382,13 @@ py::object PythonCommon::exec_module(py::object& module) {
 
     py::dict globals = py::extract<py::dict>(module.attr("__dict__"));
 
-    auto module_path(m_modules_dir);
-    for (auto it = boost::algorithm::make_split_iterator(fullname, boost::algorithm::token_finder(boost::algorithm::is_any_of(".")));
-         it != boost::algorithm::split_iterator<std::string::iterator>(); ++it)
-    { module_path = module_path / boost::copy_range<std::string>(*it); }
+    if (!globals.contains("__file__"))
+        return py::object();
+    py::object py_module_path = globals["__file__"];
+    if (py_module_path.is_none())
+        return py::object();
+    auto module_path = std::filesystem::path(pyobject_to_path(py_module_path));
 
-    if (IsExistingDir(module_path)) {
-        auto init_py_path = module_path / "__init__.py";
-        if (IsExistingFile(init_py_path))
-            module_path = init_py_path;
-        else
-            return py::object();
-    }
-
-    module_path.replace_extension("py");
     if (IsExistingFile(module_path)) {
         std::string file_contents;
         bool read_success = ReadFile(module_path, file_contents);
