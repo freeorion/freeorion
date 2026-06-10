@@ -101,6 +101,10 @@ public:
     static constexpr float FromInt(int32_t i) noexcept(from_int_noexcept)
     { return i / FLOAT_INT_SCALE; }
 
+    // disable implicit conversions
+    static float FromFloat(auto) = delete;
+    static int FromInt(auto) = delete;
+
     static constexpr int32_t DEFAULT_INT = 0; // should be equal to Meter::FromFloat(DEFAULT_VALUE);
 
 private:
