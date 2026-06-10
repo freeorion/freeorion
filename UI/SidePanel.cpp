@@ -387,7 +387,7 @@ namespace {
         return {new_verts, norms, tex};
     }
 
-    void RenderSphere(double radius, const GG::Clr ambient, const GG::Clr diffuse,
+    void RenderSphere(GLfloat radius, const GG::Clr ambient, const GG::Clr diffuse,
                       const GG::Clr spec, float shine, GLuint texture_id)
     {
         if (texture_id != 0)
@@ -508,12 +508,20 @@ namespace {
         glLoadIdentity();
         glTranslatef(initial_rotation - GetApp().Ticks() / 1000.0f * RPM / 60.0f, 0.0f, 0.0f);
 
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-        glLoadIdentity();
-        glOrtho(0.0, Value(GetApp().AppWidth()),
-                Value(GetApp().AppHeight()), 0.0,
-                0.0, Value(GetApp().AppWidth()));
+        const GLfloat radius = diameter / 2.0f;
+
+        // leave default Enter2DMode projection's -100.0 near, 100.0 far, unless someone configured larger UI for spinning planet control (default is 128)
+        constexpr int standard_2D_ortho_near_far_size = 200;
+        const bool projection_change_needed = diameter >= standard_2D_ortho_near_far_size;
+        if (projection_change_needed) {
+            // glOrtho change is needed not to clip the visible half of the sphere
+            glMatrixMode(GL_PROJECTION);
+            glPushMatrix();
+            glLoadIdentity();
+            const auto& app = GetApp();
+            // extra 1.0f margin to cover for possible 3d overlay texture like clouds or ruins, which are slightly larger sphere with radius + 0.1f
+            glOrtho(0.0, Value(app.AppWidth()), Value(app.AppHeight()), 0.0, -(radius + 1.0f), radius + 1.0f);
+        }
 
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
@@ -529,7 +537,7 @@ namespace {
         glLightfv(GL_LIGHT0, GL_SPECULAR, colour.data());
         glEnable(GL_TEXTURE_2D);
 
-        glTranslatef(Value(center.x), Value(center.y), GLfloat(-(diameter / 2 + 1)));// relocate to location on screen where planet is to be rendered
+        glTranslatef(Value(center.x), Value(center.y), 0.0f); // relocate to location on screen where planet is to be rendered
         // mesh generation makes North go +Z, and per glOrtho +Z is deep into screen, -Y is up, so we look directly at the south pole
         // rotate the mesh so north (originally +Z) faces up the screen (-Y), but go slightly more than 90 degrees to hide singularity artefacting on equirectangular UV texture
         // (north pole will be hidden behind sphere curvature, facing away from us, while south pole will be facing bit towards us but hidden in shadow instead, via lightning)
@@ -542,19 +550,22 @@ namespace {
         GG::Clr diffuse = GG::FloatClr(intensity, intensity, intensity, 1.0f);
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
-        RenderSphere(diameter / 2.0, ambient, diffuse, GG::CLR_WHITE, shininess, texture_id);
+        RenderSphere(radius, ambient, diffuse, GG::CLR_WHITE, shininess, texture_id);
         if (overlay_texture_id != 0) {
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            RenderSphere(diameter / 2.0 + 0.1, ambient, diffuse, GG::CLR_WHITE, 0.0, overlay_texture_id);
+            RenderSphere(radius + 0.1f, ambient, diffuse, GG::CLR_WHITE, 0.0f, overlay_texture_id);
             glDisable(GL_BLEND);
         }
 
         glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
 
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
+        if (projection_change_needed) {
+            // glOrtho was changed to accomodate too large of a sphere, restore the original projection
+            glMatrixMode(GL_PROJECTION);
+            glPopMatrix();
+        }
 
         glMatrixMode(GL_TEXTURE);
         glPopMatrix();
