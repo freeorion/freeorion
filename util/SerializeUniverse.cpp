@@ -1550,10 +1550,10 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
                  obj.m_last_annexed_by_empire_id,
                  f0, f1, f2, f3, rest_str) = ExtractIntsAndRestFromString<16>(std::move(info_str));
 
-        obj.m_orbital_period = Meter::FromFloat(f0);
-        obj.m_initial_orbital_position = Meter::FromFloat(f1);
-        obj.m_rotational_period = Meter::FromFloat(f2);
-        obj.m_axial_tilt = Meter::FromFloat(f3);
+        obj.m_orbital_period = Meter::FromInt(f0);
+        obj.m_initial_orbital_position = Meter::FromInt(f1);
+        obj.m_rotational_period = Meter::FromInt(f2);
+        obj.m_axial_tilt = Meter::FromInt(f3);
 
         std::tie(obj.m_type,
                  obj.m_original_type,
