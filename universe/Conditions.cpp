@@ -152,7 +152,7 @@ namespace Condition {
     }
 
     // remove empty line from the end of the string
-    if(!retval.empty())
+    if (!retval.empty())
         retval.pop_back(); // was retval = retval.substr(0, retval.length() - 1);
 
     return retval;
