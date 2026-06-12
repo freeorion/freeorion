@@ -966,7 +966,7 @@ auto IsExistingFile(const fs::path& path) -> bool
 #else
     try {
         auto stat = fs::status(path);
-        return fs::exists(stat) && fs::is_regular_file(stat);
+        return fs::exists(stat) && fs::is_regular_file(stat) && (fs::file_size(path) > 0);
     } catch(fs::filesystem_error& ec) {
         ErrorLogger() << "Filesystem error during stat of " << PathToString(path) << " : " << ec.what();
     }
