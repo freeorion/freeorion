@@ -68,7 +68,6 @@ auto PythonServer::InitModules() -> bool
         ErrorLogger() << "Can't find folder containing universe generation scripts: " << PathToString(python_universe_generator_dir);
         return false;
     }
-    AddToSysPath(python_universe_generator_dir);
 
     // Confirm existence of the directory containing the turn event Python
     // scripts and add it to Pythons sys.path to make sure Python will find
@@ -78,10 +77,6 @@ auto PythonServer::InitModules() -> bool
         ErrorLogger() << "Can't find folder containing turn events scripts:" << PathToString(python_turn_events_dir);
         return false;
     }
-    AddToSysPath(python_turn_events_dir);
-
-    // import universe generator script file
-    m_python_module_turn_events = py::import("turn_events");
 
     // Confirm existence of the directory containing the auth Python scripts
     // and add it to Pythons sys.path to make sure Python will find our scripts
@@ -90,15 +85,28 @@ auto PythonServer::InitModules() -> bool
         ErrorLogger() << "Can't find folder containing auth scripts:" << PathToString(python_auth_dir);
         return false;
     }
+
+    // Confirm existence of the directory containing the chat Python scripts
+    // and add it to Pythons sys.path to make sure Python will find our scripts
+    auto python_chat_dir = GetPythonChatDir();
+    if (!fs::exists(python_chat_dir)) {
+        ErrorLogger() << "Can't find folder containing chat scripts:" << PathToString(python_chat_dir);
+        return false;
+    }
+
+    AddToSysPath(python_universe_generator_dir);
+    AddToSysPath(python_turn_events_dir);
     AddToSysPath(python_auth_dir);
+    AddToSysPath(python_chat_dir);
+
+    // import universe generator script file
+    m_python_module_turn_events = py::import("turn_events");
 
     // import auth script file
     m_python_module_auth = py::import("auth");
 
     // Save AuthProvider instance in auth module's namespace
     m_python_module_auth.attr("__dict__")["auth_provider"] = m_python_module_auth.attr("AuthProvider")();
-
-    AddToSysPath(GetPythonChatDir());
 
     // import chat script file
     m_python_module_chat = py::import("chat");
@@ -111,7 +119,7 @@ auto PythonServer::InitModules() -> bool
         py::object asyncio = py::import("asyncio");
 
         m_asyncio_event_loop = asyncio.attr("new_event_loop")();
-	asyncio.attr("set_event_loop")(m_asyncio_event_loop);
+        asyncio.attr("set_event_loop")(m_asyncio_event_loop);
     }
 
     DebugLogger() << "Server Python modules successfully initialized!";

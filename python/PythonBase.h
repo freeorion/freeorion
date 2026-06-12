@@ -23,7 +23,6 @@ public:
     virtual bool InitCommonImports() override;         // initializes Python imports, must be implemented by derived classes
     virtual bool InitImports() = 0;                    // initializes Python imports, must be implemented by derived classes
     virtual bool InitModules() = 0;                    // initializes Python modules, must be implemented by derived classes
-    void         SetCurrentDir(const std::filesystem::path& dir); // sets Python current work directory or throws error_already_set
     void         AddToSysPath(const std::filesystem::path& dir);  // adds directory to Python sys.path or throws error_already_set
     void         SetErrorModule(boost::python::object& module);     // sets Python module that contains error report function defined on the Python side
 
