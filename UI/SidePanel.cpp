@@ -763,6 +763,8 @@ public:
     /** emitted when focus is changed */
     mutable boost::signals2::signal<void (std::string_view)> FocusChangedSignal;
 
+    mutable boost::signals2::signal<void (int)> BuildingSelectedSignal;
+
     mutable boost::signals2::signal<void (int)> BuildingRightClickedSignal;
 
     /** Emitted when an order button changes state, used to update controls
@@ -867,6 +869,8 @@ public:
 
     /** emitted when a planet panel is right-clicked */
     mutable boost::signals2::signal<void (int)> PlanetRightClickedSignal;
+
+    mutable boost::signals2::signal<void (int)> BuildingSelectedSignal;
 
     mutable boost::signals2::signal<void (int)> BuildingRightClickedSignal;
 
@@ -1217,6 +1221,8 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     AttachChild(m_buildings_panel);
     m_buildings_panel->ExpandCollapseSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::RequirePreRender, this));
+    m_buildings_panel->BuildingSelectedSignal.connect(
+        BuildingSelectedSignal);
     m_buildings_panel->BuildingRightClickedSignal.connect(
         BuildingRightClickedSignal);
 
@@ -1247,6 +1253,8 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
 
     ScriptingContext planet_context(context, ScriptingContext::Source{}, planet);
     Refresh(planet_context, app.EmpireID());
+
+    m_buildings_panel->SelectBuilding(s_building_id);
 
     RequirePreRender();
 
@@ -2466,17 +2474,25 @@ bool SidePanel::PlanetPanel::InWindow(GG::Pt pt) const {
 }
 
 void SidePanel::PlanetPanel::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
+    // Clicking on the planet panel should invalidate any building selection.
+    BuildingSelectedSignal(INVALID_OBJECT_ID);
     //std::cout << "SidePanel::PlanetPanel::LClick m_planet_id: " << m_planet_id << std::endl;
     if (!Disabled())
         LeftClickedSignal(m_planet_id);
 }
 
 void SidePanel::PlanetPanel::LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
+    // Clicking on the planet panel should invalidate any building selection.
+    BuildingSelectedSignal(INVALID_OBJECT_ID);
+
     if (!Disabled())
         LeftDoubleClickedSignal(m_planet_id);
 }
 
 void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
+    // Clicking on the planet panel should invalidate any building selection.
+    BuildingSelectedSignal(INVALID_OBJECT_ID);
+
     auto& app = GetApp();
     ScriptingContext& context = app.GetContext();
     const ObjectMap& objects = context.ContextObjects();
@@ -3108,6 +3124,8 @@ void SidePanel::PlanetPanelContainer::SetPlanets(
             PlanetLeftDoubleClickedSignal);
         m_planet_panels.back()->RightClickedSignal.connect(
             PlanetRightClickedSignal);
+        m_planet_panels.back()->BuildingSelectedSignal.connect(
+            BuildingSelectedSignal);
         m_planet_panels.back()->BuildingRightClickedSignal.connect(
             BuildingRightClickedSignal);
         m_planet_panels.back()->ResizedSignal.connect(
@@ -3444,6 +3462,7 @@ namespace {
 // static(s)
 int                                        SidePanel::s_system_id = INVALID_OBJECT_ID;
 int                                        SidePanel::s_planet_id = INVALID_OBJECT_ID;
+int                                        SidePanel::s_building_id = INVALID_OBJECT_ID;
 bool                                       SidePanel::s_needs_update = false;
 bool                                       SidePanel::s_needs_refresh = false;
 std::set<std::weak_ptr<SidePanel>, std::owner_less<std::weak_ptr<SidePanel>>> SidePanel::s_side_panels;
@@ -3453,6 +3472,7 @@ boost::signals2::signal<void ()>           SidePanel::ResourceCenterChangedSigna
 boost::signals2::signal<void (int)>        SidePanel::PlanetSelectedSignal;
 boost::signals2::signal<void (int)>        SidePanel::PlanetRightClickedSignal;
 boost::signals2::signal<void (int)>        SidePanel::PlanetDoubleClickedSignal;
+boost::signals2::signal<void (int)>        SidePanel::BuildingSelectedSignal;
 boost::signals2::signal<void (int)>        SidePanel::BuildingRightClickedSignal;
 boost::signals2::signal<void (int)>        SidePanel::SystemSelectedSignal;
 
@@ -3515,8 +3535,13 @@ void SidePanel::CompleteConstruction() {
         PlanetDoubleClickedSignal);
     m_connections[7] = m_planet_panel_container->PlanetRightClickedSignal.connect(
         PlanetRightClickedSignal);
-    m_connections[8] = m_planet_panel_container->BuildingRightClickedSignal.connect(
+    m_connections[8] = m_planet_panel_container->BuildingSelectedSignal.connect(
+        BuildingSelectedSignal);
+    m_connections[9] = m_planet_panel_container->BuildingRightClickedSignal.connect(
         BuildingRightClickedSignal);
+
+    // Can affect selection over buildings from all planets in the panels, so handle at this level.
+    BuildingSelectedSignal.connect(SelectBuilding);
 
     SetMinSize(GG::Pt(GG::X(MaxPlanetDiameter() + BORDER_LEFT + BORDER_RIGHT + 120),
                       PLANET_PANEL_TOP + GG::Y(MaxPlanetDiameter())));
@@ -4075,6 +4100,8 @@ bool SidePanel::PlanetSelectable(int planet_id, const ObjectMap& objects) const 
 }
 
 void SidePanel::SelectPlanet(int planet_id, const ObjectMap& objects) {
+    // Selecting a planet should invalidate any indivual building selections.
+    SelectBuilding(INVALID_OBJECT_ID);
     if (s_planet_id == planet_id)
         return;
 
@@ -4100,6 +4127,37 @@ void SidePanel::SelectPlanet(int planet_id, const ObjectMap& objects) {
             panel->RequirePreRender();
 
     PlanetSelectedSignal(s_planet_id);
+}
+
+void SidePanel::SelectBuilding(int building_id){
+    if (s_building_id == building_id)
+        return;
+
+    s_building_id = INVALID_OBJECT_ID;
+
+    // Setting the selected building to invalid is always possible.
+    // In other cases we check if the building can be selected.
+    if(building_id != INVALID_OBJECT_ID){
+        auto& app = GetApp();
+        auto& context = app.GetContext();
+        auto& objects = context.ContextObjects();
+
+        auto building = objects.get<Building>(building_id);
+        if (!building)
+            return;
+
+        int planet_id = building->ContainerObjectID();
+        if (planet_id == INVALID_OBJECT_ID)
+            return;
+
+        // TODO: Check the owner of the building?
+        s_building_id = building_id;
+    }
+
+    for (auto& weak_panel : s_side_panels)
+        if (auto panel = weak_panel.lock())
+            // Refresh will cause the buildingpanel to be redrawn (with the correct buildingID selected).
+            panel->Refresh();
 }
 
 void SidePanel::SetSystem(int system_id, const ObjectMap& objects) {

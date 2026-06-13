@@ -29,6 +29,10 @@ public:
     /** Enables, or disables if \a enable is false, issuing orders via this panel. */
     void EnableOrderIssuing(bool enable = true);
 
+    /** Handles selection(marker) of building. */
+    void SelectBuilding(int building_id);
+
+    mutable boost::signals2::signal<void (int)> BuildingSelectedSignal;
     mutable boost::signals2::signal<void (int)> BuildingRightClickedSignal;
 
 protected:
@@ -44,6 +48,7 @@ private:
     void ExpandCollapseButtonPressed();
 
     int m_planet_id = INVALID_OBJECT_ID; // object id for the Planet whose buildings this panel displays
+    int m_selected_building_id = INVALID_OBJECT_ID; ///< Cached value for selected building.
     int m_columns = 1; // number of columns in which to display building indicators
     std::vector<std::shared_ptr<BuildingIndicator>> m_building_indicators;
     boost::signals2::scoped_connection m_queue_connection;
@@ -70,11 +75,15 @@ public:
     void Render() override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
+    void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
 
     /** Enables, or disables if \a enable is false, issuing orders via this BuildingIndicator. */
     void EnableOrderIssuing(bool enable = true);
 
+    void SelectBuilding(int building_id);
+
+    mutable boost::signals2::signal<void (int)> LeftClickedSignal;
     mutable boost::signals2::signal<void (int)> RightClickedSignal;
 
 private:
@@ -88,6 +97,7 @@ private:
     boost::signals2::scoped_connection      m_signal_connection;
     int                                     m_building_id = INVALID_OBJECT_ID;
     bool                                    m_order_issuing_enabled = true;
+    bool                                    m_selected = false; ///< is this building (indicator) selected
 };
 
 #endif
