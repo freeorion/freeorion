@@ -29,23 +29,20 @@ namespace {
     using start_rule_payload = std::map<std::string, std::unique_ptr<BuildingType>, std::less<>>;
 
     struct py_grammar {
-        boost::python::dict globals;
         const PythonParser& parser;
         boost::python::object module;
         start_rule_payload& buildings;
 
         py_grammar(const PythonParser& parser_, start_rule_payload& buildings_) :
-            globals(boost::python::import("builtins").attr("__dict__")),
             parser(parser_),
             module(parser_.LoadModule(&PyInit__buildings)),
             buildings(buildings_)
         {
-            RegisterGlobalsSources(globals);
-            RegisterGlobalsEnums(globals);
-
             parser.LoadValueRefsModule();
             parser.LoadEffectsModule();
             parser.LoadConditionsModule();
+            parser.LoadSourcesModule();
+            parser.LoadEnumsModule();
 
             module.attr("__grammar") = boost::cref(*this);
         }
@@ -53,8 +50,6 @@ namespace {
         ~py_grammar() {
             parser.UnloadModule(module);
         }
-
-        boost::python::dict operator()() const { return globals; }
     };
 
     boost::python::object py_insert_buildings_(boost::python::object scope, const boost::python::tuple& args,

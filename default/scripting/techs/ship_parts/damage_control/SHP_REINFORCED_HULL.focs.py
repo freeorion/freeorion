@@ -1,6 +1,6 @@
 from focs._conditions import OwnedBy, Ship
-from focs._effects import Source
 from focs._effects_new import EffectsGroup, SetMaxStructure
+from focs._sources import Source
 from focs._techs import Tech
 from focs._value_refs import (
     NamedRealLookup,

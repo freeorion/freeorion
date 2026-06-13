@@ -34,6 +34,4 @@ std::unique_ptr<ValueRef::ValueRef<E>> pyobject_to_vref_enum(const boost::python
     return std::make_unique<ValueRef::Constant<E>>(boost::python::extract<enum_wrapper<E>>(obj)().value);
 }
 
-void RegisterGlobalsEnums(boost::python::dict& globals);
-
 #endif // _EnumPythonParser_h

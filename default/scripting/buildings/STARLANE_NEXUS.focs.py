@@ -3,16 +3,13 @@ from buildings.buildings_macros import (
     DO_STARLANE_BORE,
     SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS,
 )
+from focs._buildings import BuildingType
 from focs._conditions import Contains, Enqueued, IsBuilding, IsSource, Object, Planet
-from focs._effects import BuildBuilding, Source, Target
 from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage
+from focs._enums import BuildBuilding
+from focs._sources import Source, Target
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_STARLANE_NEXUS",

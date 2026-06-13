@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import (
     Contains,
     Focus,
@@ -11,8 +12,9 @@ from focs._conditions import (
     Star,
     TargetPopulation,
 )
-from focs._effects import BlackHole, Source, Target
 from focs._effects_new import EffectsGroup, SetTargetIndustry, SetTargetPopulation
+from focs._enums import BlackHole
+from focs._sources import Source, Target
 from focs._value_refs import (
     NamedReal,
     NamedRealLookup,
@@ -24,11 +26,6 @@ from macros.priorities import (
     TARGET_AFTER_2ND_SCALING_PRIORITY,
     TARGET_POPULATION_AFTER_SCALING_PRIORITY,
 )
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_HYPER_DAM",

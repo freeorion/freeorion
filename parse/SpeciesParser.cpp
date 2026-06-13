@@ -38,23 +38,20 @@ namespace {
     >;
 
     struct py_grammar {
-        boost::python::dict globals;
         const PythonParser& parser;
         boost::python::object module;
         start_rule_payload::first_type& species;
 
         py_grammar(const PythonParser& parser_, start_rule_payload::first_type& species_) :
-            globals(boost::python::import("builtins").attr("__dict__")),
             parser(parser_),
             module(parser_.LoadModule(&PyInit__species)),
             species(species_)
         {
-            RegisterGlobalsSources(globals);
-            RegisterGlobalsEnums(globals);
-
             parser.LoadValueRefsModule();
             parser.LoadEffectsModule();
             parser.LoadConditionsModule();
+            parser.LoadSourcesModule();
+            parser.LoadEnumsModule();
 
             module.attr("__grammar") = boost::cref(*this);
         }
@@ -62,18 +59,14 @@ namespace {
         ~py_grammar() {
             parser.UnloadModule(module);
         }
-
-        boost::python::dict operator()() const { return globals; }
     };
 
     struct py_manifest_grammar {
-        boost::python::dict globals;
         const PythonParser& parser;
         boost::python::object module;
         start_rule_payload::second_type& ordering;
 
         py_manifest_grammar(const PythonParser& parser_, start_rule_payload::second_type& ordering_) :
-            globals(boost::python::import("builtins").attr("__dict__")),
             parser(parser_),
             module(parser_.LoadModule(&PyInit__species_census_ordering)),
             ordering(ordering_)
@@ -84,8 +77,6 @@ namespace {
         ~py_manifest_grammar() {
             parser.UnloadModule(module);
         }
-
-        boost::python::dict operator()() const { return globals; }
     };
 
     void insert_species_census_ordering_(boost::python::object scope, const boost::python::list& tags) {

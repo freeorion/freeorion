@@ -25,23 +25,20 @@ namespace {
     std::map<std::string, std::unique_ptr<TechCategory>, std::less<>>* g_categories = nullptr;
 
     struct py_grammar {
-        boost::python::dict globals;
         const PythonParser& parser;
         boost::python::object module;
         TechManager::TechContainer& techs;
 
         py_grammar(const PythonParser& parser_, TechManager::TechContainer& techs_) :
-            globals(boost::python::import("builtins").attr("__dict__")),
             parser(parser_),
             module(parser_.LoadModule(&PyInit__techs)),
             techs(techs_)
         {
-            RegisterGlobalsSources(globals);
-            RegisterGlobalsEnums(globals);
-
             parser.LoadConditionsModule();
             parser.LoadValueRefsModule();
             parser.LoadEffectsModule();
+            parser.LoadSourcesModule();
+            parser.LoadEnumsModule();
 
             module.attr("__grammar") = boost::cref(*this);
         }
@@ -49,17 +46,13 @@ namespace {
         ~py_grammar() {
             parser.UnloadModule(module);
         }
-
-        boost::python::dict operator()() const { return globals; }
     };
 
     struct py_grammar_categories {
-        boost::python::dict globals;
         const PythonParser& parser;
         boost::python::object module;
 
         py_grammar_categories(const PythonParser& parser_) :
-            globals(boost::python::import("builtins").attr("__dict__")),
             parser(parser_),
             module(parser_.LoadModule(&PyInit__techs_categories))
         { }
@@ -67,8 +60,6 @@ namespace {
         ~py_grammar_categories() {
             parser.UnloadModule(module);
         }
-
-        boost::python::dict operator()() const { return globals; }
     };
 
     void insert_category(std::map<std::string, std::unique_ptr<TechCategory>, std::less<>>& categories,

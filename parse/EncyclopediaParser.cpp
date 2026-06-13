@@ -20,13 +20,11 @@ namespace {
     using ArticleMap = Encyclopedia::ArticleMap;
 
     struct py_grammar {
-        boost::python::dict globals;
         const PythonParser& parser;
         boost::python::object module;
         ArticleMap& articles;
 
         py_grammar(const PythonParser& parser_, ArticleMap& articles_) :
-            globals(boost::python::import("builtins").attr("__dict__")),
             parser(parser_),
             module(parser_.LoadModule(&PyInit__encyclopedia_articles)),
             articles(articles_)
@@ -37,8 +35,6 @@ namespace {
         ~py_grammar() {
             parser.UnloadModule(module);
         }
-
-        boost::python::dict operator()() const { return globals; }
     };
 
     boost::python::object py_insert_encyclopedia_article_scoped_(boost::python::object scope, const boost::python::tuple& args,

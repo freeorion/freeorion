@@ -1,13 +1,10 @@
+from focs._buildings import BuildingType
 from focs._conditions import Contains, IsBuilding, IsSource, Object, OwnedBy, Planet, Star, System
-from focs._effects import BlackHole, Red, Source
 from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, SetStarType
+from focs._enums import BlackHole, Red
+from focs._sources import Source
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_ART_BLACK_HOLE",

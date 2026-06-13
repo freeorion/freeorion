@@ -1,4 +1,4 @@
-from focs._effects import (
+from focs._enums import (
     Adequate,
     AsteroidsType,
     Barren,
@@ -14,7 +14,7 @@ from focs._effects import (
     Tundra,
     Uninhabitable,
 )
-from focs._species import *
+from focs._species import Species
 from species.species_macros.empire_opinions import FIXED_OPINION_EFFECTS
 from species.species_macros.focus import (
     HAS_ADVANCED_FOCI,

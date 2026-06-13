@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import (
     ContainedBy,
     Contains,
@@ -12,8 +13,9 @@ from focs._conditions import (
     Planet,
     Population,
 )
-from focs._effects import GasGiantType, Source
 from focs._effects_new import Destroy, EffectsGroup, SetTargetIndustry
+from focs._enums import GasGiantType
+from focs._sources import Source
 from focs._value_refs import (
     NamedReal,
     Value,
@@ -21,11 +23,6 @@ from focs._value_refs import (
 from macros.base_prod import BUILDING_COST_MULTIPLIER, INDUSTRY_PER_POP
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 from macros.priorities import TARGET_AFTER_2ND_SCALING_PRIORITY
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_GAS_GIANT_GEN",

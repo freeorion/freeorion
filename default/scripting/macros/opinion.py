@@ -2,7 +2,7 @@
 # Policy Conformance halves it
 # Values are declared in common/named_values.focs.txt
 from focs._conditions import EmpireHasAdoptedPolicy, IsSource
-from focs._effects import Target
+from focs._sources import Target
 from focs._value_refs import (
     NamedRealLookup,
     StatisticIf,

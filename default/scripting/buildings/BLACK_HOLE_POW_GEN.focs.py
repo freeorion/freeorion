@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import (
     Contains,
     EmpireHasAdoptedPolicy,
@@ -11,8 +12,9 @@ from focs._conditions import (
     ResourceSupplyConnected,
     Star,
 )
-from focs._effects import BlackHole, Source, Target
 from focs._effects_new import EffectsGroup, SetTargetIndustry
+from focs._enums import BlackHole
+from focs._sources import Source, Target
 from focs._value_refs import (
     NamedReal,
     NamedRealLookup,
@@ -24,11 +26,6 @@ from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 from macros.priorities import (
     TARGET_AFTER_SCALING_PRIORITY,
 )
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_BLACK_HOLE_POW_GEN",

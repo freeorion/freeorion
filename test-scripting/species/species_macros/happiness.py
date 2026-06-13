@@ -16,27 +16,29 @@ from focs._conditions import (
     SpeciesLikes,
     Unowned,
 )
-from focs._effects import (
+from focs._effects_new import (
+    EffectsGroup,
+    SetHappiness,
+    SetTargetHappiness,
+)
+from focs._enums import (
     Adequate,
     GasGiantType,
     Good,
     Hostile,
     Huge,
     Large,
-    LocalCandidate,
     Medium,
     Min,
     Poor,
     Small,
-    Source,
-    Target,
     Tiny,
     Uninhabitable,
 )
-from focs._effects_new import (
-    EffectsGroup,
-    SetHappiness,
-    SetTargetHappiness,
+from focs._sources import (
+    LocalCandidate,
+    Source,
+    Target,
 )
 from focs._value_refs import (
     Abs,

@@ -1,16 +1,12 @@
+from focs._buildings import BuildingType
 from focs._conditions import IsBuilding, IsField, Number, OwnedBy
-from focs._effects import Source, Target
 from focs._effects_new import EffectsGroup, MoveTowards
+from focs._sources import Source, Target
 from focs._value_refs import (
     ThisBuilding,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_FIELD_REPELLOR",

@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import (
     Contains,
     Described,
@@ -16,7 +17,6 @@ from focs._conditions import (
     System,
     WithinStarlaneJumps,
 )
-from focs._effects import BuildBuilding, RootCandidate, Source, Target
 from focs._effects_new import (
     Destroy,
     EffectsGroup,
@@ -25,6 +25,8 @@ from focs._effects_new import (
     SetTargetInfluence,
     SetTargetResearch,
 )
+from focs._enums import BuildBuilding
+from focs._sources import RootCandidate, Source, Target
 from focs._value_refs import (
     NamedReal,
     Value,
@@ -34,11 +36,6 @@ from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 from macros.priorities import (
     TARGET_AFTER_SCALING_PRIORITY,
 )
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_INTERSPECIES_ACADEMY",

@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import (
     Contains,
     IsBuilding,
@@ -9,7 +10,6 @@ from focs._conditions import (
     TargetPopulation,
     WithinStarlaneJumps,
 )
-from focs._effects import Source, Target
 from focs._effects_new import (
     EffectsGroup,
     SetEmpireCapital,
@@ -20,6 +20,7 @@ from focs._effects_new import (
     SetResearch,
     SetTargetConstruction,
 )
+from focs._sources import Source, Target
 from focs._value_refs import (
     Value,
 )
@@ -30,11 +31,6 @@ from macros.priorities import (
     TARGET_AFTER_SCALING_PRIORITY,
     TARGET_LAST_BEFORE_OVERRIDE_PRIORITY,
 )
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_MEGALITH",

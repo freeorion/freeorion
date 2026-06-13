@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import (
     Contains,
     InSystem,
@@ -11,8 +12,9 @@ from focs._conditions import (
     Unowned,
     WithinDistance,
 )
-from focs._effects import EnemyOf, LocalCandidate, Max, Source
 from focs._effects_new import EffectsGroup, SetSpeed, SetStealth
+from focs._enums import EnemyOf, Max
+from focs._sources import LocalCandidate, Source
 from focs._value_refs import (
     MinOf,
     NamedReal,
@@ -21,11 +23,6 @@ from focs._value_refs import (
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_LIGHTHOUSE",

@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import (
     ContainedBy,
     Contains,
@@ -15,7 +16,6 @@ from focs._conditions import (
     Population,
     ResourceSupplyConnected,
 )
-from focs._effects import BuildBuilding, LocalCandidate, Source, Target
 from focs._effects_new import (
     Destroy,
     EffectsGroup,
@@ -28,17 +28,14 @@ from focs._effects_new import (
     SetTargetInfluence,
     SetTargetResearch,
 )
+from focs._enums import BuildBuilding
+from focs._sources import LocalCandidate, Source, Target
 from focs._value_refs import (
     MinOf,
     Value,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.priorities import CONCENTRATION_CAMP_PRIORITY, END_CLEANUP_PRIORITY, POPULATION_DEFAULT_PRIORITY
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_EVACUATION",

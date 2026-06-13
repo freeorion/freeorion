@@ -1,16 +1,12 @@
+from focs._buildings import BuildingType
 from focs._conditions import HasSpecies, IsSource, Object, Planet
-from focs._effects import Source, Target
 from focs._effects_new import Destroy, EffectsGroup, SetPopulation, SetSpecies
+from focs._sources import Source, Target
 from focs._value_refs import (
     GameRule,
     MaxOf,
 )
 from macros.priorities import POPULATION_OVERRIDE_PRIORITY
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_SUPER_TEST",

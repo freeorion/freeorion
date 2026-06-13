@@ -1,5 +1,5 @@
 from focs._conditions import EmpireHasAdoptedPolicy, IsSource
-from focs._effects import Source
+from focs._sources import Source
 from focs._value_refs import (
     SpeciesColoniesOwned,
     StatisticIf,

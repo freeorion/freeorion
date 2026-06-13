@@ -1,7 +1,8 @@
 from focs._conditions import Contains, IsSource, Object, OwnedBy, Planet, System, Turn, WithinStarlaneJumps
-from focs._effects import AnyEmpire, Blue, Source
 from focs._effects_new import CreateBuilding, CreateShip, EffectsGroup, SetMaxDefense, SetMaxShield, SetStarType
-from focs._species import *
+from focs._enums import AnyEmpire, Blue
+from focs._sources import Source
+from focs._species import Species
 from focs._value_refs import (
     Value,
 )

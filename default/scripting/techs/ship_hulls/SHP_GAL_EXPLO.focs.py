@@ -1,6 +1,7 @@
 from focs._conditions import CanColonize, HasSpecies, IsSource, OwnedBy, Planet, Turn
-from focs._effects import GasGiantType, Huge, Large, LocalCandidate, Small, Source, Target, Tiny, UnlockPolicy
 from focs._effects_new import EffectsGroup, GenerateSitRepMessage, Item, SetMaxSupply, SetSupply
+from focs._enums import GasGiantType, Huge, Large, Small, Tiny, UnlockPolicy
+from focs._sources import LocalCandidate, Source, Target
 from focs._techs import Tech
 from focs._value_refs import (
     MinOf,

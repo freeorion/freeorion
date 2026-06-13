@@ -15,11 +15,3 @@ ValueRef::ContainerType variable_wrapper::ToContainer(std::string_view s) noexce
            (s == "Fleet") ? ValueRef::ContainerType::FLEET :
            ValueRef::ContainerType::NONE;
 }
-
-void RegisterGlobalsSources(boost::python::dict& globals) {
-    globals["Source"] = variable_wrapper(ValueRef::ReferenceType::SOURCE_REFERENCE);
-    globals["Target"] = variable_wrapper(ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE);
-    globals["LocalCandidate"] = variable_wrapper(ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE);
-    globals["RootCandidate"] = variable_wrapper(ValueRef::ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE);
-}
-

@@ -56,6 +56,7 @@ if(BUILD_PARSERS)
             ${CMAKE_CURRENT_LIST_DIR}/EncyclopediaParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/EnumParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/EnumPythonParser.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/EnumsPythonModuleParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/FieldsParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/FleetPlansParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/GameRulesParser.cpp
@@ -86,6 +87,7 @@ if(BUILD_PARSERS)
             ${CMAKE_CURRENT_LIST_DIR}/VisibilityValueRefParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/PythonParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/SourcePythonParser.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/SourcesPythonModuleParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/ConditionPythonParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/ConditionsPythonModuleParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/ValueRefsPythonModuleParser.cpp
@@ -93,7 +95,9 @@ if(BUILD_PARSERS)
             ${CMAKE_CURRENT_LIST_DIR}/ConditionPythonParser.h
             ${CMAKE_CURRENT_LIST_DIR}/EffectPythonParser.h
             ${CMAKE_CURRENT_LIST_DIR}/EnumPythonParser.h
+            ${CMAKE_CURRENT_LIST_DIR}/EnumsPythonModuleParser.h
             ${CMAKE_CURRENT_LIST_DIR}/SourcePythonParser.h
+            ${CMAKE_CURRENT_LIST_DIR}/SourcesPythonModuleParser.h
             ${CMAKE_CURRENT_LIST_DIR}/ValueRefPythonParser.h
             ${CMAKE_CURRENT_LIST_DIR}/ConditionsPythonModuleParser.h
             ${CMAKE_CURRENT_LIST_DIR}/ValueRefsPythonModuleParser.h

@@ -1,5 +1,4 @@
 from focs._conditions import Focus, Happiness, OwnedBy, Planet, Ship
-from focs._effects import Source, Target
 from focs._effects_new import (
     EffectsGroup,
     SetMaxDefense,
@@ -8,6 +7,7 @@ from focs._effects_new import (
     SetTargetIndustry,
     SetTargetResearch,
 )
+from focs._sources import Source, Target
 from focs._techs import Tech
 from focs._value_refs import (
     NamedReal,

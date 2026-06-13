@@ -1,7 +1,7 @@
 from focs._conditions import IsSource, Star, Turn
-from focs._effects import NoStar
 from focs._effects_new import AddSpecial, EffectsGroup
-from focs._species import *
+from focs._enums import NoStar
+from focs._species import Species
 from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS
 from species.species_macros.env import NARROW_EP, TUNDRA_NARROW_EP
 from species.species_macros.focus import (

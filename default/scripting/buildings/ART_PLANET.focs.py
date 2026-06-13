@@ -1,13 +1,10 @@
+from focs._buildings import BuildingType
 from focs._conditions import Contains, IsBuilding, IsSource, Object, OwnedBy, Planet, Population
-from focs._effects import AsteroidsType, Barren, GasGiantType, Source, Target
 from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, SetPlanetType
+from focs._enums import AsteroidsType, Barren, GasGiantType
+from focs._sources import Source, Target
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.enqueue import ENQUEUE_ARTIFICIAL_PLANET_EXCLUSION
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_ART_PLANET",

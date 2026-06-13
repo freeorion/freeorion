@@ -7,7 +7,7 @@ from focs._value_refs import (
 # Values are declared in macros/named_values.focs.txt
 try:
     from focs._conditions import EmpireHasAdoptedPolicy, IsSource
-    from focs._effects import Target
+    from focs._sources import Target
 except ModuleNotFoundError:
     pass
 

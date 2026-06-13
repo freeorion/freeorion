@@ -5,7 +5,6 @@ from focs._conditions import (
     System,
     WithinDistance,
 )
-from focs._effects import *
 from focs._effects_new import (
     Destroy,
     EffectsGroup,
@@ -13,6 +12,7 @@ from focs._effects_new import (
     SetSize,
 )
 from focs._fields import FieldType
+from focs._sources import Source, Target
 
 FieldType(
     name="FLD_SUBSPACE_RIFT",

@@ -1,4 +1,5 @@
 from buildings.buildings_macros import CAN_ADD_STARLANE_TO_SOURCE
+from focs._buildings import BuildingType
 from focs._conditions import (
     ContainedBy,
     Contains,
@@ -20,7 +21,6 @@ from focs._conditions import (
     Unowned,
     WithinStarlaneJumps,
 )
-from focs._effects import AnyEmpire, LocalCandidate, Source
 from focs._effects_new import (
     AddStarlanes,
     CreateShip,
@@ -37,6 +37,8 @@ from focs._effects_new import (
     SetStealth,
     Victory,
 )
+from focs._enums import AnyEmpire
+from focs._sources import LocalCandidate, Source
 from focs._value_refs import (
     DirectDistanceBetween,
     GalaxyMaxAIAggression,
@@ -47,11 +49,6 @@ from focs._value_refs import (
     Value,
 )
 from macros.misc_pre import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 # the highest current MaxAIAggression is 5, so this would range from 0.2 to 1.2
 EXPERIMENTOR_MONSTER_FREQ_FACTOR: float = (1 + GalaxyMaxAIAggression) / 5.0

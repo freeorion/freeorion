@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import (
     Capital,
     ContainedBy,
@@ -10,19 +11,15 @@ from focs._conditions import (
     Unowned,
     WithinStarlaneJumps,
 )
-from focs._effects import Partial, Source
 from focs._effects_new import EffectsGroup, SetEmpireMeter, SetVisibility
+from focs._enums import Partial
+from focs._sources import Source
 from focs._value_refs import (
     MaxOf,
     Value,
     ValueVisibility,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_SCRYING_SPHERE",

@@ -1,5 +1,4 @@
 from focs._conditions import HasSpecial, IsSource, OwnerHasTech, Planet, Turn
-from focs._effects import Source, Target, Uninhabitable
 from focs._effects_new import (
     AddSpecial,
     EffectsGroup,
@@ -9,7 +8,9 @@ from focs._effects_new import (
     SetPopulation,
     SetTargetPopulation,
 )
-from focs._species import *
+from focs._enums import Uninhabitable
+from focs._sources import Source, Target
+from focs._species import Species
 from macros.priorities import POPULATION_OVERRIDE_PRIORITY, TARGET_POPULATION_OVERRIDE_PRIORITY
 from species.species_macros.advanced_focus import ADVANCED_FOCUS_EFFECTS
 from species.species_macros.env import DESERT_STANDARD_EP

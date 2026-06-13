@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import (
     Capital,
     Contains,
@@ -11,8 +12,9 @@ from focs._conditions import (
     TargetPopulation,
     Unowned,
 )
-from focs._effects import CountUnique, LocalCandidate, Source
 from focs._effects_new import EffectsGroup, SetEmpireMeter, SetTargetInfluence
+from focs._enums import CountUnique
+from focs._sources import LocalCandidate, Source
 from focs._value_refs import (
     NamedReal,
     Statistic,
@@ -23,11 +25,6 @@ from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 from macros.priorities import (
     TARGET_AFTER_2ND_SCALING_PRIORITY,
 )
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_TRANSLATOR",

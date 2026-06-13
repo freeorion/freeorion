@@ -1,6 +1,6 @@
 # BROAD_EP and NARROW_EP are stub placeholders for applying the
 # board/narrow environment tolerance description to a species.
-from focs._effects import (
+from focs._enums import (
     Adequate,
     AsteroidsType,
     Barren,

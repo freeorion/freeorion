@@ -1,5 +1,6 @@
 from focs._conditions import IsSource, NoObject, OwnedBy, Planet, Turn
-from focs._effects import (
+from focs._effects_new import EffectsGroup, GenerateSitRepMessage, SetMaxShield, SetMaxTroops, SetPopulation
+from focs._enums import (
     AnyEmpire,
     AsteroidsType,
     Barren,
@@ -9,15 +10,13 @@ from focs._effects import (
     Inferno,
     Ocean,
     Radiated,
-    Source,
     Swamp,
-    Target,
     Terran,
     Toxic,
     Tundra,
 )
-from focs._effects_new import EffectsGroup, GenerateSitRepMessage, SetMaxShield, SetMaxTroops, SetPopulation
-from focs._species import *
+from focs._sources import Source, Target
+from focs._species import Species
 from focs._value_refs import (
     NamedReal,
     Value,

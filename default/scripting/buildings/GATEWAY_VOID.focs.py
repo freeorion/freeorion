@@ -1,6 +1,6 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import Contains, Fleet, InSystem, IsBuilding, OwnedBy, Planet, Turn
-from focs._effects import Source, Target
 from focs._effects_new import (
     Destroy,
     EffectsGroup,
@@ -11,6 +11,7 @@ from focs._effects_new import (
     SetSupply,
     SetTargetPopulation,
 )
+from focs._sources import Source, Target
 from focs._value_refs import (
     MinOf,
     Value,
@@ -20,11 +21,6 @@ from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 from macros.priorities import (
     POPULATION_OVERRIDE_PRIORITY,
 )
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_GATEWAY_VOID",

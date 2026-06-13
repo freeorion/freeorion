@@ -1,7 +1,7 @@
 from focs._conditions import IsSource, Population
-from focs._effects import Source, Target
 from focs._effects_new import EffectsGroup, GenerateSitRepMessage, SetPopulation
-from focs._species import *
+from focs._sources import Source, Target
+from focs._species import Species
 from focs._value_refs import (
     Value,
 )

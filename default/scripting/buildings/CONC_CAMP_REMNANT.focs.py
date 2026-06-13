@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import (
     ContainedBy,
     Contains,
@@ -10,16 +11,11 @@ from focs._conditions import (
     Object,
     Planet,
 )
-from focs._effects import Source, Target
 from focs._effects_new import Destroy, EffectsGroup, SetIndustry
+from focs._sources import Source, Target
 from macros.priorities import (
     CONCENTRATION_CAMP_PRIORITY,
 )
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_CONC_CAMP_REMNANT",

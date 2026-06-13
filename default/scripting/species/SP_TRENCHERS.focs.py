@@ -1,4 +1,4 @@
-from focs._species import *
+from focs._species import Species
 from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS
 from species.species_macros.env import BARREN_STANDARD_EP
 from species.species_macros.focus import (

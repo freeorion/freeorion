@@ -1,4 +1,5 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from focs._buildings import BuildingType
 from focs._conditions import (
     Capital,
     ContainedBy,
@@ -19,7 +20,6 @@ from focs._conditions import (
     UniqueNumberOf,
     Unowned,
 )
-from focs._effects import BuildBuilding, LocalCandidate, Source, Target
 from focs._effects_new import (
     EffectsGroup,
     SetEmpireCapital,
@@ -32,6 +32,8 @@ from focs._effects_new import (
     SetTargetHappiness,
     SetTargetInfluence,
 )
+from focs._enums import BuildBuilding, DestroyOnCapture
+from focs._sources import LocalCandidate, Source, Target
 from focs._value_refs import (
     GameRule,
     NamedReal,
@@ -42,11 +44,6 @@ from focs._value_refs import (
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.misc_pre import PLANET_DEFENSE_FACTOR
 from macros.priorities import TARGET_AFTER_SCALING_PRIORITY
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_IMPERIAL_PALACE",

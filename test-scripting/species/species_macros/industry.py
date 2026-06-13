@@ -1,11 +1,11 @@
 # NO_INDUSTRY
 # '''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_INDUSTRY_DESC)]]'''
 from focs._conditions import Focus, Happiness, IsHuman, IsSource, Planet, TargetIndustry
-from focs._effects import Target
 from focs._effects_new import (
     EffectsGroup,
     SetTargetIndustry,
 )
+from focs._sources import Target
 from focs._value_refs import (
     GalaxyMaxAIAggression,
     Value,

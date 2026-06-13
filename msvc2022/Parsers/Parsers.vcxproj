@@ -216,6 +216,7 @@
     <ClCompile Include="..\..\parse\EncyclopediaParser.cpp" />
     <ClCompile Include="..\..\parse\EnumParser.cpp" />
     <ClCompile Include="..\..\parse\EnumPythonParser.cpp" />
+    <ClCompile Include="..\..\parse\EnumsPythonModuleParser.cpp" />
     <ClCompile Include="..\..\parse\FieldsParser.cpp" />
     <ClCompile Include="..\..\parse\FleetPlansParser.cpp" />
     <ClCompile Include="..\..\parse\GameRulesParser.cpp" />
@@ -287,6 +288,7 @@
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4180</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="..\..\parse\SourcePythonParser.cpp" />
+    <ClCompile Include="..\..\parse\SourcesPythonModuleParser.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -330,7 +332,9 @@
     <ClInclude Include="..\..\parse\ConditionPythonParser.h" />
     <ClInclude Include="..\..\parse\EffectPythonParser.h" />
     <ClInclude Include="..\..\parse\EnumPythonParser.h" />
+    <ClInclude Include="..\..\parse\EnumsPythonModuleParser.h" />
     <ClInclude Include="..\..\parse\SourcePythonParser.h" />
+    <ClInclude Include="..\..\parse\SourcesPythonModuleParser.h" />
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

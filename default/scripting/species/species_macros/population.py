@@ -12,26 +12,24 @@ from focs._conditions import (
     TargetPopulation,
     Turn,
 )
-from focs._effects import (
+from focs._effects_new import EffectsGroup, SetPopulation, SetStarType, SetTargetPopulation
+from focs._enums import (
     AnyEmpire,
     BlackHole,
     Blue,
     GasGiantType,
     Good,
     Hostile,
-    LocalCandidate,
     Neutron,
     NoStar,
     Orange,
     Poor,
     Red,
-    Source,
-    Target,
     Uninhabitable,
     White,
     Yellow,
 )
-from focs._effects_new import EffectsGroup, SetPopulation, SetStarType, SetTargetPopulation
+from focs._sources import LocalCandidate, Source, Target
 from focs._value_refs import (
     Abs,
     CurrentTurn,

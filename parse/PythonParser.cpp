@@ -14,9 +14,12 @@
 #include "EffectPythonParser.h"
 #include "EnumPythonParser.h"
 #include "SourcePythonParser.h"
+
 #include "ConditionsPythonModuleParser.h"
 #include "EffectsPythonModuleParser.h"
 #include "ValueRefsPythonModuleParser.h"
+#include "SourcesPythonModuleParser.h"
+#include "EnumsPythonModuleParser.h"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/core/noncopyable.hpp>
@@ -162,10 +165,6 @@ PythonParser::PythonParser(PythonCommon& _python) :
     }
 
     try {
-        m_python.SetPopulateGlobalsFunc([](py::dict& globals) {
-            RegisterGlobalsSources(globals);
-            RegisterGlobalsEnums(globals);
-        });
         m_python.InitModuleLoader();
 
         // Use wrappers to not collide with types in server and AI
@@ -395,7 +394,6 @@ PythonParser::PythonParser(PythonCommon& _python) :
 
 PythonParser::~PythonParser()
 {
-    m_python.SetPopulateGlobalsFunc(std::function<void(py::dict&)>{});
     // To correctly init it again between sub-interpreters border
     m_python.FinalizeModuleLoader();
 
@@ -404,7 +402,6 @@ PythonParser::~PythonParser()
 }
 
 bool PythonParser::ParseFileCommon(const std::filesystem::path& path,
-                                   const boost::python::dict& globals,
                                    std::string& filename, std::string& file_contents) const
 {
     filename = PathToString(path);
@@ -416,6 +413,7 @@ bool PythonParser::ParseFileCommon(const std::filesystem::path& path,
     }
 
     try {
+        boost::python::dict globals;
         PythonCommon::CompileEval(file_contents.c_str(), path, globals);
     } catch (const boost::python::error_already_set&) {
         m_python.HandleErrorAlreadySet();
@@ -459,3 +457,9 @@ void PythonParser::LoadValueRefsModule() const
 
 void PythonParser::LoadEffectsModule() const
 { (void)LoadModule(&PyInit__effects_new); } // marked [[nodiscard]] but result not needed in this case
+
+void PythonParser::LoadSourcesModule() const
+{ (void)LoadModule(&PyInit__sources); } // marked [[nodiscard]] but result not needed in this case
+
+void PythonParser::LoadEnumsModule() const
+{ (void)LoadModule(&PyInit__enums); } // marked [[nodiscard]] but result not needed in this case

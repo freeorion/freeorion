@@ -20,8 +20,9 @@ from focs._conditions import (
     Unowned,
     VisibleToEmpire,
 )
-from focs._effects import BuildBuilding, EnemyOf, GasGiantType, LocalCandidate, RootCandidate, Source, Target
 from focs._effects_new import Conditional, EffectsGroup, GenerateSitRepMessage
+from focs._enums import BuildBuilding, EnemyOf, GasGiantType
+from focs._sources import LocalCandidate, RootCandidate, Source, Target
 from focs._value_refs import (
     CurrentTurn,
     EmpireAdoptedPolicies,

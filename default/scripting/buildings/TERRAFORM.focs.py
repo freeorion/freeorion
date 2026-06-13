@@ -1,3 +1,4 @@
+from focs._buildings import BuildingType
 from focs._conditions import (
     Contains,
     EmpireHasAdoptedPolicy,
@@ -11,7 +12,8 @@ from focs._conditions import (
     Planet,
     TargetPopulation,
 )
-from focs._effects import (
+from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, SetPlanetType
+from focs._enums import (
     AsteroidsType,
     Barren,
     BuildBuilding,
@@ -19,18 +21,15 @@ from focs._effects import (
     GasGiantType,
     Good,
     Inferno,
-    LocalCandidate,
     Ocean,
     Radiated,
-    Source,
     Swamp,
-    Target,
     Terran,
     Toxic,
     Tundra,
     Uninhabitable,
 )
-from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, SetPlanetType
+from focs._sources import LocalCandidate, Source, Target
 from focs._value_refs import (
     MaxOf,
     PlanetTypeDifference,
@@ -42,11 +41,6 @@ from macros.enqueue import (
     ENQUEUE_BUILD_ONE_PER_PLANET,
     LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED,
 )
-
-try:
-    from focs._buildings import *
-except ModuleNotFoundError:
-    pass
 
 
 def AGGREGATED_STEPS_FROM_TO(from_, to):
