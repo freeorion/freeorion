@@ -9,5 +9,7 @@ RUN apk add --no-cache cmake \
     sdl2-dev \
     freetype-dev \
     openal-soft-dev \
-    glew-dev
+    glew-dev \
+    libogg-dev \
+    libvorbis-dev
 
