@@ -79,9 +79,10 @@ namespace parse {
         start_rule_payload all_stats;
 
         bool file_success = true;
+        start_rule_payload stats_;
+        py_grammar p = py_grammar(parser, stats_);
         for (const auto& file : ListDir(path, IsFOCPyScript)) {
-            start_rule_payload stats_;
-            py_grammar p = py_grammar(parser, stats_);
+            stats_.clear();
             if (py_parse::detail::parse_file<py_grammar>(parser, file, p)) {
                 for (auto& stat : stats_) {
                     auto maybe_inserted = all_stats.emplace(stat.first, std::move(stat.second));
