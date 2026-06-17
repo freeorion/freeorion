@@ -11,7 +11,7 @@ from focs._conditions import (
     Planet,
     TargetPopulation,
 )
-from focs._effects_new import EffectsGroup, SetEmpireMeter, SetMaxDefense, SetMaxTroops
+from focs._effects import EffectsGroup, SetEmpireMeter, SetMaxDefense, SetMaxTroops
 from focs._enums import DestroyOnCapture
 from focs._sources import Source
 from focs._value_refs import (

@@ -12,7 +12,7 @@ from focs._conditions import (
     System,
     VisibleToEmpire,
 )
-from focs._effects_new import EffectsGroup, GenerateSitRepMessage, SetOwner
+from focs._effects import EffectsGroup, GenerateSitRepMessage, SetOwner
 from focs._sources import Source, Target
 from focs._techs import Tech
 from macros.base_prod import TECH_COST_MULTIPLIER

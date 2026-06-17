@@ -1,4 +1,4 @@
-from focs._effects_new import Item
+from focs._effects import Item
 from focs._enums import UnlockBuilding, UnlockPolicy, UnlockShipHull
 from focs._techs import Tech
 from macros.base_prod import TECH_COST_MULTIPLIER

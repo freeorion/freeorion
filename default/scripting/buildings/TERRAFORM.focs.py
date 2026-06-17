@@ -12,7 +12,7 @@ from focs._conditions import (
     Planet,
     TargetPopulation,
 )
-from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, SetPlanetType
+from focs._effects import Destroy, EffectsGroup, GenerateSitRepMessage, SetPlanetType
 from focs._enums import (
     AsteroidsType,
     Barren,

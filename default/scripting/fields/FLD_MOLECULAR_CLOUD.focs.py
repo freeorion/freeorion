@@ -1,5 +1,5 @@
 from focs._conditions import IsSource, Ship, Size, WithinDistance
-from focs._effects_new import Destroy, EffectsGroup, MoveInOrbit, MoveTowards, SetMaxShield, SetSize, SetSpeed
+from focs._effects import Destroy, EffectsGroup, MoveInOrbit, MoveTowards, SetMaxShield, SetSize, SetSpeed
 from focs._fields import FieldType
 from focs._sources import LocalCandidate, Source
 from focs._value_refs import (

@@ -1,5 +1,5 @@
 from focs._conditions import IsHuman, IsSource, Ship
-from focs._effects_new import (
+from focs._effects import (
     EffectsGroup,
     SetMaxShield,
     SetShield,

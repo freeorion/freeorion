@@ -1,5 +1,5 @@
 from focs._conditions import IsSource, OwnedBy, Planet
-from focs._effects_new import EffectsGroup, SetDetection, SetEmpireMeter
+from focs._effects import EffectsGroup, SetDetection, SetEmpireMeter
 from focs._sources import Source
 from focs._techs import Tech
 from focs._value_refs import (

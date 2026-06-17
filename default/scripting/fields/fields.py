@@ -1,5 +1,5 @@
 from focs._conditions import Object, Random, Size, System
-from focs._effects_new import Conditional, CreatePlanet, EffectsGroup
+from focs._effects import Conditional, CreatePlanet, EffectsGroup
 from focs._enums import (
     AsteroidsSize,
     AsteroidsType,

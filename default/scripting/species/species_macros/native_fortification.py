@@ -1,5 +1,5 @@
 from focs._conditions import ContainedBy, Contains, HasSpecial, HasSpecies, HasTag, IsSource, Planet, Random, Turn
-from focs._effects_new import AddSpecial, Conditional, EffectsGroup
+from focs._effects import AddSpecial, Conditional, EffectsGroup
 from focs._sources import Source
 from focs._value_refs import (
     GalaxyMaxAIAggression,

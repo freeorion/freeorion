@@ -1,6 +1,6 @@
 from focs._buildings import BuildingType
 from focs._conditions import Contains, IsBuilding, IsSource, Object, OwnedBy, Planet, Population
-from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, SetPlanetType
+from focs._effects import Destroy, EffectsGroup, GenerateSitRepMessage, SetPlanetType
 from focs._enums import AsteroidsType, Barren, GasGiantType
 from focs._sources import Source, Target
 from macros.base_prod import BUILDING_COST_MULTIPLIER

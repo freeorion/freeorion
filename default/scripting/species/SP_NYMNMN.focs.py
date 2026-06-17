@@ -1,5 +1,5 @@
 from focs._conditions import IsField, IsSource, MinimumNumberOf
-from focs._effects_new import EffectsGroup, MoveTowards
+from focs._effects import EffectsGroup, MoveTowards
 from focs._sources import LocalCandidate, Source
 from focs._species import Species
 from focs._value_refs import (

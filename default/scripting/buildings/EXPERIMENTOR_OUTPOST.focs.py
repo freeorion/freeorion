@@ -21,7 +21,7 @@ from focs._conditions import (
     Unowned,
     WithinStarlaneJumps,
 )
-from focs._effects_new import (
+from focs._effects import (
     AddStarlanes,
     CreateShip,
     Destroy,

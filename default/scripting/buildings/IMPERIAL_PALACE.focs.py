@@ -20,7 +20,7 @@ from focs._conditions import (
     UniqueNumberOf,
     Unowned,
 )
-from focs._effects_new import (
+from focs._effects import (
     EffectsGroup,
     SetEmpireCapital,
     SetEmpireMeter,

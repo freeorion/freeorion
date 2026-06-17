@@ -1,6 +1,6 @@
 from focs._buildings import BuildingType
 from focs._conditions import IsAnyObject, IsSource
-from focs._effects_new import Destroy, EffectsGroup
+from focs._effects import Destroy, EffectsGroup
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 
 BuildingType(  # pyrefly: ignore[unbound-name]

@@ -1,5 +1,5 @@
 from focs._conditions import InSystem, OwnedBy, Ship, Stationary, Turn
-from focs._effects_new import EffectsGroup, SetStructure
+from focs._effects import EffectsGroup, SetStructure
 from focs._sources import LocalCandidate, Source, Target
 from focs._techs import Tech
 from focs._value_refs import (

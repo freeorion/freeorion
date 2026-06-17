@@ -1,5 +1,5 @@
 from focs._conditions import IsBuilding, Planet
-from focs._effects_new import EffectsGroup, SetStealth
+from focs._effects import EffectsGroup, SetStealth
 from focs._techs import Tech
 from focs._value_refs import (
     NamedReal,

@@ -1,5 +1,5 @@
 from focs._conditions import HasTag, OwnedBy, Planet, Ship
-from focs._effects_new import Item
+from focs._effects import Item
 from focs._enums import UnlockPolicy
 from focs._sources import Source
 from focs._techs import Tech

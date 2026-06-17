@@ -1,5 +1,5 @@
 from focs._conditions import IsField, IsSource, Size, WithinDistance
-from focs._effects_new import (
+from focs._effects import (
     Destroy,
     EffectsGroup,
     MoveInOrbit,

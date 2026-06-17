@@ -16,7 +16,7 @@ from focs._conditions import (
     SpeciesLikes,
     Unowned,
 )
-from focs._effects_new import (
+from focs._effects import (
     EffectsGroup,
     SetHappiness,
     SetTargetHappiness,

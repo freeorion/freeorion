@@ -1,5 +1,5 @@
 from focs._conditions import IsSource, OwnedBy, OwnerHasTech, Planet, Ship, Star
-from focs._effects_new import EffectsGroup, SetDetection, SetEmpireMeter
+from focs._effects import EffectsGroup, SetDetection, SetEmpireMeter
 from focs._enums import BlackHole, Blue, Neutron, NoStar, White, Yellow
 from focs._sources import Source
 from focs._techs import Tech

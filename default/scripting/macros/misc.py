@@ -1,5 +1,5 @@
 from focs._conditions import EmpireHasAdoptedPolicy, IsSource, IsTarget, Object, OwnerHasTech, Planet, Turn
-from focs._effects_new import EffectsGroup, NoOpEffect, SetPopulation, SetSpecies
+from focs._effects import EffectsGroup, NoOpEffect, SetPopulation, SetSpecies
 from focs._sources import LocalCandidate, Source
 from focs._value_refs import (
     StatisticIf,

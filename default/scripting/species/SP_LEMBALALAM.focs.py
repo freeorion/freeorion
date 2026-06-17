@@ -1,5 +1,5 @@
 from focs._conditions import HasSpecial, IsSource, OwnerHasTech, Planet, Turn
-from focs._effects_new import (
+from focs._effects import (
     AddSpecial,
     EffectsGroup,
     GenerateSitRepMessage,

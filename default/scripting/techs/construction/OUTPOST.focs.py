@@ -8,7 +8,7 @@ from focs._conditions import (
     Planet,
     Population,
 )
-from focs._effects_new import (
+from focs._effects import (
     EffectsGroup,
     Item,
     SetConstruction,

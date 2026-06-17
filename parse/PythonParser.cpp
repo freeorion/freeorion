@@ -456,7 +456,7 @@ void PythonParser::LoadValueRefsModule() const
 { (void)LoadModule(&PyInit__value_refs); } // marked [[nodiscard]] but result not needed in this case
 
 void PythonParser::LoadEffectsModule() const
-{ (void)LoadModule(&PyInit__effects_new); } // marked [[nodiscard]] but result not needed in this case
+{ (void)LoadModule(&PyInit__effects); } // marked [[nodiscard]] but result not needed in this case
 
 void PythonParser::LoadSourcesModule() const
 { (void)LoadModule(&PyInit__sources); } // marked [[nodiscard]] but result not needed in this case

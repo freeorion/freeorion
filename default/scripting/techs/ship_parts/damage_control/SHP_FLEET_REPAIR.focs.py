@@ -9,7 +9,7 @@ from focs._conditions import (
     Structure,
     Turn,
 )
-from focs._effects_new import EffectsGroup, SetStructure
+from focs._effects import EffectsGroup, SetStructure
 from focs._enums import AllyOf
 from focs._sources import LocalCandidate, Source, Target
 from focs._techs import Tech

@@ -13,7 +13,7 @@ from focs._conditions import (
     Planet,
     Population,
 )
-from focs._effects_new import Destroy, EffectsGroup, SetTargetIndustry
+from focs._effects import Destroy, EffectsGroup, SetTargetIndustry
 from focs._enums import GasGiantType
 from focs._sources import Source
 from focs._value_refs import (

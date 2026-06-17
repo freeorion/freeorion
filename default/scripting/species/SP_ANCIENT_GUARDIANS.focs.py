@@ -1,5 +1,5 @@
 from focs._conditions import IsSource, NoObject, OwnedBy, Planet, Turn
-from focs._effects_new import EffectsGroup, GenerateSitRepMessage, SetMaxShield, SetMaxTroops, SetPopulation
+from focs._effects import EffectsGroup, GenerateSitRepMessage, SetMaxShield, SetMaxTroops, SetPopulation
 from focs._enums import (
     AnyEmpire,
     AsteroidsType,

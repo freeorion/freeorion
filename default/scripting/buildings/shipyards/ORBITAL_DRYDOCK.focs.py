@@ -15,7 +15,7 @@ from focs._conditions import (
     Structure,
     Turn,
 )
-from focs._effects_new import EffectsGroup, GenerateSitRepMessage, SetStructure
+from focs._effects import EffectsGroup, GenerateSitRepMessage, SetStructure
 from focs._enums import AllyOf
 from focs._sources import LocalCandidate, Source, Target
 from focs._value_refs import (

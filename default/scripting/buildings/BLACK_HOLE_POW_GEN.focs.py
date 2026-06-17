@@ -12,7 +12,7 @@ from focs._conditions import (
     ResourceSupplyConnected,
     Star,
 )
-from focs._effects_new import EffectsGroup, SetTargetIndustry
+from focs._effects import EffectsGroup, SetTargetIndustry
 from focs._enums import BlackHole
 from focs._sources import Source, Target
 from focs._value_refs import (
