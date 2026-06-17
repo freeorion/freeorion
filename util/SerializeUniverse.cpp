@@ -1051,7 +1051,8 @@ void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
         std::string info_str;
         ar >> make_nvp("info", info_str)
            >> make_nvp("x", o.m_x)
-           >> make_nvp("y", o.m_y);
+           >> make_nvp("y", o.m_y)
+           >> make_nvp("m_specials", o.m_specials);
 
         std::tie(o.m_id, o.m_owner_empire_id, o.m_system_id,
                  o.m_created_on_turn, o.m_name) = ExtractIntsAndRestFromString<4>(std::move(info_str));
@@ -1063,7 +1064,8 @@ void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
 
         ar << make_nvp("info", str)
            << make_nvp("x", o.m_x) // not included in str because as of this writing m_x and m_y are floating-point types, which are not portably serialized by standard library to/from text converters
-           << make_nvp("y", o.m_y);
+           << make_nvp("y", o.m_y)
+           << make_nvp("m_specials", o.m_specials);
 
         Serialize(ar, o.m_meters, version);
 
