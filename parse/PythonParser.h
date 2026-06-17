@@ -39,7 +39,9 @@ public:
     [[nodiscard]] bool ParseFileCommon(const std::filesystem::path& path,
                          std::string& filename, std::string& file_contents) const;
 
-    [[nodiscard]] boost::python::object LoadModule(PyObject* (*)()) const;
+    using InitFuncPtr = PyObject* (*)();
+
+    [[nodiscard]] boost::python::object LoadModule(InitFuncPtr) const;
     void UnloadModule(boost::python::object module) const;
     void LoadConditionsModule() const;
     void LoadValueRefsModule() const;
@@ -51,6 +53,7 @@ private:
     PythonCommon&                  m_python;
     PyThreadState*                 m_parser_thread_state = nullptr;
     PyThreadState*                 m_main_thread_state = nullptr;
+    mutable std::unordered_map<InitFuncPtr, boost::python::object> m_initialized_moduiles;
 };
 
 #endif
