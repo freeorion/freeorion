@@ -26,8 +26,8 @@ jobs:
             godot3: false
           - image: debian-sid-i386
             godot3: false
-          - image: alpine
-            godot3: false
+          # - image: alpine - broken Boost 1.84
+          #   godot3: false
     env:
       CACHE_NAME: linux
     steps:
