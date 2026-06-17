@@ -10,7 +10,7 @@ from focs._conditions import (
     Unowned,
     WithinStarlaneJumps,
 )
-from focs._effects_new import Destroy, EffectsGroup
+from focs._effects import Destroy, EffectsGroup
 from focs._enums import DestroyOnCapture
 from focs._sources import Source
 from focs._value_refs import (

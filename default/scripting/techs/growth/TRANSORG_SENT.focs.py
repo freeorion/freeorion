@@ -1,5 +1,5 @@
 from focs._conditions import OwnedBy, Planet
-from focs._effects_new import Conditional, EffectsGroup, Item, SetInfluence
+from focs._effects import Conditional, EffectsGroup, Item, SetInfluence
 from focs._enums import UnlockPolicy
 from focs._sources import LocalCandidate, Source, Target
 from focs._techs import Tech

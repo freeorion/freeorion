@@ -1,5 +1,5 @@
 from focs._conditions import HasTag, OwnedBy, Planet
-from focs._effects_new import EffectsGroup, SetTargetPopulation
+from focs._effects import EffectsGroup, SetTargetPopulation
 from focs._enums import Hostile, Poor
 from focs._sources import Source, Target
 from focs._techs import Tech

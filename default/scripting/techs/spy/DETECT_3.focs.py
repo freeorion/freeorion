@@ -1,5 +1,5 @@
 from focs._conditions import IsSource, OwnedBy, OwnerHasTech, Planet
-from focs._effects_new import EffectsGroup, Item, SetDetection, SetEmpireMeter
+from focs._effects import EffectsGroup, Item, SetDetection, SetEmpireMeter
 from focs._enums import UnlockShipPart
 from focs._sources import Source
 from focs._techs import Tech

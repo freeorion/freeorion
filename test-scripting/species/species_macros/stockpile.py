@@ -1,5 +1,5 @@
 from focs._conditions import Focus, HasSpecies, Homeworld, IsSource, OwnedBy, Planet, TargetPopulation
-from focs._effects_new import (
+from focs._effects import (
     EffectsGroup,
     SetMaxStockpile,
     SetStockpile,

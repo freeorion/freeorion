@@ -1,5 +1,5 @@
 from focs._conditions import IsSource, Planet, Turn
-from focs._effects_new import EffectsGroup, SetPlanetSize
+from focs._effects import EffectsGroup, SetPlanetSize
 from focs._enums import Huge, Large, Medium, Small, Tiny
 
 LARGE_PLANET = [

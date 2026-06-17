@@ -1,5 +1,5 @@
 from focs._conditions import InSystem, OwnedBy, Ship, Structure, Turn
-from focs._effects_new import EffectsGroup, Item, SetStructure
+from focs._effects import EffectsGroup, Item, SetStructure
 from focs._enums import UnlockPolicy
 from focs._sources import LocalCandidate, Source
 from focs._techs import Tech

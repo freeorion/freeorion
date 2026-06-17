@@ -1,5 +1,5 @@
 from focs._conditions import IsField, IsSource, MinimumNumberOf, Star, Turn
-from focs._effects_new import AddSpecial, EffectsGroup, MoveTowards
+from focs._effects import AddSpecial, EffectsGroup, MoveTowards
 from focs._enums import NoStar
 from focs._sources import LocalCandidate, Source
 from focs._species import Species

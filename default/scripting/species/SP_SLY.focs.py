@@ -14,7 +14,7 @@ from focs._conditions import (
     Structure,
     Turn,
 )
-from focs._effects_new import EffectsGroup, GiveEmpirePolicy, SetFuel, SetStructure
+from focs._effects import EffectsGroup, GiveEmpirePolicy, SetFuel, SetStructure
 from focs._enums import AllyOf, EnemyOf, GasGiantType
 from focs._sources import LocalCandidate, RootCandidate, Source, Target
 from focs._species import Species

@@ -13,7 +13,7 @@ from focs._conditions import (
     Ship,
     Unowned,
 )
-from focs._effects_new import (
+from focs._effects import (
     EffectsGroup,
     SetCapacity,
     SetMaxTroops,

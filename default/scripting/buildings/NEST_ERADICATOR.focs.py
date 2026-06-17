@@ -1,6 +1,6 @@
 from focs._buildings import BuildingType
 from focs._conditions import Contains, Enqueued, HasSpecial, IsBuilding, IsSource, Object, OwnedBy, Planet
-from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, RemoveSpecial
+from focs._effects import Destroy, EffectsGroup, GenerateSitRepMessage, RemoveSpecial
 from focs._enums import BuildBuilding
 from focs._sources import Source, Target
 from macros.priorities import (

@@ -1,7 +1,7 @@
 from typing import Literal
 
 from focs._conditions import IsSource, OwnedBy, Ship
-from focs._effects_new import (
+from focs._effects import (
     EffectsGroup,
     GenerateSitRepMessage,
     SetCapacity,

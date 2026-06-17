@@ -1,5 +1,5 @@
 from focs._conditions import IsSource, Monster, Number, Ship, Size, WithinDistance
-from focs._effects_new import Destroy, EffectsGroup, MoveInOrbit, MoveTowards, SetSize, SetSpeed, SetTargetResearch
+from focs._effects import Destroy, EffectsGroup, MoveInOrbit, MoveTowards, SetSize, SetSpeed, SetTargetResearch
 from focs._fields import FieldType
 from focs._sources import Source
 from focs._value_refs import (

@@ -1,7 +1,7 @@
 from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
 from focs._buildings import BuildingType
 from focs._conditions import Contains, IsBuilding, IsSource, OwnedBy, Planet
-from focs._effects_new import Destroy, EffectsGroup
+from focs._effects import Destroy, EffectsGroup
 from focs._enums import AsteroidsType
 from focs._sources import Source
 from macros.base_prod import BUILDING_COST_MULTIPLIER

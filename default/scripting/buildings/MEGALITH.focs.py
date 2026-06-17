@@ -10,7 +10,7 @@ from focs._conditions import (
     TargetPopulation,
     WithinStarlaneJumps,
 )
-from focs._effects_new import (
+from focs._effects import (
     EffectsGroup,
     SetEmpireCapital,
     SetIndustry,

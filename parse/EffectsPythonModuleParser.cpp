@@ -748,7 +748,7 @@ namespace {
     }
 }
 
-BOOST_PYTHON_MODULE(_effects_new) {
+BOOST_PYTHON_MODULE(_effects) {
     py::docstring_options doc_options(true, true, false);
 
     py::def("MoveInOrbit", boost::python::raw_function(insert_move_in_orbit));

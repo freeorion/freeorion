@@ -12,7 +12,7 @@ from focs._conditions import (
     TargetPopulation,
     Unowned,
 )
-from focs._effects_new import EffectsGroup, SetEmpireMeter, SetTargetInfluence
+from focs._effects import EffectsGroup, SetEmpireMeter, SetTargetInfluence
 from focs._enums import CountUnique
 from focs._sources import LocalCandidate, Source
 from focs._value_refs import (

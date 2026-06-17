@@ -1,4 +1,4 @@
-from focs._effects_new import _Item
+from focs._effects import _Item
 from focs._types import _EffectGroup, _FloatParam
 
 def Tech(

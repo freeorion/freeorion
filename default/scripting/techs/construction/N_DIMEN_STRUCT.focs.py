@@ -1,5 +1,5 @@
 from focs._conditions import HasSpecies, OwnedBy
-from focs._effects_new import EffectsGroup, SetTargetConstruction, SetTargetPopulation
+from focs._effects import EffectsGroup, SetTargetConstruction, SetTargetPopulation
 from focs._sources import Source, Target
 from focs._techs import Tech
 from focs._value_refs import (

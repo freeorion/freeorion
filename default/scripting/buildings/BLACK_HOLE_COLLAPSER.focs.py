@@ -1,6 +1,6 @@
 from focs._buildings import BuildingType
 from focs._conditions import ContainedBy, Contains, IsSource, OwnedBy, Planet, Star
-from focs._effects_new import CreateField, Destroy, EffectsGroup
+from focs._effects import CreateField, Destroy, EffectsGroup
 from focs._enums import BlackHole
 from focs._sources import Source
 from macros.base_prod import BUILDING_COST_MULTIPLIER

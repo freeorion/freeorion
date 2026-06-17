@@ -5,7 +5,7 @@ from buildings.buildings_macros import (
 )
 from focs._buildings import BuildingType
 from focs._conditions import Contains, Enqueued, IsBuilding, IsSource, Object, Planet
-from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage
+from focs._effects import Destroy, EffectsGroup, GenerateSitRepMessage
 from focs._enums import BuildBuilding
 from focs._sources import Source, Target
 from macros.base_prod import BUILDING_COST_MULTIPLIER

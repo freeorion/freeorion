@@ -1,5 +1,5 @@
 from focs._conditions import OwnedBy, OwnerHasTech, Planet
-from focs._effects_new import EffectsGroup, Item, SetTargetPopulation
+from focs._effects import EffectsGroup, Item, SetTargetPopulation
 from focs._enums import Adequate, Good, UnlockBuilding
 from focs._sources import Source
 from focs._techs import Tech

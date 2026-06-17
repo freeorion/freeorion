@@ -12,7 +12,7 @@ from focs._conditions import (
     TargetPopulation,
     Turn,
 )
-from focs._effects_new import EffectsGroup, SetPopulation, SetStarType, SetTargetPopulation
+from focs._effects import EffectsGroup, SetPopulation, SetStarType, SetTargetPopulation
 from focs._enums import (
     AnyEmpire,
     BlackHole,

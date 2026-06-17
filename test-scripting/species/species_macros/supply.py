@@ -3,7 +3,7 @@ from focs._conditions import IsSource, Planet
 # NO_SUPPLY
 # '''
 # '''
-from focs._effects_new import (
+from focs._effects import (
     EffectsGroup,
     SetMaxSupply,
     SetSupply,

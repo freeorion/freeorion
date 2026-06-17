@@ -1,5 +1,5 @@
 from focs._conditions import Focus, Happiness, OwnedBy, Planet, Ship
-from focs._effects_new import (
+from focs._effects import (
     EffectsGroup,
     SetMaxDefense,
     SetMaxFuel,

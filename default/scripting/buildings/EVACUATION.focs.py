@@ -16,7 +16,7 @@ from focs._conditions import (
     Population,
     ResourceSupplyConnected,
 )
-from focs._effects_new import (
+from focs._effects import (
     Destroy,
     EffectsGroup,
     GenerateSitRepMessage,

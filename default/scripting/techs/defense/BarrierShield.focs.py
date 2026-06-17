@@ -1,5 +1,5 @@
 from focs._conditions import OwnedBy, Planet
-from focs._effects_new import EffectsGroup, SetMaxShield, SetShield
+from focs._effects import EffectsGroup, SetMaxShield, SetShield
 from focs._sources import LocalCandidate, Source, Target
 from focs._techs import Tech
 from focs._value_refs import (

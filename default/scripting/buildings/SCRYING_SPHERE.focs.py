@@ -11,7 +11,7 @@ from focs._conditions import (
     Unowned,
     WithinStarlaneJumps,
 )
-from focs._effects_new import EffectsGroup, SetEmpireMeter, SetVisibility
+from focs._effects import EffectsGroup, SetEmpireMeter, SetVisibility
 from focs._enums import Partial
 from focs._sources import Source
 from focs._value_refs import (

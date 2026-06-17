@@ -16,7 +16,7 @@ from focs._conditions import (
     Turn,
     Unowned,
 )
-from focs._effects_new import EffectsGroup, SetTargetInfluence
+from focs._effects import EffectsGroup, SetTargetInfluence
 from focs._sources import LocalCandidate, Source, Target
 from focs._value_refs import (
     Abs,

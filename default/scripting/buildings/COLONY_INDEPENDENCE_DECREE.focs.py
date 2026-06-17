@@ -1,6 +1,6 @@
 from focs._buildings import BuildingType
 from focs._conditions import Capital, IsBuilding, IsSource, Object, OwnedBy, Planet, Population
-from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage, SetOwner, SetSpecialCapacity, SetVisibility
+from focs._effects import Destroy, EffectsGroup, GenerateSitRepMessage, SetOwner, SetSpecialCapacity, SetVisibility
 from focs._enums import AllyOf, DestroyOnCapture, Partial
 from focs._sources import LocalCandidate, Source, Target
 from focs._value_refs import (

@@ -1,5 +1,5 @@
 from focs._conditions import IsSource, Planet, Star, Turn
-from focs._effects_new import AddSpecial, Conditional, CreateShip, EffectsGroup
+from focs._effects import AddSpecial, Conditional, CreateShip, EffectsGroup
 from focs._enums import Blue, Orange, Red, White, Yellow
 from focs._species import Species
 from focs._value_refs import (

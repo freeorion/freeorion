@@ -1,5 +1,5 @@
 from focs._conditions import DesignHasPart, IsHuman, IsSource, Ship
-from focs._effects_new import EffectsGroup, SetMaxShield, SetShield
+from focs._effects import EffectsGroup, SetMaxShield, SetShield
 from focs._sources import LocalCandidate, Target
 from focs._value_refs import (
     CurrentTurn,

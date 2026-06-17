@@ -1,7 +1,7 @@
 # NO_INDUSTRY
 # '''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_INDUSTRY_DESC)]]'''
 from focs._conditions import Focus, Happiness, IsHuman, IsSource, Planet, TargetIndustry
-from focs._effects_new import (
+from focs._effects import (
     EffectsGroup,
     SetTargetIndustry,
 )

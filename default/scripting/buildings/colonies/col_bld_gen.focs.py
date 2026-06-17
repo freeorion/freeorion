@@ -16,7 +16,7 @@ from focs._conditions import (
     ResourceSupplyConnected,
     Turn,
 )
-from focs._effects_new import Destroy, EffectsGroup, GenerateSitRepMessage
+from focs._effects import Destroy, EffectsGroup, GenerateSitRepMessage
 from focs._enums import Min, Uninhabitable
 from focs._sources import LocalCandidate, Source, Target
 from focs._value_refs import (
