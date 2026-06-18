@@ -20,6 +20,7 @@ from macros.priorities import (
 
 lower_stealth_count_special = "LOWER_STEALTH_COUNT_SPECIAL"
 base_stealth_special = "BASE_STEALTH_SPECIAL"
+unstealthed_stealth_special = "UNSTEALTHED_STEALTH_SPECIAL"
 
 
 def InGame():
@@ -163,6 +164,7 @@ Tech(
         # temporarily note amount of fleet unstealthiness before capping
         EffectsGroup(
             scope=Ship & InSystem() & OwnedBy(empire=Source.Owner),
+            accountinglabel="FLEET_UNSTEALTHINESS_PRESYNC_LABEL",
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=[
                 SetSpecialCapacity(
@@ -170,11 +172,13 @@ Tech(
                     capacity=count_lower_stealth_ships_statistic_valref(own_ships_in_targetz_system),
                 ),
                 AddSpecial(name=base_stealth_special, capacity=Value(Target.Stealth)),
+                SetStealth(value=SpecialCapacity(name=base_stealth_special, object=Target.ID)),# sync client to server value - redundant on server
             ],
         ),
         # Check InGame(), this should not trigger in e.g. ShipDesigner (where the ship is ~InSystem). No meter effects - not strictly necessary
         EffectsGroup(
             scope=Ship & InGame() & ~InSystem() & OwnedBy(empire=Source.Owner),
+            accountinglabel="FLEET_UNSTEALTHINESS_PRESYNC_LABEL",
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=[
                 SetSpecialCapacity(
@@ -182,16 +186,25 @@ Tech(
                     capacity=count_lower_stealth_ships_statistic_valref(own_ships_on_targetz_starlane),
                 ),
                 AddSpecial(name=base_stealth_special, capacity=Value(Target.Stealth)),
+                SetStealth(value=SpecialCapacity(name=base_stealth_special, object=Target.ID)),# sync client to server value - redundant on server
             ],
         ),
         # apply the lowest resulting stealth of ships of higher/equal stealth
         EffectsGroup(
             scope=Ship & InSystem() & OwnedBy(empire=Source.Owner) & HasSpecial(name=base_stealth_special),
+            priority=LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY-1,
+            effects=[
+                SetStealth(value=SpecialCapacity(name=stealthed_stealth_special, object=Target.ID)),# comes from server FIXME use other special
+                AddSpecial(name=unstealthed_stealth_special, capacity=min_effective_stealth_of_more_stealthy_ships_valref_other_own_ships_in_targetz_system()),
+            ],
+        ),
+        EffectsGroup(
+            scope=Ship & InSystem() & OwnedBy(empire=Source.Owner) & HasSpecial(name=unstealthed_stealth_special),
             accountinglabel="FLEET_UNSTEALTHINESS_INSYSTEM_LABEL",
             priority=LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=[
                 SetStealth(
-                    value=min_effective_stealth_of_more_stealthy_ships_valref_other_own_ships_in_targetz_system()
+                    value=SpecialCapacity(name=unstealthed_stealth_special, object=Target.ID),# comes from server FIXME use other special
                 ),
             ],
         ),
