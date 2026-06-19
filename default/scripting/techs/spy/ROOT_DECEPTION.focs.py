@@ -4,6 +4,7 @@ from focs._enums import BlackHole, Min, Neutron, NoStar, Red
 from focs._sources import LocalCandidate, Source, Target
 from focs._techs import Tech
 from focs._value_refs import (
+    Abs,
     MinOf,
     NamedReal,
     NoOpValue,
@@ -173,7 +174,7 @@ Tech(
                 ),
                 AddSpecial(name=base_stealth_special, capacity=Value(Target.Stealth)), # record server value
                 Conditional( # if there is a discrepancy between server and client value, sync to server value
-                    condition=SpecialCapacity(name=base_stealth_special, object=Target.ID) != Value(Target.Stealth),
+                    condition=0.01 > Abs(SpecialCapacity(name=base_stealth_special, object=Target.ID) - Value(Target.Stealth)),
                     effects=[
                         SetStealth(value=SpecialCapacity(name=base_stealth_special, object=Target.ID)),
                     ],
