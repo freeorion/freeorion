@@ -192,19 +192,12 @@ Tech(
         # apply the lowest resulting stealth of ships of higher/equal stealth
         EffectsGroup(
             scope=Ship & InSystem() & OwnedBy(empire=Source.Owner) & HasSpecial(name=base_stealth_special),
-            priority=LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY-1,
-            effects=[
-                SetStealth(value=SpecialCapacity(name=stealthed_stealth_special, object=Target.ID)),# comes from server FIXME use other special
-                AddSpecial(name=unstealthed_stealth_special, capacity=min_effective_stealth_of_more_stealthy_ships_valref_other_own_ships_in_targetz_system()),
-            ],
-        ),
-        EffectsGroup(
-            scope=Ship & InSystem() & OwnedBy(empire=Source.Owner) & HasSpecial(name=unstealthed_stealth_special),
             accountinglabel="FLEET_UNSTEALTHINESS_INSYSTEM_LABEL",
             priority=LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=[
+                AddSpecial(name=unstealthed_stealth_special, capacity=min_effective_stealth_of_more_stealthy_ships_valref_other_own_ships_in_targetz_system()),
                 SetStealth(
-                    value=SpecialCapacity(name=unstealthed_stealth_special, object=Target.ID),# comes from server FIXME use other special
+                    value=SpecialCapacity(name=unstealthed_stealth_special, object=Target.ID),# comes from server
                 ),
             ],
         ),
