@@ -1,5 +1,5 @@
 from focs._conditions import HasSpecial, InSystem, IsTarget, OwnedBy, Ship, Star
-from focs._effects import AddSpecial, EffectsGroup, SetSpecialCapacity, SetStealth
+from focs._effects import AddSpecial, Conditional, EffectsGroup, SetSpecialCapacity, SetStealth
 from focs._enums import BlackHole, Min, Neutron, NoStar, Red
 from focs._sources import LocalCandidate, Source, Target
 from focs._techs import Tech
@@ -161,7 +161,7 @@ Tech(
             accountinglabel="SPY_DECEPTION_SUBSTELLAR_INTERFERENCE",
             effects=SetStealth(value=Value + NamedReal(name="SPY_DECEPTION_BLACK_INTERFERENCE", value=10.0)),
         ),
-        # temporarily note amount of fleet unstealthiness before capping
+        # note amount of fleet unstealthiness before capping and sync client/server for effect accounting
         EffectsGroup(
             scope=Ship & InSystem() & OwnedBy(empire=Source.Owner),
             accountinglabel="FLEET_UNSTEALTHINESS_PRESYNC_LABEL",
@@ -171,8 +171,13 @@ Tech(
                     name=lower_stealth_count_special,
                     capacity=count_lower_stealth_ships_statistic_valref(own_ships_in_targetz_system),
                 ),
-                AddSpecial(name=base_stealth_special, capacity=Value(Target.Stealth)),
-                SetStealth(value=SpecialCapacity(name=base_stealth_special, object=Target.ID)),# sync client to server value - redundant on server
+                AddSpecial(name=base_stealth_special, capacity=Value(Target.Stealth)), # record server value
+                Conditional( # if there is a discrepancy between server and client value, sync to server value
+                    condition=SpecialCapacity(name=base_stealth_special, object=Target.ID) != Value(Target.Stealth),
+                    effects=[
+                        SetStealth(value=SpecialCapacity(name=base_stealth_special, object=Target.ID)),
+                    ],
+                ),
             ],
         ),
         # Check InGame(), this should not trigger in e.g. ShipDesigner (where the ship is ~InSystem). No meter effects - not strictly necessary
