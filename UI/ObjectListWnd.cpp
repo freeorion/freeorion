@@ -733,7 +733,7 @@ public:
                 return std::make_unique<Condition::EmpireAffiliation>(affil);
 
             // get id of empire matching name
-            int empire_id = ALL_EMPIRES;
+            EmpireID empire_id = ALL_EMPIRES;
             for (auto& [loop_empire_id, loop_empire] : Empires()) {
                 if (loop_empire->Name() == empire_name) {
                     empire_id = loop_empire_id;

@@ -51,7 +51,8 @@ public:
       * visibility if \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if either system ID
       * is out of range, or if the empire ID is not known. */
-    std::pair<std::vector<int>, double> ShortestPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
+    std::pair<std::vector<int>, double> ShortestPath(UniverseObjectID system1_id, UniverseObjectID system2_id,
+                                                     EmpireID empire_id = ALL_EMPIRES) const;
 
     /** Shortest path known to an empire between two systems, excluding routes
      *  for systems containing objects for @p system_predicate.
@@ -62,7 +63,7 @@ public:
      *                         if it is or contains a matched object
      * 
      * @returns list of System ids, distance between systems */
-    std::pair<std::vector<int>, double> ShortestPath(int system1_id, int system2_id,
+    std::pair<std::vector<int>, double> ShortestPath(UniverseObjectID system1_id, UniverseObjectID system2_id,
                                                      const SystemExclusionPredicateType& system_predicate,
                                                      const ObjectMap& objects) const;
 
@@ -70,7 +71,7 @@ public:
       * for cases where one or the other are fleets / ships on starlanes between
       * systems. Returns -1 when no path exists, or either object does not
       * exist. */
-    double ShortestPathDistance(int object1_id, int object2_id, const ObjectMap& objects) const;
+    double ShortestPathDistance(UniverseObjectID object1_id, UniverseObjectID object2_id, const ObjectMap& objects) const;
 
     /** Returns the sequence of systems, including \a system1 and \a system2,
       * that defines the path with the fewest jumps from \a system1 to
@@ -80,8 +81,8 @@ public:
       * \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function
       * will throw if either system ID is out of range or if the empire ID is
       * not known. */
-    std::pair<std::vector<int>, int> LeastJumpsPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES,
-                                                    int max_jumps = INT_MAX) const;
+    std::pair<std::vector<int>, int> LeastJumpsPath(UniverseObjectID system1_id, UniverseObjectID system2_id,
+                                                    EmpireID empire_id = ALL_EMPIRES, int max_jumps = INT_MAX) const;
 
     /** Returns whether there is a path known to empire \a empire_id between
       * system \a system1 and system \a system2.  The path is calculated using
@@ -89,7 +90,7 @@ public:
       * if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function
       * will throw if either system ID is out of range or if the empire ID is
       * not known. */
-    bool SystemsConnected(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
+    bool SystemsConnected(UniverseObjectID system1_id, UniverseObjectID system2_id, EmpireID empire_id = ALL_EMPIRES) const;
 
     /** Returns true iff \a system is reachable from another system (i.e. it
       * has at least one known starlane to it).   This does not guarantee that
@@ -98,7 +99,7 @@ public:
       * The starlanes considered depend on their visibility for empire
       * \a empire_id, or without regard to visibility if
       * \a empire_id == ALL_EMPIRES. */
-    bool SystemHasVisibleStarlanes(int system_id, const ObjectMap& objects) const;
+    bool SystemHasVisibleStarlanes(UniverseObjectID system_id, const ObjectMap& objects) const;
 
     /** Returns the systems that are one starlane hop away from system
       * \a system.  The returned systems are indexed by distance from
@@ -109,12 +110,12 @@ public:
       * ID is out of range. */
     //TODO empire_id is never set to anything other than self, which in
     //the AI's is the same as ALL_EMPIRES
-    std::vector<std::pair<double, int>> ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
+    std::vector<std::pair<double, int>> ImmediateNeighbors(UniverseObjectID system_id, EmpireID empire_id = ALL_EMPIRES) const;
 
     /** Returns the system ids of systems that are within \p jumps of the \p
         candidates system ids.*/
-    std::vector<int> WithinJumps(std::size_t jumps, std::vector<int> candidates) const;
-    std::vector<int> WithinJumps(std::size_t jumps, int candidate) const;
+    std::vector<int> WithinJumps(std::size_t jumps, std::vector<UniverseObjectID> candidates) const;
+    std::vector<int> WithinJumps(std::size_t jumps, UniverseObjectID candidate) const;
 
     /** Returns the partition (near, far) of the \p candidate objects into two sets,
         those that are within \p jumps of the \p stationary objects and that are not.*/
@@ -137,7 +138,7 @@ public:
       * graph to account for actual system-starlane connectivity changes. */
     void UpdateCommonFilteredSystemGraphs(const EmpireManager& empires, const ObjectMap& objects);
     void UpdateEmpireVisibilityFilteredSystemGraphs(const EmpireManager& empires,
-                                                    const std::map<int, ObjectMap>& empire_object_maps);
+                                                    const std::map<EmpireID, ObjectMap>& empire_object_maps);
 
     class PathfinderImpl;
 private:

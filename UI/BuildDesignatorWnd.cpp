@@ -711,7 +711,7 @@ public:
 
     /** Sets id of empire (or ALL_EMPIRES) for which to show items in this
       * BuildSelector. */
-    void SetEmpireID(int empire_id = ALL_EMPIRES, bool refresh_list = true);
+    void SetEmpireID(EmpireID empire_id = ALL_EMPIRES, bool refresh_list = true);
 
     /** Clear and refill list of buildable items, according to current
       * filter settings. */

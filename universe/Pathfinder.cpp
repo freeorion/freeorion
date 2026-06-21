@@ -637,27 +637,27 @@ class Pathfinder::PathfinderImpl {
 public:
     double LinearDistance(int object1_id, int object2_id, const ObjectMap& objects) const;
     int16_t JumpDistanceBetweenSystems(int system1_id, int system2_id) const;
-    int JumpDistanceBetweenObjects(int object1_id, int object2_id, const ObjectMap& objects) const;
+    int JumpDistanceBetweenObjects(UniverseObjectID object1_id, UniverseObjectID object2_id, const ObjectMap& objects) const;
 
-    std::pair<std::vector<int>, double> ShortestPath(
-        int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
-    std::pair<std::vector<int>, double> ShortestPath(
-        int system1_id, int system2_id, const ObjectMap& objects,
+    std::pair<std::vector<UniverseObjectID>, double> ShortestPath(
+        UniverseObjectID system1_id, UniverseObjectID system2_id, EmpireID empire_id = ALL_EMPIRES) const;
+    std::pair<std::vector<UniverseObjectID>, double> ShortestPath(
+        UniverseObjectID system1_id, UniverseObjectID system2_id, const ObjectMap& objects,
         const Pathfinder::SystemExclusionPredicateType& sys_pred) const;
 
-    double ShortestPathDistance(int object1_id, int object2_id, const ObjectMap& objects) const;
+    double ShortestPathDistance(UniverseObjectID object1_id, UniverseObjectID object2_id, const ObjectMap& objects) const;
 
-    std::pair<std::vector<int>, int> LeastJumpsPath(
-        int system1_id, int system2_id, int empire_id = ALL_EMPIRES, int max_jumps = INT_MAX) const;
+    std::pair<std::vector<UniverseObjectID>, UniverseObjectID> LeastJumpsPath(
+        UniverseObjectID system1_id, UniverseObjectID system2_id, EmpireID empire_id = ALL_EMPIRES, int max_jumps = INT_MAX) const;
 
-    bool SystemsConnected(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
-    bool SystemHasVisibleStarlanes(int system_id, const ObjectMap& objects) const;
-    std::vector<std::pair<double, int>> ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
+    bool SystemsConnected(UniverseObjectID system1_id, UniverseObjectID system2_id, EmpireID empire_id = ALL_EMPIRES) const;
+    bool SystemHasVisibleStarlanes(UniverseObjectID system_id, const ObjectMap& objects) const;
+    std::vector<std::pair<double, int>> ImmediateNeighbors(UniverseObjectID system_id, EmpireID empire_id = ALL_EMPIRES) const;
 
-    std::vector<int> WithinJumps(std::size_t jumps, int candidate) const;
-    std::vector<int> WithinJumps(std::size_t jumps, std::vector<int> candidates) const;
+    std::vector<UniverseObjectID> WithinJumps(std::size_t jumps, UniverseObjectID candidate) const;
+    std::vector<UniverseObjectID> WithinJumps(std::size_t jumps, std::vector<UniverseObjectID> candidates) const;
     void WithinJumpsCacheHit(
-        std::vector<int>& result, std::size_t jump_limit,
+        std::vector<UniverseObjectID>& result, std::size_t jump_limit,
         std::size_t ii, const std::vector<int16_t>& row) const;
 
     std::pair<Condition::ObjectSet, Condition::ObjectSet>
@@ -668,7 +668,7 @@ public:
 
     /** Return true if \p system_id is within \p jumps of any of \p others */
     bool WithinJumpsOfOthers(
-        int jumps, int system_id, const ObjectMap& objects,
+        int jumps, UniverseObjectID system_id, const ObjectMap& objects,
         const Condition::ObjectSet& others) const;
 
     /** If any of \p others are within \p jumps of \p ii return true in \p answer.
@@ -694,9 +694,9 @@ public:
     void HandleCacheMiss(std::size_t ii, distance_matrix_storage<int16_t>::row_ref row) const;
 
 
-    mutable distance_matrix_storage<int16_t>     m_system_jumps; ///< indexed by system graph index (not system id), caches the smallest number of jumps to travel between all the systems
-    GraphImpl                                    m_graph_impl{}; ///< a graph in which the systems are vertices and the starlanes are edges
-    boost::container::flat_map<int, std::size_t> m_system_id_to_graph_index;
+    mutable distance_matrix_storage<int16_t>                  m_system_jumps; ///< indexed by system graph index (not system id), caches the smallest number of jumps to travel between all the systems
+    GraphImpl                                                 m_graph_impl{}; ///< a graph in which the systems are vertices and the starlanes are edges
+    boost::container::flat_map<UniverseObjectID, std::size_t> m_system_id_to_graph_index;
 };
 
 /////////////////////////////////////////////
@@ -1137,21 +1137,21 @@ bool Pathfinder::PathfinderImpl::SystemsConnected(int system1_id, int system2_id
     return retval;
 }
 
-bool Pathfinder::SystemHasVisibleStarlanes(int system_id, const ObjectMap& objects) const
+bool Pathfinder::SystemHasVisibleStarlanes(UniverseObjectID system_id, const ObjectMap& objects) const
 { return pimpl->SystemHasVisibleStarlanes(system_id, objects); }
 
-bool Pathfinder::PathfinderImpl::SystemHasVisibleStarlanes(int system_id, const ObjectMap& objects) const {
+bool Pathfinder::PathfinderImpl::SystemHasVisibleStarlanes(UniverseObjectID system_id, const ObjectMap& objects) const {
     if (auto system = objects.getRaw<System>(system_id))
         if (system->NumStarlanes() > 0)
             return true;
     return false;
 }
 
-std::vector<std::pair<double, int>> Pathfinder::ImmediateNeighbors(int system_id, int empire_id) const
+std::vector<std::pair<double, int>> Pathfinder::ImmediateNeighbors(UniverseObjectID system_id, EmpireID empire_id) const
 { return pimpl->ImmediateNeighbors(system_id, empire_id); }
 
 std::vector<std::pair<double, int>> Pathfinder::PathfinderImpl::ImmediateNeighbors(
-    int system_id, int empire_id) const
+    UniverseObjectID system_id, EmpireID empire_id) const
 {
     if (m_system_id_to_graph_index.size() == 0) [[unlikely]] {
         ErrorLogger() << "Mapping is missing. m_system_id_to_graph_index is empty in PathfinderImpl::ImmediateNeighbors";
@@ -1173,7 +1173,7 @@ std::vector<std::pair<double, int>> Pathfinder::PathfinderImpl::ImmediateNeighbo
 }
 
 void Pathfinder::PathfinderImpl::WithinJumpsCacheHit(
-    std::vector<int>& result, std::size_t jump_limit, std::size_t ii, const std::vector<int16_t>& row) const
+    std::vector<UniverseObjectID>& result, std::size_t jump_limit, std::size_t ii, const std::vector<int16_t>& row) const
 {
     TraceLogger() << "Cache Hit ii: " << ii << "  jumps: " << jump_limit;
     // Scan the LUT of system ids and add any result from the row within
@@ -1181,7 +1181,7 @@ void Pathfinder::PathfinderImpl::WithinJumpsCacheHit(
     for (auto& [sys_id, sys_idx] : m_system_id_to_graph_index) {
         auto hops = row[sys_idx];
         if (hops <= static_cast<decltype(hops)>(jump_limit))
-            result.push_back(sys_id);
+            result.push_back(static_cast<UniverseObjectID>(sys_id));
     }
 }
 
@@ -1511,7 +1511,7 @@ void Pathfinder::UpdateCommonFilteredSystemGraphs(const EmpireManager& empires, 
 { pimpl->UpdateCommonFilteredSystemGraphs(empires, objects); }
 
 void Pathfinder::UpdateEmpireVisibilityFilteredSystemGraphs(const EmpireManager& empires,
-                                                            const std::map<int, ObjectMap>& empire_object_maps)
+                                                            const std::map<EmpireID, ObjectMap>& empire_object_maps)
 { pimpl->UpdateEmpireVisibilityFilteredSystemGraphs(empires, empire_object_maps); }
 
 

@@ -14,7 +14,7 @@ namespace {
       * object \a obj. */
     double ObjectResourceConsumption(std::shared_ptr<const UniverseObject> obj,
                                      ResourceType resource_type,
-                                     int empire_id = ALL_EMPIRES)
+                                     EmpireID empire_id = ALL_EMPIRES)
     {
         if (!obj) {
             ErrorLogger() << "ObjectResourceConsumption passed a null object";

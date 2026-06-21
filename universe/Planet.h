@@ -156,8 +156,8 @@ public:
 
     [[nodiscard]] std::size_t           SizeInMemory() const override;
 
-    void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;
-    void Copy(const Planet& copied_planet, const Universe& universe, int empire_id = ALL_EMPIRES);
+    void Copy(const UniverseObject& copied_object, const Universe& universe, EmpireID empire_id = ALL_EMPIRES) override;
+    void Copy(const Planet& copied_planet, const Universe& universe, EmpireID empire_id = ALL_EMPIRES);
 
     void Reset(ObjectMap& objects);
 
@@ -213,7 +213,7 @@ public:
     Planet() : UniverseObject(UniverseObjectType::OBJ_PLANET) { AddMeters(planet_meter_types); }
 
     /** returns new copy of this Planet. */
-    [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
+    [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, EmpireID empire_id = ALL_EMPIRES) const override;
 
     mutable boost::signals2::signal<void ()> ResourceCenterChangedSignal;
 

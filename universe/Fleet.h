@@ -59,14 +59,14 @@ inline constexpr double FLEET_MOVEMENT_EPSILON = 0.1;  // how close a fleet need
   * ships that travel together. */
 class FO_COMMON_API Fleet final : public UniverseObject {
 public:
-    [[nodiscard]] bool         HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
+    [[nodiscard]] bool         HostileToEmpire(EmpireID empire_id, const EmpireManager& empires) const override;
 
     [[nodiscard]] std::string  Dump(uint8_t ntabs = 0) const override;
 
-    [[nodiscard]] int                  ContainerObjectID() const noexcept override { return this->SystemID(); }
-    [[nodiscard]] std::span<const int> ContainedObjectIDs() const override { return ToSpan(m_ships); }
-    [[nodiscard]] bool                 Contains(int object_id) const override;
-    [[nodiscard]] bool                 ContainedBy(int object_id) const noexcept override;
+    [[nodiscard]] UniverseObjectID                  ContainerObjectID() const noexcept override { return this->SystemID(); }
+    [[nodiscard]] std::span<const UniverseObjectID> ContainedObjectIDs() const override { return ToSpan(m_ships); }
+    [[nodiscard]] bool                              Contains(UniverseObjectID object_id) const override;
+    [[nodiscard]] bool                              ContainedBy(UniverseObjectID object_id) const noexcept override;
 
     [[nodiscard]] const std::string& PublicName(int empire_id, const Universe& universe) const override;
 
@@ -77,7 +77,7 @@ public:
       * to its destination (may be empty).  If this fleet is currently at a
       * system, that system will be the first one in the list. */
     [[nodiscard]] const auto&        TravelRoute() const noexcept { return m_travel_route; };
-    [[nodiscard]] int                OrderedGivenToEmpire() const noexcept { return m_ordered_given_to_empire_id; }   ///< returns the ID of the empire this fleet has been ordered given to, or ALL_EMPIRES if this fleet hasn't been ordered given to an empire
+    [[nodiscard]] EmpireID           OrderedGivenToEmpire() const noexcept { return m_ordered_given_to_empire_id; }   ///< returns the ID of the empire this fleet has been ordered given to, or ALL_EMPIRES if this fleet hasn't been ordered given to an empire
     [[nodiscard]] int                LastTurnMoveOrdered() const noexcept { return m_last_turn_move_ordered; }
     [[nodiscard]] bool               Aggressive() const noexcept { return m_aggression >= FleetAggression::FLEET_AGGRESSIVE; }
     [[nodiscard]] bool               Obstructive() const noexcept { return m_aggression >= FleetAggression::FLEET_OBSTRUCTIVE; }
@@ -88,26 +88,27 @@ public:
       * path if it follows the specified route.  It is assumed in the calculation that the
       * fleet starts its move path at its actual current location, however the fleet's
       * current location will not be on the list, even if it is currently in a system. */
-    [[nodiscard]] std::vector<MovePathNode> MovePath(const std::vector<int>& route, bool flag_blockades,
+    [[nodiscard]] std::vector<MovePathNode> MovePath(const std::vector<UniverseObjectID>& route, bool flag_blockades,
                                                      const ScriptingContext& context) const;
     [[nodiscard]] std::vector<MovePathNode> MovePath(bool flag_blockades, const ScriptingContext& context) const;   ///< Returns MovePath for fleet's current TravelRoute
 
     [[nodiscard]] std::pair<uint8_t, uint8_t> ETA(const ScriptingContext& context) const;            ///< turns which must elapse before the fleet arrives at its current final destination and the turns to the next system, respectively.
     [[nodiscard]] std::pair<uint8_t, uint8_t> ETA(const std::vector<MovePathNode>& move_path) const; ///< turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path
 
-    [[nodiscard]] float   Damage(const Universe& universe) const;                     ///< total amount of damage this fleet has, which is the sum of the ships' damage
-    [[nodiscard]] float   Structure(const ObjectMap& objects) const;                  ///< total amount of structure this fleet has, which is the sum of the ships' structure
-    [[nodiscard]] float   Shields(const ObjectMap& objects) const;                    ///< total amount of shields this fleet has, which is the sum of the ships' shields
-    [[nodiscard]] float   Fuel(const ObjectMap& objects) const;                       ///< effective amount of fuel this fleet has, which is the least of the amounts of fuel that the ships have
-    [[nodiscard]] float   MaxFuel(const ObjectMap& objects) const;                    ///< effective maximum amount of fuel this fleet has, which is the least of the max amounts of fuel that the ships can have
-    [[nodiscard]] int     FinalDestinationID() const;                                 ///< ID of system that this fleet is moving to or INVALID_OBJECT_ID if staying still.
-    [[nodiscard]] int     PreviousToFinalDestinationID() const;                       ///< ID of system previous to the destination system that this fleet is moving to or INVALID_OBJECT_ID not moving at least two jumps.
-    [[nodiscard]] int     PreviousSystemID() const noexcept { return m_prev_system; } ///< ID of system that this fleet is moving away from as it moves to its destination.
-    [[nodiscard]] int     NextSystemID() const noexcept     { return m_next_system; } ///< ID of system that this fleet is moving to next as it moves to its destination.
+    [[nodiscard]] float   Damage(const Universe& universe) const;                              ///< total amount of damage this fleet has, which is the sum of the ships' damage
+    [[nodiscard]] float   Structure(const ObjectMap& objects) const;                           ///< total amount of structure this fleet has, which is the sum of the ships' structure
+    [[nodiscard]] float   Shields(const ObjectMap& objects) const;                             ///< total amount of shields this fleet has, which is the sum of the ships' shields
+    [[nodiscard]] float   Fuel(const ObjectMap& objects) const;                                ///< effective amount of fuel this fleet has, which is the least of the amounts of fuel that the ships have
+    [[nodiscard]] float   MaxFuel(const ObjectMap& objects) const;                             ///< effective maximum amount of fuel this fleet has, which is the least of the max amounts of fuel that the ships can have
 
-    [[nodiscard]] bool             Blockaded(const ScriptingContext& context) const;  ///< true iff either (i) fleet is stationary and at least one system exit is blocked for this fleet or (ii) fleet is attempting to depart a system along a blocked system exit
-    [[nodiscard]] bool             BlockadedAtSystem(int start_system_id, int dest_system_id, const ScriptingContext& context) const; ///< returns true iff this fleet's movement would be blockaded at system.
-    [[nodiscard]] std::vector<int> BlockadingFleetsAtSystem(int start_system_id, int dest_system_id, const ScriptingContext& context) const; ///< returns ids of fleets that would blockade this fleet's movement at system.
+    [[nodiscard]] UniverseObjectID FinalDestinationID() const;                                 ///< ID of system that this fleet is moving to or INVALID_OBJECT_ID if staying still.
+    [[nodiscard]] UniverseObjectID PreviousToFinalDestinationID() const;                       ///< ID of system previous to the destination system that this fleet is moving to or INVALID_OBJECT_ID not moving at least two jumps.
+    [[nodiscard]] UniverseObjectID PreviousSystemID() const noexcept { return m_prev_system; } ///< ID of system that this fleet is moving away from as it moves to its destination.
+    [[nodiscard]] UniverseObjectID NextSystemID() const noexcept     { return m_next_system; } ///< ID of system that this fleet is moving to next as it moves to its destination.
+
+    [[nodiscard]] bool                          Blockaded(const ScriptingContext& context) const;  ///< true iff either (i) fleet is stationary and at least one system exit is blocked for this fleet or (ii) fleet is attempting to depart a system along a blocked system exit
+    [[nodiscard]] bool                          BlockadedAtSystem(UniverseObjectID start_system_id, UniverseObjectID dest_system_id, const ScriptingContext& context) const; ///< returns true iff this fleet's movement would be blockaded at system.
+    [[nodiscard]] std::vector<UniverseObjectID> BlockadingFleetsAtSystem(UniverseObjectID start_system_id, UniverseObjectID dest_system_id, const ScriptingContext& context) const; ///< returns ids of fleets that would blockade this fleet's movement at system.
 
     [[nodiscard]] float   Speed(const ObjectMap& objects) const;                      ///< speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)
     [[nodiscard]] bool    CanChangeDirectionEnRoute() const noexcept { return false; }///< true iff this fleet can change its direction while in interstellar space.
@@ -145,8 +146,8 @@ public:
 
     [[nodiscard]] std::size_t SizeInMemory() const override;
 
-    void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;
-    void Copy(const Fleet& copied_fleet, const Universe& universe, int empire_id = ALL_EMPIRES);
+    void Copy(const UniverseObject& copied_object, const Universe& universe, EmpireID empire_id = ALL_EMPIRES) override;
+    void Copy(const Fleet& copied_fleet, const Universe& universe, EmpireID empire_id = ALL_EMPIRES);
 
     /** Moves fleet and its ships, consumes fuel or resupplies ships,
       * and sets systems as explored for empires. */
@@ -155,33 +156,33 @@ public:
     void ResetTargetMaxUnpairedMeters() override;
 
     /** Sets this fleet to move through the series of systems in the list, in order */
-    void SetRoute(std::vector<int> route, const ObjectMap& objects);
+    void SetRoute(std::vector<UniverseObjectID> route, const ObjectMap& objects);
     void ClearRoute(const ObjectMap& objects) { SetRoute({}, objects); }
     /** Removes ids in this fleet's route (list of system ids) after \a system_id.
       * If \a system_id is not in the route, the route is cleared. */
-    static std::vector<int> TruncateRouteToEndAtFirstOf(std::vector<int> route, int system_id);
-    void TruncateRouteToEndAtFirstOf(int system_id)
+    static std::vector<int> TruncateRouteToEndAtFirstOf(std::vector<UniverseObjectID> route, UniverseObjectID system_id);
+    void TruncateRouteToEndAtFirstOf(UniverseObjectID system_id)
     { m_travel_route = TruncateRouteToEndAtFirstOf(std::move(m_travel_route), system_id); }
-    static std::vector<int> TruncateRouteToEndAtLastOf(std::vector<int> route, int system_id);
-    void TruncateRouteToEndAtLAstOf(int system_id)
+    static std::vector<int> TruncateRouteToEndAtLastOf(std::vector<UniverseObjectID> route, UniverseObjectID system_id);
+    void TruncateRouteToEndAtLAstOf(UniverseObjectID system_id)
     { m_travel_route = TruncateRouteToEndAtLastOf(std::move(m_travel_route), system_id); }
 
     void ResetPrevNextSystems() noexcept { m_next_system = m_prev_system = INVALID_OBJECT_ID; }
 
     /** Sets this fleet to move through the series of systems that makes the
       * shortest path from its current location to target_system_id */
-    void CalculateRouteTo(int target_system_id, const Universe& universe);
+    void CalculateRouteTo(UniverseObjectID target_system_id, const Universe& universe);
 
     void SetAggression(FleetAggression aggression);         ///< sets this fleet's aggression level towards other fleets
 
-    void AddShips(const std::vector<int>& ship_ids);        ///< adds the ships to the fleet
-    void RemoveShips(const std::vector<int>& ship_ids);     ///< removes the ships from the fleet.
+    void AddShips(const std::vector<UniverseObjectID>& ship_ids);        ///< adds the ships to the fleet
+    void RemoveShips(const std::vector<UniverseObjectID>& ship_ids);     ///< removes the ships from the fleet.
 
-    void SetNextAndPreviousSystems(int next, int prev);     ///< sets the previous and next systems for this fleet.  Useful after moving a moving fleet to a different location, so that it moves along its new local starlanes
-    void SetArrivalStarlane(int starlane) noexcept  { m_arrival_starlane = starlane; }  ///< sets the arrival starlane, used to clear blockaded status after combat
+    void SetNextAndPreviousSystems(UniverseObjectID next, UniverseObjectID prev);     ///< sets the previous and next systems for this fleet.  Useful after moving a moving fleet to a different location, so that it moves along its new local starlanes
+    void SetArrivalStarlane(UniverseObjectID starlane) noexcept  { m_arrival_starlane = starlane; }  ///< sets the arrival starlane, used to clear blockaded status after combat
     void ClearArrivalFlag() noexcept { m_arrived_this_turn = false; }                   ///< used to clear the m_arrived_this_turn flag, prior to any fleets moving, for accurate blockade tests
 
-    void SetGiveToEmpire(int empire_id);                    ///< marks fleet to be given to empire
+    void SetGiveToEmpire(EmpireID empire_id);               ///< marks fleet to be given to empire
     void ClearGiveToEmpire();                               ///< marks fleet not to be given to any empire
 
     void SetMoveOrderedTurn(int turn);                      ///< marks fleet to as being ordered to move on indicated turn
@@ -194,7 +195,7 @@ public:
     static constexpr uint8_t ETA_OUT_OF_RANGE = 253;///< returned by ETA when fleet can't reach destination due to insufficient fuel capacity and lack of fleet resupply on route
 
     explicit Fleet(std::string name = "", double x = INVALID_POSITION, double y = INVALID_POSITION,
-                   int owner_id = ALL_EMPIRES, int creation_turn = INVALID_GAME_TURN) :
+                   EmpireID owner_id = ALL_EMPIRES, int creation_turn = INVALID_GAME_TURN) :
         UniverseObject(UniverseObjectType::OBJ_FLEET, std::move(name), x, y, owner_id, creation_turn)
     {}
 
@@ -203,18 +204,18 @@ private:
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
     /** Returns new copy of this Fleet. */
-    [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
+    [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, EmpireID empire_id = ALL_EMPIRES) const override;
 
     IDSet m_ships;
 
     // these two uniquely describe the starlane graph edge the fleet is on, if it it's on one
-    int             m_prev_system = INVALID_OBJECT_ID;  ///< the previous system in the route, if any
-    int             m_next_system = INVALID_OBJECT_ID;  ///< the next system in the route, if any
+    UniverseObjectID m_prev_system = INVALID_OBJECT_ID;  ///< the previous system in the route, if any
+    UniverseObjectID m_next_system = INVALID_OBJECT_ID;  ///< the next system in the route, if any
 
-    FleetAggression m_aggression = FleetAggression::FLEET_OBSTRUCTIVE;  ///< should this fleet attack enemies in the same system, block their passage, or ignore them
+    FleetAggression  m_aggression = FleetAggression::FLEET_OBSTRUCTIVE;  ///< should this fleet attack enemies in the same system, block their passage, or ignore them
 
-    int             m_ordered_given_to_empire_id = ALL_EMPIRES;
-    int             m_last_turn_move_ordered = BEFORE_FIRST_TURN;
+    EmpireID         m_ordered_given_to_empire_id = ALL_EMPIRES;
+    int              m_last_turn_move_ordered = BEFORE_FIRST_TURN;
     /** list of systems on travel route of fleet from current position to
       * destination.  If the fleet is currently in a system, that will be the
       * first system on the list.  Otherwise, the first system on the list will
@@ -222,10 +223,9 @@ private:
       * also contain a single null pointer, which indicates that the route is
       * unknown.  The list may also be empty, which indicates that the fleet
       * is not planning to move. */
-    std::vector<int>m_travel_route;
-
-    int             m_arrival_starlane = INVALID_OBJECT_ID; // see comment for ArrivalStarlane()
-    bool            m_arrived_this_turn = false;
+    std::vector<UniverseObjectID> m_travel_route;
+    UniverseObjectID              m_arrival_starlane = INVALID_OBJECT_ID; // see comment for ArrivalStarlane()
+    bool                          m_arrived_this_turn = false;
 
     template <typename Archive>
     friend void serialize(Archive&, Fleet&, unsigned int const);

@@ -1618,7 +1618,7 @@ template <>
 Visibility ComplexVariable<Visibility>::Eval(const ScriptingContext& context) const
 {
     if (m_property == Property::EmpireObjectVisibility) {
-        int empire_id = ALL_EMPIRES;
+        EmpireID empire_id = ALL_EMPIRES;
         if (m_int_ref1) {
             empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES && context.combat_bout < 1)
@@ -1977,7 +1977,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
         // TODO: implement supply-connect-restriction path length determination...
         // in the meantime, leave empire_id commented out to avoid unused var warning
-        //int empire_id = ALL_EMPIRES;
+        //EmpireID empire_id = ALL_EMPIRES;
         //if (m_int_ref3)
         //    empire_id = m_int_ref3->Eval(context);
 
@@ -2046,7 +2046,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         if (policy_name.empty())
             return 0;
 
-        int empire_id = ALL_EMPIRES;
+        EmpireID empire_id = ALL_EMPIRES;
         if (m_int_ref1) {
             empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
@@ -2059,7 +2059,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         return empire->TurnPolicyAdopted(policy_name);
     }
     else if (m_property == Property::NumPoliciesAdopted) { // similar to a string-keyed empire property, but does specialized lookups of adopted policy info
-        int empire_id = ALL_EMPIRES;
+        EmpireID empire_id = ALL_EMPIRES;
         if (m_int_ref1) {
             empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
@@ -2352,7 +2352,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 
     }
     else if (m_property == Property::EmpireMeterValue) {
-        int empire_id = ALL_EMPIRES;
+        EmpireID empire_id = ALL_EMPIRES;
         if (m_int_ref1)
             empire_id = m_int_ref1->Eval(context);
         auto empire = context.GetEmpire(empire_id);

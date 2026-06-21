@@ -21,10 +21,10 @@ public:
 
     [[nodiscard]] std::string           Dump(uint8_t ntabs = 0) const override;
 
-    [[nodiscard]] int                   ContainerObjectID() const noexcept override { return this->SystemID(); }
-    [[nodiscard]] bool                  ContainedBy(int object_id) const noexcept override;
+    [[nodiscard]] UniverseObjectID      ContainerObjectID() const noexcept override { return this->SystemID(); }
+    [[nodiscard]] bool                  ContainedBy(UniverseObjectID object_id) const noexcept override;
 
-    [[nodiscard]] const std::string&    PublicName(int empire_id, const Universe&) const override;
+    [[nodiscard]] const std::string&    PublicName(EmpireID empire_id, const Universe&) const override;
     [[nodiscard]] const std::string&    FieldTypeName() const noexcept { return m_type_name; }
 
     /* Field is (presently) the only distributed UniverseObject that isn't just
@@ -35,8 +35,8 @@ public:
 
     [[nodiscard]] std::size_t           SizeInMemory() const override;
 
-    void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;
-    void Copy(const Field& copied_field, const Universe& universe, int empire_id = ALL_EMPIRES);
+    void Copy(const UniverseObject& copied_object, const Universe& universe, EmpireID empire_id = ALL_EMPIRES) override;
+    void Copy(const Field& copied_field, const Universe& universe, EmpireID empire_id = ALL_EMPIRES);
 
     void ResetTargetMaxUnpairedMeters() override;
     void ClampMeters() override;
@@ -48,7 +48,7 @@ private:
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
     /** Returns new copy of this Field. */
-    [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
+    [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, EmpireID empire_id = ALL_EMPIRES) const override;
 
     std::string m_type_name;
 

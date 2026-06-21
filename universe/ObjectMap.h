@@ -63,7 +63,7 @@ public:
     template <typename T = UniverseObject, bool only_existing = false>
     [[nodiscard]] std::shared_ptr<const std::decay_t<T>> get(UniverseObjectID id) const;
     template <typename T = UniverseObject, bool only_existing = false>
-    [[nodiscard]] const std::decay_t<T>* getRaw(int id) const;
+    [[nodiscard]] const std::decay_t<T>* getRaw(UniverseObjectID id) const;
 
     /** Returns pointer to an object of type T that matches predicate \a pred.
       * returns nullptr if none exists. */
@@ -78,7 +78,7 @@ public:
     template <typename T = UniverseObject, bool only_existing = false>
     [[nodiscard]] std::shared_ptr<std::decay_t<T>> get(UniverseObjectID id);
     template <typename T = UniverseObject, bool only_existing = false>
-    [[nodiscard]] std::decay_t<T>* getRaw(int id);
+    [[nodiscard]] std::decay_t<T>* getRaw(UniverseObjectID id);
 
     /** Returns a vector containing the objects that match \a pred when applied as a visitor or predicate filter or range of object ids */
     template <typename T = UniverseObject, typename Pred, bool only_existing = false>
@@ -89,7 +89,7 @@ public:
         static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
         static constexpr bool invokable_on_const_entry = invoke_flags[4];
         static constexpr bool invokable_on_const_reference = invoke_flags[6];
-        static constexpr bool invokable_on_int = invoke_flags[11];
+        static constexpr bool invokable_on_id = invoke_flags[11];
         //static constexpr bool is_visitor = invoke_flags[9]; // legacy cruft
         static constexpr bool is_int_range = invoke_flags[10];
 
@@ -148,7 +148,7 @@ public:
             range_copy(rng, std::back_inserter(result));
             return result;
 
-        } else if constexpr (invokable_on_int) {
+        } else if constexpr (invokable_on_id) {
             auto rng = map | range_filter([pred](const auto& id_ptr) { return pred(id_ptr.first); })
                 | range_values | range_transform(get_rawptr);
             result.reserve(map.size());
@@ -180,7 +180,7 @@ public:
         static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
         static constexpr bool invokable_on_const_entry = invoke_flags[4];
         static constexpr bool invokable_on_const_reference = invoke_flags[6];
-        static constexpr bool invokable_on_int = invoke_flags[11];
+        static constexpr bool invokable_on_id = invoke_flags[11];
         //static constexpr bool is_visitor = invoke_flags[9]; // legacy cruft
         static constexpr bool is_int_range = invoke_flags[10];
 
@@ -221,7 +221,7 @@ public:
                 if (pred(*obj))
                     result.push_back(obj);
 
-        } else if constexpr (invokable_on_int) {
+        } else if constexpr (invokable_on_id) {
             for (const auto& [id, obj] : map)
                 if (pred(id))
                     result.push_back(obj);
@@ -413,7 +413,7 @@ public:
       * Copy or Clone functions of the copied UniverseObjects.  Any objects
       * in this ObjectMap that have no corresponding object in \a copied_map
       * are left unchanged. */
-    void Copy(const ObjectMap& copied_map, const Universe& universe, int empire_id = ALL_EMPIRES);
+    void Copy(const ObjectMap& copied_map, const Universe& universe, EmpireID empire_id = ALL_EMPIRES);
 
     /** Copies the contents of the ObjectMap \a copied_map into this ObjectMap, in
      * preparation for serializing this ObjectMap.  The normal object-by-object 
@@ -697,7 +697,8 @@ private:
 
 namespace ObjectMapPredicateTypeTraits{
     template <typename T>
-    concept int_iterable = std::is_same_v<std::decay_t<typename T::value_type>, int> && requires(T t) { t.begin(); t.end(); };
+    concept id_iterable = std::is_same_v<std::decay_t<typename T::value_type>, UniverseObjectID> &&
+                          requires(T t) { t.begin(); t.end(); };
 
     template <class T>
     concept is_set = requires(T t) { []<typename ...Args>(std::set<Args...>&){}(t); };
@@ -735,13 +736,13 @@ constexpr std::array<bool, 12> ObjectMap::CheckTypes() // TODO: check if it's a 
     using DecayPred = std::decay_t<Pred>;
     using ContainerT = container_type<DecayT>;
     using EntryT = typename ContainerT::value_type;
-    static_assert(std::is_same_v<std::pair<const int, std::shared_ptr<DecayT>>, EntryT>);
-    using ConstEntryT = std::pair<const int, std::shared_ptr<const DecayT>>;
+    static_assert(std::is_same_v<std::pair<const UniverseObjectID, std::shared_ptr<DecayT>>, EntryT>);
+    using ConstEntryT = std::pair<const UniverseObjectID, std::shared_ptr<const DecayT>>;
     static_assert(std::is_convertible_v<EntryT, ConstEntryT>);
 
     using namespace ObjectMapPredicateTypeTraits;
 
-    constexpr bool is_int_range = int_iterable<Pred>;
+    constexpr bool is_id_range = id_iterable<Pred>;
 
 
     constexpr bool is_visitor = false; // legacy cruft
@@ -785,25 +786,25 @@ constexpr std::array<bool, 12> ObjectMap::CheckTypes() // TODO: check if it's a 
                     (!invokable_on_const_reference && !invokable_on_mutable_reference),
                     "predicate may not modify ObjectMap contents");
 
-    constexpr bool invokable_on_int = std::is_invocable_r_v<bool, DecayPred, int>;
+    constexpr bool invokable_on_id = std::is_invocable_r_v<bool, DecayPred, UniverseObjectID>;
 
     constexpr bool invokable =
         invokable_on_raw_const_object || invokable_on_raw_mutable_object ||
         invokable_on_shared_const_object || invokable_on_shared_mutable_object ||
         invokable_on_const_entry || invokable_on_mutable_entry ||
         invokable_on_const_reference || invokable_on_mutable_reference ||
-        invokable_on_int;
+        invokable_on_id;
 
     return std::array<bool, 12>{
         invokable_on_raw_const_object, invokable_on_raw_mutable_object,
         invokable_on_shared_const_object, invokable_on_shared_mutable_object,
         invokable_on_const_entry, invokable_on_mutable_entry,
         invokable_on_const_reference, invokable_on_mutable_reference,
-        invokable, is_visitor, is_int_range, invokable_on_int};
+        invokable, is_visitor, is_id_range, invokable_on_id};
 }
 
 template <typename T, bool only_existing>
-std::shared_ptr<const std::decay_t<T>> ObjectMap::get(int id) const
+std::shared_ptr<const std::decay_t<T>> ObjectMap::get(UniverseObjectID id) const
 {
     using DecayT = std::decay_t<T>;
     auto& map{Map<DecayT, only_existing>()};
@@ -812,7 +813,7 @@ std::shared_ptr<const std::decay_t<T>> ObjectMap::get(int id) const
 }
 
 template <typename T, bool only_existing>
-const std::decay_t<T>* ObjectMap::getRaw(int id) const
+const std::decay_t<T>* ObjectMap::getRaw(UniverseObjectID id) const
 {
     using DecayT = std::decay_t<T>;
     auto& map{Map<DecayT, only_existing>()};
@@ -828,10 +829,10 @@ std::shared_ptr<const std::decay_t<T>> ObjectMap::get(Pred pred) const
     static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
     static constexpr bool invokable_on_const_entry = invoke_flags[4];
     static constexpr bool invokable_on_const_reference = invoke_flags[6];
-    static constexpr bool invokable_on_int = invoke_flags[11];
+    static constexpr bool invokable_on_id = invoke_flags[11];
     // static constexpr bool is_visitor = invoke_flags[9]; // legacy cruft
-    static constexpr bool is_int_range = invoke_flags[10];
-    static_assert(!is_int_range, "use findRaw to get multiple objects from IDs");
+    static constexpr bool is_id_range = invoke_flags[10];
+    static_assert(!is_id_range, "use findRaw to get multiple objects from IDs");
 
     using DecayT = std::decay_t<T>;
     auto& map{Map<DecayT, only_existing>()};
@@ -855,7 +856,7 @@ std::shared_ptr<const std::decay_t<T>> ObjectMap::get(Pred pred) const
         auto it = range_find_if(rng, [&pred](const auto& id_obj) { return pred(*id_obj->second); });
         return (it != rng.end()) ? it->second : nullptr;
 
-    } else if constexpr (invokable_on_int) {
+    } else if constexpr (invokable_on_id) {
         auto it = range_find_if(map, [&pred](const auto& id_obj) { return pred(id_obj->first); });
         return (it != map.end()) ? it->second : nullptr;
 
@@ -874,10 +875,10 @@ const std::decay_t<T>* ObjectMap::getRaw(Pred pred) const
     static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
     static constexpr bool invokable_on_const_entry = invoke_flags[4];
     static constexpr bool invokable_on_const_reference = invoke_flags[6];
-    static constexpr bool invokable_on_int = invoke_flags[11];
+    static constexpr bool invokable_on_id = invoke_flags[11];
     //static constexpr bool is_visitor = invoke_flags[9]; // lrgacy cruft
-    static constexpr bool is_int_range = invoke_flags[10];
-    static_assert(!is_int_range, "use findRaw to get multiple objects from IDs");
+    static constexpr bool is_id_range = invoke_flags[10];
+    static_assert(!is_id_range, "use findRaw to get multiple objects from IDs");
 
     using DecayT = std::decay_t<T>;
     auto& map{Map<DecayT, only_existing>()};
@@ -905,7 +906,7 @@ const std::decay_t<T>* ObjectMap::getRaw(Pred pred) const
         static_assert(std::is_same_v<decltype(result), const DecayT&>);
         return std::addressof(result);
 
-    } else if constexpr (invokable_on_int) {
+    } else if constexpr (invokable_on_id) {
         static constexpr bool is_nx = noexcept(pred(INVALID_OBJECT_ID));
         const auto check_pred = [pred](const auto& id_obj) noexcept(is_nx) { return pred(id_obj.first); };
         auto it = range_find_if(map, check_pred);
@@ -919,7 +920,7 @@ const std::decay_t<T>* ObjectMap::getRaw(Pred pred) const
 }
 
 template <typename T, bool only_existing>
-std::shared_ptr<std::decay_t<T>> ObjectMap::get(int id)
+std::shared_ptr<std::decay_t<T>> ObjectMap::get(UniverseObjectID id)
 {
     using DecayT = std::decay_t<T>;
     auto& map{Map<DecayT, only_existing>()};
@@ -928,7 +929,7 @@ std::shared_ptr<std::decay_t<T>> ObjectMap::get(int id)
 }
 
 template <typename T, bool only_existing>
-std::decay_t<T>* ObjectMap::getRaw(int id)
+std::decay_t<T>* ObjectMap::getRaw(UniverseObjectID id)
 {
     using DecayT = std::decay_t<T>;
     auto& map{Map<DecayT, only_existing>()};
@@ -944,22 +945,22 @@ std::vector<std::decay_t<T>*> ObjectMap::findRaw(Pred pred)
     static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
     static constexpr bool invokable_on_const_entry = invoke_flags[4];
     static constexpr bool invokable_on_const_reference = invoke_flags[6];
-    static constexpr bool invokable_on_int = invoke_flags[11];
+    static constexpr bool invokable_on_id = invoke_flags[11];
     //static constexpr bool is_visitor = invoke_flags[9]; // legacy cruft
-    static constexpr bool is_int_range = invoke_flags[10];
+    static constexpr bool is_id_range = invoke_flags[10];
 
     using DecayT = std::decay_t<T>;
 
     std::vector<DecayT*> result;
-    if constexpr (!is_int_range)
+    if constexpr (!is_id_range)
         result.reserve(size<DecayT>());
     else
         result.reserve(std::size(pred));
 
     auto& map{Map<DecayT, false>()};
 
-    if constexpr (is_int_range) {
-        for (int object_id : pred) {
+    if constexpr (is_id_range) {
+        for (UniverseObjectID object_id : pred) {
             auto map_it = map.find(object_id);
             if (map_it != map.end())
                 result.push_back(map_it->second.get());
@@ -988,7 +989,7 @@ std::vector<std::decay_t<T>*> ObjectMap::findRaw(Pred pred)
             if (pred(std::as_const(*obj)))
                 result.push_back(obj.get());
 
-    } else if constexpr (invokable_on_int) {
+    } else if constexpr (invokable_on_id) {
         for (auto& [id, obj] : map)
             if (pred(id))
                 result.push_back(obj.get());
@@ -1009,22 +1010,22 @@ std::vector<std::shared_ptr<const std::decay_t<T>>> ObjectMap::find(Pred pred) c
     static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
     static constexpr bool invokable_on_const_entry = invoke_flags[4];
     static constexpr bool invokable_on_const_reference = invoke_flags[6];
-    static constexpr bool invokable_on_int = invoke_flags[11];
+    static constexpr bool invokable_on_id = invoke_flags[11];
     //static constexpr bool is_visitor = invoke_flags[9]; // legacy cruft
-    static constexpr bool is_int_range = invoke_flags[10];
+    static constexpr bool is_id_range = invoke_flags[10];
 
     using DecayT = std::decay_t<T>;
 
     auto& map{Map<DecayT, only_existing>()};
 
     std::vector<std::shared_ptr<const DecayT>> result;
-    if constexpr (!is_int_range)
+    if constexpr (!is_id_range)
         result.reserve(map.size());
     else
         result.reserve(std::size(pred));
 
-    if constexpr (is_int_range) {
-        for (int object_id : pred) {
+    if constexpr (is_id_range) {
+        for (UniverseObjectID object_id : pred) {
             auto map_it = map.find(object_id);
             if (map_it != map.end())
                 result.push_back(map_it->second);
@@ -1050,7 +1051,7 @@ std::vector<std::shared_ptr<const std::decay_t<T>>> ObjectMap::find(Pred pred) c
             if (pred(*obj))
                 result.push_back(obj);
 
-    } else if constexpr (invokable_on_int) {
+    } else if constexpr (invokable_on_id) {
         for (const auto& [id, obj] : map)
             if (pred(id))
                 result.push_back(obj);
@@ -1066,28 +1067,28 @@ std::vector<std::shared_ptr<const std::decay_t<T>>> ObjectMap::find(Pred pred) c
 
 
 template <typename T, typename Pred, bool only_existing>
-std::vector<int> ObjectMap::findIDs(Pred pred) const
+std::vector<UniverseObjectID> ObjectMap::findIDs(Pred pred) const
 {
     static constexpr auto invoke_flags = CheckTypes<T, Pred>();
     static constexpr bool invokable_on_raw_const_object = invoke_flags[0];
     static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
     static constexpr bool invokable_on_const_entry = invoke_flags[4];
     static constexpr bool invokable_on_const_reference = invoke_flags[6];
-    static constexpr bool invokable_on_int = invoke_flags[11];
+    static constexpr bool invokable_on_id = invoke_flags[11];
     //static constexpr bool is_visitor = invoke_flags[9]; // legacy cruft
-    static constexpr bool is_int_range = invoke_flags[10];
+    static constexpr bool is_id_range = invoke_flags[10];
 
     using DecayT = std::decay_t<T>;
 
     auto& map{Map<DecayT, only_existing>()};
 
-    std::vector<int> result;
-    if constexpr (!is_int_range)
+    std::vector<UniverseObjectID> result;
+    if constexpr (!is_id_range)
         result.reserve(map.size());
     else
         result.reserve(std::size(pred));
 
-    if constexpr (is_int_range) {
+    if constexpr (is_id_range) {
         std::copy_if(pred.begin(), pred.end(), std::back_inserter(result),
                      [&map](int id) { return map.contains(id); });
 
@@ -1111,7 +1112,7 @@ std::vector<int> ObjectMap::findIDs(Pred pred) const
             if (pred(*obj))
                 result.push_back(id);
 
-    } else if constexpr (invokable_on_int) {
+    } else if constexpr (invokable_on_id) {
         for (const auto id : map | range_keys)
             if (pred(id))
                 result.push_back(id);
@@ -1132,10 +1133,10 @@ int ObjectMap::count(Pred pred) const
     static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
     static constexpr bool invokable_on_const_entry = invoke_flags[4];
     static constexpr bool invokable_on_const_reference = invoke_flags[6];
-    static constexpr bool invokable_on_int = invoke_flags[11];
+    static constexpr bool invokable_on_id = invoke_flags[11];
     static constexpr bool invokable = invoke_flags[8];
     //static constexpr bool is_visitor = invoke_flags[9]; // legacy cruft
-    static constexpr bool is_int_range = invoke_flags[10];
+    static constexpr bool is_id_range = invoke_flags[10];
 
     using DecayT = std::decay_t<T>;
     auto& map{Map<DecayT, only_existing>()};
@@ -1143,7 +1144,7 @@ int ObjectMap::count(Pred pred) const
     using EntryT = typename ContainerT::value_type;
 
 
-    if constexpr (is_int_range) {
+    if constexpr (is_id_range) {
         return std::count_if(pred.begin(), pred.end(),
                              [&map](int id) { return map.contains(id); });
 
@@ -1163,7 +1164,7 @@ int ObjectMap::count(Pred pred) const
         return std::count_if(map.begin(), map.end(),
                              [ref_pred{pred}](const EntryT& o) { return ref_pred(*o.second); });
 
-    } else if constexpr (invokable_on_int) {
+    } else if constexpr (invokable_on_id) {
         return std::count_if(map.begin(), map.end(),
                              [int_pred{pred}](const EntryT& o) { return int_pred(o.first); });
 
@@ -1177,11 +1178,11 @@ template <typename T, typename Pred, bool only_existing>
 bool ObjectMap::check_if_any(Pred pred) const
 {
     static constexpr auto invoke_flags = CheckTypes<T, Pred>();
-    static constexpr bool is_int_range = invoke_flags[10];
+    static constexpr bool is_id_range = invoke_flags[10];
     using DecayT = std::decay_t<T>;
     const auto& map{Map<DecayT, only_existing>()};
 
-    if constexpr (is_int_range) {
+    if constexpr (is_id_range) {
         return range_any_of(pred, [&map](int id) { return map.contains(id); });
 
     } else {
@@ -1192,7 +1193,7 @@ bool ObjectMap::check_if_any(Pred pred) const
         static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
         static constexpr bool invokable_on_const_entry = invoke_flags[4];
         static constexpr bool invokable_on_const_reference = invoke_flags[6];
-        static constexpr bool invokable_on_int = invoke_flags[11];
+        static constexpr bool invokable_on_id = invoke_flags[11];
         // static constexpr bool is_visitor = invoke_flags[9]; // legacy cruft
 
         const auto test_pred = [&pred](const EntryT& obj) {
@@ -1204,7 +1205,7 @@ bool ObjectMap::check_if_any(Pred pred) const
                 return pred(obj);
             else if constexpr (invokable_on_const_reference)
                 return pred(obj.second);
-            else if constexpr (invokable_on_int)
+            else if constexpr (invokable_on_id)
                 return pred(obj.first);
 
             else {
@@ -1220,9 +1221,9 @@ bool ObjectMap::check_if_any(Pred pred) const
 
 template <typename T, typename Pred, typename IDs, bool only_existing>
 #if !defined(FREEORION_ANDROID)
-    requires requires(IDs ids) { ids.begin(); ids.end(); {*ids.begin()} -> std::convertible_to<int>; }
+    requires requires(IDs ids) { ids.begin(); ids.end(); { *ids.begin()} -> std::convertible_to<UniverseObjectID>; }
 #else
-    requires requires(IDs ids) { ids.begin(); ids.end(); {static_cast<int>(*ids.begin())}; }
+    requires requires(IDs ids) { ids.begin(); ids.end(); { static_cast<UniverseObjectID>(*ids.begin())}; }
 #endif
 bool ObjectMap::check_if_any(Pred pred, IDs&& ids) const
 {
@@ -1231,15 +1232,15 @@ bool ObjectMap::check_if_any(Pred pred, IDs&& ids) const
     static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
     static constexpr bool invokable_on_const_entry = invoke_flags[4];
     static constexpr bool invokable_on_const_reference = invoke_flags[6];
-    static constexpr bool invokable_on_int = invoke_flags[11];
+    static constexpr bool invokable_on_id = invoke_flags[11];
     //static constexpr bool is_visitor = invoke_flags[9]; // legacy cruft
-    static constexpr bool is_int_range = invoke_flags[10];
-    static_assert(!is_int_range, "check_if_any passed two int ranges. Don't know what to do with this...");
+    static constexpr bool is_id_range = invoke_flags[10];
+    static_assert(!is_id_range, "check_if_any passed two UniverseObjectID ranges. Don't know what to do with this...");
 
     using DecayT = std::decay_t<T>;
     auto& map{Map<DecayT, only_existing>()};
 
-    const auto map_lookup = [&map](const int id) { return map.find(id); };
+    const auto map_lookup = [&map](const UniverseObjectID id) { return map.find(id); };
     const auto rng = ids | range_transform(map_lookup);
 
     const auto test_pred = [&pred, end_it{map.end()}](const auto it) {
@@ -1251,7 +1252,7 @@ bool ObjectMap::check_if_any(Pred pred, IDs&& ids) const
             return it != end_it && pred(*it);
         else if constexpr (invokable_on_const_reference)
             return it != end_it && pred(*it->second);
-        else if constexpr (invokable_on_int)
+        else if constexpr (invokable_on_id)
             return it != end_it && pred(it->first);
 
         else {

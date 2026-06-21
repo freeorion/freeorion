@@ -11,7 +11,7 @@
 
 namespace {
     // sorted pair, so order of empire IDs specified doesn't matter
-    [[nodiscard]] inline constexpr auto DiploKey(int id1, int ind2) noexcept
+    [[nodiscard]] inline constexpr auto DiploKey(EmpireID id1, EmpireID ind2) noexcept
     { return std::pair(std::max(id1, ind2), std::min(id1, ind2)); }
 }
 
@@ -27,12 +27,12 @@ EmpireManager& EmpireManager::operator=(EmpireManager&& other) noexcept {
     return *this;
 }
 
-std::shared_ptr<const Empire> EmpireManager::GetEmpire(int id) const {
+std::shared_ptr<const Empire> EmpireManager::GetEmpire(EmpireID id) const {
     auto it = m_const_empire_map.find(id);
     return it == m_const_empire_map.end() ? nullptr : it->second;
 }
 
-std::shared_ptr<const UniverseObject> EmpireManager::GetSource(int id, const ObjectMap& objects) const {
+std::shared_ptr<const UniverseObject> EmpireManager::GetSource(EmpireID id, const ObjectMap& objects) const {
     auto it = m_const_empire_map.find(id);
     return it != m_const_empire_map.end() ? it->second->Source(objects) : nullptr;
 }
@@ -81,8 +81,8 @@ std::string EmpireManager::DumpDiplomacy() const {
     for (auto& [ids, message] : m_diplomatic_messages) {
         if (message.GetType() == DiplomaticMessage::Type::INVALID)
             continue;   // don't print non-messages and pollute the log files...
-        retval += "From: " + std::to_string(ids.first)
-               + " to: " + std::to_string(ids.second)
+        retval += "From: " + to_string(ids.first)
+               + " to: " + to_string(ids.second)
                + " message: " + message.Dump() + "\n";
     }
 
@@ -183,13 +183,13 @@ boost::container::flat_set<int> EmpireManager::GetEmpireIDsWithDiplomaticStatusW
         | range_transform(to_other_id) | range_to<boost::container::flat_set<int>>();
 }
 
-bool EmpireManager::DiplomaticMessageAvailable(int sender_id, int recipient_id) const {
+bool EmpireManager::DiplomaticMessageAvailable(EmpireID sender_id, EmpireID recipient_id) const {
     auto it = m_diplomatic_messages.find({sender_id, recipient_id});
     return it != m_diplomatic_messages.end() &&
            it->second.GetType() != DiplomaticMessage::Type::INVALID;
 }
 
-const DiplomaticMessage& EmpireManager::GetDiplomaticMessage(int sender_id, int recipient_id) const {
+const DiplomaticMessage& EmpireManager::GetDiplomaticMessage(EmpireID sender_id, EmpireID recipient_id) const {
     const auto it = m_diplomatic_messages.find({sender_id, recipient_id});
     if (it != m_diplomatic_messages.end())
         return it->second;
@@ -198,7 +198,7 @@ const DiplomaticMessage& EmpireManager::GetDiplomaticMessage(int sender_id, int 
     return DEFAULT_DIPLOMATIC_MESSAGE;
 }
 
-void EmpireManager::SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status) {
+void EmpireManager::SetDiplomaticStatus(EmpireID empire1, EmpireID empire2, DiplomaticStatus status) {
     const DiplomaticStatus initial_status = GetDiplomaticStatus(empire1, empire2);
     if (status != initial_status) {
         m_empire_diplomatic_statuses[DiploKey(empire1, empire2)] = status;
@@ -360,7 +360,7 @@ void EmpireManager::RefreshCapitalIDs() {
 }
 
 void EmpireManager::GetDiplomaticMessagesToSerialize(std::map<std::pair<int, int>, DiplomaticMessage>& messages,
-                                                     int encoding_empire) const
+                                                     EmpireID encoding_empire) const
 {
     messages.clear();
 

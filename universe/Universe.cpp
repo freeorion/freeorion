@@ -300,7 +300,7 @@ void Universe::SetEmpireStats(Pending::Pending<EmpireStatsMap> future)
 const Universe::EmpireStatsMap& Universe::EmpireStats() const
 { return Pending::SwapPending(m_pending_empire_stats, m_empire_stats); }
 
-const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const {
+const ObjectMap& Universe::EmpireKnownObjects(EmpireID empire_id) const {
     if (empire_id == ALL_EMPIRES)
         return m_objects;
 
@@ -312,7 +312,7 @@ const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const {
     return const_empty_map;
 }
 
-ObjectMap& Universe::EmpireKnownObjects(int empire_id) {
+ObjectMap& Universe::EmpireKnownObjects(EmpireID empire_id) {
     if (empire_id == ALL_EMPIRES)
         return m_objects;
 
@@ -325,7 +325,7 @@ ObjectMap& Universe::EmpireKnownObjects(int empire_id) {
     return empty_map;
 }
 
-Universe::IDSet Universe::EmpireVisibleObjectIDs(int empire_id, const EmpireManager& empires) const {
+Universe::IDSet Universe::EmpireVisibleObjectIDs(EmpireID empire_id, const EmpireManager& empires) const {
     // get id(s) of all empires to consider visibility of...
     const auto& all_empire_ids = empires.EmpireIDs();
     const auto empire_ids = (empire_id != ALL_EMPIRES) ?
@@ -358,14 +358,14 @@ int Universe::HighestDestroyedObjectID() const {
     return *range_max_element(m_destroyed_object_ids);
 }
 
-const std::unordered_set<int>& Universe::EmpireKnownDestroyedObjectIDs(int empire_id) const {
+const std::unordered_set<int>& Universe::EmpireKnownDestroyedObjectIDs(EmpireID empire_id) const {
     auto it = m_empire_known_destroyed_object_ids.find(empire_id);
     if (it != m_empire_known_destroyed_object_ids.end())
         return it->second;
     return m_destroyed_object_ids;
 }
 
-const std::unordered_set<int>& Universe::EmpireStaleKnowledgeObjectIDs(int empire_id) const {
+const std::unordered_set<int>& Universe::EmpireStaleKnowledgeObjectIDs(EmpireID empire_id) const {
     auto it = m_empire_stale_knowledge_object_ids.find(empire_id);
     if (it != m_empire_stale_knowledge_object_ids.end())
         return it->second;
@@ -401,7 +401,7 @@ const ShipDesign* Universe::GetGenericShipDesign(std::string_view name) const {
     return it != rng.end() ? std::addressof(*it) : nullptr;
 }
 
-const std::set<int>& Universe::EmpireKnownShipDesignIDs(int empire_id) const {
+const std::set<int>& Universe::EmpireKnownShipDesignIDs(EmpireID empire_id) const {
     auto it = m_empire_known_ship_design_ids.find(empire_id);
     if (it != m_empire_known_ship_design_ids.end())
         return it->second;
@@ -413,7 +413,7 @@ namespace {
 #if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
     constexpr
 #endif
-    std::tuple<int, Visibility, bool, const char*> GetVisIdFromChars(const char* next, const char* const buffer_end) {
+    std::tuple<UniverseObjectID, Visibility, bool, const char*> GetVisIdFromChars(const char* next, const char* const buffer_end) {
         // safety checks
         if (!next || !buffer_end || next == buffer_end)
             return {INVALID_OBJECT_ID, Visibility::INVALID_VISIBILITY, false, next};
@@ -426,7 +426,7 @@ namespace {
             return {INVALID_OBJECT_ID, Visibility::INVALID_VISIBILITY, false, next};
 
         // parse string to int
-        int id = INVALID_OBJECT_ID;
+        int id = static_cast<int>(INVALID_OBJECT_ID);
         bool success = false;
         std::tie(next, success) = FromChars(next, buffer_end, id);
 
@@ -446,7 +446,7 @@ namespace {
 
         ++next;
 
-        return {id, vs, success, next};
+        return {static_cast<UniverseObjectID>(id), vs, success, next};
     };
 
 #if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
@@ -458,8 +458,8 @@ namespace {
         const auto [id0, vis0, success0, next0] = GetVisIdFromChars(start, end);
         const auto [id1, vis1, success1, next1] = GetVisIdFromChars(next0, end);
         const auto [id2, vis2, success2, next2] = GetVisIdFromChars(next1, end);
-        return id0 == 12 && vis0 == Visibility::VIS_PARTIAL_VISIBILITY && success0 &&
-               id1 == 5 && vis1 == Visibility::VIS_FULL_VISIBILITY && success1 &&
+        return id0 == UniverseObjectID(12) && vis0 == Visibility::VIS_PARTIAL_VISIBILITY && success0 &&
+               id1 == UniverseObjectID(5) && vis1 == Visibility::VIS_FULL_VISIBILITY && success1 &&
                id2 == INVALID_OBJECT_ID && vis2 == Visibility::INVALID_VISIBILITY && !success2;
     }());
 #endif
@@ -482,7 +482,7 @@ Visibilities::Visibilities(std::string_view str) {
     ids_vis.reserve(count);
 
     for (std::size_t idx = 0; idx < count && next != str_end; ++idx) {
-        int id = INVALID_OBJECT_ID;
+        int id = static_cast<int>(INVALID_OBJECT_ID);
         Visibility vs = Visibility::INVALID_VISIBILITY;
         std::tie(id, vs, success, next) = GetVisIdFromChars(next, str_end);
         if (!success)
@@ -513,14 +513,14 @@ std::string Visibilities::ToString() const {
 }
 
 
-Visibility Universe::GetObjectVisibilityByEmpire(int object_id, int empire_id) const {
+Visibility Universe::GetObjectVisibilityByEmpire(UniverseObjectID object_id, EmpireID empire_id) const {
     const auto empire_it = m_empire_object_visibility.find(empire_id);
     if (empire_it == m_empire_object_visibility.end())
         return Visibility::VIS_NO_VISIBILITY;
     return empire_it->second.Get(object_id);
 }
 
-const ObjVisTurns& Universe::GetObjectVisibilityTurnsByEmpire(int object_id, int empire_id) const {
+const ObjVisTurns& Universe::GetObjectVisibilityTurnsByEmpire(UniverseObjectID object_id, EmpireID empire_id) const {
     static constexpr ObjVisTurns never_visible{};
 
     auto empire_it = m_empire_object_visibility_turns.find(empire_id);
@@ -536,7 +536,7 @@ const ObjVisTurns& Universe::GetObjectVisibilityTurnsByEmpire(int object_id, int
     return *object_it;
 }
 
-int Universe::GetObjectVisibilityTurnByEmpire(int object_id, int empire_id, Visibility vis) const {
+int Universe::GetObjectVisibilityTurnByEmpire(UniverseObjectID object_id, EmpireID empire_id, Visibility vis) const {
     auto empire_it = m_empire_object_visibility_turns.find(empire_id);
     if (empire_it == m_empire_object_visibility_turns.end())
         return INVALID_GAME_TURN;
@@ -551,7 +551,7 @@ int Universe::GetObjectVisibilityTurnByEmpire(int object_id, int empire_id, Visi
     return obj_vis[vis];
 }
 
-bool Universe::EmpireHasEverDetectedObjectAtVisibility(int object_id, int empire_id, Visibility vis) const {
+bool Universe::EmpireHasEverDetectedObjectAtVisibility(UniverseObjectID object_id, EmpireID empire_id, Visibility vis) const {
     auto empire_it = m_empire_object_visibility_turns.find(empire_id);
     if (empire_it == m_empire_object_visibility_turns.end())
         return false;
@@ -563,7 +563,7 @@ bool Universe::EmpireHasEverDetectedObjectAtVisibility(int object_id, int empire
     return object_it != obj_vis_turns.end() && object_it->contains(vis);
 }
 
-void Universe::SetObjectVisibilityTurnsByEmpire(int object_id, int empire_id, Visibility vis, int turn) {
+void Universe::SetObjectVisibilityTurnsByEmpire(UniverseObjectID object_id, EmpireID empire_id, Visibility vis, int turn) {
     auto& obj_vis_turns = m_empire_object_visibility_turns[empire_id];
 
     const auto is_obj_id = [object_id](const auto& ov) noexcept { return ov.obj_id == object_id; };
@@ -575,7 +575,7 @@ void Universe::SetObjectVisibilityTurnsByEmpire(int object_id, int empire_id, Vi
         obj_vis_turns.emplace_back(object_id, vis, turn);    
 }
 
-std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(int object_id, int empire_id) const {
+std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(UniverseObjectID object_id, EmpireID empire_id) const {
     if (empire_id != ALL_EMPIRES) {
         auto empire_it = m_empire_object_visible_specials.find(empire_id);
         if (empire_it == m_empire_object_visible_specials.end())
@@ -606,7 +606,7 @@ void Universe::ObfuscateIDGenerator() {
     m_design_id_allocator->ObfuscateBeforeSerialization();
 }
 
-bool Universe::VerifyUnusedObjectID(const int empire_id, const int id) {
+bool Universe::VerifyUnusedObjectID(const EmpireID empire_id, const UniverseObjectID id) {
     auto [good_id, possible_legacy] = m_object_id_allocator->IsIDValidAndUnused(id, empire_id);
     if (!possible_legacy) // Possibly from old save game
         ErrorLogger() << "object id = " << id << " should not have been assigned by empire = " << empire_id;
@@ -614,7 +614,7 @@ bool Universe::VerifyUnusedObjectID(const int empire_id, const int id) {
     return good_id && possible_legacy;
 }
 
-void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, int id) {
+void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, UniverseObjectID id) {
     if (!obj)
         return;
 

@@ -262,7 +262,7 @@ struct [[nodiscard]] ScriptingContext final {
         throw std::runtime_error("ScriptingContext::ContextUniverse() asked for undefined mutable objects");
     }
 
-    [[nodiscard]] DiplomaticStatus ContextDiploStatus(int empire1, int empire2) const {
+    [[nodiscard]] DiplomaticStatus ContextDiploStatus(EmpireID empire1, EmpireID empire2) const {
         if (empire1 == ALL_EMPIRES || empire2 == ALL_EMPIRES || empire1 == empire2)
             return DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
         const auto high_low_ids = empire1 > empire2 ? std::pair{empire1, empire2} : std::pair{empire2, empire1};
@@ -271,7 +271,7 @@ struct [[nodiscard]] ScriptingContext final {
     }
 
     [[nodiscard]] auto GetEmpireIDsWithDiplomaticStatusWithEmpire(
-        int empire_id, DiplomaticStatus diplo_status) const
+        EmpireID empire_id, DiplomaticStatus diplo_status) const
     {
         return EmpireManager::GetEmpireIDsWithDiplomaticStatusWithEmpire(
             empire_id, diplo_status, diplo_statuses);
@@ -285,7 +285,7 @@ struct [[nodiscard]] ScriptingContext final {
     }
 
     // mutable empire not thread safe to modify
-    [[nodiscard]] std::shared_ptr<Empire> GetEmpire(int id) {
+    [[nodiscard]] std::shared_ptr<Empire> GetEmpire(EmpireID id) {
         if (!empires) {
             ErrorLogger() << "ScriptingContext::GetEmpire() asked for unavailable mutable Empire";
             return nullptr;
@@ -293,7 +293,7 @@ struct [[nodiscard]] ScriptingContext final {
         return empires->GetEmpire(id);
     }
 
-    [[nodiscard]] std::shared_ptr<const Empire> GetEmpire(int id) const
+    [[nodiscard]] std::shared_ptr<const Empire> GetEmpire(EmpireID id) const
     { return const_empires.GetEmpire(id); }
 
     [[nodiscard]] const EmpireManager& Empires() const noexcept
