@@ -23,7 +23,7 @@ public:
     [[nodiscard]] bool               HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
     [[nodiscard]] std::string        Dump(uint8_t ntabs = 0) const override;
 
-    void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;
+    void Copy(const UniverseObject& copied_object, const Universe& universe, EmpireID empire_id = ALL_EMPIRES) override;
     void Copy(const Fighter& copied_fighter, const Universe& universe);
 
     [[nodiscard]] auto* CombatTargets() const noexcept { return m_combat_targets; }
@@ -35,7 +35,7 @@ public:
     void SetDestroyed(bool destroyed = true) noexcept { m_destroyed = destroyed; }
 
 private:
-    [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
+    [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, EmpireID empire_id = ALL_EMPIRES) const override;
 
     float                         m_damage = 0.0f;                        // strength of fighter's attack
     bool                          m_destroyed = false;                    // was attacked by anything -> destroyed

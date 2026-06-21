@@ -7,7 +7,7 @@
 #include "../util/i18n.h"
 
 
-Building::Building(int empire_id, std::string building_type, int produced_by_empire_id, int creation_turn) :
+Building::Building(EmpireID empire_id, std::string building_type, EmpireID produced_by_empire_id, int creation_turn) :
     UniverseObject{UniverseObjectType::OBJ_BUILDING, "", empire_id, creation_turn},
     m_building_type(std::move(building_type)),
     m_produced_by_empire_id(produced_by_empire_id)
@@ -16,8 +16,8 @@ Building::Building(int empire_id, std::string building_type, int produced_by_emp
     Rename(type ? UserString(type->Name()) : UserString("ENC_BUILDING"));
 }
 
-std::shared_ptr<UniverseObject> Building::Clone(const Universe& universe, int empire_id) const {
-    const Visibility vis = empire_id == ALL_EMPIRES ?
+std::shared_ptr<UniverseObject> Building::Clone(const Universe& universe, EmpireID empire_id) const {
+    const Visibility vis = (empire_id == ALL_EMPIRES) ?
         Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))

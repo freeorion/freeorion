@@ -55,7 +55,7 @@ namespace Effect {
 }
 
 
-using IDSet = boost::container::flat_set<int32_t>;
+using IDSet = boost::container::flat_set<UniverseObjectID>;
 
 /** The Universe class contains the majority of FreeOrion gamestate: All the
   * UniverseObjects in a game, and (of less importance) all ShipDesigns in a
@@ -66,28 +66,28 @@ using IDSet = boost::container::flat_set<int32_t>;
   * and populate new Universe gamestates when new games are started. */
 class FO_COMMON_API Universe {
 public:
-    using EmpireObjectMap = std::map<int, ObjectMap>; ///< Known information each empire had about objects in the Universe; keyed by empire id
+    using EmpireObjectMap = std::map<EmpireID, ObjectMap>; ///< Known information each empire had about objects in the Universe; keyed by empire id
 
     using IDSet = ::IDSet;
 
 private:
-    using ObjectKnowledgeMap = std::map<int, std::unordered_set<int>>; ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
+    using ObjectKnowledgeMap = std::map<EmpireID, std::unordered_set<UniverseObjectID>>; ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
 
     using VisValRef = const ValueRef::ValueRef<Visibility>*;
-    using SrcVisValRefVec = std::vector<std::pair<int, VisValRef>>;
-    using ObjSrcVisValRefVecMap = std::map<int, SrcVisValRefVec>;
-    using EmpireObjectVisValueRefMap = std::map<int, ObjSrcVisValRefVecMap>;
+    using SrcVisValRefVec = std::vector<std::pair<UniverseObjectID, VisValRef>>;
+    using ObjSrcVisValRefVecMap = std::map<UniverseObjectID, SrcVisValRefVec>;
+    using EmpireObjectVisValueRefMap = std::map<EmpireID, ObjSrcVisValRefVecMap>;
 
     /** Discrepancy between meter's value at start of turn, and the value that
       * this client calculate that the meter should have with the knowledge
       * available -> the unknown factor affecting the meter.  This is used
       * when generating effect accounting, in the case where the expected
       * and actual meter values don't match. */
-    using DiscrepancyMap = std::unordered_map<int, boost::container::flat_map<MeterType, double>>;
+    using DiscrepancyMap = std::unordered_map<UniverseObjectID, boost::container::flat_map<MeterType, double>>;
 
 public:
-    using ObjectSpecialsMap = std::map<int, std::set<std::string>>;       ///< map from object id to names of specials on an object
-    using EmpireObjectSpecialsMap = std::map<int, ObjectSpecialsMap>;     ///< map from empire id to ObjectSpecialsMap of known specials for objects for that empire
+    using ObjectSpecialsMap = std::map<UniverseObjectID, std::set<std::string>>; ///< map from object id to names of specials on an object
+    using EmpireObjectSpecialsMap = std::map<EmpireID, ObjectSpecialsMap>;       ///< map from empire id to ObjectSpecialsMap of known specials for objects for that empire
 
     using ShipDesignMap = std::map<int, ShipDesign>;                      ///< ShipDesigns in universe; keyed by design id
     using ship_design_iterator = ShipDesignMap::const_iterator;           ///< const iterator over ship designs created by players that are known by this client
@@ -226,10 +226,10 @@ public:
       * the server is allocating an id on behalf of itself.  This can be removed
       * when no longer supporting legacy id allocation in pending Orders. \note
       * Universe gains ownership of \a ship_design once inserted. */
-    bool InsertShipDesignID(ShipDesign ship_design, std::optional<int> empire_id, int id);
+    bool InsertShipDesignID(ShipDesign ship_design, std::optional<EmpireID> empire_id, int id);
 
    /** Reset object and ship design id allocation for a new game. */
-    void ResetAllIDAllocation(const std::vector<int>& empire_ids = std::vector<int>());
+    void ResetAllIDAllocation(const std::vector<EmpireID>& empire_ids = std::vector<EmpireID>());
 
     /** Clears main ObjectMap, empires' latest known objects map, and
       * ShipDesign map. */
@@ -249,14 +249,14 @@ public:
       * \a object_ids.  Then clamps meter values so target and max meters are
       * within a reasonable range and any current meters with associated max
       * meters are limited by their max. */
-    void ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids, ScriptingContext& context,
+    void ApplyMeterEffectsAndUpdateMeters(const std::vector<UniverseObjectID>& object_ids, ScriptingContext& context,
                                           bool do_accounting = true);
 
     /** Calls above ApplyMeterEffectsAndUpdateMeters() function on all objects.*/
     void ApplyMeterEffectsAndUpdateMeters(ScriptingContext& context, bool do_accounting = true);
 
     /** Executes effects that modify objects' appearance in the human client. */
-    void ApplyAppearanceEffects(const std::vector<int>& object_ids, ScriptingContext& context);
+    void ApplyAppearanceEffects(const std::vector<UniverseObjectID>& object_ids, ScriptingContext& context);
 
     /** Executes effects that modify objects' apperance for all objects. */
     void ApplyAppearanceEffects(ScriptingContext& context);
@@ -272,13 +272,13 @@ public:
     /** Based on (known subset of, if in a client) universe and any orders
       * given so far this turn, updates estimated meter maxes for next turn
       * for the objects with ids indicated in \a objects_vec. */
-    void UpdateMeterEstimates(const std::vector<int>& objects_vec, ScriptingContext& context);
+    void UpdateMeterEstimates(const std::vector<UniverseObjectID>& objects_vec, ScriptingContext& context);
 
     /** Updates indicated object's meters, and if applicable, the
       * meters of objects contained within the indicated object.
       * If \a object_id is INVALID_OBJECT_ID, then all
       * objects' meters are updated. */
-    void UpdateMeterEstimates(int object_id, ScriptingContext& context, bool update_contained_objects = false);
+    void UpdateMeterEstimates(UniverseObjectID object_id, ScriptingContext& context, bool update_contained_objects = false);
 
     /** Updates all meters for all (known) objects */
     void UpdateMeterEstimates(ScriptingContext& context);
@@ -297,7 +297,7 @@ public:
 
     /** Sets a special record of visibility that overrides the standard
       * empire-object visibility after the latter is processed. */
-    void SetEffectDerivedVisibility(int empire_id, int object_id, int source_id,
+    void SetEffectDerivedVisibility(EmpireID empire_id, UniverseObjectID object_id, UniverseObjectID source_id,
                                     const ValueRef::ValueRef<Visibility>* vis);
 
     /** Applies empire-object visibilities set by effects. */
@@ -305,15 +305,15 @@ public:
 
     /** If an \p empire_id can't currently see \p object_id, then remove
      * \p object_id' object from the object map and the set of known objects. */
-    void ForgetKnownObject(int empire_id, int object_id);
+    void ForgetKnownObject(EmpireID empire_id, UniverseObjectID object_id);
 
     /** Sets visibility for indicated \a empire_id of object with \a object_id
       * to at least * \a vis. If visibility is already equal or higher, does nothing.
       * For ship object ids, also sets the ship's design to be known to the empire. */
-    void SetEmpireObjectVisibility(int empire_id, int object_id, Visibility vis);
+    void SetEmpireObjectVisibility(EmpireID empire_id, UniverseObjectID object_id, Visibility vis);
 
     /** Sets visibility for indicated \a empire_id for the indicated \a special */
-    void SetEmpireSpecialVisibility(int empire_id, int object_id,
+    void SetEmpireSpecialVisibility(EmpireID empire_id, UniverseObjectID object_id,
                                     const std::string& special_name, bool visible = true);
 
     /** Stores latest known information about each object for each empire and
@@ -341,15 +341,16 @@ public:
 
     /** Adds the object ID \a object_id to the set of object ids for the empire
       * with id \a empire_id that the empire knows have been destroyed. */
-    void SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id);
+    void SetEmpireKnowledgeOfDestroyedObject(UniverseObjectID object_id, EmpireID empire_id);
 
     /** Adds the ship design ID \a ship_design_id to the set of ship design ids
       * known by the empire with id \a empire_id */
-    void SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id);
+    void SetEmpireKnowledgeOfShipDesign(int ship_design_id, EmpireID empire_id);
 
     /** Record in statistics that \a object_id was destroyed by species/empire
       * associated with \a source_object_id */
-    void CountDestructionInStats(int object_id, int source_object_id, const std::map<int, std::shared_ptr<Empire>>& empires);
+    void CountDestructionInStats(UniverseObjectID object_id, UniverseObjectID source_object_id,
+                                 const std::map<EmpireID, std::shared_ptr<Empire>>& empires);
 
     /** Removes the object with ID number \a object_id from the universe's map
       * of existing objects, and adds the object's id to the set of destroyed
@@ -359,7 +360,7 @@ public:
       * to have been destroyed.  Older or limited versions of objects remain
       * in empires latest known objects ObjectMap, regardless of whether the
       * empire knows the object is destroyed. */
-    void Destroy(int object_id, const std::span<const int> empire_ids,
+    void Destroy(UniverseObjectID object_id, const std::span<const EmpireID> empire_ids,
                  bool update_destroyed_object_knowers = true);
 
     /** Destroys object with ID \a object_id, and destroys any associted
@@ -369,18 +370,18 @@ public:
       * whose ID is in \a empire_ids and that currently have visibility of the
       * object have its id added to their set of objects' ids that are known
       * to have been destroyed. */
-    std::vector<int> RecursiveDestroy(int object_id, const std::span<const int> empire_ids);
+    std::vector<UniverseObjectID> RecursiveDestroy(UniverseObjectID object_id, const std::span<const EmpireID> empire_ids);
 
     /** Used by the Destroy effect to mark an object for destruction later
       * during turn processing. (objects can't be destroyed immediately as
       * other effects might depend on their existence) */
-    void EffectDestroy(int destroyed_object_id, int source_object_id = INVALID_OBJECT_ID);
+    void EffectDestroy(UniverseObjectID destroyed_object_id, UniverseObjectID source_object_id = INVALID_OBJECT_ID);
 
     /** Permanently deletes object with ID number \a object_id.
       * No information about this object is retained in the Universe.
       * Can be performed on objects whether or not the have been destroyed.
       * Returns true if such an object was found, false otherwise. */
-    bool Delete(int object_id);
+    bool Delete(UniverseObjectID object_id);
 
     /** Permanently deletes the ship design with ID number \a design_id. No
       * information about this design is retained in the Universe. */
