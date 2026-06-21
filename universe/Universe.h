@@ -49,7 +49,7 @@ namespace Effect {
     struct SourcedEffectsGroup; // struct SourcedEffectsGroup { int source_object_id; const EffectsGroup* effects_group; };
     class EffectsGroup;
     using TargetSet = std::vector<UniverseObject*>;
-    using AccountingMap = std::unordered_map<int, boost::container::flat_map<MeterType, std::vector<AccountingInfo>>>;
+    using AccountingMap = std::unordered_map<UniverseObjectID, boost::container::flat_map<MeterType, std::vector<AccountingInfo>>>;
     using SourcesEffectsTargetsAndCause = std::pair<SourcedEffectsGroup, TargetsAndCause>;
     using SourcesEffectsTargetsAndCausesVec = std::vector<SourcesEffectsTargetsAndCause>;
 }

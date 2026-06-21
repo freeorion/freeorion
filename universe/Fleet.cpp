@@ -701,7 +701,7 @@ std::size_t Fleet::SizeInMemory() const {
     return retval;
 }
 
-void Fleet::SetRoute(std::vector<int> route, const ObjectMap& objects) {
+void Fleet::SetRoute(std::vector<UniverseObjectID> route, const ObjectMap& objects) {
     if (route.empty()) {
         if (SystemID() == INVALID_OBJECT_ID) {
             ErrorLogger() << "Fleet::SetRoute() : Attempted to change fleet " << this->Name()
@@ -721,9 +721,9 @@ void Fleet::SetRoute(std::vector<int> route, const ObjectMap& objects) {
 
     TraceLogger() << "Fleet::SetRoute: " << this->Name() << " (" << this->ID() << ")  input: " << [&]() {
         std::stringstream ss;
-        for (int id : m_travel_route)
+        for (auto id : m_travel_route)
             if (const auto obj = objects.getRaw<UniverseObject>(id))
-                ss << obj->Name() << " (" << id << ")  ";
+                ss << obj->Name() << " (" << to_string(id) << ")  ";
         return ss.str();
     }();
 
@@ -775,7 +775,7 @@ void Fleet::SetRoute(std::vector<int> route, const ObjectMap& objects) {
     StateChangedSignal();
 }
 
-std::vector<int> Fleet::TruncateRouteToEndAtFirstOf(std::vector<int> route, int system_id) {
+std::vector<int> Fleet::TruncateRouteToEndAtFirstOf(std::vector<UniverseObjectID> route, UniverseObjectID system_id) {
     const auto sys_it = range_find(route, system_id);
     if (sys_it == route.end())
         route.clear();
@@ -784,7 +784,7 @@ std::vector<int> Fleet::TruncateRouteToEndAtFirstOf(std::vector<int> route, int 
     return route;
 }
 
-std::vector<int> Fleet::TruncateRouteToEndAtLastOf(std::vector<int> route, int system_id) {
+std::vector<UniverseObjectID> Fleet::TruncateRouteToEndAtLastOf(std::vector<UniverseObjectID> route, UniverseObjectID system_id) {
     const auto sys_it = std::find(route.rbegin(), route.rend(), system_id);
     if (sys_it == route.rend())
         route.clear();
@@ -800,14 +800,14 @@ void Fleet::SetAggression(FleetAggression aggression) {
     StateChangedSignal();
 }
 
-void Fleet::AddShips(const std::vector<int>& ship_ids) {
+void Fleet::AddShips(const std::vector<UniverseObjectID>& ship_ids) {
     auto old_ships_size = m_ships.size();
     m_ships.insert(ship_ids.begin(), ship_ids.end());
     if (old_ships_size != m_ships.size())
         StateChangedSignal();
 }
 
-void Fleet::RemoveShips(const std::vector<int>& ship_ids) {
+void Fleet::RemoveShips(const std::vector<UniverseObjectID>& ship_ids) {
     auto old_ships_size = m_ships.size();
     for (int ship_id : ship_ids)
         m_ships.erase(ship_id);
@@ -815,7 +815,7 @@ void Fleet::RemoveShips(const std::vector<int>& ship_ids) {
         StateChangedSignal();
 }
 
-void Fleet::SetNextAndPreviousSystems(int next, int prev) {
+void Fleet::SetNextAndPreviousSystems(UniverseObjectID next, UniverseObjectID prev) {
     m_prev_system = prev;
     m_next_system = next;
     m_arrival_starlane = prev; // see comment for ArrivalStarlane()
@@ -834,9 +834,9 @@ namespace {
                 for (auto sys_id : fleet->TravelRoute()) {
                     if (auto sys = objects.getRaw<const System>(sys_id))
                         ss.append("  ").append(sys->Name()).append(" (")
-                        .append(std::to_string(sys_id)).append(")");
+                        .append(to_string(sys_id)).append(")");
                     else
-                        ss.append("  (?) (").append(std::to_string(sys_id)).append(")");
+                        ss.append("  (?) (").append(to_string(sys_id)).append(")");
                 }
                 return ss;
             }()
@@ -847,7 +847,7 @@ namespace {
                 for (const auto& node : move_path) {
                     if (auto sys = objects.getRaw<const System>(node.object_id))
                         ss.append("  ").append(sys->Name()).append(" (")
-                        .append(std::to_string(node.object_id)).append(")");
+                          .append(to_string(node.object_id)).append(")");
                     else
                         ss.append("  (-)");
                 }
@@ -867,10 +867,9 @@ void Fleet::MoveAlongPath(ScriptingContext& context, const std::vector<MovePathN
         m_arrived_this_turn = false;
         m_next_system = m_prev_system = INVALID_OBJECT_ID;
         DebugLogger() << "Fleet " << Name() << " (" << ID() << ") movement blockaded at "
-                      << [&context](int sys_id) {
+                      << [&context](UniverseObjectID sys_id) {
                             const auto* sys = context.ContextObjects().getRaw<const System>(sys_id);
-                            const auto id_as_string = std::to_string(sys_id);
-                            return (sys ? sys->Name() : "") + " (" + id_as_string + ")";
+                            return (sys ? sys->Name() : "") + " (" + to_string(sys_id) + ")";
                          }(SystemID());
         return;
     }

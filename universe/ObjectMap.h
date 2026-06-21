@@ -91,12 +91,12 @@ public:
         static constexpr bool invokable_on_const_reference = invoke_flags[6];
         static constexpr bool invokable_on_id = invoke_flags[11];
         //static constexpr bool is_visitor = invoke_flags[9]; // legacy cruft
-        static constexpr bool is_int_range = invoke_flags[10];
+        static constexpr bool is_id_range = invoke_flags[10];
 
         using DecayT = std::decay_t<T>;
 
         std::vector<const DecayT*> result;
-        if constexpr (!is_int_range)
+        if constexpr (!is_id_range)
             result.reserve(size<DecayT>());
         else
             result.reserve(std::size(pred));
@@ -106,7 +106,7 @@ public:
         static constexpr auto not_null = [](const auto& p) noexcept(noexcept(bool(p))) -> bool { return p; };
         static constexpr auto get_rawptr = [](const auto& p) noexcept(noexcept(p.get())) -> auto* { return p.get(); };
 
-        if constexpr (is_int_range) {
+        if constexpr (is_id_range) {
             // TODO: special case for sorted range of int?
             const auto find_in_map = [&map](auto id) -> const DecayT* {
                 auto map_it = map.find(id);
@@ -157,7 +157,7 @@ public:
 
         } else {
             static constexpr bool invokable = invoke_flags[8];
-            static_assert(is_int_range || invokable, "Don't know how to handle predicate");
+            static_assert(is_id_range || invokable, "Don't know how to handle predicate");
             return result;
         }
     }
@@ -182,20 +182,20 @@ public:
         static constexpr bool invokable_on_const_reference = invoke_flags[6];
         static constexpr bool invokable_on_id = invoke_flags[11];
         //static constexpr bool is_visitor = invoke_flags[9]; // legacy cruft
-        static constexpr bool is_int_range = invoke_flags[10];
+        static constexpr bool is_id_range = invoke_flags[10];
 
         using DecayT = std::decay_t<T>;
 
         auto& map{Map<DecayT, only_existing>()};
 
         std::vector<std::shared_ptr<DecayT>> result;
-        if constexpr (!is_int_range)
+        if constexpr (!is_id_range)
             result.reserve(map.size());
         else
             result.reserve(std::size(pred));
 
-        if constexpr (is_int_range) {
-            for (int object_id : pred) {
+        if constexpr (is_id_range) {
+            for (auto object_id : pred) {
                 auto map_it = map.find(object_id);
                 if (map_it != map.end())
                     result.push_back(map_it->second);
@@ -1184,7 +1184,7 @@ bool ObjectMap::check_if_any(Pred pred) const
     const auto& map{Map<DecayT, only_existing>()};
 
     if constexpr (is_id_range) {
-        return range_any_of(pred, [&map](int id) { return map.contains(id); });
+        return range_any_of(pred, [&map](auto id) { return map.contains(id); });
 
     } else {
         using ContainerT = std::decay_t<decltype(map)>;

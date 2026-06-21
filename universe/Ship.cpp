@@ -183,7 +183,7 @@ UniverseObject::TagVecs Ship::Tags(const ScriptingContext& context) const {
     else return {};
 }
 
-bool Ship::ContainedBy(int object_id) const noexcept {
+bool Ship::ContainedBy(UniverseObjectID object_id) const noexcept {
     return object_id != INVALID_OBJECT_ID
         && (    object_id == m_fleet_id
             ||  object_id == this->SystemID());
@@ -346,7 +346,7 @@ bool Ship::CanHaveTroops(const Universe& universe) const {
     return design ? design->HasTroops() : false;
 }
 
-const std::string& Ship::PublicName(int empire_id, const Universe& universe) const {
+const std::string& Ship::PublicName(EmpireID empire_id, const Universe& universe) const {
     // Disclose real ship name only to fleet owners. Rationale: a player who
     // doesn't know the design for a particular ship can easily guess it if the
     // ship's name is "Scout"
@@ -365,7 +365,7 @@ const std::string& Ship::PublicName(int empire_id, const Universe& universe) con
         return UserString("OBJ_SHIP");
 }
 
-const std::string& Ship::PublicName(int empire_id) const {
+const std::string& Ship::PublicName(EmpireID empire_id) const {
     if (empire_id == ALL_EMPIRES || OwnedBy(empire_id))
         return Name();
     else if (!Unowned())
@@ -551,7 +551,7 @@ std::size_t Ship::SizeInMemory() const {
     return retval;
 }
 
-void Ship::SetFleetID(int fleet_id) {
+void Ship::SetFleetID(UniverseObjectID fleet_id) {
     if (m_fleet_id != fleet_id) {
         m_fleet_id = fleet_id;
         StateChangedSignal();
@@ -629,7 +629,7 @@ void Ship::SetOrderedScrapped(bool b) {
     StateChangedSignal();
 }
 
-void Ship::SetColonizePlanet(int planet_id) {
+void Ship::SetColonizePlanet(UniverseObjectID planet_id) {
     if (planet_id == m_ordered_colonize_planet_id) return;
     m_ordered_colonize_planet_id = planet_id;
     StateChangedSignal();
@@ -638,7 +638,7 @@ void Ship::SetColonizePlanet(int planet_id) {
 void Ship::ClearColonizePlanet()
 { SetColonizePlanet(INVALID_OBJECT_ID); }
 
-void Ship::SetInvadePlanet(int planet_id) {
+void Ship::SetInvadePlanet(UniverseObjectID planet_id) {
     if (planet_id == m_ordered_invade_planet_id) return;
     m_ordered_invade_planet_id = planet_id;
     StateChangedSignal();
@@ -647,7 +647,7 @@ void Ship::SetInvadePlanet(int planet_id) {
 void Ship::ClearInvadePlanet()
 { SetInvadePlanet(INVALID_OBJECT_ID); }
 
-void Ship::SetBombardPlanet(int planet_id) {
+void Ship::SetBombardPlanet(UniverseObjectID planet_id) {
     if (planet_id == m_ordered_bombard_planet_id) return;
     m_ordered_bombard_planet_id = planet_id;
     StateChangedSignal();

@@ -716,7 +716,7 @@ void ProductionQueue::Update(const ScriptingContext& context,
             } else {
                 // system is in this group.
                 const auto& group = group_it->first;
-                static_assert(std::is_same_v<std::decay_t<decltype(group)>, int_flat_set>,
+                static_assert(std::is_same_v<std::decay_t<decltype(group)>, id_flat_set>,
                               "make sure industry_resource_pool.Output() contains ordered container / is sorted for use of ordered_unique_range below");
                 retval.emplace_back(boost::container::ordered_unique_range, group.begin(), group.end());
             }
@@ -740,7 +740,7 @@ void ProductionQueue::Update(const ScriptingContext& context,
 
     for (auto& elem : m_queue) {
         // for items that don't depend on location, only store cost/time once
-        const int location_id = elem.item.CostIsProductionLocationInvariant(universe) ?
+        const UniverseObjectID location_id = elem.item.CostIsProductionLocationInvariant(universe) ?
             INVALID_OBJECT_ID : elem.location;
 
         queue_item_costs_and_times.try_emplace(std::pair(elem.item, location_id),
@@ -898,10 +898,10 @@ void ProductionQueue::insert(iterator it, Element element) {
     m_queue.insert(it, std::move(element));
 }
 
-void ProductionQueue::erase(int i) {
-    if (i < 0 || std::cmp_greater_equal(i, m_queue.size()))
+void ProductionQueue::erase(UniverseObjectID i) {
+    if (i < UniverseObjectID{0} || std::cmp_greater_equal(i, m_queue.size()))
         throw std::out_of_range("Tried to erase ProductionQueue item out of bounds.");
-    m_queue.erase(begin() + i);
+    m_queue.erase(std::next(begin()));
 }
 
 ProductionQueue::iterator ProductionQueue::erase(iterator it) {
@@ -910,11 +910,11 @@ ProductionQueue::iterator ProductionQueue::erase(iterator it) {
     return m_queue.erase(it);
 }
 
-ProductionQueue::iterator ProductionQueue::find(int i)
-{ return (0 <= i && std::cmp_less(i, size())) ? (begin() + i) : end(); }
+ProductionQueue::iterator ProductionQueue::find(UniverseObjectID i)
+{ return (UniverseObjectID{0} <= i && static_cast<std::size_t>(i) < size()) ? (next(begin())) : end(); }
 
-ProductionQueue::Element& ProductionQueue::operator[](int i) {
-    if (i < 0 || std::cmp_greater_equal(i, m_queue.size()))
+ProductionQueue::Element& ProductionQueue::operator[](UniverseObjectID i) {
+    if (i < UniverseObjectID{0} || static_cast<std::size_t>(i) < m_queue.size())
         throw std::out_of_range("Tried to access ProductionQueue element out of bounds");
     return m_queue[i];
 }

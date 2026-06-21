@@ -24,17 +24,17 @@ public:
     };
     using PartMeterMap = boost::container::flat_map<std::pair<std::string, MeterType>, Meter, string_metertype_pair_less>;
 
-    [[nodiscard]] bool HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
+    [[nodiscard]] bool HostileToEmpire(EmpireID empire_id, const EmpireManager& empires) const override;
 
     [[nodiscard]] TagVecs     Tags(const ScriptingContext& context) const override;
     [[nodiscard]] bool        HasTag(std::string_view name, const ScriptingContext& context) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
 
-    [[nodiscard]] int ContainerObjectID() const noexcept override { return m_fleet_id; }
-    [[nodiscard]] bool ContainedBy(int object_id) const noexcept override;
+    [[nodiscard]] UniverseObjectID ContainerObjectID() const noexcept override { return m_fleet_id; }
+    [[nodiscard]] bool ContainedBy(UniverseObjectID object_id) const noexcept override;
 
-    [[nodiscard]] const std::string& PublicName(int empire_id, const Universe& universe) const override;
-    [[nodiscard]] const std::string& PublicName(int empire_id) const;
+    [[nodiscard]] const std::string& PublicName(EmpireID empire_id, const Universe& universe) const override;
+    [[nodiscard]] const std::string& PublicName(EmpireID empire_id) const;
 
     /** Back propagates part meters (which UniverseObject equivalent doesn't). */
     void BackPropagateMeters() noexcept override;
@@ -50,8 +50,8 @@ public:
     void Copy(const Ship& copied_ship, const Universe& universe, EmpireID empire_id = ALL_EMPIRES);
 
     [[nodiscard]] int   DesignID() const noexcept             { return m_design_id; }             ///< returns the design id of the ship
-    [[nodiscard]] int   FleetID() const noexcept              { return m_fleet_id; }              ///< returns the ID of the fleet the ship is residing in
-    [[nodiscard]] int   ProducedByEmpireID() const noexcept   { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this ship
+    [[nodiscard]] auto  FleetID() const noexcept              { return m_fleet_id; }              ///< returns the ID of the fleet the ship is residing in
+    [[nodiscard]] auto  ProducedByEmpireID() const noexcept   { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this ship
     [[nodiscard]] int   ArrivedOnTurn() const noexcept        { return m_arrived_on_turn; }       ///< returns the turn on which this ship arrived in its current system
     [[nodiscard]] int   LastResuppliedOnTurn() const noexcept { return m_last_resupplied_on_turn;}///< returns the turn on which this ship was last resupplied / upgraded
     [[nodiscard]] bool  IsMonster(const Universe& universe) const;
@@ -69,9 +69,9 @@ public:
     [[nodiscard]] float TroopCapacity(const Universe& universe) const;
 
     [[nodiscard]] bool  OrderedScrapped() const noexcept        { return m_ordered_scrapped; }          ///< returns true iff this ship has been ordered scrapped, or false otherwise
-    [[nodiscard]] int   OrderedColonizePlanet() const noexcept  { return m_ordered_colonize_planet_id; }///< returns the ID of the planet this ship has been ordered to colonize, or INVALID_OBJECT_ID if this ship hasn't been ordered to colonize a planet
-    [[nodiscard]] int   OrderedInvadePlanet() const noexcept    { return m_ordered_invade_planet_id; }  ///< returns the ID of the planet this ship has been ordered to invade with ground troops, or INVALID_OBJECT_ID if this ship hasn't been ordered to invade a planet
-    [[nodiscard]] int   OrderedBombardPlanet() const noexcept   { return m_ordered_bombard_planet_id; } ///< returns the ID of the planet this ship has been ordered to bombard, or INVALID_OBJECT_ID if this ship hasn't been ordered to bombard a planet
+    [[nodiscard]] auto  OrderedColonizePlanet() const noexcept  { return m_ordered_colonize_planet_id; }///< returns the ID of the planet this ship has been ordered to colonize, or INVALID_OBJECT_ID if this ship hasn't been ordered to colonize a planet
+    [[nodiscard]] auto  OrderedInvadePlanet() const noexcept    { return m_ordered_invade_planet_id; }  ///< returns the ID of the planet this ship has been ordered to invade with ground troops, or INVALID_OBJECT_ID if this ship hasn't been ordered to invade a planet
+    [[nodiscard]] auto  OrderedBombardPlanet() const noexcept   { return m_ordered_bombard_planet_id; } ///< returns the ID of the planet this ship has been ordered to bombard, or INVALID_OBJECT_ID if this ship hasn't been ordered to bombard a planet
     [[nodiscard]] int   LastTurnActiveInCombat() const noexcept { return m_last_turn_active_in_combat; }///< returns the last turn this ship has been actively involved in combat
 
     [[nodiscard]] const auto&  PartMeters() const noexcept      { return m_part_meters; }                  ///< returns this Ship's part meters
@@ -100,17 +100,17 @@ public:
 
     [[nodiscard]] std::size_t        SizeInMemory() const override;
 
-    void SetFleetID(int fleet_id); ///< sets the ID of the fleet the ship resides in
+    void SetFleetID(UniverseObjectID fleet_id); ///< sets the ID of the fleet the ship resides in
     void SetArrivedOnTurn(int turn);
     void Resupply(int turn);
     void SetSpecies(std::string species_name, const SpeciesManager& sm);
-    void SetOrderedScrapped(bool b = true); ///< flags ship for scrapping
-    void SetColonizePlanet(int planet_id);  ///< marks ship to colonize the indicated planet
-    void ClearColonizePlanet();             ///< marks ship to colonize no planets
-    void SetInvadePlanet(int planet_id);    ///< marks ship to invade the indicated planet
-    void ClearInvadePlanet();               ///< marks ship to invade no planets
-    void SetBombardPlanet(int planet_id);   ///< marks ship to bombard the indicated planet
-    void ClearBombardPlanet();              ///< marks ship to bombard no planets
+    void SetOrderedScrapped(bool b = true);             ///< flags ship for scrapping
+    void SetColonizePlanet(UniverseObjectID planet_id); ///< marks ship to colonize the indicated planet
+    void ClearColonizePlanet();                         ///< marks ship to colonize no planets
+    void SetInvadePlanet(UniverseObjectID planet_id);   ///< marks ship to invade the indicated planet
+    void ClearInvadePlanet();                           ///< marks ship to invade no planets
+    void SetBombardPlanet(UniverseObjectID planet_id);  ///< marks ship to bombard the indicated planet
+    void ClearBombardPlanet();                          ///< marks ship to bombard no planets
     void SetLastTurnActiveInCombat(int turn) noexcept { m_last_turn_active_in_combat = turn; } ///< sets the last turn this ship was actively involved in combat
 
     [[nodiscard]] Meter* GetPartMeter(MeterType type, const std::string& part_name); ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
@@ -119,8 +119,8 @@ public:
 
     /** Create a ship from an @p empire_id, @p design_id, @p species_name and
         @p production_by_empire_id. */
-    Ship(int empire_id, int design_id, std::string species_name, const Universe& universe,
-         const SpeciesManager& species, int produced_by_empire_id, int current_turn);
+    Ship(EmpireID empire_id, int design_id, std::string species_name, const Universe& universe,
+         const SpeciesManager& species, EmpireID produced_by_empire_id, int current_turn);
     Ship() : UniverseObject(UniverseObjectType::OBJ_SHIP) { AddMeters(ship_meter_types); }
     Ship(Ship&&) = default;
 
@@ -146,18 +146,18 @@ private:
         return retval;
     }();
 
-    PartMeterMap    m_part_meters;
-    std::string     m_species_name;
-    int             m_design_id = INVALID_DESIGN_ID;
-    int             m_fleet_id = INVALID_OBJECT_ID;
-    int             m_ordered_colonize_planet_id = INVALID_OBJECT_ID;
-    int             m_ordered_invade_planet_id = INVALID_OBJECT_ID;
-    int             m_ordered_bombard_planet_id = INVALID_OBJECT_ID;
-    int             m_last_turn_active_in_combat = INVALID_GAME_TURN;
-    int             m_produced_by_empire_id = ALL_EMPIRES;
-    int             m_arrived_on_turn = INVALID_GAME_TURN;
-    int             m_last_resupplied_on_turn = BEFORE_FIRST_TURN;
-    bool            m_ordered_scrapped = false;
+    PartMeterMap     m_part_meters;
+    std::string      m_species_name;
+    int              m_design_id = INVALID_DESIGN_ID;
+    UniverseObjectID m_fleet_id = INVALID_OBJECT_ID;
+    UniverseObjectID m_ordered_colonize_planet_id = INVALID_OBJECT_ID;
+    UniverseObjectID m_ordered_invade_planet_id = INVALID_OBJECT_ID;
+    UniverseObjectID m_ordered_bombard_planet_id = INVALID_OBJECT_ID;
+    int              m_last_turn_active_in_combat = INVALID_GAME_TURN;
+    EmpireID         m_produced_by_empire_id = ALL_EMPIRES;
+    int              m_arrived_on_turn = INVALID_GAME_TURN;
+    int              m_last_resupplied_on_turn = BEFORE_FIRST_TURN;
+    bool             m_ordered_scrapped = false;
 
     template <typename Archive>
     friend void serialize(Archive&, Ship&, unsigned int const);

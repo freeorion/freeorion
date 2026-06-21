@@ -28,19 +28,19 @@ public:
     /** Returns the straight-line distance between the objects with the given
       * IDs. \throw std::out_of_range This function will throw if either object
       * ID is out of range. */
-    double LinearDistance(int object1_id, int object2_id, const ObjectMap& objects) const;
+    double LinearDistance(UniverseObjectID object1_id, UniverseObjectID object2_id, const ObjectMap& objects) const;
 
     /** Returns the number of starlane jumps between the systems with the given
       * IDs. If there is no path between the systems, -1 is returned.
       * \throw std::out_of_range This function will throw if either system
       * ID is not a valid system id. */
-    int16_t JumpDistanceBetweenSystems(int system1_id, int system2_id) const;
+    int16_t JumpDistanceBetweenSystems(UniverseObjectID system1_id, UniverseObjectID system2_id) const;
 
     /** Returns the number of starlane jumps between any two objects, accounting
       * for cases where one or the other are fleets / ships on starlanes between
       * systems. Returns INT_MAX when no path exists, or either object does not
       * exist. */
-    int JumpDistanceBetweenObjects(int object1_id, int object2_id, const ObjectMap& objects) const;
+    int JumpDistanceBetweenObjects(UniverseObjectID object1_id, UniverseObjectID object2_id, const ObjectMap& objects) const;
 
     /** Returns the sequence of systems, including \a system1_id and
       * \a system2_id, that defines the shortest path from \a system1 to

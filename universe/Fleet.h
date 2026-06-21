@@ -68,7 +68,7 @@ public:
     [[nodiscard]] bool                              Contains(UniverseObjectID object_id) const override;
     [[nodiscard]] bool                              ContainedBy(UniverseObjectID object_id) const noexcept override;
 
-    [[nodiscard]] const std::string& PublicName(int empire_id, const Universe& universe) const override;
+    [[nodiscard]] const std::string& PublicName(EmpireID empire_id, const Universe& universe) const override;
 
     [[nodiscard]] const auto&        ShipIDs() const noexcept { return m_ships; } ///< returns set of IDs of ships in fleet.
     [[nodiscard]] int                MaxShipAgeInTurns(const ObjectMap& objects, int current_turn) const; ///< Returns the age of the oldest ship in the fleet
@@ -142,7 +142,7 @@ public:
       * blockaded, the value is the current system ID. The blockade intent is
       * that you can't break a blockade unless you beat the blockaders
       * (via combat or they retreat). **/
-    [[nodiscard]] int ArrivalStarlane() const noexcept { return m_arrival_starlane; }
+    [[nodiscard]] UniverseObjectID ArrivalStarlane() const noexcept { return m_arrival_starlane; }
 
     [[nodiscard]] std::size_t SizeInMemory() const override;
 
@@ -160,10 +160,10 @@ public:
     void ClearRoute(const ObjectMap& objects) { SetRoute({}, objects); }
     /** Removes ids in this fleet's route (list of system ids) after \a system_id.
       * If \a system_id is not in the route, the route is cleared. */
-    static std::vector<int> TruncateRouteToEndAtFirstOf(std::vector<UniverseObjectID> route, UniverseObjectID system_id);
+    static std::vector<UniverseObjectID> TruncateRouteToEndAtFirstOf(std::vector<UniverseObjectID> route, UniverseObjectID system_id);
     void TruncateRouteToEndAtFirstOf(UniverseObjectID system_id)
     { m_travel_route = TruncateRouteToEndAtFirstOf(std::move(m_travel_route), system_id); }
-    static std::vector<int> TruncateRouteToEndAtLastOf(std::vector<UniverseObjectID> route, UniverseObjectID system_id);
+    static std::vector<UniverseObjectID> TruncateRouteToEndAtLastOf(std::vector<UniverseObjectID> route, UniverseObjectID system_id);
     void TruncateRouteToEndAtLAstOf(UniverseObjectID system_id)
     { m_travel_route = TruncateRouteToEndAtLastOf(std::move(m_travel_route), system_id); }
 

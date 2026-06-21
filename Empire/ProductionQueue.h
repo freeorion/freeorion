@@ -68,7 +68,7 @@ struct FO_COMMON_API ProductionQueue {
         /** Returns the total cost per item (blocksize 1) and the minimum number of
           * turns required to produce the indicated item, or (-1.0, -1) if the item
           * is unknown, unavailable, or invalid. */
-        [[nodiscard]] std::pair<float, int> ProductionCostAndTime(int empire_id, int location_id,
+        [[nodiscard]] std::pair<float, int> ProductionCostAndTime(EmpireID empire_id, UniverseObjectID location_id,
                                                                   const ScriptingContext& context) const;
 
         // non-defaulted operator< to handle different build_type differently
@@ -86,12 +86,12 @@ struct FO_COMMON_API ProductionQueue {
 
         [[nodiscard]] bool operator==(const ProductionItem&) const noexcept  = default;
 
-        [[nodiscard]] bool EnqueueConditionPassedAt(int location_id, const ScriptingContext& context) const;
+        [[nodiscard]] bool EnqueueConditionPassedAt(UniverseObjectID location_id, const ScriptingContext& context) const;
 
-        [[nodiscard]] std::map<std::string, std::map<int, float>> CompletionSpecialConsumption(
-            int location_id, const ScriptingContext& context) const; // for each special name, what object ids have those special capacities reduced by what amount for full completion of the production item
-        [[nodiscard]] std::map<MeterType, std::map<int, float>>   CompletionMeterConsumption(
-            int location_id, const ScriptingContext& context) const;  // for each meter type, what object ids have those meters reduced by what amount for full completion of the production item
+        [[nodiscard]] std::map<std::string, std::map<UniverseObjectID, float>> CompletionSpecialConsumption(
+            UniverseObjectID location_id, const ScriptingContext& context) const; // for each special name, what object ids have those special capacities reduced by what amount for full completion of the production item
+        [[nodiscard]] std::map<MeterType, std::map<UniverseObjectID, float>>   CompletionMeterConsumption(
+            UniverseObjectID location_id, const ScriptingContext& context) const;  // for each meter type, what object ids have those meters reduced by what amount for full completion of the production item
 
         [[nodiscard]] std::string Dump() const;
 
@@ -110,8 +110,8 @@ struct FO_COMMON_API ProductionQueue {
     struct FO_COMMON_API Element {
         Element() = default;
 
-        Element(ProductionItem item_, int empire_id_, boost::uuids::uuid uuid_, int ordered_,
-                int remaining_, int blocksize_, int location_) :
+        Element(ProductionItem item_, EmpireID empire_id_, boost::uuids::uuid uuid_,
+                int ordered_, int remaining_, int blocksize_, UniverseObjectID location_) :
             item(std::move(item_)),
             empire_id(empire_id_),
             ordered(ordered_),
@@ -131,18 +131,18 @@ struct FO_COMMON_API ProductionQueue {
 
 
         ProductionItem      item;
-        int                 empire_id = ALL_EMPIRES;
+        EmpireID            empire_id = ALL_EMPIRES;
         int                 ordered = 0;                ///< how many of item (blocks) to produce
         int                 blocksize = 1;              ///< size of block to produce (default=1)
         int                 remaining = 0;              ///< how many left to produce
-        int                 location = INVALID_OBJECT_ID;///< the ID of the UniverseObject at which this item is being produced
+        UniverseObjectID    location = INVALID_OBJECT_ID;///< the ID of the UniverseObject at which this item is being produced
         float               allocated_pp = 0.0f;        ///< PP allocated to this ProductionQueue Element by Empire production update
         float               progress = 0.0f;            ///< fraction of this item that is complete.
         float               progress_memory = 0.0f;     ///< updated by server turn processing; aides in allowing blocksize changes to be undone in same turn w/o progress loss
         int                 blocksize_memory = 1;       ///< used along with progress_memory
         int                 turns_left_to_next_item = -1;
         int                 turns_left_to_completion = -1;
-        int                 rally_point_id = INVALID_OBJECT_ID;
+        UniverseObjectID    rally_point_id = INVALID_OBJECT_ID;
         bool                paused = false;
         bool                to_be_removed = false;
         bool                allowed_imperial_stockpile_use = false;
@@ -166,9 +166,9 @@ struct FO_COMMON_API ProductionQueue {
     ProductionQueue() = default;
     explicit ProductionQueue(int empire_id);
 
-    [[nodiscard]] int     ProjectsInProgress() const noexcept { return m_projects_in_progress; } ///< number of production projects currently (perhaps partially) funded.
-    [[nodiscard]] float   TotalPPsSpent() const; ///< number of PPs currently spent on the projects in this queue.
-    [[nodiscard]] int     EmpireID() const noexcept { return m_empire_id; }
+    [[nodiscard]] int      ProjectsInProgress() const noexcept { return m_projects_in_progress; } ///< number of production projects currently (perhaps partially) funded.
+    [[nodiscard]] float    TotalPPsSpent() const; ///< number of PPs currently spent on the projects in this queue.
+    [[nodiscard]] EmpireID EmpireID() const noexcept { return m_empire_id; }
 
     /** Returns map from sets of object ids that can share resources to amount
       * of PP allocated to production queue elements that have build locations
@@ -217,27 +217,27 @@ struct FO_COMMON_API ProductionQueue {
     // STL container-like interface
     void     push_back(Element element);
     void     insert(iterator it, Element element);
-    void     erase(int i);
+    void     erase(UniverseObjectID i);
     iterator erase(iterator it);
 
     [[nodiscard]] auto     begin() noexcept { return m_queue.begin(); }
     [[nodiscard]] auto     end() noexcept { return m_queue.end(); }
-    [[nodiscard]] iterator find(int i);
-    Element&               operator[](int i);
+    [[nodiscard]] iterator find(UniverseObjectID i);
+    Element&               operator[](UniverseObjectID i);
 
     void clear();
 
     mutable boost::signals2::signal<void ()> ProductionQueueChangedSignal;
 
 private:
-    using int_flat_set = boost::container::flat_set<int>;
+    using id_flat_set = boost::container::flat_set<UniverseObjectID>;
     QueueType                       m_queue;
     int                             m_projects_in_progress = 0;
-    std::map<int_flat_set, float>   m_object_group_allocated_pp;
-    std::map<int_flat_set, float>   m_object_group_allocated_stockpile_pp;
+    std::map<id_flat_set, float>    m_object_group_allocated_pp;
+    std::map<id_flat_set, float>    m_object_group_allocated_stockpile_pp;
     float                           m_expected_new_stockpile_amount = 0.0f;
     float                           m_expected_project_transfer_to_stockpile = 0.0f;
-    int                             m_empire_id = ALL_EMPIRES;
+    ::EmpireID                      m_empire_id = ALL_EMPIRES;
 
     friend class boost::serialization::access;
     template <typename Archive>
