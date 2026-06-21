@@ -4137,7 +4137,7 @@ void SidePanel::SelectBuilding(int building_id) {
 
     // Setting the selected building to invalid is always possible.
     // In other cases we check if the building can be selected.
-    if(building_id != INVALID_OBJECT_ID) {
+    if (building_id != INVALID_OBJECT_ID) {
         auto& app = GetApp();
         auto& context = app.GetContext();
         auto& objects = context.ContextObjects();
@@ -4154,10 +4154,11 @@ void SidePanel::SelectBuilding(int building_id) {
         s_building_id = building_id;
     }
 
-    for (auto& weak_panel : s_side_panels)
+    for (auto& weak_panel : s_side_panels) {
         if (auto panel = weak_panel.lock())
             // Refresh will cause the buildingpanel to be redrawn (with the correct buildingID selected).
             panel->Refresh();
+    }
 }
 
 void SidePanel::SetSystem(int system_id, const ObjectMap& objects) {
