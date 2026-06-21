@@ -56,12 +56,12 @@ class FO_COMMON_API System final : public UniverseObject {
 public:
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
 
-    [[nodiscard]] std::span<const int> ContainedObjectIDs() const override { return ToSpan(m_objects); }
+    [[nodiscard]] std::span<const UniverseObjectID> ContainedObjectIDs() const override { return ToSpan(m_objects); }
 
-    [[nodiscard]] bool Contains(int object_id) const override
+    [[nodiscard]] bool Contains(UniverseObjectID object_id) const override
     { return object_id != INVALID_OBJECT_ID && m_objects.contains(object_id); }
 
-    [[nodiscard]] bool ContainedBy(int) const noexcept override { return false; }
+    [[nodiscard]] bool ContainedBy(UniverseObjectID) const noexcept override { return false; }
 
     /** returns the name to display for players for this system.  While all
       * systems may have a proper name assigned, if they contain no planets or
@@ -69,7 +69,7 @@ public:
       * yet explored might be "Unexplored Region", rather than an empty string
       * for the name.  This is distinct from PublicName functions, which filter
       * the name based on ownership. */
-    [[nodiscard]] std::string   ApparentName(int empire_id, const Universe& u, bool blank_unexplored_and_none = false) const;
+    [[nodiscard]] std::string   ApparentName(EmpireID empire_id, const Universe& u, bool blank_unexplored_and_none = false) const;
 
     [[nodiscard]] StarType      GetStarType() const noexcept { return m_star; }  ///< type of star for this system
     [[nodiscard]] StarType      NextOlderStarType() const noexcept;
@@ -78,7 +78,7 @@ public:
     [[nodiscard]] auto          Orbits() const noexcept       { return m_orbits.size(); }     ///< number of orbits in this system
 
     [[nodiscard]] int           NumStarlanes() const noexcept { return static_cast<int>(m_starlanes.size()); }; ///< number of starlanes from this system to other systems
-    [[nodiscard]] bool          HasStarlaneTo(int id) const; ///< true if there is a starlane from this system to the system with ID number \a id
+    [[nodiscard]] bool          HasStarlaneTo(UniverseObjectID id) const; ///< true if there is a starlane from this system to the system with ID number \a id
 
     [[nodiscard]] auto&         ObjectIDs() const noexcept        { return m_objects; }
     [[nodiscard]] auto&         PlanetIDs() const noexcept        { return m_planets; }
@@ -112,12 +112,12 @@ public:
     void Copy(const UniverseObject& copied_object, const Universe& universe, EmpireID empire_id = ALL_EMPIRES) override;
     void Copy(const System& copied_system, const Universe& universe, EmpireID empire_id = ALL_EMPIRES);
 
-    void SetID(int id) override {
+    void SetID(UniverseObjectID id) override {
         this->m_system_id = id;
         UniverseObject::SetID(id);
     }
 
-    void SetOwner(int) override {} // no-op for systems
+    void SetOwner(EmpireID) noexcept override {} // no-op for systems
 
     void ResetTargetMaxUnpairedMeters() override;
 
@@ -127,11 +127,11 @@ public:
     void Insert(UniverseObject* obj, int orbit, int current_turn, const ObjectMap& objects);
 
     /** removes the object with ID number \a id from this system. */
-    void Remove(int id);
+    void Remove(UniverseObjectID id);
 
-    void SetStarType(StarType type);     ///< sets the type of the star in this Systems to \a StarType
-    void AddStarlane(int id);            ///< adds a starlane between this system and the system with ID number \a id.  \note Adding a starlane to a system to which there is already a wormhole erases the wormhole; you may want to check for a wormhole before calling this function.
-    bool RemoveStarlane(int id);         ///< removes a starlane between this system and the system with ID number \a id.  Returns false if there was no starlane from this system to system \a id.
+    void SetStarType(StarType type);            ///< sets the type of the star in this Systems to \a StarType
+    void AddStarlane(UniverseObjectID id);      ///< adds a starlane between this system and the system with ID number \a id.  \note Adding a starlane to a system to which there is already a wormhole erases the wormhole; you may want to check for a wormhole before calling this function.
+    bool RemoveStarlane(UniverseObjectID id);   ///< removes a starlane between this system and the system with ID number \a id.  Returns false if there was no starlane from this system to system \a id.
 
     void SetLastTurnBattleHere(int turn) noexcept { m_last_turn_battle_here = turn; }
 
@@ -148,19 +148,21 @@ private:
 
     static constexpr int SYSTEM_ORBITS = 7;
 
-    StarType            m_star = StarType::INVALID_STAR_TYPE;
-    std::vector<int>    m_orbits = std::vector<int>(SYSTEM_ORBITS, INVALID_OBJECT_ID);  ///< indexed by orbit number, indicates the id of the planet in that orbit
-    IDSet               m_objects;
-    IDSet               m_planets;
-    IDSet               m_buildings;
-    IDSet               m_fleets;
-    IDSet               m_ships;
-    IDSet               m_fields;
-    IDSet               m_starlanes; ///< IDs of other connected systems
-    int                 m_last_turn_battle_here = INVALID_GAME_TURN;  ///< the turn on which there was last a battle in this system
+    StarType                        m_star = StarType::INVALID_STAR_TYPE;
+    std::vector<UniverseObjectID>   m_orbits = std::vector<UniverseObjectID>(SYSTEM_ORBITS, INVALID_OBJECT_ID);  ///< indexed by orbit number, indicates the id of the planet in that orbit
 
-    std::string         m_overlay_texture;          // intentionally not serialized; set by local effects
-    double              m_overlay_size = 1.0;
+    IDSet m_objects;
+    IDSet m_planets;
+    IDSet m_buildings;
+    IDSet m_fleets;
+    IDSet m_ships;
+    IDSet m_fields;
+    IDSet m_starlanes; ///< IDs of other connected systems
+
+    int m_last_turn_battle_here = INVALID_GAME_TURN;  ///< the turn on which there was last a battle in this system
+
+    std::string m_overlay_texture;          // intentionally not serialized; set by local effects
+    double      m_overlay_size = 1.0;
 
     friend ObjectMap;
 
