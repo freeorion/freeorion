@@ -174,7 +174,9 @@ Tech(
                 ),
                 AddSpecial(name=base_stealth_special, capacity=Value(Target.Stealth)), # record server value
                 Conditional( # if there is a discrepancy between server and client value, sync to server value
-                    condition=0.01 > Abs(SpecialCapacity(name=base_stealth_special, object=Target.ID) - Value(Target.Stealth)),
+                    #condition=0.01 > Abs(SpecialCapacity(name=base_stealth_special, object=Target.ID) - Value(Target.Stealth)),
+                    condition=0.001 > ((SpecialCapacity(name=base_stealth_special, object=Target.ID) - Value(Target.Stealth))
+                                     *(SpecialCapacity(name=base_stealth_special, object=Target.ID) - Value(Target.Stealth))),
                     effects=[
                         SetStealth(value=SpecialCapacity(name=base_stealth_special, object=Target.ID)),
                     ],
