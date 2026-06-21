@@ -37,7 +37,7 @@ public:
 
     /** Returns the id of the building selected in the SidePanels, or
       * INVALID_OBJECT_ID if no building is selected */
-    static int BuildingID() noexcept { return s_building_id; }
+    static int SelectedBuildingID() noexcept { return s_building_id; }
 
     /** Returns whether this SidePanel contains an object with the indicated
       * \a object_id that can be selected within the SidePanel. */

@@ -81,7 +81,7 @@ public:
     /** Enables, or disables if \a enable is false, issuing orders via this BuildingIndicator. */
     void EnableOrderIssuing(bool enable = true);
 
-    void SelectBuilding(int building_id);
+    void SelectBuilding(int building_id) noexcept;
 
     mutable boost::signals2::signal<void (int)> LeftClickedSignal;
     mutable boost::signals2::signal<void (int)> RightClickedSignal;

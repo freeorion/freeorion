@@ -168,7 +168,7 @@ void BuildingsPanel::EnableOrderIssuing(bool enable) {
 }
 
 void BuildingsPanel::SelectBuilding(int building_id) {
-    if(m_selected_building_id == building_id)
+    if (m_selected_building_id == building_id)
         return;
 
     m_selected_building_id = building_id;
@@ -308,9 +308,9 @@ void BuildingIndicator::Render() {
 
     // Draw outline and background...
     // TODO: don't hardcode color here, but put it near WndOuterBorderColor() (WndSelectedBorderColor?).
-    auto &borderColor = m_selected ? GG::CLR_GRAY : ClientUI::WndOuterBorderColor();
+    auto border_color = m_selected ? GG::CLR_GRAY : ClientUI::WndOuterBorderColor();
 
-    GG::FlatRectangle(ul, lr, ClientUI::WndColor(), borderColor, 1);
+    GG::FlatRectangle(ul, lr, ClientUI::WndColor(), border_color , 1);
 }
 
 void BuildingIndicator::PreRender() {
@@ -396,7 +396,7 @@ void BuildingIndicator::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!m_order_issuing_enabled)
         return;
 
-    if(!m_selected)
+    if (!m_selected)
         LeftClickedSignal(m_building_id);
     else
         LeftClickedSignal(INVALID_OBJECT_ID);
@@ -468,9 +468,8 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
 void BuildingIndicator::EnableOrderIssuing(bool enable)
 { m_order_issuing_enabled = enable; }
 
-void BuildingIndicator::SelectBuilding(int building_id){
-    m_selected = (m_building_id == building_id);
-}
+void BuildingIndicator::SelectBuilding(int building_id) noexcept
+{ m_selected = (m_building_id == building_id); }
 
 void BuildingIndicator::DoLayout() {
     GG::Pt child_lr = Size() - GG::Pt(GG::X1, GG::Y1);   // extra pixel prevents graphic from overflowing border box

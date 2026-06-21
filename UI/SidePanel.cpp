@@ -4129,7 +4129,7 @@ void SidePanel::SelectPlanet(int planet_id, const ObjectMap& objects) {
     PlanetSelectedSignal(s_planet_id);
 }
 
-void SidePanel::SelectBuilding(int building_id){
+void SidePanel::SelectBuilding(int building_id) {
     if (s_building_id == building_id)
         return;
 
@@ -4137,7 +4137,7 @@ void SidePanel::SelectBuilding(int building_id){
 
     // Setting the selected building to invalid is always possible.
     // In other cases we check if the building can be selected.
-    if(building_id != INVALID_OBJECT_ID){
+    if(building_id != INVALID_OBJECT_ID) {
         auto& app = GetApp();
         auto& context = app.GetContext();
         auto& objects = context.ContextObjects();
