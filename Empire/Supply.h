@@ -63,7 +63,7 @@ public:
     [[nodiscard]] bool SystemHasFleetSupply(int system_id, int empire_id, bool include_allies,
                                             const DiploStatusMap& diplo_statuses) const;
 
-    [[nodiscard]] std::string Dump(const Universe& u, int empire_id = ALL_EMPIRES) const;
+    [[nodiscard]] std::string Dump(const Universe& u, EmpireID empire_id = ALL_EMPIRES) const;
 
     /** Calculates systems at which fleets of empires can be supplied, and
       * groups of systems that can exchange resources, and the starlane

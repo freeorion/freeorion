@@ -2111,7 +2111,7 @@ void CreateShip::Execute(ScriptingContext& context) const {
         return;
     }
 
-    int empire_id = ALL_EMPIRES;
+    EmpireID empire_id = ALL_EMPIRES;
     std::shared_ptr<Empire> empire;
     if (m_empire_id) {
         empire_id = m_empire_id->Eval(context);

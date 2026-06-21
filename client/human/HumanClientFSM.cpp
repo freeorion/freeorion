@@ -957,7 +957,7 @@ struct WaitingForGameStart::GameStartDataUnpackedNotification::UnpackedData {
     bool save_state_string_available = false;
     bool single_player_game = false;
 
-    int empire_id = ALL_EMPIRES;
+    EmpireID empire_id = ALL_EMPIRES;
     int current_turn = INVALID_GAME_TURN;
 
     std::string save_state_string; // ignored - used by AI but not by human client

@@ -53,7 +53,7 @@ public:
     /** Returns the set of known Empires for this application. */
     [[nodiscard]] virtual EmpireManager& Empires() noexcept = 0;
 
-    [[nodiscard]] virtual Empire* GetEmpire(int id) = 0;
+    [[nodiscard]] virtual Empire* GetEmpire(EmpireID id) = 0;
 
     [[nodiscard]] virtual SpeciesManager& GetSpeciesManager() noexcept = 0;
 
@@ -63,7 +63,7 @@ public:
 
     /** On server or clients with no player: ALL_EMPIRES
       * On clients with a player: that player's ID */
-    [[nodiscard]] virtual int EmpireID() const noexcept = 0;
+    [[nodiscard]] virtual EmpireID EmpireID() const noexcept = 0;
 
     //! Returns the current game turn
     //!
@@ -72,10 +72,10 @@ public:
 
     /** On server or AI clients, returns INVALID_OBJECT_ID
       * On UI clients, returns the ID of the object currently selected. */
-    [[nodiscard]] virtual int SelectedSystemID() const { return INVALID_OBJECT_ID; }
-    [[nodiscard]] virtual int SelectedPlanetID() const { return INVALID_OBJECT_ID; }
-    [[nodiscard]] virtual int SelectedFleetID() const { return INVALID_OBJECT_ID; }
-    [[nodiscard]] virtual int SelectedShipID() const { return INVALID_OBJECT_ID; }
+    [[nodiscard]] virtual UniverseObjectID SelectedSystemID() const { return INVALID_OBJECT_ID; }
+    [[nodiscard]] virtual UniverseObjectID SelectedPlanetID() const { return INVALID_OBJECT_ID; }
+    [[nodiscard]] virtual UniverseObjectID SelectedFleetID() const { return INVALID_OBJECT_ID; }
+    [[nodiscard]] virtual UniverseObjectID SelectedShipID() const { return INVALID_OBJECT_ID; }
 
     [[nodiscard]] static int MAX_AI_PLAYERS() noexcept;
 
@@ -103,7 +103,7 @@ protected:
 { return IApp::GetApp()->Empires(); }
 
 /** Accessor for Empires */
-[[nodiscard]] inline Empire* GetEmpire(int id)
+[[nodiscard]] inline Empire* GetEmpire(EmpireID id)
 { return IApp::GetApp()->GetEmpire(id); }
 
 /** Accessor for the App's species manager */
@@ -132,7 +132,7 @@ protected:
 
 /** Returns app's empire ID. This may be an actual empire ID or may be
   * ALL_EMPIRES. */
-[[nodiscard]] inline int AppEmpireID() noexcept
+[[nodiscard]] inline EmpireID AppEmpireID() noexcept
 { return IApp::GetApp()->EmpireID(); }
 
 /** Returns current game turn.  This is >= 1 during a game, BEFORE_FIRST_TURN
