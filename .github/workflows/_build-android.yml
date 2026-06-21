@@ -3,7 +3,7 @@ name: "Android"
 on:
   workflow_call:
 env:
-  GODOT_VERSION: "3.5.2"
+  GODOT_VERSION: "3.6.2"
 jobs:
   generate-godot-api:
     name: Generate Godot API
@@ -146,7 +146,8 @@ jobs:
           sed -i 's|keystore/debug_password=""|keystore/debug_password="android"|' godot/export_presets.cfg
       - name: Export APK via Godot CLI
         run: |
-          godot -v --path godot/ --export-debug "Android" ../freeorion.apk
+          cd godot
+          godot -v --export-debug "Android" ../freeorion.apk
       - name: Upload APK
         uses: actions/upload-artifact@v7
         with:
