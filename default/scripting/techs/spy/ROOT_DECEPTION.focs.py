@@ -205,7 +205,7 @@ Tech(
             effects=[
                 AddSpecial(name=unstealthed_stealth_special, capacity=min_effective_stealth_of_more_stealthy_ships_valref_other_own_ships_in_targetz_system()),
                 SetStealth(
-                    value=SpecialCapacity(name=unstealthed_stealth_special, object=Target.ID),# comes from server
+                    value=min_effective_stealth_of_more_stealthy_ships_valref_other_own_ships_in_targetz_system()
                 ),
             ],
         ),
