@@ -851,11 +851,12 @@ std::shared_ptr<const std::decay_t<T>> ObjectMap::get(Pred pred) const
         return (it != map.end()) ? it->second : nullptr;
 
     } else if constexpr (invokable_on_const_reference) {
-        auto rng = map | range_values;
-        auto it = range_find_if(rng, [&pred](const auto& id_obj) { return pred(*id_obj->second); });
-        return (it != rng.end()) ? it->second : nullptr;
+        static_assert(requires { pred(*map.begin()->second); });
+        auto it = range_find_if(map, [&pred](const auto& id_obj) { return pred(*id_obj->second); });
+        return (it != map.end()) ? it->second : nullptr;
 
     } else if constexpr (invokable_on_int) {
+        static_assert(requires { pred(map.begin()->first); });
         auto it = range_find_if(map, [&pred](const auto& id_obj) { return pred(id_obj->first); });
         return (it != map.end()) ? it->second : nullptr;
 
