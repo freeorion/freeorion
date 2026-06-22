@@ -74,14 +74,14 @@ struct FO_COMMON_API DiplomaticStatusUpdateInfo {
     DiplomaticStatus    diplo_status = DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
 };
 
-[[nodiscard]] FO_COMMON_API DiplomaticMessage WarDeclarationDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
-[[nodiscard]] FO_COMMON_API DiplomaticMessage PeaceProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
-[[nodiscard]] FO_COMMON_API DiplomaticMessage AcceptPeaceDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
-[[nodiscard]] FO_COMMON_API DiplomaticMessage AlliesProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
-[[nodiscard]] FO_COMMON_API DiplomaticMessage AcceptAlliesDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
-[[nodiscard]] FO_COMMON_API DiplomaticMessage EndAllianceDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
-[[nodiscard]] FO_COMMON_API DiplomaticMessage CancelDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
-[[nodiscard]] FO_COMMON_API DiplomaticMessage RejectProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
+[[nodiscard]] FO_COMMON_API DiplomaticMessage WarDeclarationDiplomaticMessage(EmpireID sender_empire_id, EmpireID recipient_empire_id);
+[[nodiscard]] FO_COMMON_API DiplomaticMessage PeaceProposalDiplomaticMessage(EmpireID sender_empire_id, EmpireID recipient_empire_id);
+[[nodiscard]] FO_COMMON_API DiplomaticMessage AcceptPeaceDiplomaticMessage(EmpireID sender_empire_id, EmpireID recipient_empire_id);
+[[nodiscard]] FO_COMMON_API DiplomaticMessage AlliesProposalDiplomaticMessage(EmpireID sender_empire_id, EmpireID recipient_empire_id);
+[[nodiscard]] FO_COMMON_API DiplomaticMessage AcceptAlliesDiplomaticMessage(EmpireID sender_empire_id, EmpireID recipient_empire_id);
+[[nodiscard]] FO_COMMON_API DiplomaticMessage EndAllianceDiplomaticMessage(EmpireID sender_empire_id, EmpireID recipient_empire_id);
+[[nodiscard]] FO_COMMON_API DiplomaticMessage CancelDiplomaticMessage(EmpireID sender_empire_id, EmpireID recipient_empire_id);
+[[nodiscard]] FO_COMMON_API DiplomaticMessage RejectProposalDiplomaticMessage(EmpireID sender_empire_id, EmpireID recipient_empire_id);
 
 
 #endif

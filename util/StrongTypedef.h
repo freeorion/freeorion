@@ -20,6 +20,13 @@ constexpr typeName& operator++(typeName& x) {                                   
 }                                                                                                       \
 constexpr typeName operator++(typeName& x, int) { typeName rv = x; ++x; return rv; }                    \
                                                                                                         \
+constexpr typeName& operator--(typeName& x) {                                                           \
+    constexpr underlyingType MIN = std::numeric_limits<underlyingType>::min();                          \
+    x = (Value(x) > MIN) ? typeName(Value(x) - 1) : typeName(-1);                                       \
+    return x;                                                                                           \
+}                                                                                                       \
+constexpr typeName operator--(typeName& x, int) { typeName rv = x; --x; return rv; }                    \
+                                                                                                        \
 auto to_string(typeName x) { return std::to_string(static_cast<underlyingType>(x)); }
 
 #endif

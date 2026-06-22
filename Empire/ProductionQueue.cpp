@@ -124,14 +124,14 @@ namespace {
         return retval;
     }
 
-    float CalculateNewStockpile(int empire_id, float starting_stockpile,
+    float CalculateNewStockpile(EmpireID empire_id, float starting_stockpile,
                                 float project_transfer_to_stockpile,
-                                const std::map<boost::container::flat_set<int>, float>& available_pp,
-                                const std::map<boost::container::flat_set<int>, float>& allocated_pp,
-                                const std::map<boost::container::flat_set<int>, float>& allocated_stockpile_pp,
+                                const std::map<boost::container::flat_set<UniverseObjectID>, float>& available_pp,
+                                const std::map<boost::container::flat_set<UniverseObjectID>, float>& allocated_pp,
+                                const std::map<boost::container::flat_set<UniverseObjectID>, float>& allocated_stockpile_pp,
                                 const ScriptingContext& context)
     {
-        TraceLogger() << "CalculateNewStockpile for empire " << empire_id;
+        TraceLogger() << "CalculateNewStockpile for empire " << to_string(empire_id);
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "CalculateStockpileContribution() passed null empire.  doing nothing.";
@@ -178,15 +178,15 @@ namespace {
       * stockpile project build items. */
     template <typename ItemCostsTimesMap, typename FlagsVec, typename QueueGroups>
     float SetProdQueueElementSpending(
-        std::map<boost::container::flat_set<int>, float> available_pp,
+        std::map<boost::container::flat_set<UniverseObjectID>, float> available_pp,
         float available_stockpile,
         float stockpile_limit,
         const QueueGroups& queue_element_resource_sharing_object_groups,
         const ItemCostsTimesMap& queue_item_costs_and_times,
         const FlagsVec& is_producible,
         ProductionQueue::QueueType& queue,
-        std::map<boost::container::flat_set<int>, float>& allocated_pp,
-        std::map<boost::container::flat_set<int>, float>& allocated_stockpile_pp,
+        std::map<boost::container::flat_set<UniverseObjectID>, float>& allocated_pp,
+        std::map<boost::container::flat_set<UniverseObjectID>, float>& allocated_stockpile_pp,
         int& projects_in_progress, Simulating simulating,
         const Universe& universe)
     {
@@ -226,7 +226,7 @@ namespace {
             }
 
             // get resource sharing group and amount of resource available to build this item
-            const boost::container::flat_set<int>& group = queue_element_resource_sharing_object_groups[i];
+            const boost::container::flat_set<UniverseObjectID>& group = queue_element_resource_sharing_object_groups[i];
             auto available_pp_it = available_pp.find(group);
             float& group_pp_available = (available_pp_it != available_pp.end()) ?
                                         available_pp_it->second : dummy_pp_source;
@@ -256,7 +256,7 @@ namespace {
             // get max contribution per turn and turns to build at max contribution rate
 
             const auto [item_cost, build_turns] = [&queue_item_costs_and_times, &universe](const auto& q_elem) {
-                const int location_id = q_elem.item.CostIsProductionLocationInvariant(universe) ?
+                const auto location_id = q_elem.item.CostIsProductionLocationInvariant(universe) ?
                     INVALID_OBJECT_ID : q_elem.location;
 
                 auto time_cost_it = queue_item_costs_and_times.find({q_elem.item, location_id});
@@ -380,7 +380,7 @@ bool ProductionQueue::ProductionItem::CostIsProductionLocationInvariant(const Un
 }
 
 std::pair<float, int> ProductionQueue::ProductionItem::ProductionCostAndTime(
-    int empire_id, int location_id, const ScriptingContext& context) const
+    ::EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const
 {
     if (build_type == BuildType::BT_BUILDING) {
         const BuildingType* type = GetBuildingType(name);
@@ -402,7 +402,7 @@ std::pair<float, int> ProductionQueue::ProductionItem::ProductionCostAndTime(
     return {-1.0f, -1};
 }
 
-bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id,
+bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(UniverseObjectID location_id,
                                                                const ScriptingContext& context) const
 {
     switch (build_type) {
@@ -429,9 +429,9 @@ namespace {
     constexpr auto lookup_part = [](const auto& name) { return GetShipPart(name); };
 }
 
-std::map<std::string, std::map<int, float>>
-ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, const ScriptingContext& context) const {
-    std::map<std::string, std::map<int, float>> retval;
+std::map<std::string, std::map<UniverseObjectID, float>>
+ProductionQueue::ProductionItem::CompletionSpecialConsumption(UniverseObjectID location_id, const ScriptingContext& context) const {
+    std::map<std::string, std::map<UniverseObjectID, float>> retval;
 
     switch (build_type) {
     case BuildType::BT_BUILDING: {
@@ -494,11 +494,11 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
     return retval;
 }
 
-std::map<MeterType, std::map<int, float>>
+std::map<MeterType, std::map<UniverseObjectID, float>>
 ProductionQueue::ProductionItem::CompletionMeterConsumption(
-    int location_id, const ScriptingContext& context) const
+    UniverseObjectID location_id, const ScriptingContext& context) const
 {
-    std::map<MeterType, std::map<int, float>> retval;
+    std::map<MeterType, std::map<UniverseObjectID, float>> retval;
 
     auto* location_obj = context.ContextObjects().getRaw(location_id);
     const ScriptingContext location_context{context, ScriptingContext::Source{}, location_obj};
@@ -566,7 +566,7 @@ std::string ProductionQueue::Element::Dump() const {
 /////////////////////
 // ProductionQueue //
 /////////////////////
-ProductionQueue::ProductionQueue(int empire_id) :
+ProductionQueue::ProductionQueue(::EmpireID empire_id) :
     m_empire_id(empire_id)
 {}
 
@@ -700,12 +700,12 @@ void ProductionQueue::Update(const ScriptingContext& context,
     update_timer.EnterSection("Queue Items -> Res Groups");
     // determine which resource sharing group each queue item is located in
     auto queue_element_groups = [this, &available_pp]() {
-        std::vector<boost::container::flat_set<int>> retval;
+        std::vector<boost::container::flat_set<UniverseObjectID>> retval;
         retval.reserve(m_queue.size());
 
         for (const auto& element : m_queue) {
             // get location object for element
-            const int location_id = element.location;
+            const auto location_id = element.location;
 
             // search through groups to find object
             const auto group_contains_location = [location_id](const auto& group_pp) noexcept { return group_pp.first.contains(location_id); };
@@ -734,7 +734,7 @@ void ProductionQueue::Update(const ScriptingContext& context,
         return m_queue | range_transform(to_producible) | range_to<std::vector<uint8_t>>();
     }();
 
-    boost::unordered_map<std::pair<ProductionQueue::ProductionItem, int>,
+    boost::unordered_map<std::pair<ProductionQueue::ProductionItem, UniverseObjectID>,
                          std::pair<float, int>, PQCacheHasher> queue_item_costs_and_times;
     queue_item_costs_and_times.reserve(m_queue.size());
 
@@ -814,10 +814,10 @@ void ProductionQueue::Update(const ScriptingContext& context,
 
     const auto sim_time_start = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time());
 
-    std::map<int_flat_set, float> allocated_pp;
+    std::map<id_flat_set, float> allocated_pp;
     float sim_available_stockpile = available_stockpile;
     float sim_pp_in_stockpile = pp_in_stockpile;
-    std::map<int_flat_set, float> allocated_stockpile_pp;
+    std::map<id_flat_set, float> allocated_stockpile_pp;
     int dummy_int = 0;
 
     update_timer.EnterSection("Looping over Turns");
@@ -840,7 +840,7 @@ void ProductionQueue::Update(const ScriptingContext& context,
             allocated_pp, allocated_stockpile_pp, dummy_int, Simulating::SIM, universe);
 
         // check completion status and update m_queue and sim_queue as appropriate
-        for (unsigned int i = 0; i < sim_queue.size(); i++) {
+        for (std::size_t i = 0; i < sim_queue.size(); i++) {
             ProductionQueue::Element& sim_element = sim_queue[i];
             ProductionQueue::Element& orig_element = m_queue[sim_queue_original_indices[i]];
 
@@ -899,7 +899,7 @@ void ProductionQueue::insert(iterator it, Element element) {
 }
 
 void ProductionQueue::erase(UniverseObjectID i) {
-    if (i < UniverseObjectID{0} || std::cmp_greater_equal(i, m_queue.size()))
+    if (i < UniverseObjectID{0} || std::cmp_greater_equal(static_cast<int>(i), m_queue.size()))
         throw std::out_of_range("Tried to erase ProductionQueue item out of bounds.");
     m_queue.erase(std::next(begin()));
 }
@@ -914,9 +914,9 @@ ProductionQueue::iterator ProductionQueue::find(UniverseObjectID i)
 { return (UniverseObjectID{0} <= i && static_cast<std::size_t>(i) < size()) ? (next(begin())) : end(); }
 
 ProductionQueue::Element& ProductionQueue::operator[](UniverseObjectID i) {
-    if (i < UniverseObjectID{0} || static_cast<std::size_t>(i) < m_queue.size())
+    if (i < UniverseObjectID{0} || static_cast<std::size_t>(i) >= m_queue.size())
         throw std::out_of_range("Tried to access ProductionQueue element out of bounds");
-    return m_queue[i];
+    return m_queue[static_cast<std::size_t>(i)];
 }
 
 void ProductionQueue::clear() {

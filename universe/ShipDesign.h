@@ -18,7 +18,7 @@ struct ScriptingContext;
     converted to a ShipDesign. */
 struct FO_COMMON_API ParsedShipDesign {
     ParsedShipDesign(std::string&& name, std::string&& description,
-                     int designed_on_turn, int designed_by_empire,
+                     int designed_on_turn, EmpireID designed_by_empire,
                      std::string&& hull, std::vector<std::string>&& parts,
                      std::string&& icon, std::string&& model,
                      bool name_desc_in_stringtable = false, bool monster = false,
@@ -29,7 +29,7 @@ struct FO_COMMON_API ParsedShipDesign {
     boost::uuids::uuid          m_uuid = boost::uuids::nil_uuid();
 
     int                         m_designed_on_turn = INVALID_GAME_TURN;
-    int                         m_designed_by_empire = ALL_EMPIRES;
+    EmpireID                    m_designed_by_empire = ALL_EMPIRES;
 
     std::string                 m_hull;
     std::vector<std::string>    m_parts;
@@ -102,13 +102,13 @@ public:
     [[nodiscard]] const std::string& Description(bool stringtable_lookup = true) const;
     void SetDescription(const std::string& description);
 
-    [[nodiscard]] int DesignedOnTurn() const noexcept   { return m_designed_on_turn; };    ///< returns turn on which design was created
-    [[nodiscard]] int DesignedByEmpire() const noexcept { return m_designed_by_empire; };  ///< returns id of empire that created this design
+    [[nodiscard]] int DesignedOnTurn() const noexcept    { return m_designed_on_turn; };    ///< returns turn on which design was created
+    [[nodiscard]] auto DesignedByEmpire() const noexcept { return m_designed_by_empire; };  ///< returns id of empire that created this design
 
     [[nodiscard]] bool  ProductionCostTimeLocationInvariant() const;          ///< returns true if the production cost and time are invariant (does not depend on) the location
-    [[nodiscard]] float ProductionCost(int empire_id, int location_id, const ScriptingContext& context) const; ///< returns the total cost to build a ship of this design
-    [[nodiscard]] float PerTurnCost(int empire_id, int location_id, const ScriptingContext& context) const;    ///< returns the maximum per-turn number of production points that can be spent on building a ship of this design
-    [[nodiscard]] int   ProductionTime(int empire_id, int location_id, const ScriptingContext& context) const; ///< returns the time in turns it takes to build a ship of this design
+    [[nodiscard]] float ProductionCost(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const; ///< returns the total cost to build a ship of this design
+    [[nodiscard]] float PerTurnCost(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const;    ///< returns the maximum per-turn number of production points that can be spent on building a ship of this design
+    [[nodiscard]] int   ProductionTime(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const; ///< returns the time in turns it takes to build a ship of this design
     [[nodiscard]] bool  Producible() const noexcept { return m_producible; }  ///< returns whether this design is producible by players and appears on the production screen list
 
     [[nodiscard]] float Speed() const noexcept          { return m_speed; }                 ///< returns design speed along starlanes
@@ -168,7 +168,8 @@ public:
       * clients and server. */
     [[nodiscard]] uint32_t GetCheckSum() const;
 
-    [[nodiscard]] bool ProductionLocation(int empire_id, int location_id, const ScriptingContext& context) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id
+    [[nodiscard]] bool ProductionLocation(EmpireID empire_id, UniverseObjectID location_id,
+                                          const ScriptingContext& context) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id
 
     void SetID(int id);                                                  ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
     void SetUUID(boost::uuids::uuid uuid) { m_uuid = uuid; }
@@ -205,7 +206,7 @@ private:
     boost::uuids::uuid       m_uuid = boost::uuids::nil_uuid();
 
     int                      m_designed_on_turn = INVALID_GAME_TURN;
-    int                      m_designed_by_empire = ALL_EMPIRES;
+    EmpireID                 m_designed_by_empire = ALL_EMPIRES;
 
     std::string              m_hull;
     std::vector<std::string> m_parts;

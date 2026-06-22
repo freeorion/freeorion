@@ -5,7 +5,7 @@
 #include "../universe/Universe.h"
 #include "CombatEvent.h"
 
-using DiploStatusMap = boost::container::flat_map<std::pair<int, int>, DiplomaticStatus>;
+using DiploStatusMap = boost::container::flat_map<std::pair<EmpireID, EmpireID>, DiplomaticStatus>;
 
 /** Contains information about the state of a combat before or after the combat occurs. */
 struct CombatInfo {
@@ -13,7 +13,7 @@ public:
     /** Assembles objects from \a universe_ that are in the system with ID
       * system_id_ and puts them into a new ObjectMap, without the rest of
       * the Universe contents. */
-    CombatInfo(int system_id_, int turn_,
+    CombatInfo(UniverseObjectID system_id_, int turn_,
                Universe& universe_,
                EmpireManager& empires_,
                const DiploStatusMap& diplo_statuses_,
@@ -27,8 +27,8 @@ public:
     /** Returns System object in this CombatInfo's objects if one exists with id system_id. */
     [[nodiscard]] std::shared_ptr<System> GetSystem();
 
-    [[nodiscard]] std::shared_ptr<const Empire> GetEmpire(int id) const;
-    [[nodiscard]] std::shared_ptr<Empire> GetEmpire(int id);
+    [[nodiscard]] std::shared_ptr<const Empire> GetEmpire(EmpireID id) const;
+    [[nodiscard]] std::shared_ptr<Empire> GetEmpire(EmpireID id);
 
     const Universe&                          universe;                      ///< universe in which combat occurs, used for general info getting, but not object state info
     EmpireManager&                           empires;
@@ -42,13 +42,13 @@ public:
     EmpireObjectVisibilityMap                empire_object_visibility;      ///< indexed by empire id and object id, the visibility level the empire has of each object.  may be increased during battle
     int                                      bout = 0;                      ///< current combat bout, used with CombatBout ValueRef for implementing bout dependent targeting. First combat bout is 1
     int                                      turn = INVALID_GAME_TURN;      ///< main game turn
-    int                                      system_id = INVALID_OBJECT_ID; ///< ID of system where combat is occurring (could be INVALID_OBJECT_ID ?)
-    std::set<int>                            empire_ids;                    ///< IDs of empires involved in combat (could include ALL_EMPIRES to indicate unowned monster or planet involvement)
+    UniverseObjectID                         system_id = INVALID_OBJECT_ID; ///< ID of system where combat is occurring (could be INVALID_OBJECT_ID ?)
+    std::set<EmpireID>                       empire_ids;                    ///< IDs of empires involved in combat (could include ALL_EMPIRES to indicate unowned monster or planet involvement)
 
-    std::unordered_set<int>                  damaged_object_ids;            ///< ids of objects damaged during this battle
-    std::unordered_set<int>                  destroyed_object_ids;          ///< ids of objects destroyed during this battle
-    std::map<int, std::unordered_set<int>>   destroyed_object_knowers;      ///< indexed by empire ID, the set of ids of objects the empire knows were destroyed during the combat
-    std::vector<CombatEventPtr>              combat_events;                 ///< list of combat attack events that occur in combat
+    std::unordered_set<UniverseObjectID>                     damaged_object_ids;       ///< ids of objects damaged during this battle
+    std::unordered_set<UniverseObjectID>                     destroyed_object_ids;     ///< ids of objects destroyed during this battle
+    std::map<EmpireID, std::unordered_set<UniverseObjectID>> destroyed_object_knowers; ///< indexed by empire ID, the set of ids of objects the empire knows were destroyed during the combat
+    std::vector<CombatEventPtr>                              combat_events;            ///< list of combat attack events that occur in combat
 
 private:
     void InitializeObjectVisibility();

@@ -277,7 +277,7 @@ struct [[nodiscard]] ScriptingContext final {
             empire_id, diplo_status, diplo_statuses);
     }
 
-    [[nodiscard]] Visibility ContextVis(int object_id, int empire_id) const {
+    [[nodiscard]] Visibility ContextVis(UniverseObjectID object_id, EmpireID empire_id) const {
         const auto empire_it = empire_object_vis.find(empire_id);
         if (empire_it == empire_object_vis.end())
             return Visibility::VIS_NO_VISIBILITY;

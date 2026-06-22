@@ -5,7 +5,7 @@
 
 #include <boost/signals2/signal.hpp>
 #include <boost/serialization/nvp.hpp>
-
+#include "../universe/ConstantsFwd.h"
 #include <vector>
 class ObjectMap;
 
@@ -18,12 +18,12 @@ public:
     /** emitted after updating population and growth numbers */
     mutable boost::signals2::signal<void ()> ChangedSignal;
 
-    void SetPopCenters(std::vector<int> pop_center_ids);
+    void SetPopCenters(std::vector<UniverseObjectID> pop_center_ids);
     void Update(const ObjectMap& objects); ///< recalculates total population and growth
 
 private:
-    std::vector<int> m_pop_center_ids;    ///< UniverseObject ids of PopCenters that contribute to the pool
-    float            m_population = 0.0f; ///< total population of all PopCenters in pool
+    std::vector<UniverseObjectID> m_pop_center_ids;    ///< UniverseObject ids of PopCenters that contribute to the pool
+    float                         m_population = 0.0f; ///< total population of all PopCenters in pool
 
     friend class boost::serialization::access;
     template <typename Archive>

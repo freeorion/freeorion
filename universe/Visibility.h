@@ -25,19 +25,19 @@ FO_ENUM(
 
 
 class Visibilities {
-    using int_vis_map_t = boost::container::flat_map<int, Visibility>;
-    int_vis_map_t ids_vis;
+    using id_vis_map_t = boost::container::flat_map<UniverseObjectID, Visibility>;
+    id_vis_map_t ids_vis;
 
 public:
-    using const_iterator = int_vis_map_t::const_iterator;
-    using const_reference = int_vis_map_t::const_reference;
+    using const_iterator = id_vis_map_t::const_iterator;
+    using const_reference = id_vis_map_t::const_reference;
     using reference = const_reference;
-    using const_pointer = int_vis_map_t::const_pointer;
+    using const_pointer = id_vis_map_t::const_pointer;
     using pointer = const_pointer;
 
     Visibilities() noexcept = default;
     explicit Visibilities(std::string_view str);
-    Visibilities(std::pair<int, Visibility> val) :
+    Visibilities(std::pair<UniverseObjectID, Visibility> val) :
         ids_vis({val})
     {}
 
@@ -45,13 +45,13 @@ public:
     [[nodiscard]] const_iterator end() const noexcept { return ids_vis.end(); }
     [[nodiscard]] bool empty() const noexcept { return ids_vis.empty(); }
 
-    Visibility Get(int id) const {
+    Visibility Get(UniverseObjectID id) const {
         auto it = ids_vis.find(id);
         if (it == ids_vis.end())
             return Visibility::VIS_NO_VISIBILITY;
         return it->second;
     }
-    std::optional<Visibility> GetIfSet(int id) const {
+    std::optional<Visibility> GetIfSet(UniverseObjectID id) const {
         auto it = ids_vis.find(id);
         if (it == ids_vis.end())
             return std::nullopt;
@@ -61,14 +61,14 @@ public:
     std::size_t Size() const noexcept { return ids_vis.size(); }
     std::size_t SizeInMemory() const noexcept { return ids_vis.capacity() * sizeof(decltype(ids_vis)::value_type); }
 
-    void Set(int id, Visibility vs) { ids_vis.insert_or_assign(id, vs); }
+    void Set(UniverseObjectID id, Visibility vs) { ids_vis.insert_or_assign(id, vs); }
     void Set(const Visibilities& rhs) {
         ids_vis.reserve(ids_vis.size() + rhs.Size());
         for (auto& [id, vs] : rhs.ids_vis)
             ids_vis.insert_or_assign(id, vs);
     }
     // set, but don't lower value if already present. return final vis value.
-    Visibility SetOrIncrease(int id, Visibility vs) {
+    Visibility SetOrIncrease(UniverseObjectID id, Visibility vs) {
         auto [it, is_new] = ids_vis.try_emplace(id, vs);
         if (!is_new && it->second < vs)
             it->second = vs;
@@ -80,7 +80,7 @@ public:
     template <typename Archive>
     friend void serialize(Archive&, Visibilities&, unsigned int const);
 };
-using EmpireObjectVisibilityMap = std::map<int, Visibilities>; ///< map from empire id to ObjectVisibilityMap for that empire
+using EmpireObjectVisibilityMap = std::map<EmpireID, Visibilities>; ///< map from empire id to ObjectVisibilityMap for that empire
 
 
 struct ObjVisTurns {

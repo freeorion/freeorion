@@ -1616,25 +1616,25 @@ int GGHumanClientApp::AutoTurnsLeft() const
 bool GGHumanClientApp::HaveWindowFocus() const
 { return m_have_window_focus; }
 
-int GGHumanClientApp::SelectedSystemID() const {
+UniverseObjectID GGHumanClientApp::SelectedSystemID() const {
     if (auto mapwnd = m_ui.GetMapWndConst())
         return mapwnd->SelectedSystemID();
     return INVALID_OBJECT_ID;
 }
 
-int GGHumanClientApp::SelectedPlanetID() const {
+UniverseObjectID GGHumanClientApp::SelectedPlanetID() const {
     if (auto mapwnd = m_ui.GetMapWndConst())
         return mapwnd->SelectedPlanetID();
     return INVALID_OBJECT_ID;
 }
 
-int GGHumanClientApp::SelectedFleetID() const {
+UniverseObjectID GGHumanClientApp::SelectedFleetID() const {
     if (auto mapwnd = m_ui.GetMapWndConst())
         return mapwnd->SelectedFleetID();
     return INVALID_OBJECT_ID;
 }
 
-int GGHumanClientApp::SelectedShipID() const {
+UniverseObjectID GGHumanClientApp::SelectedShipID() const {
     if (auto mapwnd = m_ui.GetMapWndConst())
         return mapwnd->SelectedShipID();
     return INVALID_OBJECT_ID;

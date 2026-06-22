@@ -75,15 +75,15 @@ public:
 
     //! Returns the number of production points required to build this building
     //! at this location by this empire
-    [[nodiscard]] auto ProductionCost(int empire_id, int location_id, const ScriptingContext& context) const -> float;
+    [[nodiscard]] auto ProductionCost(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const -> float;
 
     //! Returns the maximum number of production points per turn that can be
     //! spend on this building
-    [[nodiscard]] auto PerTurnCost(int empire_id, int location_id, const ScriptingContext& context) const -> float;
+    [[nodiscard]] auto PerTurnCost(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const -> float;
 
     //! Returns the number of turns required to build this building at this
     //! location by this empire
-    [[nodiscard]] auto ProductionTime(int empire_id, int location_id, const ScriptingContext& context) const -> int;
+    [[nodiscard]] auto ProductionTime(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const -> int;
 
     //! Returns the ValueRef that determines ProductionCost()
     [[nodiscard]] const auto* Cost() const noexcept { return m_production_cost.get(); }
@@ -125,17 +125,17 @@ public:
 
     //! Returns true iff the empire with ID empire_id can produce this building
     //! at the location with location_id
-    [[nodiscard]] auto ProductionLocation(int empire_id, int location_id, const ScriptingContext& context) const -> bool;
+    [[nodiscard]] auto ProductionLocation(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const -> bool;
 
     //! Returns true iff the empire with ID empire_id meets the requirements of
     //! the EnqueueLocation() UI filter method for this building at the
     //! location with location_id
-    [[nodiscard]] auto EnqueueLocation(int empire_id, int location_id, const ScriptingContext& context) const -> bool;
+    [[nodiscard]] auto EnqueueLocation(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const -> bool;
 
     //! Returns CaptureResult for an empire capturing a planet with this building
     //! on it or that is the location of a Production Queue BuildItem for a building
     //! of this type
-    [[nodiscard]] auto GetCaptureResult(int, int, int, bool) const noexcept { return m_capture_result; }
+    [[nodiscard]] auto GetCaptureResult(EmpireID, EmpireID, UniverseObjectID, bool) const noexcept { return m_capture_result; }
 
     //! Returns a number, calculated from the contained data, which should be
     //! different for different contained data, and must be the same for

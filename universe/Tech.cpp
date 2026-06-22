@@ -365,7 +365,7 @@ std::string Tech::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-float Tech::ResearchCost(int empire_id, const ScriptingContext& context) const {
+float Tech::ResearchCost(EmpireID empire_id, const ScriptingContext& context) const {
     static constexpr auto ARBITRARY_LARGE_COST = 999999.9f;
 
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_TECH_RESEARCH") || !m_research_cost) {
@@ -392,10 +392,10 @@ float Tech::ResearchCost(int empire_id, const ScriptingContext& context) const {
     }
 }
 
-float Tech::PerTurnCost(int empire_id, const ScriptingContext& context) const
+float Tech::PerTurnCost(EmpireID empire_id, const ScriptingContext& context) const
 { return ResearchCost(empire_id, context) / std::max(1, ResearchTime(empire_id, context)); }
 
-int Tech::ResearchTime(int empire_id, const ScriptingContext& context) const {
+int Tech::ResearchTime(EmpireID empire_id, const ScriptingContext& context) const {
     static constexpr auto ARBITRARY_LARGE_TURNS = 9999;
 
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_TECH_RESEARCH") || !m_research_turns) {

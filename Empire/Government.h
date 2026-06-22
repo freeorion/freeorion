@@ -39,7 +39,7 @@ public:
     [[nodiscard]] const auto& Graphic() const noexcept          { return m_graphic; }
     [[nodiscard]] const auto& UnlockedItems() const noexcept    { return m_unlocked_items; }
 
-    [[nodiscard]] float       AdoptionCost(int empire_id, const ScriptingContext& context) const;
+    [[nodiscard]] float       AdoptionCost(EmpireID empire_id, const ScriptingContext& context) const;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const;
 
     //! Returns a number, calculated from the contained data, which should be

@@ -28,7 +28,7 @@ class ObjectMap;
 struct ScriptingContext;
 
 // The ID number assigned to temporary universe objects
-inline constexpr int TEMPORARY_OBJECT_ID = -2;
+inline constexpr UniverseObjectID TEMPORARY_OBJECT_ID{-2};
 
 
 //! The various major subclasses of UniverseObject

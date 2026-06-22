@@ -18,11 +18,11 @@ struct FO_COMMON_API ResearchQueue {
     struct Element {
 #if !defined(_MSC_VER)
         Element() = default;
-        Element(std::string name_, EmpireID empire_id_, float alloc, int turns, bool p) :
+        Element(std::string name_, EmpireID empire_id_, float alloc, int turns_left_, bool p) :
             name(std::move(name_)),
-            allocated_rp(alloc),
-            turns_left(turns),
             empire_id(empire_id_),
+            allocated_rp(alloc),
+            turns_left(turns_left_),
             paused(p)
         {}
 #endif
@@ -30,9 +30,9 @@ struct FO_COMMON_API ResearchQueue {
         [[nodiscard]] std::string Dump() const;
 
         std::string name;
+        EmpireID    empire_id = ALL_EMPIRES;
         float       allocated_rp = 0.0f;
         int         turns_left = 0;
-        EmpireID    empire_id = ALL_EMPIRES;
         bool        paused = false;
 
     private:
