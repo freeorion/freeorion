@@ -223,20 +223,10 @@ namespace {
 
     boost::python::object insert_1arg_(const PythonTypes& types, const ValueRef::OpType op, const boost::python::tuple& args, const boost::python::dict& kw) {
         if (args[0] == types.type_int) {
-            std::unique_ptr<ValueRef::ValueRef<int>> operand;
-            auto arg = boost::python::extract<value_ref_wrapper<int>>(args[1]);
-            if (arg.check())
-                operand = ValueRef::CloneUnique(arg().value_ref);
-            else
-                operand = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(args[1])());
+            std::unique_ptr<ValueRef::ValueRef<int>> operand = pyobject_to_vref_or_cast<int, double>(args[1]);
             return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::Operation<int>>(op, std::move(operand))));
         } else if (args[0] == types.type_float) {
-            std::unique_ptr<ValueRef::ValueRef<double>> operand;
-            auto arg = boost::python::extract<value_ref_wrapper<double>>(args[1]);
-            if (arg.check())
-                operand = ValueRef::CloneUnique(arg().value_ref);
-            else
-                operand = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(args[1])());
+            std::unique_ptr<ValueRef::ValueRef<double>> operand = pyobject_to_vref_or_cast<double, int>(args[1]);
             return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Operation<double>>(op, std::move(operand))));
         } else if (args[0] == types.type_str) {
             std::unique_ptr<ValueRef::ValueRef<std::string>> operand;
@@ -681,6 +671,21 @@ namespace {
             throw std::runtime_error(std::string("Not implemented ") + __func__);
         }
     }
+
+    boost::python::object insert_static_cast_(const PythonTypes& types, const boost::python::object& type, const boost::python::object& value) {
+        if (type == types.type_int) {
+            auto ref = pyobject_to_vref_or_cast<int, double>(value);
+            return boost::python::object(value_ref_wrapper<int>(std::move(ref)));
+        } else if (type == types.type_float) {
+            auto ref = pyobject_to_vref_or_cast<double, int>(value);
+            return boost::python::object(value_ref_wrapper<double>(std::move(ref)));
+        } else {
+            ErrorLogger() << "Unsupported type for static cast: "
+                          << boost::python::extract<std::string>(boost::python::str(type))();
+
+            throw std::runtime_error(std::string("Not implemented ") + __func__);
+        }
+    }
 }
 
 BOOST_PYTHON_MODULE(_value_refs) {
@@ -869,6 +874,9 @@ BOOST_PYTHON_MODULE(_value_refs) {
     py::def("EmpireStockpile", boost::python::raw_function(insert_empire_stockpile_));
     py::def("PlanetTypeDifference", boost::python::raw_function(insert_planet_type_difference_));
     py::def("Const", boost::python::make_function([types](const boost::python::object& type, const boost::python::object& value) { return insert_const_(types, type, value); },
+        boost::python::default_call_policies(),
+        boost::mpl::vector<boost::python::object, boost::python::object, boost::python::object>()));
+    py::def("StaticCast", boost::python::make_function([types](const boost::python::object& type, const boost::python::object& value) { return insert_static_cast_(types, type, value); },
         boost::python::default_call_policies(),
         boost::mpl::vector<boost::python::object, boost::python::object, boost::python::object>()));
 }
