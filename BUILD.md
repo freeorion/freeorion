@@ -214,7 +214,7 @@ Create a `build` directory aside the _source_directory_ and change into
 this directory. It will contain all compile FreeOrion build artifacs.
 
 ```bash
-cmake -DANDROID_ABI=<android arch> -DANDROID_PLATFORM=24 -DANDROID_NDK=<android ndk path> -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=<android>/build/cmake/android.toolchain.cmake -DCMAKE_CXX_FLAGS=-std=c++14 -DANDROID_ALLOW_UNDEFINED_SYMBOLS=Off -DBUILD_SERVER=OFF -DBUILD_AI=OFF -DBUILD_CLIENT_GG=OFF -DBoost_INCLUDE_DIR=<sdk>/include/ -DBoost_USE_STATIC_LIBS=On -DBoost_LIBRARY_DIR=<sdk>/lib/ -DBUILD_CLIENT_GODOT=On -DICUI18N_LIBRARY=<sdk>/lib/libicui18n.a -DICUUC_LIBRARY=<sdk>/lib/libicuuc.a -DICUDATA_LIBRARY=<sdk>/lib/libicudata.a -DICONV_LIBRARY=<sdk>/lib/libiconv.so -DPYTHON_LIBRARY=<sdk>/lib/libpython3.9.a -DPYTHON_INCLUDE_DIR=<sdk>/include/python3.9/ ../freeorion
+cmake -DANDROID_ABI=<android arch> -DANDROID_PLATFORM=24 -DANDROID_NDK=<android ndk path> -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=<android>/build/cmake/android.toolchain.cmake -DCMAKE_CXX_FLAGS=-std=c++14 -DANDROID_ALLOW_UNDEFINED_SYMBOLS=Off -DBUILD_SERVER=OFF -DBUILD_AI=OFF -DBUILD_CLIENT_GG=OFF -DBoost_INCLUDE_DIR=<sdk>/include/ -DBoost_USE_STATIC_LIBS=On -DBoost_LIBRARY_DIR=<sdk>/lib/ -DBUILD_CLIENT_GODOT=3 -DICUI18N_LIBRARY=<sdk>/lib/libicui18n.a -DICUUC_LIBRARY=<sdk>/lib/libicuuc.a -DICUDATA_LIBRARY=<sdk>/lib/libicudata.a -DICONV_LIBRARY=<sdk>/lib/libiconv.so -DPYTHON_LIBRARY=<sdk>/lib/libpython3.9.a -DPYTHON_INCLUDE_DIR=<sdk>/include/python3.9/ ../freeorion
 ```
 
 After successfully creating the Makefiles build the whole project by

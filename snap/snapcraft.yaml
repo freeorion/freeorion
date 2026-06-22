@@ -70,7 +70,7 @@ parts:
       HOME=$(pwd)/home godot3-server --path ../src/godot --export-pack "Linux/X11" "${CRAFT_PART_INSTALL}/usr/share/freeorion/freeorion.pck"
     plugin: cmake
     cmake-parameters:
-      - -DCMAKE_INSTALL_PREFIX=/usr -DBUILD_CLIENT_GODOT=ON
+      - -DCMAKE_INSTALL_PREFIX=/usr -DBUILD_CLIENT_GODOT=3
     #cmake-parameters: [-DBUILD_TESTING=ON]
     override-pull: |
       craftctl default
