@@ -12,18 +12,18 @@ jobs:
       matrix:
         os: [ubuntu-24.04, ubuntu-22.04]
         compiler: [gcc, clang]
-        client-godot: ["ON"]
+        client-godot: ["3"]
         build-type: [Release]
         build-parsers: ["ON"]
         include:
           - os: ubuntu-24.04
             compiler: gcc-asan
-            client-godot: "ON"
+            client-godot: "3"
             build-type: RelWithDebInfo
             build-parsers: "ON"
           - os: ubuntu-24.04
             compiler: gcc
-            client-godot: "ON"
+            client-godot: "3"
             build-type: Release
             build-parsers: "OFF"
     env:
@@ -116,7 +116,7 @@ jobs:
           cd build
           cmake --build . --config ${{ matrix.build-type }} --target unittest
       - name: Run Godot unit tests
-        if: matrix.client-godot == 'ON' && matrix.build-parsers == 'ON'
+        if: matrix.client-godot == '3' && matrix.build-parsers == 'ON'
         env:
           ASAN_OPTIONS: ${{ matrix.compiler == 'gcc-asan' && 'detect_leaks=0:abort_on_error=1' || ''}}
           LD_PRELOAD: ${{ matrix.compiler == 'gcc-asan' && '/usr/lib/gcc/x86_64-linux-gnu/13/libasan.so' || '' }}

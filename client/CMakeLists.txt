@@ -4,7 +4,7 @@ endif()
 if(BUILD_CLIENT_GG)
     add_subdirectory(human)
 endif()
-if(BUILD_CLIENT_GODOT)
+if(BUILD_CLIENT_GODOT EQUAL "3")
     add_subdirectory(godot)
 endif()
 
@@ -30,7 +30,7 @@ if(BUILD_CLIENT_GG)
     )
 endif()
 
-if(BUILD_CLIENT_GODOT)
+if(BUILD_CLIENT_GODOT EQUAL "3")
     target_sources(freeoriongodot
         PUBLIC
             ${CMAKE_CURRENT_LIST_DIR}/ClientApp.h
