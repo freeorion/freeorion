@@ -83,7 +83,7 @@ namespace {
 
 std::string ResearchQueue::Element::Dump() const {
     std::stringstream retval;
-    retval << "ResearchQueue::Element: tech: " << name << "  empire id: " << empire_id;
+    retval << "ResearchQueue::Element: tech: " << name << "  empire id: " << to_string(empire_id);
     retval << "  allocated: " << allocated_rp << "  turns left: " << turns_left;
     if (paused)
         retval << "  (paused)";

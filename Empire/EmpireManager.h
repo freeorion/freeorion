@@ -72,7 +72,7 @@ public:
     void SetDiplomaticStatus(EmpireID empire1, EmpireID empire2, DiplomaticStatus status);
     void HandleDiplomaticMessage(const DiplomaticMessage& message);
     void SetDiplomaticMessage(const DiplomaticMessage& message);
-    void RemoveDiplomaticMessage(int sender_id, int recipient_id);
+    void RemoveDiplomaticMessage(EmpireID sender_id, EmpireID recipient_id);
 
     void ResetDiplomacy();
 
@@ -82,13 +82,13 @@ public:
       * a pointer to it.  This will only set up the data in Empire.  It is the
       * caller's responsibility to make sure that universe updates planet
       * ownership. */
-    void CreateEmpire(int empire_id, std::string name, std::string player_name,
+    void CreateEmpire(EmpireID empire_id, std::string name, std::string player_name,
                       EmpireColor color, bool authenticated);
 
     /** Removes and deletes all empires from the manager. */
     void Clear() noexcept;
 
-    typedef boost::signals2::signal<void (int, int)> DiploSignalType;
+    typedef boost::signals2::signal<void (EmpireID, EmpireID)> DiploSignalType;
 
     mutable DiploSignalType DiplomaticStatusChangedSignal;
     mutable DiploSignalType DiplomaticMessageChangedSignal;

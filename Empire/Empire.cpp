@@ -86,7 +86,7 @@ namespace {
 // Empire //
 ////////////
 Empire::Empire(std::string name, std::string player_name,
-               int empire_id, EmpireColor color, bool authenticated) :
+               ::EmpireID empire_id, EmpireColor color, bool authenticated) :
     m_id(empire_id),
     m_name(std::move(name)),
     m_player_name(std::move(player_name)),
@@ -97,7 +97,7 @@ Empire::Empire(std::string name, std::string player_name,
     m_influence_queue(m_id),
     m_authenticated(authenticated)
 {
-    //DebugLogger() << "Empire::Empire(" << m_name << ", " << m_player_name << ", " << empire_id << ", colour)";
+    //DebugLogger() << "Empire::Empire(" << m_name << ", " << m_player_name << ", " << to_string(empire_id) << ", colour)";
     Init();
 }
 
@@ -137,15 +137,15 @@ std::shared_ptr<const UniverseObject> Empire::Source(const ObjectMap& objects) c
 
 std::string Empire::Dump() const {
     std::string retval = "Empire name: " + m_name +
-                         " ID: " + std::to_string(m_id) +
-                         " Capital ID: " + std::to_string(m_capital_id);
+                         " ID: " + to_string(m_id) +
+                         " Capital ID: " + to_string(m_capital_id);
     retval += " meters:\n";
     for (const auto& [name, meter] : m_meters)
         retval += UserString(name) + ": " + std::to_string(meter.Initial()) + "\n";
     return retval;
 }
 
-void Empire::SetCapitalID(int id, const ObjectMap& objects) {
+void Empire::SetCapitalID(UniverseObjectID id, const ObjectMap& objects) {
     m_capital_id = INVALID_OBJECT_ID;
     m_source_id = INVALID_OBJECT_ID;
 
@@ -182,7 +182,7 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
 
     // check that policy is available
     if (!m_available_policies.contains(name)) {
-        DebugLogger() << "Policy name: " << name << "  not available to empire with id: " << m_id;
+        DebugLogger() << "Policy name: " << name << "  not available to empire with id: " << to_string(m_id);
         return;
     }
 
@@ -866,7 +866,7 @@ bool Empire::ProducibleItem(BuildType build_type, int location_id, const Scripti
     }
 }
 
-bool Empire::ProducibleItem(BuildType build_type, const std::string& name, int location,
+bool Empire::ProducibleItem(BuildType build_type, const std::string& name, UniverseObjectID location,
                             const ScriptingContext& context) const
 {
     // special case to check for ships being passed with names, not design ids
@@ -903,7 +903,7 @@ bool Empire::ProducibleItem(BuildType build_type, const std::string& name, int l
     }
 }
 
-bool Empire::ProducibleItem(BuildType build_type, int design_id, int location,
+bool Empire::ProducibleItem(BuildType build_type, int design_id, UniverseObjectID location,
                             const ScriptingContext& context) const
 {
     // special case to check for buildings being passed with ids, not names
@@ -940,7 +940,7 @@ bool Empire::ProducibleItem(BuildType build_type, int design_id, int location,
     }
 }
 
-bool Empire::ProducibleItem(const ProductionQueue::ProductionItem& item, int location,
+bool Empire::ProducibleItem(const ProductionQueue::ProductionItem& item, UniverseObjectID location,
                             const ScriptingContext& context) const
 {
     if (item.build_type == BuildType::BT_BUILDING)
@@ -954,7 +954,7 @@ bool Empire::ProducibleItem(const ProductionQueue::ProductionItem& item, int loc
 }
 
 bool Empire::EnqueuableItem(BuildType build_type, const std::string& name,
-                            int location, const ScriptingContext& context) const
+                            UniverseObjectID location, const ScriptingContext& context) const
 {
     if (build_type != BuildType::BT_BUILDING)
         return false;
@@ -971,7 +971,7 @@ bool Empire::EnqueuableItem(BuildType build_type, const std::string& name,
     return building_type->EnqueueLocation(m_id, location, context);
 }
 
-bool Empire::EnqueuableItem(const ProductionQueue::ProductionItem& item, int location,
+bool Empire::EnqueuableItem(const ProductionQueue::ProductionItem& item, UniverseObjectID location,
                             const ScriptingContext& context) const
 {
     if (item.build_type == BuildType::BT_BUILDING)
@@ -1125,14 +1125,14 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context, bo
 
     // exclude systems known to have been destroyed (or rather, include ones that aren't known
     // by this empire to be destroyed). this should already contain sorted unique ids.
-    const auto not_known_destroyed = [&](const int id) { return !known_destroyed_objects.contains(id); };
+    const auto not_known_destroyed = [&](const auto id) { return !known_destroyed_objects.contains(id); };
     const auto known_system_ids = universe.EmpireKnownObjects(this->EmpireID()).findIDs<System>(not_known_destroyed);
 
     UpdateSupplyUnobstructedSystems(context, known_system_ids, precombat);
 }
 
 void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
-                                             const std::span<const int> known_systems,
+                                             const std::span<const UniverseObjectID> known_systems,
                                              bool precombat)
 {
     TraceLogger(supply) << "UpdateSupplyUnobstructedSystems (allowing supply propagation) for empire " << m_id;
@@ -1142,9 +1142,9 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
     const ObjectMap& objects{context.ContextObjects()};
 
     // get systems with historically at least partial visibility
-    boost::container::flat_set<int> systems_with_at_least_partial_visibility_at_some_point;
+    boost::container::flat_set<UniverseObjectID> systems_with_at_least_partial_visibility_at_some_point;
     systems_with_at_least_partial_visibility_at_some_point.reserve(known_systems.size());
-    for (int system_id : known_systems) {
+    for (auto system_id : known_systems) {
         if (universe.EmpireHasEverDetectedObjectAtVisibility(system_id, m_id, Visibility::VIS_PARTIAL_VISIBILITY))
             systems_with_at_least_partial_visibility_at_some_point.insert(system_id);
     }
@@ -1162,13 +1162,13 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
     // Unrestricted lane access (i.e, (fleet->ArrivalStarlane() == system->ID()) ) is used as a proxy for
     // order of arrival -- if an enemy has unrestricted lane access and you don't, they must have arrived
     // before you, or be in cahoots with someone who did.
-    std::set<int> systems_containing_friendly_fleets;
-    std::set<int> systems_with_lane_preserving_fleets;
-    std::set<int> unrestricted_friendly_systems;
-    std::set<int> systems_containing_obstructing_objects;
-    std::set<int> unrestricted_obstruction_systems;
+    std::set<UniverseObjectID> systems_containing_friendly_fleets;
+    std::set<UniverseObjectID> systems_with_lane_preserving_fleets;
+    std::set<UniverseObjectID> unrestricted_friendly_systems;
+    std::set<UniverseObjectID> systems_containing_obstructing_objects;
+    std::set<UniverseObjectID> unrestricted_obstruction_systems;
     for (auto* fleet : objects.allRaw<Fleet>()) {
-        int system_id = fleet->SystemID();
+        auto system_id = fleet->SystemID();
         if (system_id == INVALID_OBJECT_ID) {
             continue;   // not in a system, so can't affect system obstruction
         } else if (known_destroyed_objects.contains(fleet->ID())) {
@@ -1190,7 +1190,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
                         systems_with_lane_preserving_fleets.insert(system_id);
                 }
             } else if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
-                int fleet_owner = fleet->Owner();
+                auto fleet_owner = fleet->Owner();
                 bool fleet_at_war = fleet_owner == ALL_EMPIRES ||
                                     context.ContextDiploStatus(m_id, fleet_owner) == DiplomaticStatus::DIPLO_WAR;
                 // newly created ships are not allowed to block supply since they have not even potentially gone
@@ -1693,7 +1693,7 @@ constexpr unsigned int MAX_PROD_QUEUE_SIZE = 500;
 
 void Empire::PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item,
                                     boost::uuids::uuid uuid, const ScriptingContext& context,
-                                    int number, int blocksize, int location, int pos)
+                                    int number, int blocksize, UniverseObjectID location, int pos)
 {
     if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE) {
         ErrorLogger() << "Empire::PlaceProductionOnQueue() : Maximum queue size reached. Aborting enqueue";
@@ -1790,7 +1790,7 @@ void Empire::DuplicateProductionItem(int index, boost::uuids::uuid uuid, const S
     PlaceProductionOnQueue(elem.item, uuid, context, elem.remaining, elem.blocksize, elem.location, index + 1);
 }
 
-void Empire::SetProductionRallyPoint(int index, int rally_point_id) {
+void Empire::SetProductionRallyPoint(int index, UniverseObjectID rally_point_id) {
     if (index < 0 || cmp_less_equal(m_production_queue.size(), index))
         throw std::runtime_error("Empire::SetProductionQuantity() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
     m_production_queue[index].rally_point_id = rally_point_id;
@@ -2079,11 +2079,11 @@ void Empire::AddShipHull(std::string name, int current_turn) {
     AddSitRepEntry(CreateShipHullUnlockedSitRep(std::move(name), current_turn));
 }
 
-void Empire::AddExploredSystem(int ID, int turn, const ObjectMap& objects) {
+void Empire::AddExploredSystem(UniverseObjectID ID, int turn, const ObjectMap& objects) {
     if (objects.getRaw<System>(ID))
         m_explored_systems.emplace(ID, turn);
     else
-        ErrorLogger() << "Empire::AddExploredSystem given an invalid system id: " << ID;
+        ErrorLogger() << "Empire::AddExploredSystem given an invalid system id: " << to_string(ID);
 }
 
 std::string Empire::NewShipName() {
@@ -3206,42 +3206,42 @@ void Empire::PrepPolicyInfoForSerialization(const ScriptingContext& context) {
 }
 
 const decltype(Empire::m_adopted_policies)&
-Empire::GetAdoptedPoliciesToSerialize(int encoding_empire) const {
+Empire::GetAdoptedPoliciesToSerialize(EmpireID encoding_empire) const {
     const auto it = m_adopted_policies_to_serialize_for_empires.find(encoding_empire);
     return (it == m_adopted_policies_to_serialize_for_empires.end()) ?
         m_adopted_policies : it->second;
 }
 
 const decltype(Empire::m_initial_adopted_policies)&
-Empire::GetInitialPoliciesToSerialize(int encoding_empire) const {
+Empire::GetInitialPoliciesToSerialize(EmpireID encoding_empire) const {
     const auto it = m_initial_adopted_policies_to_serialize_for_empires.find(encoding_empire);
     return (it == m_initial_adopted_policies_to_serialize_for_empires.end()) ?
         m_initial_adopted_policies : it->second;
 }
 
 const decltype(Empire::m_policy_adoption_total_duration)&
-Empire::GetAdoptionTotalDurationsToSerialize(int encoding_empire) const {
+Empire::GetAdoptionTotalDurationsToSerialize(EmpireID encoding_empire) const {
     const auto it = m_policy_adoption_total_duration_to_serialize_for_empires.find(encoding_empire);
     return (it == m_policy_adoption_total_duration_to_serialize_for_empires.end()) ?
         m_policy_adoption_total_duration : it->second;
 }
 
 const decltype(Empire::m_policy_adoption_current_duration)&
-Empire::GetAdoptionCurrentDurationsToSerialize(int encoding_empire) const {
+Empire::GetAdoptionCurrentDurationsToSerialize(EmpireID encoding_empire) const {
     const auto it = m_policy_adoption_current_duration_to_serialize_for_empires.find(encoding_empire);
     return (it == m_policy_adoption_current_duration_to_serialize_for_empires.end()) ?
         m_policy_adoption_current_duration : it->second;
 }
 
 const decltype(Empire::m_policy_latest_turn_adopted)&
-Empire::GetAdoptionLatestTurnsToSerialize(int encoding_empire) const {
+Empire::GetAdoptionLatestTurnsToSerialize(EmpireID encoding_empire) const {
     const auto it = m_policy_latest_turn_adopted_to_serialize_for_empires.find(encoding_empire);
     return (it == m_policy_latest_turn_adopted_to_serialize_for_empires.end()) ?
         m_policy_latest_turn_adopted : it->second;
 }
 
 const decltype(Empire::m_available_policies)&
-Empire::GetAvailablePoliciesToSerialize(int encoding_empire) const {
+Empire::GetAvailablePoliciesToSerialize(EmpireID encoding_empire) const {
     const auto it = m_available_policies_to_serialize_for_empires.find(encoding_empire);
     return (it == m_available_policies_to_serialize_for_empires.end()) ?
         m_available_policies : it->second;
@@ -3293,49 +3293,49 @@ void Empire::PrepQueueAvailabilityInfoForSerialization(const ScriptingContext& c
     }
 }
 
-const decltype(Empire::m_techs)& Empire::GetTechsToSerialize(int encoding_empire) {
+const decltype(Empire::m_techs)& Empire::GetTechsToSerialize(EmpireID encoding_empire) {
     const auto it = m_techs_to_serialize_for_empires.find(encoding_empire);
     return (it == m_techs_to_serialize_for_empires.end()) ?
         m_techs : it->second;
 }
 
-const decltype(Empire::m_research_queue)& Empire::GetResearchQueueToSerialize(int encoding_empire) {
+const decltype(Empire::m_research_queue)& Empire::GetResearchQueueToSerialize(EmpireID encoding_empire) {
     const auto it = m_research_queue_to_serialize_for_empires.find(encoding_empire);
     return (it == m_research_queue_to_serialize_for_empires.end()) ?
         m_research_queue : it->second;
 }
 
-const decltype(Empire::m_research_progress)& Empire::GetResearchProgressToSerialize(int encoding_empire) {
+const decltype(Empire::m_research_progress)& Empire::GetResearchProgressToSerialize(EmpireID encoding_empire) {
     const auto it = m_research_progress_to_serialize_for_empires.find(encoding_empire);
     return (it == m_research_progress_to_serialize_for_empires.end()) ?
         m_research_progress : it->second;
 }
 
-const decltype(Empire::m_production_queue)& Empire::GetProductionQueueToSerialize(int encoding_empire) {
+const decltype(Empire::m_production_queue)& Empire::GetProductionQueueToSerialize(EmpireID encoding_empire) {
     const auto it = m_production_queue_to_serialize_for_empires.find(encoding_empire);
     return (it == m_production_queue_to_serialize_for_empires.end()) ?
         m_production_queue : it->second;
 }
 
-const decltype(Empire::m_influence_queue)& Empire::GetInfluenceQueueToSerialize(int encoding_empire) {
+const decltype(Empire::m_influence_queue)& Empire::GetInfluenceQueueToSerialize(EmpireID encoding_empire) {
     const auto it = m_influence_queue_to_serialize_for_empires.find(encoding_empire);
     return (it == m_influence_queue_to_serialize_for_empires.end()) ?
         m_influence_queue : it->second;
 }
 
-const decltype(Empire::m_available_building_types)& Empire::GetAvailableBuildingsToSerialize(int encoding_empire) {
+const decltype(Empire::m_available_building_types)& Empire::GetAvailableBuildingsToSerialize(EmpireID encoding_empire) {
     const auto it = m_available_building_types_to_serialize_for_empires.find(encoding_empire);
     return (it == m_available_building_types_to_serialize_for_empires.end()) ?
         m_available_building_types : it->second;
 }
 
-const decltype(Empire::m_available_ship_parts)& Empire::GetAvailablePartsToSerialize(int encoding_empire) {
+const decltype(Empire::m_available_ship_parts)& Empire::GetAvailablePartsToSerialize(EmpireID encoding_empire) {
     const auto it = m_available_ship_parts_to_serialize_for_empires.find(encoding_empire);
     return (it == m_available_ship_parts_to_serialize_for_empires.end()) ?
         m_available_ship_parts : it->second;
 }
 
-const decltype(Empire::m_available_ship_hulls)& Empire::GetAvailableHullsToSerialize(int encoding_empire) {
+const decltype(Empire::m_available_ship_hulls)& Empire::GetAvailableHullsToSerialize(EmpireID encoding_empire) {
     const auto it = m_available_ship_hulls_to_serialize_for_empires.find(encoding_empire);
     return (it == m_available_ship_hulls_to_serialize_for_empires.end()) ?
         m_available_ship_hulls : it->second;

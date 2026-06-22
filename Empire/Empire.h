@@ -15,6 +15,7 @@
 #include "ProductionQueue.h"
 #include "ResearchQueue.h"
 #include "ResourcePool.h"
+#include "../universe/ConstantsFwd.h"
 #include "../universe/EnumsFwd.h"
 #include "../universe/Meter.h"
 #include "../util/AppInterface.h"
@@ -77,14 +78,14 @@ public:
     // EmpireManagers must be friends so that they can have access to the constructor and keep it hidden from others
     friend class EmpireManager;
 
-    Empire(std::string name, std::string player_name, int ID, EmpireColor color, bool authenticated);
+    Empire(std::string name, std::string player_name, EmpireID ID, EmpireColor color, bool authenticated);
 
     [[nodiscard]] const auto&  Name() const noexcept { return m_name; }
     [[nodiscard]] const auto&  PlayerName() const noexcept { return m_player_name; }
     [[nodiscard]] bool         IsAuthenticated() const noexcept { return m_authenticated; }
-    [[nodiscard]] int          EmpireID() const noexcept { return m_id; }
+    [[nodiscard]] auto         EmpireID() const noexcept { return m_id; }
     [[nodiscard]] auto         Color() const noexcept { return m_color; }
-    [[nodiscard]] int          CapitalID() const noexcept { return m_capital_id; }
+    [[nodiscard]] auto         CapitalID() const noexcept { return m_capital_id; }
 
     /** Returns an object that is owned by the empire, or null.*/
     [[nodiscard]] std::shared_ptr<const UniverseObject> Source(const ObjectMap& objects) const;
@@ -171,19 +172,19 @@ public:
     [[nodiscard]] float       ProductionStatus(int i, const ScriptingContext& context) const; ///< Returns the PPs spent towards item \a i in the build queue if it has partial progress, -1.0 if there is no such index in the production queue.
 
     /** Return true iff this empire can produce the specified item at the specified location. */
-    [[nodiscard]] bool        ProducibleItem(BuildType build_type, int location,
+    [[nodiscard]] bool        ProducibleItem(BuildType build_type, UniverseObjectID location,
                                              const ScriptingContext& context) const;
-    [[nodiscard]] bool        ProducibleItem(BuildType build_type, const std::string& name, int location,
+    [[nodiscard]] bool        ProducibleItem(BuildType build_type, const std::string& name, UniverseObjectID location,
                                              const ScriptingContext& context) const;
-    [[nodiscard]] bool        ProducibleItem(BuildType build_type, int design_id, int location,
+    [[nodiscard]] bool        ProducibleItem(BuildType build_type, int design_id, UniverseObjectID location,
                                              const ScriptingContext& context) const;
-    [[nodiscard]] bool        ProducibleItem(const ProductionQueue::ProductionItem& item, int location,
+    [[nodiscard]] bool        ProducibleItem(const ProductionQueue::ProductionItem& item, UniverseObjectID location,
                                              const ScriptingContext& context) const;
 
     /** Return true iff this empire can enqueue the specified item at the specified location. */
-    [[nodiscard]] bool        EnqueuableItem(BuildType build_type, const std::string& name, int location,
+    [[nodiscard]] bool        EnqueuableItem(BuildType build_type, const std::string& name, UniverseObjectID location,
                                              const ScriptingContext& context) const;
-    [[nodiscard]] bool        EnqueuableItem(const ProductionQueue::ProductionItem& item, int location,
+    [[nodiscard]] bool        EnqueuableItem(const ProductionQueue::ProductionItem& item, UniverseObjectID location,
                                              const ScriptingContext& context) const;
 
     [[nodiscard]] bool        HasExploredSystem(int ID) const;                            ///< returns  true if the given item is in the appropriate list, false if it is not.
@@ -210,12 +211,12 @@ public:
     [[nodiscard]] bool        PreservedLaneTravel(int start_system_id, int dest_system_id) const;
 
     struct LaneEndpoints {
-        int start = INVALID_OBJECT_ID;
-        int end = INVALID_OBJECT_ID;
+        UniverseObjectID start = INVALID_OBJECT_ID;
+        UniverseObjectID end = INVALID_OBJECT_ID;
         constexpr auto operator<=>(const LaneEndpoints&) const noexcept = default;
 #if (defined(__clang_major__) && (__clang_major__ < 16))
         LaneEndpoints() = default;
-        LaneEndpoints(int s, int e) noexcept : start(s), end(e) {};
+        LaneEndpoints(UniverseObjectID s, UniverseObjectID e) noexcept : start(s), end(e) {};
         LaneEndpoints(LaneEndpoints&&) noexcept = default;
         LaneEndpoints(const LaneEndpoints&) noexcept = default;
         LaneEndpoints& operator=(LaneEndpoints&&) noexcept = default;
@@ -224,10 +225,10 @@ public:
     };
     using LaneSet = boost::container::flat_set<LaneEndpoints>;
 
-    using IntSet = boost::container::flat_set<int>;
+    using IDSet = boost::container::flat_set<UniverseObjectID>;
 
-    [[nodiscard]] IntSet      ExploredSystems() const;     ///< ids of systems that this empire has explored
-    [[nodiscard]] int         TurnSystemExplored(int system_id) const;
+    [[nodiscard]] IDSet       ExploredSystems() const;     ///< ids of systems that this empire has explored
+    [[nodiscard]] int         TurnSystemExplored(UniverseObjectID system_id) const;
     [[nodiscard]] LaneSet     KnownStarlanes(const Universe& universe) const;     ///< map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
     [[nodiscard]] LaneSet     VisibleStarlanes(const Universe& universe) const;   ///< map from system id (start) to set of system ids (endpoints) of all starlanes visible to this empire this turn
     [[nodiscard]] const auto& SitReps() const noexcept { return m_blobbed_sitreps; }
@@ -252,7 +253,7 @@ public:
 
     /** If the object with id \a id is a planet owned by this empire, sets that
       * planet to be this empire's capital, and otherwise does nothing. */
-    void SetCapitalID(int id, const ObjectMap& objects);
+    void SetCapitalID(UniverseObjectID id, const ObjectMap& objects);
 
     /** Adopts the specified policy, assuming its conditions are met. Revokes
       * the policy if \a adopt is false; */
@@ -297,7 +298,7 @@ public:
     void PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item,
                                 boost::uuids::uuid uuid,
                                 const ScriptingContext& context,
-                                int number, int blocksize, int location, int pos = -1);
+                                int number, int blocksize, UniverseObjectID location, int pos = -1);
 
     /** Adds a copy of the production item at position \a index below it in
       * the queue, with one less quantity. Sets the quantity of the production
@@ -309,13 +310,13 @@ public:
 
     void SetProductionQuantity(int index, int quantity);     ///< Changes the remaining number to produce for queue item \a index to \a quantity
     void SetProductionQuantityAndBlocksize(int index, int quantity, int blocksize);   ///< Changes the remaining number and blocksize to produce for queue item \a index to \a quantity and \a blocksize
-    void SetProductionRallyPoint(int index, int rally_point_id = INVALID_OBJECT_ID);  ///< Sets the rally point for ships produced by this produce, to which they are automatically ordered to move after they are produced.
+    void SetProductionRallyPoint(int index, UniverseObjectID rally_point_id = INVALID_OBJECT_ID); ///< Sets the rally point for ships produced by this produce, to which they are automatically ordered to move after they are produced.
     void MoveProductionWithinQueue(int index, int new_index);///< Moves queue item at \a index to \a new_index
     void MarkToBeRemoved(int index);                         ///< Marks the item at positon \a index to be removed from the queue
     void MarkNotToBeRemoved(int index);                      ///< Marks the item at position \a index not to be removed from the queue
     void PauseProduction(int index);                         ///< Sets the item at postion \a index paused, if such an index exists
     void ResumeProduction(int index);                        ///< Sets the item at postion \a index unpaused, if such an index exists
-    void AllowUseImperialPP(int index, bool allow=true);     ///< Allows or disallows the use of the imperial stockpile for production
+    void AllowUseImperialPP(int index, bool allow = true);   ///< Allows or disallows the use of the imperial stockpile for production
 
     void RemoveProductionFromQueue(int index);               ///< Removes the produce at position \a index in the production queue, if such an index exists.
 
@@ -332,7 +333,7 @@ public:
     void AddShipPart(std::string name, int current_turn);       ///< Inserts the given ShipPart into the Empire's list of available ShipPart%s.
     void AddShipHull(std::string name, int current_turn);       ///< Inserts the given ship ShipHull into the Empire's list of available ShipHulls.
 
-    void AddExploredSystem(int ID, int turn, const ObjectMap& objects); ///< Inserts the given ID into the Empire's list of explored systems.
+    void AddExploredSystem(UniverseObjectID ID, int turn, const ObjectMap& objects); ///< Inserts the given ID into the Empire's list of explored systems.
 
     /** inserts given design id into the empire's set of designs in front of next design */
     void AddShipDesign(int ship_design_id, const Universe& universe, int next_design_id = INVALID_DESIGN_ID);
@@ -519,10 +520,10 @@ public:
 private:
     void Init();
 
-    int         m_id = ALL_EMPIRES;                ///< Empire's unique numeric id
-    int         m_capital_id = INVALID_OBJECT_ID;  ///< the ID of the empire's capital planet
-    std::string m_name;                            ///< Empire's name
-    std::string m_player_name;                     ///< Empire's Player's name
+    ::EmpireID         m_id = ALL_EMPIRES;                ///< Empire's unique numeric id
+    UniverseObjectID m_capital_id = INVALID_OBJECT_ID;  ///< the ID of the empire's capital planet
+    std::string      m_name;                            ///< Empire's name
+    std::string      m_player_name;                     ///< Empire's Player's name
 
     EmpireColor m_color = {{128, 255, 255, 255}};
 
@@ -558,19 +559,19 @@ public:
     void PrepPolicyInfoForSerialization(const ScriptingContext& context);
 
 private:
-    std::map<int, decltype(m_adopted_policies)>                 m_adopted_policies_to_serialize_for_empires;
-    std::map<int, decltype(m_initial_adopted_policies)>         m_initial_adopted_policies_to_serialize_for_empires;
-    std::map<int, decltype(m_policy_adoption_total_duration)>   m_policy_adoption_total_duration_to_serialize_for_empires;
-    std::map<int, decltype(m_policy_adoption_current_duration)> m_policy_adoption_current_duration_to_serialize_for_empires;
-    std::map<int, decltype(m_policy_latest_turn_adopted)>       m_policy_latest_turn_adopted_to_serialize_for_empires;
-    std::map<int, decltype(m_available_policies)>               m_available_policies_to_serialize_for_empires;
+    std::map<::EmpireID, decltype(m_adopted_policies)>                 m_adopted_policies_to_serialize_for_empires;
+    std::map<::EmpireID, decltype(m_initial_adopted_policies)>         m_initial_adopted_policies_to_serialize_for_empires;
+    std::map<::EmpireID, decltype(m_policy_adoption_total_duration)>   m_policy_adoption_total_duration_to_serialize_for_empires;
+    std::map<::EmpireID, decltype(m_policy_adoption_current_duration)> m_policy_adoption_current_duration_to_serialize_for_empires;
+    std::map<::EmpireID, decltype(m_policy_latest_turn_adopted)>       m_policy_latest_turn_adopted_to_serialize_for_empires;
+    std::map<::EmpireID, decltype(m_available_policies)>               m_available_policies_to_serialize_for_empires;
 
-    const decltype(m_adopted_policies)& GetAdoptedPoliciesToSerialize(int encoding_empire) const;
-    const decltype(m_initial_adopted_policies)& GetInitialPoliciesToSerialize(int encoding_empire) const;
-    const decltype(m_policy_adoption_total_duration)& GetAdoptionTotalDurationsToSerialize(int encoding_empire) const;
-    const decltype(m_policy_adoption_current_duration)& GetAdoptionCurrentDurationsToSerialize(int encoding_empire) const;
-    const decltype(m_policy_latest_turn_adopted)& GetAdoptionLatestTurnsToSerialize(int encoding_empire) const;
-    const decltype(m_available_policies)& GetAvailablePoliciesToSerialize(int encoding_empire) const;
+    const decltype(m_adopted_policies)& GetAdoptedPoliciesToSerialize(::EmpireID encoding_empire) const;
+    const decltype(m_initial_adopted_policies)& GetInitialPoliciesToSerialize(::EmpireID encoding_empire) const;
+    const decltype(m_policy_adoption_total_duration)& GetAdoptionTotalDurationsToSerialize(::EmpireID encoding_empire) const;
+    const decltype(m_policy_adoption_current_duration)& GetAdoptionCurrentDurationsToSerialize(::EmpireID encoding_empire) const;
+    const decltype(m_policy_latest_turn_adopted)& GetAdoptionLatestTurnsToSerialize(::EmpireID encoding_empire) const;
+    const decltype(m_available_policies)& GetAvailablePoliciesToSerialize(::EmpireID encoding_empire) const;
 
 
     using StringFlatSet = boost::container::flat_set<std::string, std::less<>>;
@@ -731,10 +732,11 @@ private:
     std::map<std::string, int>      m_building_types_scrapped;  ///< how many buildings of each type has this empire scrapped?
 
     // cached calculation results, returned by reference
-    std::map<int, float>            m_supply_system_ranges;         ///< number of starlane jumps away from each system (by id) supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
-    std::set<int>                   m_supply_unobstructed_systems;  ///< ids of system that don't block supply from flowing
-    std::map<int, std::set<int>>    m_preserved_system_exit_lanes;  ///< for each system known to this empire, the set of exit lanes preserved for fleet travel even if otherwise blockaded
-    std::map<int, std::set<int>>    m_pending_system_exit_lanes;    ///< pending updates to m_preserved_system_exit_lanes
+    std::map<UniverseObjectID, float>                      m_supply_system_ranges;        ///< number of starlane jumps away from each system (by id) supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
+    std::set<UniverseObjectID>                             m_supply_unobstructed_systems; ///< ids of system that don't block supply from flowing
+    std::map<UniverseObjectID, std::set<UniverseObjectID>> m_preserved_system_exit_lanes; ///< for each system known to this empire, the set of exit lanes preserved for fleet travel even if otherwise blockaded
+    std::map<UniverseObjectID, std::set<UniverseObjectID>> m_pending_system_exit_lanes;   ///< pending updates to m_preserved_system_exit_lanes
+
     int                             m_auto_turn_count = 0;          ///< auto-turn counter value
     int                             m_last_turn_received = INVALID_GAME_TURN; ///< last turn empire completedly received game state
 
@@ -743,34 +745,34 @@ public:
     void PrepQueueAvailabilityInfoForSerialization(const ScriptingContext& context);
 
 private:
-    std::map<int, decltype(m_techs)>                    m_techs_to_serialize_for_empires;
-    std::map<int, decltype(m_research_queue)>           m_research_queue_to_serialize_for_empires;
-    std::map<int, decltype(m_research_progress)>        m_research_progress_to_serialize_for_empires;
-    std::map<int, decltype(m_production_queue)>         m_production_queue_to_serialize_for_empires;
-    std::map<int, decltype(m_influence_queue)>          m_influence_queue_to_serialize_for_empires;
-    std::map<int, decltype(m_available_building_types)> m_available_building_types_to_serialize_for_empires;
-    std::map<int, decltype(m_available_ship_parts)>     m_available_ship_parts_to_serialize_for_empires;
-    std::map<int, decltype(m_available_ship_hulls)>     m_available_ship_hulls_to_serialize_for_empires;
+    std::map<::EmpireID, decltype(m_techs)>                    m_techs_to_serialize_for_empires;
+    std::map<::EmpireID, decltype(m_research_queue)>           m_research_queue_to_serialize_for_empires;
+    std::map<::EmpireID, decltype(m_research_progress)>        m_research_progress_to_serialize_for_empires;
+    std::map<::EmpireID, decltype(m_production_queue)>         m_production_queue_to_serialize_for_empires;
+    std::map<::EmpireID, decltype(m_influence_queue)>          m_influence_queue_to_serialize_for_empires;
+    std::map<::EmpireID, decltype(m_available_building_types)> m_available_building_types_to_serialize_for_empires;
+    std::map<::EmpireID, decltype(m_available_ship_parts)>     m_available_ship_parts_to_serialize_for_empires;
+    std::map<::EmpireID, decltype(m_available_ship_hulls)>     m_available_ship_hulls_to_serialize_for_empires;
 
-    const decltype(Empire::m_techs)& GetTechsToSerialize(int encoding_empire);
-    const decltype(Empire::m_research_queue)& GetResearchQueueToSerialize(int encoding_empire);
-    const decltype(Empire::m_research_progress)& GetResearchProgressToSerialize(int encoding_empire);
-    const decltype(Empire::m_production_queue)& GetProductionQueueToSerialize(int encoding_empire);
-    const decltype(Empire::m_influence_queue)& GetInfluenceQueueToSerialize(int encoding_empire);
-    const decltype(Empire::m_available_building_types)& GetAvailableBuildingsToSerialize(int encoding_empire);
-    const decltype(Empire::m_available_ship_parts)& GetAvailablePartsToSerialize(int encoding_empire);
-    const decltype(Empire::m_available_ship_hulls)& GetAvailableHullsToSerialize(int encoding_empire);
+    const decltype(Empire::m_techs)& GetTechsToSerialize(::EmpireID encoding_empire);
+    const decltype(Empire::m_research_queue)& GetResearchQueueToSerialize(::EmpireID encoding_empire);
+    const decltype(Empire::m_research_progress)& GetResearchProgressToSerialize(::EmpireID encoding_empire);
+    const decltype(Empire::m_production_queue)& GetProductionQueueToSerialize(::EmpireID encoding_empire);
+    const decltype(Empire::m_influence_queue)& GetInfluenceQueueToSerialize(::EmpireID encoding_empire);
+    const decltype(Empire::m_available_building_types)& GetAvailableBuildingsToSerialize(::EmpireID encoding_empire);
+    const decltype(Empire::m_available_ship_parts)& GetAvailablePartsToSerialize(::EmpireID encoding_empire);
+    const decltype(Empire::m_available_ship_hulls)& GetAvailableHullsToSerialize(::EmpireID encoding_empire);
 
 
     /** The source id is the id of any object owned by the empire.  It is
         mutable so that Source() can be const and still cache its result. */
-    mutable int m_source_id = INVALID_OBJECT_ID;
+    mutable UniverseObjectID m_source_id = INVALID_OBJECT_ID;
 
-    int         m_outposts_owned = 0;       ///< how many uncolonized outposts does this empire currently own?
+    int  m_outposts_owned = 0;    ///< how many uncolonized outposts does this empire currently own?
 
-    bool        m_ready = false;            ///< readiness status of empire
-    bool        m_authenticated = false;    ///< Empire's Player's authentication flag. Set if only player with empire's player's name should play this empire.
-    bool        m_eliminated = false;       ///< Whether the empire has lost
+    bool m_ready = false;         ///< readiness status of empire
+    bool m_authenticated = false; ///< Empire's Player's authentication flag. Set if only player with empire's player's name should play this empire.
+    bool m_eliminated = false;    ///< Whether the empire has lost
 
     friend class boost::serialization::access;
     Empire() { Init(); }

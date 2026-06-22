@@ -414,10 +414,10 @@ public:
     /** InsertTemp inserts the provided \a objets into the object map with a series of
       * temporary ids. It returns the ids of the inserted objects. */
     template <typename T>
-    std::vector<int> InsertTemp(const std::vector<std::shared_ptr<T>>& objects)
+    std::vector<UniverseObjectID> InsertTemp(const std::vector<std::shared_ptr<T>>& objects)
     {
         auto ID = TEMPORARY_OBJECT_ID;
-        std::vector<int> retval;
+        std::vector<UniverseObjectID> retval;
         retval.reserve(objects.size());
         for (auto& obj : objects) {
             if (!obj)
@@ -586,37 +586,37 @@ private:
     /** Fills \a designs_to_serialize with ShipDesigns known to the empire with
       * the ID \a encoding empire.  If encoding_empire is ALL_EMPIRES, then all
       * designs are included. */
-    const ShipDesignMap& GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, int encoding_empire) const;
+    const ShipDesignMap& GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, EmpireID encoding_empire) const;
 
     /** Fills \a objects with copies of UniverseObjects that should be sent
       * to the empire with id \a encoding_empires */
-    void GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) const;
+    void GetObjectsToSerialize(ObjectMap& objects, EmpireID encoding_empire) const;
 
     /** Fills \a destroyed_object_ids with ids of objects known to be destroyed
       * by the empire with ID \a encoding empire. If encoding_empire is
       * ALL_EMPIRES, then all destroyed objects are included. */
-    void GetDestroyedObjectsToSerialize(std::set<int>& destroyed_object_ids, int encoding_empire) const;
+    void GetDestroyedObjectsToSerialize(std::set<int>& destroyed_object_ids, EmpireID encoding_empire) const;
 
     /** Fills \a empire_latest_known_objects map with the latest known data
       * about UniverseObjects for the empire with id \a encoding_empire.  If
       * the encoding empire is ALL_EMPIRES then all stored empire object
       * knowledge is included. */
-    void GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_known_objects, int encoding_empire) const;
+    void GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_known_objects, EmpireID encoding_empire) const;
 
     /***/
-    void GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility, int encoding_empire) const;
+    void GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility, EmpireID encoding_empire) const;
 
     /***/
-    void GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnsVecMap& empire_object_visibility_turns, int encoding_empire) const;
+    void GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnsVecMap& empire_object_visibility_turns, EmpireID encoding_empire) const;
 
     /***/
-    //void GetEffectSpecifiedVisibilities(EmpireObjectVisibilityMap& effect_specified_empire_object_visibilities, int encoding_empire) const;
+    //void GetEffectSpecifiedVisibilities(EmpireObjectVisibilityMap& effect_specified_empire_object_visibilities, EmpireID encoding_empire) const;
 
     /***/
-    void GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids, int encoding_empire) const;
+    void GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids, EmpireID encoding_empire) const;
 
     /***/
-    void GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_knowledge_object_ids, int encoding_empire) const;
+    void GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_knowledge_object_ids, EmpireID encoding_empire) const;
 
     /** Manages allocating and verifying new object ids.*/
     std::unique_ptr<IDAllocator> m_object_id_allocator;

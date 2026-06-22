@@ -3489,7 +3489,7 @@ void Universe::UpdateStatRecords(const ScriptingContext& context) {
 }
 
 const Universe::ShipDesignMap& Universe::GetShipDesignsToSerialize(
-    ShipDesignMap& designs_to_serialize, int encoding_empire) const
+    ShipDesignMap& designs_to_serialize, EmpireID encoding_empire) const
 {
     if (encoding_empire == ALL_EMPIRES)
         return m_ship_designs;
@@ -3523,7 +3523,7 @@ const Universe::ShipDesignMap& Universe::GetShipDesignsToSerialize(
     return designs_to_serialize;
 }
 
-void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) const {
+void Universe::GetObjectsToSerialize(ObjectMap& objects, EmpireID encoding_empire) const {
     if (std::addressof(objects) == std::addressof(m_objects))
         return;
 
@@ -3556,7 +3556,7 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
 }
 
 void Universe::GetDestroyedObjectsToSerialize(std::set<int>& destroyed_object_ids,
-                                              int encoding_empire) const
+                                              EmpireID encoding_empire) const
 {
     destroyed_object_ids.clear();
     if (encoding_empire == ALL_EMPIRES) {
@@ -3571,7 +3571,7 @@ void Universe::GetDestroyedObjectsToSerialize(std::set<int>& destroyed_object_id
 }
 
 void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_known_objects,
-                                                int encoding_empire) const
+                                                EmpireID encoding_empire) const
 {
     if (std::addressof(empire_latest_known_objects) == std::addressof(m_empire_latest_known_objects))
         return;
@@ -3596,7 +3596,7 @@ void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_k
 }
 
 void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility,
-                                            int encoding_empire) const
+                                            EmpireID encoding_empire) const
 {
     if (encoding_empire == ALL_EMPIRES) {
         empire_object_visibility = m_empire_object_visibility;
@@ -3616,7 +3616,7 @@ void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_ob
 }
 
 void Universe::GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnsVecMap& empire_object_visibility_turns,
-                                                int encoding_empire) const
+                                                EmpireID encoding_empire) const
 {
     if (encoding_empire == ALL_EMPIRES) {
         // include all empires' visibility turn info
@@ -3631,7 +3631,7 @@ void Universe::GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnsVecMa
 }
 
 void Universe::GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids,
-                                              int encoding_empire) const
+                                              EmpireID encoding_empire) const
 {
     if (std::addressof(empire_known_destroyed_object_ids) == std::addressof(m_empire_known_destroyed_object_ids))
         return;
@@ -3650,7 +3650,7 @@ void Universe::GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_d
 }
 
 void Universe::GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_knowledge_object_ids,
-                                              int encoding_empire) const
+                                              EmpireID encoding_empire) const
 {
     if (std::addressof(empire_stale_knowledge_object_ids) == std::addressof(m_empire_stale_knowledge_object_ids))
         return;

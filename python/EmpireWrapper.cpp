@@ -355,10 +355,10 @@ namespace FreeOrionPython {
                                                         py::return_value_policy<py::return_by_value>()
                                                     ))
 
-            .def("canBuild",                        +[](const Empire& empire, BuildType build_type, const std::string& name, int location) -> bool { return empire.ProducibleItem(build_type, name, location, IApp::GetApp()->GetContext()); })
-            .def("canBuild",                        +[](const Empire& empire, BuildType build_type, int design, int location) -> bool { return empire.ProducibleItem(build_type, design, location, IApp::GetApp()->GetContext()); })
+            .def("canBuild",                        +[](const Empire& empire, BuildType build_type, const std::string& name, int location) -> bool { return empire.ProducibleItem(build_type, name, static_cast<UniverseObjectID>(location), IApp::GetApp()->GetContext()); })
+            .def("canBuild",                        +[](const Empire& empire, BuildType build_type, int design, int location) -> bool { return empire.ProducibleItem(build_type, design, static_cast<UniverseObjectID>(location), IApp::GetApp()->GetContext()); })
 
-            .def("hasExploredSystem",               &Empire::HasExploredSystem)
+            .def("hasExploredSystem",               +[](const Empire& empire, int sys_id) { return empire.HasExploredSystem(static_cast<UniverseObjectID>(sys_id)); })
             .add_property("exploredSystemIDs",      +[](const Empire& empire) { return ToVec(empire.ExploredSystems()); })
 
             .add_property("eliminated",             &Empire::Eliminated)

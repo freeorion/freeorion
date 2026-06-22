@@ -89,7 +89,7 @@ std::string EmpireManager::DumpDiplomacy() const {
     return retval;
 }
 
-std::shared_ptr<Empire> EmpireManager::GetEmpire(int id) {
+std::shared_ptr<Empire> EmpireManager::GetEmpire(EmpireID id) {
     iterator it = m_empire_map.find(id);
     return it == end() ? nullptr : it->second;
 }
@@ -119,7 +119,7 @@ void EmpireManager::BackPropagateMeters() noexcept {
         entry.second->BackPropagateMeters();
 }
 
-void EmpireManager::CreateEmpire(int empire_id, std::string name, std::string player_name,
+void EmpireManager::CreateEmpire(EmpireID empire_id, std::string name, std::string player_name,
                                  EmpireColor color, bool authenticated)
 {
     auto empire = std::make_shared<Empire>(std::move(name), std::move(player_name),
@@ -133,10 +133,11 @@ void EmpireManager::InsertEmpire(std::shared_ptr<Empire>&& empire) {
         return;
     }
 
-    int empire_id = empire->EmpireID();
+    auto empire_id = empire->EmpireID();
 
     if (m_empire_map.contains(empire_id)) {
-        ErrorLogger() << "EmpireManager::InsertEmpire passed empire with id (" << empire_id << ") for which there already is an empire.";
+        ErrorLogger() << "EmpireManager::InsertEmpire passed empire with id (" << to_string(empire_id)
+                      << ") for which there already is an empire.";
         return;
     }
 
@@ -152,19 +153,19 @@ void EmpireManager::Clear() noexcept {
     m_empire_diplomatic_statuses.clear();
 }
 
-DiplomaticStatus EmpireManager::GetDiplomaticStatus(int empire1, int empire2) const {
+DiplomaticStatus EmpireManager::GetDiplomaticStatus(EmpireID empire1, EmpireID empire2) const {
     if (empire1 == ALL_EMPIRES || empire2 == ALL_EMPIRES || empire1 == empire2)
         return DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
 
     auto it = m_empire_diplomatic_statuses.find(DiploKey(empire1, empire2));
     if (it != m_empire_diplomatic_statuses.end())
         return it->second;
-    ErrorLogger() << "Couldn't find diplomatic status between empires " << empire1 << " and " << empire2;
+    ErrorLogger() << "Couldn't find diplomatic status between empires " << to_string(empire1) << " and " << to_string(empire2);
     return DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
 }
 
-boost::container::flat_set<int> EmpireManager::GetEmpireIDsWithDiplomaticStatusWithEmpire(
-    int empire_id, DiplomaticStatus diplo_status, const DiploStatusMap& statuses)
+boost::container::flat_set<EmpireID> EmpireManager::GetEmpireIDsWithDiplomaticStatusWithEmpire(
+    EmpireID empire_id, DiplomaticStatus diplo_status, const DiploStatusMap& statuses)
 {
     if (empire_id == ALL_EMPIRES || diplo_status == DiplomaticStatus::INVALID_DIPLOMATIC_STATUS)
         return {};
@@ -180,7 +181,7 @@ boost::container::flat_set<int> EmpireManager::GetEmpireIDsWithDiplomaticStatusW
     { return e1e2.first == empire_id ? e1e2.second : e1e2.first; };
 
     return statuses | range_filter(is_status) | range_keys | range_filter(has_empire_id)
-        | range_transform(to_other_id) | range_to<boost::container::flat_set<int>>();
+        | range_transform(to_other_id) | range_to<boost::container::flat_set<EmpireID>>();
 }
 
 bool EmpireManager::DiplomaticMessageAvailable(EmpireID sender_id, EmpireID recipient_id) const {
@@ -207,8 +208,8 @@ void EmpireManager::SetDiplomaticStatus(EmpireID empire1, EmpireID empire2, Dipl
 }
 
 void EmpireManager::SetDiplomaticMessage(const DiplomaticMessage& message) {
-    const int empire1 = message.SenderEmpireID();
-    const int empire2 = message.RecipientEmpireID();
+    const auto empire1 = message.SenderEmpireID();
+    const auto empire2 = message.RecipientEmpireID();
     const DiplomaticMessage& initial_message = GetDiplomaticMessage(empire1, empire2);
     if (message != initial_message) {
         m_diplomatic_messages[{empire1, empire2}] = message;
@@ -216,7 +217,7 @@ void EmpireManager::SetDiplomaticMessage(const DiplomaticMessage& message) {
     }
 }
 
-void EmpireManager::RemoveDiplomaticMessage(int sender_id, int recipient_id) {
+void EmpireManager::RemoveDiplomaticMessage(EmpireID sender_id, EmpireID recipient_id) {
     const auto it = m_diplomatic_messages.find({sender_id, recipient_id});
     const bool changed = (it != m_diplomatic_messages.end()) &&
                          (it->second.GetType() != DiplomaticMessage::Type::INVALID);
@@ -230,8 +231,8 @@ void EmpireManager::RemoveDiplomaticMessage(int sender_id, int recipient_id) {
 }
 
 void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
-    const int sender_empire_id = message.SenderEmpireID();
-    const int recipient_empire_id = message.RecipientEmpireID();
+    const auto sender_empire_id = message.SenderEmpireID();
+    const auto recipient_empire_id = message.RecipientEmpireID();
 
     if (!message.IsAllowed())
         return;
@@ -344,11 +345,11 @@ void EmpireManager::ResetDiplomacy() {
 
     // set all empires at war with each other (but not themselves)
     m_empire_diplomatic_statuses.clear();
-    for (auto id_empire_1 : m_const_empire_map) {
-        for (auto id_empire_2 : m_const_empire_map) {
+    for (auto& id_empire_1 : m_const_empire_map) {
+        for (auto& id_empire_2 : m_const_empire_map) {
             if (id_empire_1.first == id_empire_2.first)
                 continue;
-            std::pair<int, int> diplo_key = DiploKey(id_empire_1.first, id_empire_2.first);
+            auto diplo_key = DiploKey(id_empire_1.first, id_empire_2.first);
             m_empire_diplomatic_statuses[diplo_key] = DiplomaticStatus::DIPLO_WAR;
         }
     }
@@ -359,7 +360,7 @@ void EmpireManager::RefreshCapitalIDs() {
     m_capital_ids = m_const_empire_map | range_transform(to_cap_id) | range_to<decltype(m_capital_ids)>();
 }
 
-void EmpireManager::GetDiplomaticMessagesToSerialize(std::map<std::pair<int, int>, DiplomaticMessage>& messages,
+void EmpireManager::GetDiplomaticMessagesToSerialize(std::map<std::pair<EmpireID, EmpireID>, DiplomaticMessage>& messages,
                                                      EmpireID encoding_empire) const
 {
     messages.clear();

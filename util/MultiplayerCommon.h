@@ -136,7 +136,7 @@ struct FO_COMMON_API GalaxySetupData {
       * serialized.  The use of this local field is done just so I don't
       * have to rewrite any custom boost::serialization classes that implement
       * empire-dependent visibility. */
-    int encoding_empire = ALL_EMPIRES; ///< used during serialization to globally set what empire knowledge to use
+    EmpireID encoding_empire = ALL_EMPIRES; ///< used during serialization to globally set what empire knowledge to use
 };
 
 /** Contains the UI data that must be saved in save game files in order to
@@ -145,7 +145,7 @@ struct FO_COMMON_API SaveGameUIData {
     std::unordered_map<std::string, int> obsolete_ship_parts;
     std::vector<std::pair<int, boost::optional<std::pair<bool, int>>>> ordered_ship_design_ids_and_obsolete;
     std::vector<std::pair<std::string, std::pair<bool, int>>> ordered_ship_hull_and_obsolete;
-    std::set<int> fleets_exploring;
+    std::set<UniverseObjectID> fleets_exploring;
     double map_zoom_steps_in = 0.0;
     int    map_top = 0;
     int    map_left = 0;
@@ -155,7 +155,7 @@ struct FO_COMMON_API SaveGameUIData {
 /** The data for one empire necessary for game-setup during multiplayer loading. */
 struct FO_COMMON_API SaveGameEmpireData {
     SaveGameEmpireData() = default;
-    SaveGameEmpireData(int id, std::string ename, std::string pname,
+    SaveGameEmpireData(EmpireID id, std::string ename, std::string pname,
                        std::array<uint8_t, 4> c, bool a, bool e, bool w) :
         empire_name(std::move(ename)),
         player_name(std::move(pname)),
@@ -169,7 +169,7 @@ struct FO_COMMON_API SaveGameEmpireData {
     std::string empire_name;
     std::string player_name;
     std::array<uint8_t, 4> color = {};
-    int         empire_id = ALL_EMPIRES;
+    EmpireID    empire_id = ALL_EMPIRES;
     bool        authenticated = false;
     bool        eliminated = false;
     bool        won = false;
@@ -178,14 +178,14 @@ struct FO_COMMON_API SaveGameEmpireData {
 /** Contains basic data about a player in a game. */
 struct FO_COMMON_API PlayerSaveHeaderData {
     PlayerSaveHeaderData() = default;
-    PlayerSaveHeaderData(std::string name_, int empire_id_, Networking::ClientType client_type_) :
+    PlayerSaveHeaderData(std::string name_, EmpireID empire_id_, Networking::ClientType client_type_) :
         name(std::move(name_)),
         empire_id(empire_id_),
         client_type(client_type_)
     {}
 
     std::string             name;
-    int                     empire_id = ALL_EMPIRES;
+    EmpireID                empire_id = ALL_EMPIRES;
     Networking::ClientType  client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
 };
 
@@ -193,10 +193,10 @@ struct FO_COMMON_API PlayerSaveHeaderData {
 struct FO_COMMON_API PlayerSaveGameData final : public PlayerSaveHeaderData {
     PlayerSaveGameData() = default;
 
-    PlayerSaveGameData(std::string name, int empire_id, OrderSet orders_, SaveGameUIData ui_data_,
+    PlayerSaveGameData(std::string name, EmpireID empire_id, OrderSet orders_, SaveGameUIData ui_data_,
                        std::string save_state_string_, Networking::ClientType client_type);
 
-    PlayerSaveGameData(std::string name, int empire_id, Networking::ClientType client_type);
+    PlayerSaveGameData(std::string name, EmpireID empire_id, Networking::ClientType client_type);
 
     std::string    save_state_string;
     OrderSet       orders;
@@ -213,7 +213,7 @@ struct FO_COMMON_API ServerSaveGameData {
   * multiplayer game (in the multiplayer lobby screen). */
 struct PlayerSetupData {
     PlayerSetupData() = default;
-    PlayerSetupData(std::string name, int empire_id, int player_id_, Networking::ClientType type) :
+    PlayerSetupData(std::string name, EmpireID empire_id, int player_id_, Networking::ClientType type) :
         player_name(std::move(name)),
         player_id(player_id_),
         save_game_empire_id(empire_id),
@@ -223,7 +223,7 @@ struct PlayerSetupData {
     PlayerSetupData(std::string name, std::string empire_name_, int player_id_,
                     Networking::ClientType type, std::array<uint8_t, 4> clr,
                     std::string starting_species, bool is_auth,
-                    int save_empire_id = ALL_EMPIRES) :
+                    EmpireID save_empire_id = ALL_EMPIRES) :
         player_name(std::move(name)),
         empire_name(std::move(empire_name_)),
         starting_species_name(std::move(starting_species)),
@@ -238,7 +238,7 @@ struct PlayerSetupData {
     std::string             empire_name;
     std::string             starting_species_name;
     int                     player_id = Networking::INVALID_PLAYER_ID;
-    int                     save_game_empire_id = ALL_EMPIRES; //! When loading a game, the ID of the empire that this player will control
+    EmpireID                save_game_empire_id = ALL_EMPIRES; //! When loading a game, the ID of the empire that this player will control
     int                     starting_team = Networking::NO_TEAM_ID;
     std::array<uint8_t, 4>  empire_color = {};
     Networking::ClientType  client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
@@ -297,7 +297,7 @@ struct FO_COMMON_API ChatHistoryEntity {
 /** Information about one player that other players are informed of.  Assembled by server and sent to players. */
 struct PlayerInfo {
     std::string             name; //! Name of this player (not the same as the empire name)
-    int                     empire_id = ALL_EMPIRES;
+    EmpireID                empire_id = ALL_EMPIRES;
     Networking::ClientType  client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
     bool                    host = false; //! true iff this is the host player
 

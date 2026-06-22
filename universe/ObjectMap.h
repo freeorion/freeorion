@@ -355,7 +355,7 @@ public:
 
 
     /** Returns the IDs of all objects not known to have been destroyed. */
-    [[nodiscard]] std::vector<int> FindExistingObjectIDs() const;
+    [[nodiscard]] std::vector<UniverseObjectID> FindExistingObjectIDs() const;
 
     /** Returns highest used object ID in this ObjectMap */
     [[nodiscard]] int HighestObjectID() const;
@@ -363,7 +363,7 @@ public:
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const;
 
     /**  */
-    [[nodiscard]] std::shared_ptr<const UniverseObject> getExisting(int id) const;
+    [[nodiscard]] std::shared_ptr<const UniverseObject> getExisting(UniverseObjectID id) const;
 
     template <typename T = UniverseObject>
     [[nodiscard]] const auto& allExisting() const noexcept
@@ -428,7 +428,7 @@ public:
       * by passing the visibility of the object by the empire specified by
       * \a empire_id to Copy or Clone of the object.  The passed object is
       * unchanged. */
-    void CopyObject(std::shared_ptr<const UniverseObject> source, int empire_id,
+    void CopyObject(std::shared_ptr<const UniverseObject> source, EmpireID empire_id,
                     const Universe& universe);
 
     /** Adds object \a obj to the map under its ID. If there already was an object
@@ -445,21 +445,21 @@ public:
       * existed in the map, a null shared_ptr is returned and nothing is
       * removed. The ObjectMap will no longer share ownership of the
       * returned object. */
-    std::shared_ptr<UniverseObject> erase(int id);
+    std::shared_ptr<UniverseObject> erase(UniverseObjectID id);
 
     /** Empties map, removing shared ownership by this map of all
       * previously contained objects. */
     void clear();
 
     /** */
-    void UpdateCurrentDestroyedObjects(const std::unordered_set<int>& destroyed_object_ids);
+    void UpdateCurrentDestroyedObjects(const std::unordered_set<UniverseObjectID>& destroyed_object_ids);
 
     /** Recalculates contained objects for all objects in this ObjectMap based
       * on what other objects exist in this ObjectMap. Useful to eliminate
       * cases where there are inconsistencies between whan an object thinks it
       * contains, and what other objects think they are contained by the first
       * object. */
-    void AuditContainment(const std::unordered_set<int>& destroyed_object_ids);
+    void AuditContainment(const std::unordered_set<UniverseObjectID>& destroyed_object_ids);
 
     template <typename T, typename Pred>
     [[nodiscard]] static constexpr std::array<bool, 12> CheckTypes();

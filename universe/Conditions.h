@@ -1592,7 +1592,7 @@ struct FO_COMMON_API ContainedBy final : public Impl::NestedCondition<ConditionT
         // if the subcondition matches systems, buildings, planets, ships, fleets, and fields are candidates for ContainedBy
         // if the subcondition matches single objects (source, target, rootcandidate), then the containers of those objects are candidates for Contains
 
-        static constexpr auto add_contents_ids_of = [](const auto* obj, std::vector<int>& out) {
+        static constexpr auto add_contents_ids_of = [](const auto* obj, std::vector<UniverseObjectID>& out) {
             if (obj) {
                 const auto& ids = obj->ContainedObjectIDs();
                 out.insert(out.end(), ids.begin(), ids.end());
