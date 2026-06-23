@@ -1,0 +1,70 @@
+FieldType
+    name = "FLD_NEBULA_4"
+    description = "FLD_NEBULA_4_DESC"
+    stealth = 0.01
+    effectsgroups = [
+        EffectsGroup    // shrink slowly when in no-star system
+            scope = Source
+            activation = And [
+                Size low = 2 high = 120
+                Star type = NoStar
+            ]
+            effects =
+                SetSize value = Value + RandomNumber(-0.5, 0.3)
+
+        EffectsGroup    // shrink slowly when in no-star system
+            scope = Source
+            activation = And [
+                Size low = 120
+                Star type = NoStar
+            ]
+            effects =
+                SetSize value = Value + RandomNumber(-0.5, 0)
+
+        EffectsGroup    // spawn new star when small enough
+            scope = And [
+                System
+                Object id = Source.SystemID
+            ]
+            activation = And [
+                Size high = 5
+                Star type = NoStar
+            ]
+            effects = [
+                SetStarType type = OneOf(Blue, Blue, White, Yellow)
+                GenerateSitRepMessage
+                    message = "EFFECT_NEBULA"
+                    label = "EFFECT_NEBULA_LABEL"
+                    icon = "icons/buttons/addstar.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        ]
+                    affiliation = CanSee condition = Source
+                ]
+
+        [[CREATE_PLANETS]]
+
+        EffectsGroup    // make ships slower, reduce detection, increase stealth
+            scope = And [
+                Ship
+                WithinDistance distance = Source.Size * 0.9 condition = Source
+            ]
+            stackinggroup = "NEBULA_SHIP_EFFECTS"
+            effects = [
+                SetSpeed value = max(5, Value - 20)
+                SetStealth value = Value + 20
+                SetDetection value = Value - 20
+            ]
+
+        EffectsGroup    // dissipate when small
+            scope = Source
+            activation = Size high = 5
+            effects = [
+                Destroy
+                CreateField type = "FLD_ACCRETION_DISC" size = 20
+                AddSpecial name = "ACCRETION_DISC_SPECIAL"
+            ]
+    ]
+    graphic = "fields/star_forming_nebula_4.png"
+
+#include "fields.macros"
