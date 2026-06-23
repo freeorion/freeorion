@@ -2,6 +2,7 @@
 #define __FreeOrion__Util__PythonCommon__
 
 #include <filesystem>
+#include <vector>
 
 #include "../util/boost_fix.h"
 #include <boost/python.hpp>
@@ -47,7 +48,8 @@ public:
     // Compiles and evaluates \a code with defined \a filename. Populates \a globals
     static void CompileEval(const char* code, const std::filesystem::path& filename, const boost::python::object& globals);
 
-    void SetModulesDir(const std::filesystem::path& modules_dir);
+    void SetModulesDirs(const std::vector<std::filesystem::path>& modules_dirs);
+    void SetModulesDirs(std::vector<std::filesystem::path>&& modules_dirs);
 
     //! @name Modules finder and loader
     //! Methods exposed to Python as a meta path finder and a loader
@@ -70,7 +72,7 @@ private:
     //! @name Modules finder and loader
     //! Finder and loader implementation properties
     //! @{
-    std::filesystem::path m_modules_dir;
+    std::vector<std::filesystem::path> m_modules_dirs;
     boost::optional<boost::python::list> m_meta_path;
     int m_meta_path_len;
     //! @}
