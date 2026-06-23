@@ -1,0 +1,14 @@
+Part
+    name = "FT_BAY_MISSILE"
+    description = "FT_BAY_MISSILE_DESC"
+    exclusions = [ "FT_HANGAR_0" "FT_HANGAR_1" "FT_HANGAR_2" "FT_HANGAR_3" "FT_HANGAR_4" "FT_BAY_1" ]
+    class = FighterBay
+    capacity = 4
+    mountableSlotTypes = External
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 1
+    tags = [ "PEDIA_PC_FIGHTER_BAY" ]
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/nuclear_missile.png"
+
+#include "/scripting/common/upkeep.macros"
