@@ -61,10 +61,6 @@ def colony_pod_cost_turns():
     return (base_cost * (1 + get_number_of_colonies() * AIDependencies.COLONY_POD_UPKEEP), build_turns)
 
 
-def outpod_pod_cost():
-    return AIDependencies.OUTPOST_POD_COST * (1 + get_number_of_colonies() * AIDependencies.COLONY_POD_UPKEEP)
-
-
 def galaxy_is_sparse():
     setup_data = fo.getGalaxySetupData()
     avg_empire_systems = setup_data.size // len(fo.allEmpireIDs())
@@ -261,7 +257,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):  # noq
     fleet_pool = colony_fleet_ids[:]
     try_all = False
     if mission_type == MissionType.OUTPOST:
-        cost = 20 + outpod_pod_cost()
+        cost = 20 + AIDependencies.outpost_pod_cost()
     else:
         try_all = True
         cost = 20 + colony_pod_cost_turns()[1]
@@ -675,7 +671,7 @@ class OrbitalColonizationManager:
             for plan in self._colonization_plans.values()
             if not plan.base_enqueued and plan.score > MINIMUM_COLONY_SCORE
         ]
-        queue_limit = max(1, int(2 * empire.productionPoints / outpod_pod_cost()))
+        queue_limit = max(1, int(2 * empire.productionPoints / AIDependencies.outpost_pod_cost()))
         for colonization_plan in sorted(considered_plans, key=lambda x: x.score, reverse=True):
             if self.num_enqueued_bases >= queue_limit:
                 debug("Base enqueue limit (%d) reached." % queue_limit)
