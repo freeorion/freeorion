@@ -1,0 +1,6 @@
+Article
+    name = "PEDIA_TITLE"
+    category = "INTERFACE_TITLE"
+    short_description = "PEDIA_SHORT_DESC"
+    description = "PEDIA_TEXT"
+    icon = ""
