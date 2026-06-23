@@ -1,0 +1,33 @@
+Hull
+    name = "SH_HUNTER_DRONE_BODY"
+    description = "SH_HUNTER_DRONE_BODY_DESC"
+    speed = 30
+    fuel = 3
+    NoDefaultFuelEffect
+    stealth = 5
+    structure = 10
+    slots = [
+        Slot type = External position = (0.15, 0.64)
+        Slot type = External position = (0.41, 0.35)
+        Slot type = External position = (0.76, 0.48)
+        Slot type = Internal position = (0.41, 0.56)
+    ]
+    buildcost = 1
+    buildtime = 2
+    Unproducible
+    tags = [ "PEDIA_HULL_MONSTER_GUARD" ]
+    location = All
+    effectsgroups = [
+        [[HUNT_SHIPS]]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
+        [[MODERATE_VISION]]
+        [[MONSTER_SHIELD_REGENERATION]]
+    ]
+    icon = ""
+    graphic = "icons/monsters/drone.png"
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"

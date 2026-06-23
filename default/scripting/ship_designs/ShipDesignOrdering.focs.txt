@@ -39,3 +39,6 @@ ShipDesignOrdering
     uuid = "08a58b08-0929-496d-84fc-faa91424ca21"
     uuid = "cea092f3-e46e-41ad-b865-4188341536cd"
     uuid = "08a58b08-0929-496d-84fc-faa91424ca32"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca40"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca41"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca42"
