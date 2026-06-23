@@ -134,7 +134,7 @@ void AIClientApp::Run() {
                                                  boost::uuids::nil_uuid()));
 
         // Start parsing content
-        m_AI->SetModulesDir(GetResourceDir() / "scripting");
+        m_AI->SetModulesDirs({GetResourceDir() / "scripting"});
         parse::StartBackgroundParsing(PythonParser(*m_AI), GetSpeciesManager());
 
         // Import python main module only after game content has been parsed, allowing

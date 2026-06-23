@@ -60,7 +60,7 @@ ClientAppFixture::ClientAppFixture() :
         DebugLogger() << "Started background parser thread";
         PythonCommon python;
         python.Initialize();
-        python.SetModulesDir(GetResourceDir() / "scripting");
+        python.SetModulesDirs({GetResourceDir() / "scripting"});
         parse::StartBackgroundParsing(PythonParser(python), GetSpeciesManager());
     });
     background.join();

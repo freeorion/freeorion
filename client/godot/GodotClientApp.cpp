@@ -80,7 +80,7 @@ GodotClientApp::~GodotClientApp() {
 void GodotClientApp::StartParsingContent() {
     PythonCommon python;
     python.Initialize();
-    python.SetModulesDir(GetResourceDir() / "scripting");
+    python.SetModulesDirs({GetResourceDir() / "scripting"});
     parse::StartBackgroundParsing(PythonParser(python), GetSpeciesManager());
 }
 

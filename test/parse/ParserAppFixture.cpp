@@ -36,7 +36,7 @@ ParserAppFixture::ParserAppFixture(bool test_scripting) :
     BOOST_REQUIRE(fs::exists(m_scripting_dir));
     BOOST_REQUIRE(fs::is_directory(m_scripting_dir));
 
-    m_python.SetModulesDir(m_scripting_dir);
+    m_python.SetModulesDirs({m_scripting_dir});
 }
 
 int ParserAppFixture::EmpireID() const noexcept
