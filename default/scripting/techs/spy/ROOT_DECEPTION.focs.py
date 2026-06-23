@@ -115,17 +115,23 @@ def min_effective_stealth_of_more_stealthy_ships_valref(base_cond):
     ) + min_effective_stealth_of_more_stealthy_ships_valref_for_not_max_stealth_ships(base_cond)
 
 def min_effective_stealth_of_more_stealthy_ships_valref_other_own_ships_in_targetz_system():
-    return StatisticElse(float, condition=Ship & InSystem(id=Target.SystemID) & ~IsTarget & OwnedBy(empire=Source.Owner) & (
+    return  (0.0 < SpecialCapacity(name=base_stealth_special, object=Target.ID)
+    ) * StatisticElse(float, condition=Ship & InSystem() & InSystem(id=Target.SystemID) & ~IsTarget & OwnedBy(empire=Source.Owner) & (
         SpecialCapacity(name=base_stealth_special, object=Target.ID)
         < SpecialCapacity(name=base_stealth_special, object=LocalCandidate.ID)
     )) * ( SpecialCapacity(name=base_stealth_special, object=Target.ID)
            - SpecialCapacity(name=lower_stealth_count_special, object=Target.ID)
     ) + MinOf(float, Statistic(float,Min,
-            value=SpecialCapacity(name=base_stealth_special, object=LocalCandidate.ID)
+            value=
+                #min special caps aller anderen im ... oh hier werden  
+                SpecialCapacity(name=base_stealth_special, object=LocalCandidate.ID)
                   - SpecialCapacity(name=lower_stealth_count_special, object=LocalCandidate.ID),
             condition=Ship & InSystem(id=Target.SystemID) & ~IsTarget
+                      & InSystem()
                       & OwnedBy(empire=Source.Owner)
-                      & (Value(Target.Stealth) < Value(LocalCandidate.Stealth)),
+                      #& (Value(Target.Stealth) < Value(LocalCandidate.Stealth)),
+                     & (SpecialCapacity(name=base_stealth_special, object=Target.ID)
+                        < SpecialCapacity(name=base_stealth_special, object=LocalCandidate.ID)),
         ),
         SpecialCapacity(name=base_stealth_special, object=Target.ID)
             - SpecialCapacity(name=lower_stealth_count_special, object=Target.ID),
