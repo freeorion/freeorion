@@ -825,10 +825,10 @@ float Empire::ProductionStatus(int i, const ScriptingContext& context) const {
     return item_progress * item_cost * m_production_queue[i].blocksize;
 }
 
-bool Empire::HasExploredSystem(int ID) const
+bool Empire::HasExploredSystem(UniverseObjectID ID) const
 { return m_explored_systems.contains(ID); }
 
-bool Empire::ProducibleItem(BuildType build_type, int location_id, const ScriptingContext& context) const {
+bool Empire::ProducibleItem(BuildType build_type, UniverseObjectID location_id, const ScriptingContext& context) const {
     if (build_type == BuildType::BT_SHIP)
         throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_SHIP with no further parameters, but ship designs are tracked by number");
 
@@ -841,7 +841,7 @@ bool Empire::ProducibleItem(BuildType build_type, int location_id, const Scripti
     // must own the production location...
     auto location = context.ContextObjects().getRaw(location_id);
     if (!location) {
-        WarnLogger() << "Empire::ProducibleItem for BT_STOCKPILE unable to get location object with id " << location_id;
+        WarnLogger() << "Empire::ProducibleItem for BT_STOCKPILE unable to get location object with id " << to_string(location_id);
         return false;
     }
 
@@ -1057,7 +1057,7 @@ void Empire::SetAutoTurn(int turns_count)
 void Empire::SetLastTurnReceived(int last_turn_received) noexcept
 { m_last_turn_received = last_turn_received; }
 
-void Empire::UpdateSystemSupplyRanges(const std::span<const int> known_objects, const ObjectMap& objects) {
+void Empire::UpdateSystemSupplyRanges(const std::span<const UniverseObjectID> known_objects, const ObjectMap& objects) {
     TraceLogger(supply) << "Empire::UpdateSystemSupplyRanges() for empire " << this->Name();
     m_supply_system_ranges.clear();
 
@@ -1067,7 +1067,7 @@ void Empire::UpdateSystemSupplyRanges(const std::span<const int> known_objects, 
         //std::cout << "... considering owned planet: " << obj->Name() << std::endl;
 
         // ensure object is within a system, from which it can distribute supplies
-        const int system_id = obj->SystemID();
+        const auto system_id = obj->SystemID();
         if (system_id == INVALID_OBJECT_ID)
             continue;   // TODO: consider future special case if current object is itself a system
 
@@ -1097,13 +1097,13 @@ void Empire::UpdateSystemSupplyRanges(const Universe& universe) {
 
     // exclude objects known to have been destroyed (or rather, include ones that aren't known
     // by this empire to be destroyed). this should already contain sorted unique ids.
-    const auto not_known_destroyed = [&](int id) { return !known_destroyed_objects.contains(id); };
+    const auto not_known_destroyed = [&](UniverseObjectID id) { return !known_destroyed_objects.contains(id); };
     const auto known_object_ids = empire_known_objects.findIDs(not_known_destroyed);
 
     UpdateSystemSupplyRanges(known_object_ids, empire_known_objects);
 }
 
-void Empire::UpdateUnobstructedFleets(ObjectMap& objects, const std::unordered_set<int>& known_destroyed_objects) const {
+void Empire::UpdateUnobstructedFleets(ObjectMap& objects, const std::unordered_set<UniverseObjectID>& known_destroyed_objects) const {
     for (const auto* system : objects.findRaw<System>(m_supply_unobstructed_systems)) {
         if (!system)
             continue;
@@ -1135,7 +1135,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
                                              const std::span<const UniverseObjectID> known_systems,
                                              bool precombat)
 {
-    TraceLogger(supply) << "UpdateSupplyUnobstructedSystems (allowing supply propagation) for empire " << m_id;
+    TraceLogger(supply) << "UpdateSupplyUnobstructedSystems (allowing supply propagation) for empire " << to_string(m_id);
     m_supply_unobstructed_systems.clear();
 
     const Universe& universe{context.ContextUniverse()};
@@ -1211,28 +1211,29 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
         }
     }
 
-    TraceLogger(supply) << "Empire::UpdateSupplyUnobstructedSystems systems with obstructing objects for empire " << m_id << " : " << [&]() {
+    TraceLogger(supply) << "Empire::UpdateSupplyUnobstructedSystems systems with obstructing objects for empire "
+                        << to_string(m_id) << " : " << [&]() {
         std::stringstream ss;
-        for (int obj_id : systems_containing_obstructing_objects)
-            ss << obj_id << ", ";
+        for (auto obj_id : systems_containing_obstructing_objects)
+            ss << to_string(obj_id) << ", ";
         return ss.str();
     }();
 
-    DebugLogger() << "Preserved System-Lanes for empire " << m_name << " (" << m_id << ") : " << [&]() {
+    DebugLogger() << "Preserved System-Lanes for empire " << m_name << " (" << to_string(m_id) << ") : " << [&]() {
         std::stringstream ss2;
         for (const auto& sys_lanes : m_preserved_system_exit_lanes) {
-            ss2 << "[Sys: " << sys_lanes.first << " : (";
+            ss2 << "[Sys: " << to_string(sys_lanes.first) << " : (";
             for (auto lane : sys_lanes.second)
-                ss2 << lane << " ";
+                ss2 << to_string(lane) << " ";
             ss2 << ")]  ";
         }
         return ss2.str();
     }();
 
-    DebugLogger() << "Systems with lane-preserving fleets for empire " << m_name << " (" << m_id << ") : " << [&]() {
+    DebugLogger() << "Systems with lane-preserving fleets for empire " << m_name << " (" << to_string(m_id) << ") : " << [&]() {
         std::stringstream ss3;
         for (auto sys_id : systems_with_lane_preserving_fleets)
-            ss3 << sys_id << ", ";
+            ss3 << to_string(sys_id) << ", ";
         return ss3.str();
     }();
 
@@ -1244,7 +1245,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
 
         // has empire ever seen this system with partial or better visibility?
         if (!systems_with_at_least_partial_visibility_at_some_point.contains(sys->ID())) {
-            TraceLogger(supply) << "System " << sys->Name() << " (" << sys->ID() << ") has never been seen";
+            TraceLogger(supply) << "System " << sys->Name() << " (" << to_string(sys->ID()) << ") has never been seen";
             continue;
         }
 
@@ -1254,45 +1255,45 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
         if (unrestricted_friendly_systems.contains(sys->ID())) {
             // in unrestricted friendly systems, supply can propagate
             m_supply_unobstructed_systems.insert(sys->ID());
-            TraceLogger(supply) << "System " << sys->Name() << " (" << sys->ID() << ") +++ is unrestricted and friendly";
+            TraceLogger(supply) << "System " << sys->Name() << " (" << to_string(sys->ID()) << ") +++ is unrestricted and friendly";
 
         } else if (systems_containing_friendly_fleets.contains(sys->ID())) {
             // if there are unrestricted friendly ships, and no unrestricted enemy fleets, supply can propagate
             if (!unrestricted_obstruction_systems.contains(sys->ID())) {
                 m_supply_unobstructed_systems.insert(sys->ID());
-                TraceLogger(supply) << "System " << sys->Name() << " (" << sys->ID() << ") +++ has friendly fleets and no obstructions";
+                TraceLogger(supply) << "System " << sys->Name() << " (" << to_string(sys->ID()) << ") +++ has friendly fleets and no obstructions";
             } else {
-                TraceLogger(supply) << "System " << sys->Name() << " (" << sys->ID() << ") --- is has friendly fleets but has obstructions";
+                TraceLogger(supply) << "System " << sys->Name() << " (" << to_string(sys->ID()) << ") --- is has friendly fleets but has obstructions";
             }
 
         } else if (!systems_containing_obstructing_objects.contains(sys->ID())) {
             // if there are no friendly fleets or obstructing enemy fleets, supply can propagate
             m_supply_unobstructed_systems.insert(sys->ID());
-            TraceLogger(supply) << "System " << sys->Name() << " (" << sys->ID() << ") +++ has no obstructing objects";
+            TraceLogger(supply) << "System " << sys->Name() << " (" << to_string(sys->ID()) << ") +++ has no obstructing objects";
 
         } else if (!systems_with_lane_preserving_fleets.contains(sys->ID())) {
             // if there are obstructing enemy fleets but no friendly fleets that could maintain
             // lane access, supply cannot propagate and this empire's available system exit
-            TraceLogger(supply) << "System " << sys->Name() << " (" << sys->ID() << ") --- has no lane preserving fleets";
+            TraceLogger(supply) << "System " << sys->Name() << " (" << to_string(sys->ID()) << ") --- has no lane preserving fleets";
 
             // lanes for this system are cleared
             if (!m_preserved_system_exit_lanes[sys->ID()].empty()) {
                 std::stringstream ssca;
                 ssca << "Empire::UpdateSupplyUnobstructedSystems clearing preserved lanes for system ("
-                     << sys->ID() << "); available lanes were:";
-                for (int system_id : m_preserved_system_exit_lanes[sys->ID()])
-                    ssca << system_id << ", ";
+                     << to_string(sys->ID()) << "); available lanes were:";
+                for (auto system_id : m_preserved_system_exit_lanes[sys->ID()])
+                    ssca << to_string(system_id) << ", ";
                 TraceLogger(supply) << ssca.str();
             }
             m_preserved_system_exit_lanes[sys->ID()].clear();
 
         } else {
-            TraceLogger(supply) << "Empire::UpdateSupplyUnobstructedSystems : Restricted system " << sys->ID() << " with no friendly fleets, no obustrcting enemy fleets, and no lane-preserving fleets";
+            TraceLogger(supply) << "Empire::UpdateSupplyUnobstructedSystems : Restricted system " << to_string(sys->ID()) << " with no friendly fleets, no obustrcting enemy fleets, and no lane-preserving fleets";
         }
     }
 }
 
-void Empire::RecordPendingLaneUpdate(int start_system_id, int dest_system_id, const ObjectMap& objects) {
+void Empire::RecordPendingLaneUpdate(UniverseObjectID start_system_id, UniverseObjectID dest_system_id, const ObjectMap& objects) {
     if (!m_supply_unobstructed_systems.contains(start_system_id)) {
         m_pending_system_exit_lanes[start_system_id].insert(dest_system_id);
     } else if (const auto* sys = objects.getRaw<System>(start_system_id)) {
@@ -1308,13 +1309,13 @@ void Empire::UpdatePreservedLanes() {
     m_pending_system_exit_lanes.clear();
 }
 
-bool Empire::PreservedLaneTravel(int start_system_id, int dest_system_id) const {
+bool Empire::PreservedLaneTravel(UniverseObjectID start_system_id, UniverseObjectID dest_system_id) const {
     auto find_it = m_preserved_system_exit_lanes.find(start_system_id);
     return find_it != m_preserved_system_exit_lanes.end()
         && find_it->second.contains(dest_system_id);
 }
 
-Empire::IntSet Empire::ExploredSystems() const {
+Empire::IDSet Empire::ExploredSystems() const {
     const auto rng = m_explored_systems | range_keys;
     static_assert(std::is_same_v<std::decay_t<decltype(m_explored_systems)>, std::map<int, int>>,
                   "make sure m_explored_systems is sorted for use of ordered_unique_range below");
@@ -1330,7 +1331,7 @@ Empire::IntSet Empire::ExploredSystems() const {
 #endif
 }
 
-int Empire::TurnSystemExplored(int system_id) const {
+int Empire::TurnSystemExplored(UniverseObjectID system_id) const {
     auto it = m_explored_systems.find(system_id);
     if (it == m_explored_systems.end())
         return INVALID_GAME_TURN;
@@ -2402,8 +2403,8 @@ void Empire::CheckProductionProgress(
     // UpdateResourcePools should have generated necessary info
     // m_production_queue.Update(context.ContextUniverse());
 
-    std::map<int, std::vector<Ship*>> system_new_ships;
-    std::map<int, int> new_ship_rally_point_ids;
+    std::map<UniverseObjectID, std::vector<Ship*>> system_new_ships;
+    std::map<UniverseObjectID, UniverseObjectID> new_ship_rally_point_ids;
 
     auto& universe = context.ContextUniverse();
 
@@ -2417,7 +2418,7 @@ void Empire::CheckProductionProgress(
     // items above it on the queue getting finished don't increase the
     // cost and result in it not being finished that turn.
     struct ItemCostAndTime {
-        ItemCostAndTime(int l, BuildType bt, int d, std::string_view n, float c, int t) :
+        ItemCostAndTime(UniverseObjectID l, BuildType bt, int d, std::string_view n, float c, int t) :
             location_id(l),
             build_type(bt),
             design_id(d),
@@ -2427,7 +2428,7 @@ void Empire::CheckProductionProgress(
         {}
         ItemCostAndTime() = default;
 
-        const int location_id = INVALID_OBJECT_ID;
+        const UniverseObjectID location_id = INVALID_OBJECT_ID;
         const BuildType build_type = BuildType::INVALID_BUILD_TYPE;
         const int design_id = INVALID_DESIGN_ID;
         const std::string_view name = "";
@@ -2441,8 +2442,8 @@ void Empire::CheckProductionProgress(
         // cache unique items and locations costs and time...
 
         // for items that don't depend on location, only store cost/time once
-        const int location_id = (elem.item.CostIsProductionLocationInvariant(universe) ?
-                                 INVALID_OBJECT_ID : elem.location);
+        const UniverseObjectID location_id = (elem.item.CostIsProductionLocationInvariant(universe) ?
+                                             INVALID_OBJECT_ID : elem.location);
         const auto& item = elem.item;
         const std::string_view item_name = item.name;
         auto same_item_and_loc =
@@ -2459,7 +2460,7 @@ void Empire::CheckProductionProgress(
                                                 item_name, cost, time);
     }
 
-    auto get_cost_turns = [](const auto& qicat, const ProductionQueue::Element& elem, int location_id)
+    auto get_cost_turns = [](const auto& qicat, const ProductionQueue::Element& elem, UniverseObjectID location_id)
         -> std::pair<float, int>
     {
         const auto& item = elem.item;
@@ -2482,7 +2483,7 @@ void Empire::CheckProductionProgress(
     // appropriate, and record that queue item as complete, so it can be erased
     // from the queue
     std::vector<int> to_erase;
-    for (unsigned int i = 0; i < m_production_queue.size(); ++i) {
+    for (std::size_t i = 0; i < m_production_queue.size(); ++i) {
         auto& elem = m_production_queue[i];
 
         if (elem.to_be_removed) {
@@ -2490,7 +2491,7 @@ void Empire::CheckProductionProgress(
             DebugLogger() << "Marking flagged-to-be-removed item " << i << " to be removed from queue";
         }
 
-        const int location_id = (elem.item.CostIsProductionLocationInvariant(universe) ? INVALID_OBJECT_ID : elem.location);
+        const UniverseObjectID location_id = (elem.item.CostIsProductionLocationInvariant(universe) ? INVALID_OBJECT_ID : elem.location);
         auto [cost, turns] = get_cost_turns(queue_item_costs_and_times, elem, location_id);
 
         if (cost < 0.01f || turns < 1) {

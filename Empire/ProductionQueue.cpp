@@ -648,7 +648,7 @@ int ProductionQueue::IndexOfUUID(boost::uuids::uuid uuid) const {
 
 namespace {
     struct PQCacheHasher {
-        using entry_t = std::pair<ProductionQueue::ProductionItem, int>;
+        using entry_t = std::pair<ProductionQueue::ProductionItem, UniverseObjectID>;
         using build_type_t = decltype(entry_t::first_type::build_type);
         using name_t = decltype(entry_t::first_type::name);
         using id_t = decltype(entry_t::first_type::design_id);
