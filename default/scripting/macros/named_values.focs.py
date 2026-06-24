@@ -1,13 +1,17 @@
 from focs._value_refs import (
     GameRule,
     NamedInteger,
+    NamedIntegerLookup,
     NamedReal,
     NumPartClassesInShipDesign,
     PartOfClassInShipDesign,
+    Round,
+    StaticCast,
     UsedInDesignID,
 )
 from macros.base_prod import RESEARCH_PER_POP
 from macros.misc_pre import MIN_RECOLONIZING_HAPPINESS, MIN_RECOLONIZING_SIZE, SHIP_STRUCTURE_FACTOR
+from ship_hulls.hull_structures import HULL_STRUCTURES
 
 # Proposed naming convention: <EFFECT_NAME> _ <METER_NAME> _ FLAT/PERPOP/<others>
 # Examples:
@@ -93,3 +97,29 @@ NamedReal(
     value=SPATIAL_FLUX_STEALTH_HULL_BASE + SPATIAL_FLUX_STEALTH_NON_AGGRESSIVE_BONUS,
 )
 NamedReal(name="SPATIAL_FLUX_STEALTH_TECH_BONUS", value=10)
+
+# Named values for living hulls - LIVING_HULL_NAMED macro and base values come from ship_hulls/hull_structures.macros
+
+
+def LIVING_HULL_NAMED(hull: str):
+    NamedReal(name=hull + "_STRUCTURE", value=HULL_STRUCTURES[hull].BASE_STRUCTURE * SHIP_STRUCTURE_FACTOR)
+    NamedInteger(
+        name=hull + "_GROWTH_STRUCTURE",
+        value=Round(int, HULL_STRUCTURES[hull].GROWTH_STRUCTURE * SHIP_STRUCTURE_FACTOR),
+    )
+    NamedInteger(name=hull + "_GROWTH_TURNS", value=HULL_STRUCTURES[hull].GROWTH_TURNS)
+    NamedReal(
+        name=hull + "_GROWTH_PER_TURN",
+        value=StaticCast(float, NamedIntegerLookup(name=hull + "_GROWTH_STRUCTURE"))
+        / StaticCast(float, NamedIntegerLookup(name=hull + "_GROWTH_TURNS")),
+    )
+
+
+LIVING_HULL_NAMED("SH_BIOADAPTIVE")
+LIVING_HULL_NAMED("SH_ENDOMORPHIC")
+LIVING_HULL_NAMED("SH_ENDOSYMBIOTIC")
+LIVING_HULL_NAMED("SH_ORGANIC")
+LIVING_HULL_NAMED("SH_PROTOPLASMIC")
+LIVING_HULL_NAMED("SH_RAVENOUS")
+LIVING_HULL_NAMED("SH_SENTIENT")
+LIVING_HULL_NAMED("SH_SYMBIOTIC")
