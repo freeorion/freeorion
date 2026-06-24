@@ -41,6 +41,7 @@ jobs:
     outputs:
       count: ${{ steps.repo-stats.outputs.count }}
       authors: ${{ steps.repo-stats.outputs.authors }}
+      files: ${{ steps.repo-stats.outputs.files }}
       short-version: ${{ steps.short-version.outputs.short-version }}
     steps:
       - name: Get Mastodon account
@@ -109,8 +110,10 @@ jobs:
           git fetch --no-tags --prune --no-recurse-submodules --filter=blob:none origin ${{ github.sha }}:FETCH_HEAD
           COUNT=$(git rev-list --count --no-merges ${{ steps.prev-status.outputs.prev-git-sha }}..${{ github.sha }})
           AUTHORS=$(git log --format='%aN' ${{ steps.prev-status.outputs.prev-git-sha }}..${{ github.sha }} | sort -u | wc -l)
+          FILES=$(git diff --name-only ${{ steps.prev-status.outputs.prev-git-sha }}..${{ github.sha }} | wc -l)
           echo "count=${COUNT}" >> "${GITHUB_OUTPUT}"
           echo "authors=${AUTHORS}" >> "${GITHUB_OUTPUT}"
+          echo "files=${FILES}" >> "${GITHUB_OUTPUT}"
       - name: Get short version
         id: short-version
         run: TZ=UTC0 git show ${{ github.sha }} --format="short-version=%cd.%h" --quiet --date='format-local:%Y-%m-%d' --abbrev=7 >> "$GITHUB_OUTPUT"
@@ -193,9 +196,10 @@ jobs:
           PRE_TEXT='New #4X #TBS #FreeOrion weekly #TestBuild available (build ${{ needs.check-last-post.outputs.short-version }})'
           COUNT='${{ needs.check-last-post.outputs.count }}'
           AUTHORS='${{ needs.check-last-post.outputs.authors }}'
+          FILES='${{ needs.check-last-post.outputs.files }}'
           STATS_TEXT=""
           if [[ -n "${COUNT}" && "${COUNT}" != "0" ]]; then
-            STATS_TEXT=" with ${COUNT} commits by ${AUTHORS} authors"
+            STATS_TEXT=" with ${COUNT} commits and ${FILES} changed files by ${AUTHORS} authors"
           fi
           POST_TEXT=':%0AFor #Windows and #macOS: https://sourceforge.net/projects/freeorion/files/FreeOrion/Test/%0AFor Snap (#Linux): https://snapcraft.io/freeorion'
           echo "text=${PRE_TEXT}${STATS_TEXT}${POST_TEXT}" >> "${GITHUB_OUTPUT}"
