@@ -402,6 +402,28 @@ py::object PythonCommon::exec_module(py::object& module) {
             throw import_error("Unreadable module " + fullname);
         }
 
+        if (globals.contains("__spec__")) {
+            py::object py_spec = globals["__spec__"];
+            auto opt_spec = py::extract<const module_spec&>(py_spec);
+            if (opt_spec.check()) {
+                const module_spec& spec = opt_spec();
+                if (spec.parent.empty()) {
+                    if (module_path.filename() == "__init__.py") {
+                        globals["__package__"] = fullname;
+                    } else {
+                        size_t last_dot = fullname.find_last_of('.');
+                        globals["__package__"] = (last_dot != std::string::npos) ? fullname.substr(0, last_dot) : "";
+                    }
+                } else {
+                    globals["__package__"] = spec.parent;
+                }
+            } else {
+                WarnLogger() << "Wrong spec in module " << module_path.string();
+            }
+        } else {
+            WarnLogger() << "No spec in module " << module_path.string();
+        }
+
         // store globals content in module namespace
         // it is required so functions in the same module will see each other
         // and still import will work
