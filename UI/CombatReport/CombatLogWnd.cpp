@@ -49,11 +49,11 @@ public:
     /** Fill \p new_logs with pointers to the flat log contents of \p
         event using the pre-calculated \p details.*/
     void PopulateWithFlatLogs(
-        GG::X w, int viewing_empire_id, std::vector<std::shared_ptr<GG::Wnd>>& new_logs,
+        GG::X w, EmpireID viewing_empire_id, std::vector<std::shared_ptr<GG::Wnd>>& new_logs,
         const CombatEvent& event, std::string details);
 
     // Returns either a simple LinkText for a simple log or a CombatLogAccordionPanel for a complex log
-    std::vector<std::shared_ptr<GG::Wnd>> MakeCombatLogPanel(GG::X w, int viewing_empire_id, const CombatEvent& event);
+    std::vector<std::shared_ptr<GG::Wnd>> MakeCombatLogPanel(GG::X w, EmpireID viewing_empire_id, const CombatEvent& event);
 
     // public interface
     CombatLogWnd& m_wnd;
@@ -151,7 +151,7 @@ namespace {
 
     class OrderByNameAndId {
     public:
-        explicit OrderByNameAndId(int viewing_empire_id_ = ALL_EMPIRES) :
+        explicit OrderByNameAndId(EmpireID viewing_empire_id_ = ALL_EMPIRES) :
             viewing_empire_id(viewing_empire_id_)
         {}
 
@@ -176,11 +176,11 @@ namespace {
         }
 
     private:
-        const int viewing_empire_id;
+        const EmpireID viewing_empire_id;
     };
 
     std::string ForcesToText(
-        int viewing_empire_id,
+        EmpireID viewing_empire_id,
         const std::vector<std::vector<std::shared_ptr<UniverseObject>>>& forces,
         const std::string_view delimiter = ", ",
         const std::string_view category_delimiter = "\n-\n")
@@ -222,7 +222,7 @@ namespace {
     class CombatLogAccordionPanel : public AccordionPanel {
     public:
         CombatLogAccordionPanel(GG::X w, CombatLogWnd::Impl& log_,
-                                int viewing_empire_id_, const CombatEvent* event_);
+                                EmpireID viewing_empire_id_, const CombatEvent* event_);
         ~CombatLogAccordionPanel() = default;
         void CompleteConstruction() override;
 
@@ -231,7 +231,7 @@ namespace {
         void ToggleExpansion();
 
         CombatLogWnd::Impl&                     log;
-        int                                     viewing_empire_id = ALL_EMPIRES;
+        EmpireID                                viewing_empire_id = ALL_EMPIRES;
         std::shared_ptr<LinkText>               title;
         std::vector<std::shared_ptr<GG::Wnd>>   details;
 
@@ -240,7 +240,7 @@ namespace {
     };
 
     CombatLogAccordionPanel::CombatLogAccordionPanel(GG::X w, CombatLogWnd::Impl& log_,
-                                                     int viewing_empire_id_, const CombatEvent* event) :
+                                                     EmpireID viewing_empire_id_, const CombatEvent* event) :
         AccordionPanel(w, GG::Y(ClientUI::Pts()), true),
         log(log_),
         viewing_empire_id(viewing_empire_id_),
@@ -283,7 +283,7 @@ namespace {
     public:
         EmpireForcesAccordionPanel(GG::X w,
                                    CombatLogWnd::Impl& log_,
-                                   int viewing_empire_id_,
+                                   EmpireID viewing_empire_id_,
                                    int empire_id,
                                    std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces_);
 
@@ -295,7 +295,7 @@ namespace {
         void ToggleExpansion();
 
         CombatLogWnd::Impl& log;
-        const int viewing_empire_id = ALL_EMPIRES;
+        const EmpireID viewing_empire_id = ALL_EMPIRES;
         std::shared_ptr<LinkText> title;
         std::shared_ptr<LinkText> details;
         std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces;
@@ -311,7 +311,7 @@ namespace {
 
     EmpireForcesAccordionPanel::EmpireForcesAccordionPanel(GG::X w,
                                                            CombatLogWnd::Impl& log_,
-                                                           int viewing_empire_id_,
+                                                           EmpireID viewing_empire_id_,
                                                            int empire_id,
                                                            std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces_) :
         AccordionPanel(w, GG::Y(ClientUI::Pts()), true),
@@ -504,7 +504,7 @@ namespace {
 
 /** Fill \p new_logs with pointers to the flat log contents of \p
     event using the pre-calculated \p details.*/
-void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id,
+void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, EmpireID viewing_empire_id,
                                               std::vector<std::shared_ptr<GG::Wnd>>& new_logs,
                                               const CombatEvent& event, std::string details)
 {
@@ -523,7 +523,7 @@ void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id,
 
 // Returns either a simple LinkText for a simple log or a CombatLogAccordionPanel for a complex log
 std::vector<std::shared_ptr<GG::Wnd>> CombatLogWnd::Impl::MakeCombatLogPanel(
-    GG::X w, int viewing_empire_id, const CombatEvent& event)
+    GG::X w, EmpireID viewing_empire_id, const CombatEvent& event)
 {
     std::vector<std::shared_ptr<GG::Wnd>> new_logs;
 

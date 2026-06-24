@@ -1225,7 +1225,7 @@ namespace {
             // loop over all objects, noting which is visible by which empire or neutrals
             for (const auto* target : combat_info.objects.allRaw()) {
                 // for all empires, can they detect this object?
-                for (int viewing_empire_id : combat_info.empire_ids) {
+                for (EmpireID viewing_empire_id : combat_info.empire_ids) {
                     // get visibility of target to attacker empire
                     auto empire_vis_info_it = combat_info.empire_object_visibility.find(viewing_empire_id);
                     if (empire_vis_info_it == combat_info.empire_object_visibility.end()) {

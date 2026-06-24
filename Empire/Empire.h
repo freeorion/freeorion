@@ -187,7 +187,7 @@ public:
     [[nodiscard]] bool        EnqueuableItem(const ProductionQueue::ProductionItem& item, UniverseObjectID location,
                                              const ScriptingContext& context) const;
 
-    [[nodiscard]] bool        HasExploredSystem(int ID) const;                            ///< returns  true if the given item is in the appropriate list, false if it is not.
+    [[nodiscard]] bool        HasExploredSystem(UniverseObjectID ID) const;               ///< returns  true if the given item is in the appropriate list, false if it is not.
 
     [[nodiscard]] bool        Eliminated() const noexcept { return m_eliminated; }        ///< whether this empire has lost the game
     [[nodiscard]] bool        Won() const noexcept { return !m_victories.empty(); }       ///< whether this empire has won the game
@@ -208,7 +208,7 @@ public:
     /** Returns true if the specified lane travel is preserved against being blockaded (i.e., the empire
      * has in the start system at least one fleet that meets the requirements to preserve the lane (which
      * is determined in Empire::UpdateSupplyUnobstructedSystems(). */
-    [[nodiscard]] bool        PreservedLaneTravel(int start_system_id, int dest_system_id) const;
+    [[nodiscard]] bool        PreservedLaneTravel(UniverseObjectID start_system_id, UniverseObjectID dest_system_id) const;
 
     struct LaneEndpoints {
         UniverseObjectID start = INVALID_OBJECT_ID;
@@ -372,13 +372,13 @@ public:
     /** Calculates ranges that systems can send fleet and resource supplies,
       * using the specified st of \a known_objects as the source for supply-
       * producing objects and systems through which it can be propagated. */
-    void UpdateSystemSupplyRanges(const std::span<const int> known_objects, const ObjectMap& objects);
+    void UpdateSystemSupplyRanges(const std::span<const UniverseObjectID> known_objects, const ObjectMap& objects);
     /** Calculates ranges that systems can send fleet and resource supplies. */
     void UpdateSystemSupplyRanges(const Universe& universe);
     /** Calculates systems that can propagate supply (fleet or resource) using
       * the specified set of \a known_systems */
     void UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
-                                         const std::span<const int> known_systems,
+                                         const std::span<const UniverseObjectID> known_systems,
                                          bool precombat = false);
     /** Calculates systems that can propagate supply using this empire's own /
       * internal list of explored systems. */
@@ -386,10 +386,10 @@ public:
     /** Updates fleet ArrivalStarlane to flag fleets of this empire that are not
       * blockaded post-combat must be done after *all* noneliminated empires
       * have updated their unobstructed systems */
-    void UpdateUnobstructedFleets(ObjectMap& objects, const std::unordered_set<int>& known_destroyed_objects) const;
+    void UpdateUnobstructedFleets(ObjectMap& objects, const std::unordered_set<UniverseObjectID>& known_destroyed_objects) const;
     /** Records, in a list of pending updates, the start_system exit lane to the
       * specified destination as accessible to this empire*/
-    void RecordPendingLaneUpdate(int start_system_id, int dest_system_id, const ObjectMap& objects);
+    void RecordPendingLaneUpdate(UniverseObjectID start_system_id, UniverseObjectID dest_system_id, const ObjectMap& objects);
     /** Processes all the pending lane access updates.  This is managed as a two
       * step process to avoid order-of-processing issues. */
     void UpdatePreservedLanes();
@@ -593,7 +593,7 @@ private:
     StringFlatSet                   m_available_ship_parts;     ///< acquired ShipParts
     StringFlatSet                   m_available_ship_hulls;     ///< acquired ShipHulls
 
-    std::map<int, int>              m_explored_systems;         ///< systems explored by this empire and the turn on which they were explored
+    std::map<UniverseObjectID, int> m_explored_systems;         ///< systems explored by this empire and the turn on which they were explored
     std::set<int>                   m_known_ship_designs;       ///< ids of ship designs in the universe that this empire knows about
 
 public:
@@ -713,7 +713,7 @@ private:
     std::map<int, int>              m_ship_designs_in_production;   ///< how many ships of each design has this empire in active production in its production queue
 
     std::unordered_set<int>         m_ships_destroyed;
-    std::map<int, int>              m_empire_ships_destroyed;   ///< how many ships of each empire has this empire destroyed?
+    std::map<::EmpireID, int>       m_empire_ships_destroyed;   ///< how many ships of each empire has this empire destroyed?
     std::map<int, int>              m_ship_designs_destroyed;   ///< how many ships of each design has this empire destroyed?
     std::map<std::string, int>      m_species_ships_destroyed;  ///< how many ships crewed by each species has this empire destroyed?
     std::map<std::string, int>      m_species_planets_invaded;  ///< how many planets populated by each species has this empire captured?

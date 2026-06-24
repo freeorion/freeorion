@@ -6,6 +6,7 @@
 
 #include <memory>
 #include <optional>
+#include "../universe/ConstantsFwd.h"
 #include <string>
 #include <vector>
 
@@ -34,16 +35,16 @@ struct FO_COMMON_API CombatEvent {
 
     /** Generate the combat log description.
         Describe the result of a combat event (i.e. what happened). */
-    [[nodiscard]] virtual std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const = 0;
+    [[nodiscard]] virtual std::string CombatLogDescription(EmpireID viewing_empire_id, const ScriptingContext& context) const = 0;
 
     /** Generate the combat log details.
         Describe how it happened in enough detail to avoid a trip to the Pedia. */
-    [[nodiscard]] virtual std::string CombatLogDetails(int viewing_empire_id) const
+    [[nodiscard]] virtual std::string CombatLogDetails(EmpireID viewing_empire_id) const
     { return {}; }
 
     /** If the combat event is composed of smaller events then return a vector of the sub events,
         otherwise returns an empty vector. */
-    [[nodiscard]] virtual std::vector<const CombatEvent*> SubEvents(int viewing_empire_id) const
+    [[nodiscard]] virtual std::vector<const CombatEvent*> SubEvents(EmpireID viewing_empire_id) const
     { return {}; }
 
     /** Return true if there are no details or sub-events; */
@@ -61,7 +62,7 @@ struct FO_COMMON_API CombatEvent {
         faction most active in the event (i.e. the attacker in a WeaponEvent).
         It is from the perspective of the \p viewing_empire_id.
         Some events, eg. BoutBegin, are not associated with any faction.*/
-    [[nodiscard]] virtual std::optional<int> PrincipalFaction(int viewing_empire_id) const;
+    [[nodiscard]] virtual std::optional<EmpireID> PrincipalFaction(EmpireID viewing_empire_id) const;
 };
 
 
