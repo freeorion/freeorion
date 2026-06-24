@@ -6,6 +6,7 @@ from focs._techs import Tech
 from focs._value_refs import (
     Abs,
     MinOf,
+    MaxOf,
     NamedReal,
     NoOpValue,
     SpecialCapacity,
@@ -99,9 +100,10 @@ def min_effective_stealth_of_more_stealthy_ships_valref_for_not_max_stealth_ship
             value=stealth_result(LocalCandidate.ID),
             condition=target_has_less_stealth_cond(base_cond),
         ),
-        (
-            SpecialCapacity(name=base_stealth_special, object=Target.ID)
-            - SpecialCapacity(name=lower_stealth_count_special, object=Target.ID)
+        MaxOf(
+            float,
+            0.0,
+            stealth_result(Target.ID),
         ),
     )
 
@@ -111,12 +113,17 @@ def min_effective_stealth_of_more_stealthy_ships_valref_for_not_max_stealth_ship
 #    this results in a stealth decrease which does not leak information about unseen higher-stealth ships
 #    if there are a lot higher-stealth ships, normal linear unstealthiness would lead to the higher-stealth ships ending with lower stealth
 #    perfect ignorance linear unstealthiness solves this weirdness by lowering stealth to the lowest stealth of initially-higher stealth ships
+#    Implementation note:
+#      - min_effective_stealth_of_more_stealthy_... will return zero if the target is at maximum stealth,
+#        so we add the target stealth_result in that case
 def min_effective_stealth_of_more_stealthy_ships_valref(base_cond):
     return StatisticElse(float, condition=candidate_has_less_stealth_cond(base_cond)) * stealth_result(
         Target.ID
     ) + min_effective_stealth_of_more_stealthy_ships_valref_for_not_max_stealth_ships(base_cond)
 
 def min_effective_stealth_of_more_stealthy_ships_valref_other_own_ships_in_targetz_system():
+    # not adding stealth_result in case of negative stealth_result was tested OK,
+    # got refactored when backporting into min_effective_stealth_of_more_stealthy_ships_valref_for_not_max_stealth_ships
     return  (0.0 < SpecialCapacity(name=base_stealth_special, object=Target.ID)
     ) * StatisticElse(float, condition=Ship & InSystem() & InSystem(id=Target.SystemID) & ~IsTarget & OwnedBy(empire=Source.Owner) & (
         SpecialCapacity(name=base_stealth_special, object=Target.ID)
