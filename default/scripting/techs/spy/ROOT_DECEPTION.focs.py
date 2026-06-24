@@ -44,8 +44,10 @@ def count_lower_stealth_ships_statistic_valref(base_cond):
 
 
 def target_has_less_stealth_cond(base_cond):
-    return base_cond & (Value(Target.Stealth) < Value(LocalCandidate.Stealth))
-
+    return base_cond & (
+        SpecialCapacity(name=base_stealth_special, object=Target.ID)
+        < SpecialCapacity(name=base_stealth_special, object=LocalCandidate.ID)
+    )
 
 own_ships_in_targetz_system = Ship & InSystem(id=Target.SystemID) & OwnedBy(empire=Source.Owner)
 other_own_ships_in_targetz_system = Ship & InSystem(id=Target.SystemID) & ~IsTarget & OwnedBy(empire=Source.Owner)
