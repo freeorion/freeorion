@@ -212,13 +212,13 @@ jobs:
       - name: Upload screenshot
         continue-on-error: true
         id: upload-screenshot
-        if: hashFiles('screenshot.png') != ''
+        if: hashFiles('screenshot1.png') != ''
         run: |
           RESPONSE=$(curl -sSL -w "\n%{http_code}" \
             -X POST \
             -H "Authorization: Bearer ${{ secrets.MASTODON_ACCESS_TOKEN }}" \
-            -F "file=@screenshot.png" \
-            -F "description=FreeOrion UI Screenshot - ${{ needs.linux-snap.outputs.screenshot-alt }}" \
+            -F "file=@screenshot1.png" \
+            -F "description=FreeOrion UI Screenshot - ${{ needs.linux-snap.outputs.screenshot-alt1 }}" \
             "https://fosstodon.org/api/v2/media")
 
           HTTP_CODE=$(echo "${RESPONSE}" | tail -n1)

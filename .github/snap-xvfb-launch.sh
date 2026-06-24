@@ -4,10 +4,10 @@ ps auxx | grep 'Xvfb' | grep -v grep
 
 export SDL_VIDEODRIVER=x11
 
-while [ ! -f screenshot.png ]; do
-  echo "::group::Launching freeorion at $(pwd)"
+for i in {1..2}; do
+  echo "::group::Launching freeorion at $(pwd) - $i"
 
-  rm -f freeoriond.log freeorion.log
+  rm -f freeoriond${i}.log freeorion${i}.log
 
   /snap/bin/freeorion.freeoriond \
       --hostless \
@@ -29,7 +29,7 @@ while [ ! -f screenshot.png ]; do
       --setup.specials.frequency GALAXY_SETUP_RANDOM \
       --setup.native.frequency GALAXY_SETUP_RANDOM \
       --setup.monster.frequency MONSTER_SETUP_RANDOM \
-      --log-file $(pwd)/freeoriond.log &
+      --log-file $(pwd)/freeoriond${i}.log &
   FODPID=$!
   echo "FreeOrionD started pid ${FODPID}"
 
@@ -38,7 +38,7 @@ while [ ! -f screenshot.png ]; do
   EMPIRE_ID=$(( $RANDOM % 3 + 1 ))
   MODE=$(( $RANDOM % 8 + 1 ))
   LIBGL_DEBUG=verbose /snap/bin/freeorion \
-    --log-file $(pwd)/freeorion.log \
+    --log-file $(pwd)/freeorion${i}.log \
     --audio.effects.enabled 0 \
     --audio.music.enabled 0 \
     --video.fullscreen.width 1280 \
@@ -52,12 +52,12 @@ while [ ! -f screenshot.png ]; do
   FOPID=$!
   SCREENSHOT_TEXT=""
   echo "FreeOrion started pid ${FOPID}"
-  if timeout 30s tail -F --retry -n +1 freeorion.log 2>/dev/null | grep -q -m 1 "Checksum received from server matches client checksum."; then
+  if timeout 30s tail -F --retry -n +1 freeorion${i}.log 2>/dev/null | grep -q -m 1 "Checksum received from server matches client checksum."; then
     sleep 4
     FO_WIN_ID=$(xdotool search --name "^FreeOrion" | head -n 1)
     if [ -n "$FO_WIN_ID" ]; then
       xdotool key --window "$FO_WIN_ID" --delay 150 ctrl+h
-      if timeout 30s tail -F --retry -n +1 freeorion.log 2>/dev/null | grep -q -m 1 "Zoomed to capital system "; then
+      if timeout 30s tail -F --retry -n +1 freeorion${i}.log 2>/dev/null | grep -q -m 1 "Zoomed to capital system "; then
         case $MODE in
           1)
             SCREENSHOT_TEXT="Home System"
@@ -106,8 +106,8 @@ while [ ! -f screenshot.png ]; do
 
       if [ -n "${SCREENSHOT_TEXT}" ]; then
         sleep 3
-        import -display :99 -window root $(pwd)/screenshot.png
-        echo "screenshot-alt=${SCREENSHOT_TEXT}" >> "$GITHUB_OUTPUT"
+        import -display :99 -window root $(pwd)/screenshot${i}.png
+        echo "screenshot-alt${i}=${SCREENSHOT_TEXT}" >> "$GITHUB_OUTPUT"
       else
         echo "::error::Missing screenshot text"
       fi

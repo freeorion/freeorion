@@ -10,9 +10,9 @@ on:
       snap:
         description: "Snap file"
         value: ${{ jobs.snapcraft.outputs.snap }}
-      screenshot-alt:
-        description: "Alt text for screenshot"
-        value: ${{ jobs.snapcraft.outputs.screenshot-alt }}
+      screenshot-alt1:
+        description: "Alt text for 1st screenshot"
+        value: ${{ jobs.snapcraft.outputs.screenshot-alt1 }}
 
 jobs:
   snapcraft:
@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 55
     outputs:
       snap: ${{ steps.snapcraft.outputs.snap }}
-      screenshot-alt: ${{ steps.test-launch.outputs.screenshot-alt }}
+      screenshot-alt1: ${{ steps.test-launch.outputs.screenshot-alt1 }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v6
@@ -39,12 +39,15 @@ jobs:
       run: |
         xvfb-run --auto-servernum --server-args="-screen 0 1280x720x24" /bin/bash .github/snap-xvfb-launch.sh
     - name: Optimize screenshot
-      run: optipng -o2 screenshot.png
+      run: |
+        for i in screenshot*.png; do
+          optipng -o2 "${i}"
+        done
     - name: Upload screenshot
       uses: actions/upload-artifact@v4
       with:
         name: snap-screenshot-${{ github.run_number }}
-        path: screenshot.png
+        path: screenshot*.png
         retention-days: 1
     - name: Upload binaries artifacts
       uses: actions/upload-artifact@v4
