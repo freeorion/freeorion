@@ -90,7 +90,7 @@ def stealth_result(obj, debug=False):
         )
 
 
-#    iff the target does have the maximum stealth of all base_cond matches this returns 0
+#    iff the target does have the maximum stealth of all base_cond matches (and its stealth is non-negative) this returns 0
 def min_effective_stealth_of_more_stealthy_ships_valref_for_not_max_stealth_ships(base_cond):
     return MinOf(
         float,
@@ -100,11 +100,7 @@ def min_effective_stealth_of_more_stealthy_ships_valref_for_not_max_stealth_ship
             value=stealth_result(LocalCandidate.ID),
             condition=target_has_less_stealth_cond(base_cond),
         ),
-        MaxOf(
-            float,
-            0.0,
-            stealth_result(Target.ID),
-        ),
+        stealth_result(Target.ID),
     )
 
 
@@ -117,7 +113,8 @@ def min_effective_stealth_of_more_stealthy_ships_valref_for_not_max_stealth_ship
 #      - min_effective_stealth_of_more_stealthy_... will return zero if the target is at maximum stealth,
 #        so we add the target stealth_result in that case
 def min_effective_stealth_of_more_stealthy_ships_valref(base_cond):
-    return StatisticElse(float, condition=candidate_has_less_stealth_cond(base_cond)) * stealth_result(
+    return (0.0 < SpecialCapacity(name=base_stealth_special, object=Target.ID)
+    ) * StatisticElse(float, condition=candidate_has_less_stealth_cond(base_cond)) * stealth_result(
         Target.ID
     ) + min_effective_stealth_of_more_stealthy_ships_valref_for_not_max_stealth_ships(base_cond)
 
@@ -219,9 +216,9 @@ Tech(
             accountinglabel="FLEET_UNSTEALTHINESS_INSYSTEM_LABEL",
             priority=LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=[
-                AddSpecial(name=unstealthed_stealth_special, capacity=min_effective_stealth_of_more_stealthy_ships_valref_other_own_ships_in_targetz_system()),
+                AddSpecial(name=unstealthed_stealth_special, capacity=min_effective_stealth_of_more_stealthy_ships_valref(other_own_ships_in_targetz_system)),
                 SetStealth(
-                    value=min_effective_stealth_of_more_stealthy_ships_valref_other_own_ships_in_targetz_system()
+                    value=min_effective_stealth_of_more_stealthy_ships_valref(other_own_ships_in_targetz_system)
                 ),
             ],
         ),
