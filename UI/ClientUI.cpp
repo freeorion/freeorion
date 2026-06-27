@@ -1197,7 +1197,7 @@ const std::vector<std::shared_ptr<GG::Texture>>& ClientUI::GetPrefixedTextures(
         try {
             if (fs::exists(*it) && !fs::is_directory(*it)) {
                 auto path_str = it->path().filename().string();
-                if (boost::algorithm::starts_with(path_str, prefix))
+                if (boost::algorithm::starts_with(path_str, prefix) && GG::GUI::IsSupportedTextureFilenameExtension(*it))
                     textures.emplace_back(std::move(path_str), m_app.GetTexture(*it, mipmap));
             }
         } catch (const fs::filesystem_error& e) {
