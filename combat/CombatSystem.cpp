@@ -1821,7 +1821,7 @@ namespace {
 
 
         // Create weapon fire events and mark attackers as visible to other battle participants
-        const auto attacks_this_bout = bout_event->weapon_firings.SubEvents(ALL_EMPIRES);
+        const auto attacks_this_bout = bout_event->weapons_platform_firings.SubEvents(ALL_EMPIRES);
         for (const auto* this_event : attacks_this_bout) {
             if (const auto* naked_fire_event = dynamic_cast<const WeaponFireEvent*>(this_event)) {
                 handle_attack_event(naked_fire_event);
