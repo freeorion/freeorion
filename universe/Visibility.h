@@ -18,6 +18,7 @@ FO_ENUM(
     ((INVALID_VISIBILITY, -1))
     ((VIS_NO_VISIBILITY))
     ((VIS_BASIC_VISIBILITY))
+    ((VIS_TARGETABLE_VISIBILITY))
     ((VIS_PARTIAL_VISIBILITY))
     ((VIS_FULL_VISIBILITY))
     ((NUM_VISIBILITIES))
@@ -86,6 +87,7 @@ using EmpireObjectVisibilityMap = std::map<int, Visibilities>; ///< map from emp
 struct ObjVisTurns {
     int obj_id = INVALID_OBJECT_ID;
     int basic = INVALID_GAME_TURN;
+    int targetable = INVALID_GAME_TURN;
     int partial = INVALID_GAME_TURN;
     int full = INVALID_GAME_TURN;
 
@@ -93,12 +95,13 @@ struct ObjVisTurns {
     constexpr explicit ObjVisTurns(int obj_id_) noexcept :
         obj_id(obj_id_)
     {}
-    constexpr ObjVisTurns(int obj_id_, int basic_turn, int partial_turn, int full_turn) noexcept :
-        obj_id(obj_id_), basic(basic_turn), partial(partial_turn), full(full_turn)
+    constexpr ObjVisTurns(int obj_id_, int basic_turn, int targetable_turn, int partial_turn, int full_turn) noexcept :
+        obj_id(obj_id_), basic(basic_turn), targetable(targetable_turn), partial(partial_turn), full(full_turn)
     {}
     constexpr ObjVisTurns(int obj_id_, Visibility vis, int turn) noexcept :
         obj_id(obj_id_),
         basic(vis >= Visibility::VIS_BASIC_VISIBILITY ? turn : INVALID_GAME_TURN),
+        targetable(vis >= Visibility::VIS_TARGETABLE_VISIBILITY ? turn : INVALID_GAME_TURN),
         partial(vis >= Visibility::VIS_PARTIAL_VISIBILITY ? turn : INVALID_GAME_TURN),
         full(vis >= Visibility::VIS_FULL_VISIBILITY ? turn : INVALID_GAME_TURN)
     {}
@@ -110,6 +113,7 @@ struct ObjVisTurns {
         switch (vis) {
         case Visibility::VIS_FULL_VISIBILITY:    return full;
         case Visibility::VIS_PARTIAL_VISIBILITY: return partial;
+        case Visibility::VIS_TARGETABLE_VISIBILITY: return targetable;
         default:                                 return basic;
         }
     }
@@ -117,6 +121,7 @@ struct ObjVisTurns {
         switch (vis) {
         case Visibility::VIS_FULL_VISIBILITY:    return full;
         case Visibility::VIS_PARTIAL_VISIBILITY: return partial;
+        case Visibility::VIS_TARGETABLE_VISIBILITY: return targetable;
         default:                                 return basic;
         }
     }
@@ -129,6 +134,7 @@ struct ObjVisTurns {
         switch (vis) {
         case Visibility::VIS_FULL_VISIBILITY:    full = std::max(full, turn); [[fallthrough]];
         case Visibility::VIS_PARTIAL_VISIBILITY: partial = std::max(partial, turn); [[fallthrough]];
+        case Visibility::VIS_TARGETABLE_VISIBILITY: targetable = std::max(targetable, turn); [[fallthrough]];
         case Visibility::VIS_BASIC_VISIBILITY:   basic = std::max(basic, turn); break;
         default: break;
         }

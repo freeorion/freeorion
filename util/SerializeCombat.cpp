@@ -378,6 +378,7 @@ namespace {
         switch (vis) {
         case Visibility::VIS_FULL_VISIBILITY:    return "f"; break;
         case Visibility::VIS_PARTIAL_VISIBILITY: return "p"; break;
+        case Visibility::VIS_TARGETABLE_VISIBILITY: return "t"; break;
         case Visibility::VIS_BASIC_VISIBILITY:   return "b"; break;
         default:                                 return "x";
         }
@@ -387,6 +388,7 @@ namespace {
         switch (c) {
         case 'f': return Visibility::VIS_FULL_VISIBILITY;    break;
         case 'p': return Visibility::VIS_PARTIAL_VISIBILITY; break;
+        case 't': return Visibility::VIS_TARGETABLE_VISIBILITY; break;
         case 'b': return Visibility::VIS_BASIC_VISIBILITY;   break;
         default:  return Visibility::VIS_NO_VISIBILITY;
         }
