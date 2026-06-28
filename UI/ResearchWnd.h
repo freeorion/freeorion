@@ -24,7 +24,7 @@ public:
 
     void Render() override;
 
-    void SetEmpireShown(int empire_id, const ScriptingContext& context);
+    void SetEmpireShown(EmpireID empire_id, const ScriptingContext& context);
 
     void Refresh(const ScriptingContext& context);
     void Reset(const ScriptingContext& context);

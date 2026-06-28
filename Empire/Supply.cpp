@@ -380,7 +380,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
     { return std::pair(id_e.first, id_e.second->KnownStarlanes(universe)); };
 
     const auto empire_visible_starlanes = empires | range_transform(to_known_lanes)
-        | range_to<boost::container::flat_map<int, Empire::LaneSet>>();
+        | range_to<boost::container::flat_map<EmpireID, Empire::LaneSet>>();
 
     boost::container::flat_set<UniverseObjectID> systems_with_supply_in_them;
     systems_with_supply_in_them.reserve(objects.size<System>());
@@ -577,8 +577,8 @@ void SupplyManager::Update(const ScriptingContext& context) {
             for (auto& [empire_id, system_ranges] : empire_propagating_supply_ranges) {
                 auto range_it = system_ranges.find(sys->ID());
                 if (range_it != system_ranges.end())
-                    TraceLogger(supply) << " ... after culling empires ranges at system " << sys->ID()
-                                        << " : " << empire_id << " : " << range_it->second.first;
+                    TraceLogger(supply) << " ... after culling empires ranges at system " << to_string(sys->ID())
+                                        << " : " << to_string(empire_id) << " : " << range_it->second.first;
             }
             //// END DEBUG
         }
@@ -595,7 +595,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
         // less supply in the next iteration (unless as much or more is already
         // there)
         for (const auto& [empire_id, prev_sys_ranges] : empire_propagating_supply_ranges) {
-            TraceLogger(supply) << ">-< Doing supply propagation for empire " << empire_id
+            TraceLogger(supply) << ">-< Doing supply propagation for empire " << to_string(empire_id)
                                 << " >-<  at spread range: " << range_to_spread;
             const auto& unobstructed_systems = empire_supply_unobstructed_systems[empire_id];
 
@@ -607,7 +607,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
 
             for (const auto& [system_id, range_and_dist] : prev_sys_ranges) {
                 const auto& [range, distance_to_supply_source] = range_and_dist;
-                TraceLogger(supply) << " ... for system " << system_id << " with range: " << range;
+                TraceLogger(supply) << " ... for system " << to_string(system_id) << " with range: " << range;
 
                 // get lanes starting in system with id system_id
                 const Empire::LaneEndpoints system_lane{system_id, system_id};
@@ -764,12 +764,12 @@ void SupplyManager::Update(const ScriptingContext& context) {
     for (const auto& [empire_id, traversals] : m_supply_starlane_traversals) {
         TraceLogger(supply) << "Empire " << to_string(empire_id) << " propagated supply traversals:";
         for (auto const& [a, b] : traversals)
-            TraceLogger(supply) << " ... " << a << " to " << b;
+            TraceLogger(supply) << " ... " << to_string(a) << " to " << to_string(b);
     }
     for (const auto& [empire_id, traversals] : m_supply_starlane_obstructed_traversals) {
         TraceLogger(supply) << "Empire " << to_string(empire_id) << " obstructed supply traversals:";
         for (auto const& [a, b] : traversals)
-            TraceLogger(supply) << " ... " << a << " to " << b;
+            TraceLogger(supply) << " ... " << to_string(a) << " to " << to_string(b);
     }
 
     auto ally_merged_supply_starlane_traversals{m_supply_starlane_traversals};
@@ -900,7 +900,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
     for (const auto& [empire_id, supplyable] : ally_merged_fleet_supplyable_system_ids) {
         TraceLogger(supply) << "Empire " << to_string(empire_id) << " supplyable systems after adding allies:";
         for (auto const& a : supplyable)
-            TraceLogger(supply) << " ... " << a;
+            TraceLogger(supply) << " ... " << to_string(a);
     }
 
 
@@ -962,10 +962,10 @@ void SupplyManager::Update(const ScriptingContext& context) {
             continue;
 
         TraceLogger(supply) << "Empire " << to_string(empire_id) << " supply groups map before merging:";
-        for (auto const& q : supply_groups_map) {
-            TraceLogger(supply) << " ... " << q.first << " to: " << [&]() {
+        for (auto const& [root_sys_id, other_sys_ids] : supply_groups_map) {
+            TraceLogger(supply) << " ... " << to_string(root_sys_id) << " to: " << [&]() {
                 std::stringstream other_ids;
-                for (auto const& r : q.second)
+                for (auto const& r : other_sys_ids)
                     other_ids << to_string(r) << ", ";
                 return other_ids.str();
             }();

@@ -358,7 +358,7 @@ public:
     [[nodiscard]] std::vector<UniverseObjectID> FindExistingObjectIDs() const;
 
     /** Returns highest used object ID in this ObjectMap */
-    [[nodiscard]] int HighestObjectID() const;
+    [[nodiscard]] UniverseObjectID HighestObjectID() const;
 
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const;
 

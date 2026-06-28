@@ -42,7 +42,7 @@ System::System(StarType star, std::string name, double x, double y, int current_
     m_orbits.assign(SYSTEM_ORBITS, INVALID_OBJECT_ID);
 }
 
-std::shared_ptr<UniverseObject> System::Clone(const Universe& universe, int empire_id) const {
+std::shared_ptr<UniverseObject> System::Clone(const Universe& universe, EmpireID empire_id) const {
     const Visibility vis = empire_id == ALL_EMPIRES ?
         Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
@@ -54,7 +54,7 @@ std::shared_ptr<UniverseObject> System::Clone(const Universe& universe, int empi
     return retval;
 }
 
-void System::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
+void System::Copy(const UniverseObject& copied_object, const Universe& universe, EmpireID empire_id) {
     if (std::addressof(copied_object) == this)
         return;
     if (copied_object.ObjectType() != UniverseObjectType::OBJ_SYSTEM) {
@@ -65,7 +65,7 @@ void System::Copy(const UniverseObject& copied_object, const Universe& universe,
     Copy(static_cast<const System&>(copied_object), universe, empire_id);
 }
 
-void System::Copy(const System& copied_system, const Universe& universe, int empire_id) {
+void System::Copy(const System& copied_system, const Universe& universe, EmpireID empire_id) {
     if (std::addressof(copied_system) == this)
         return;
 
@@ -183,7 +183,7 @@ std::string System::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-std::string System::ApparentName(int empire_id, const Universe& u, bool blank_unexplored_and_none) const {
+std::string System::ApparentName(EmpireID empire_id, const Universe& u, bool blank_unexplored_and_none) const {
     const ObjectMap& o = u.Objects();
 
     if (empire_id == ALL_EMPIRES)
@@ -449,7 +449,7 @@ std::set<int> System::FreeOrbits() const { // TODO: return something better
     return retval;
 }
 
-System::IDSet System::VisibleStarlanes(int empire_id, const Universe& universe) const {
+System::IDSet System::VisibleStarlanes(EmpireID empire_id, const Universe& universe) const {
     if (empire_id == ALL_EMPIRES)
         return m_starlanes;
 

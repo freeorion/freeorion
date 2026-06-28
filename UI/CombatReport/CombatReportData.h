@@ -23,7 +23,7 @@ struct ParticipantSummary {
     float   max_health = 0.0f;
 
     ParticipantSummary() = default;
-    ParticipantSummary(int object_id_, int empire_id_, const CombatParticipantState& state);
+    ParticipantSummary(int object_id_, EmpireID empire_id_, const CombatParticipantState& state);
 };
 
 // A summary of what happened to a side in the combat (an empire or neutral)
@@ -44,7 +44,7 @@ public:
     float           max_current_health = 0.0f;
 
     CombatSummary() = default;
-    CombatSummary(int empire_id);
+    CombatSummary(EmpireID empire_id);
 
     GG::Clr         SideColor() const;
     std::string     SideName() const;

@@ -102,7 +102,7 @@ namespace {
     class ProductionItemPanel : public GG::Control {
     public:
         ProductionItemPanel(GG::X w, GG::Y h, const ProductionQueue::ProductionItem& item,
-                            int empire_id, int location_id) :
+                            EmpireID empire_id, int location_id) :
             Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
             m_item(item),
             m_empire_id(empire_id),
@@ -248,7 +248,7 @@ namespace {
     };
 
     std::string EnqueueAndLocationConditionDescription(const std::string& building_name, int candidate_object_id,
-                                                       int empire_id, bool only_failed_conditions)
+                                                       EmpireID empire_id, bool only_failed_conditions)
     {
         std::vector<const Condition::Condition*> enqueue_conditions;
         enqueue_conditions.reserve(3);
@@ -273,7 +273,7 @@ namespace {
     }
 
     std::string LocationConditionDescription(int ship_design_id, int candidate_object_id,
-                                             int empire_id, bool only_failed_conditions)
+                                             EmpireID empire_id, bool only_failed_conditions)
     {
 #if defined(__GNUC__) && (__GNUC__ < 13)
         // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
@@ -314,7 +314,7 @@ namespace {
     class ProductionItemRowBrowseWnd : public GG::BrowseInfoWnd {
     public:
         ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
-                                   int candidate_object_id, int empire_id) :
+                                   int candidate_object_id, EmpireID empire_id) :
             GG::BrowseInfoWnd(GG::X0, GG::Y0, ICON_BROWSE_TEXT_WIDTH + ICON_BROWSE_ICON_WIDTH, GG::Y1),
             m_item(std::move(item)),
             m_candidate_object_id(candidate_object_id),
@@ -605,7 +605,7 @@ namespace {
     class ProductionItemRow : public GG::ListBox::Row {
     public:
         ProductionItemRow(GG::X w, GG::Y h, const ProductionQueue::ProductionItem& item,
-                          int empire_id, int location_id) :
+                          EmpireID empire_id, int location_id) :
             GG::ListBox::Row(w, h),
             m_item(item)
         {
@@ -874,7 +874,7 @@ void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id, bool r
     }
 }
 
-void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id, bool refresh_list) {
+void BuildDesignatorWnd::BuildSelector::SetEmpireID(EmpireID empire_id, bool refresh_list) {
     if (empire_id == m_empire_id)
         return;
 
@@ -1313,7 +1313,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
     auto& app = GetApp();
     auto& context = app.GetContext();
     const auto& objects = context.ContextObjects();
-    const int empire_id = app.EmpireID();
+    const EmpireID empire_id = app.EmpireID();
 
     auto empire = std::as_const(context).GetEmpire(empire_id);
     if (!empire) {
@@ -1341,7 +1341,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
 void BuildDesignatorWnd::SetBuild(int queue_idx) {
     auto& app = GetApp();
     const auto& context = app.GetContext();
-    const int empire_id = app.EmpireID();
+    const EmpireID empire_id = app.EmpireID();
     const auto empire = context.GetEmpire(empire_id);
 
     if (!empire) {
@@ -1543,7 +1543,7 @@ void BuildDesignatorWnd::ShowShipPartInEncyclopedia(std::string part_name)
 void BuildDesignatorWnd::ShowSpeciesInEncyclopedia(std::string species_name)
 { m_enc_detail_panel->SetSpecies(std::move(species_name)); }
 
-void BuildDesignatorWnd::ShowEmpireInEncyclopedia(int empire_id)
+void BuildDesignatorWnd::ShowEmpireInEncyclopedia(EmpireID empire_id)
 { m_enc_detail_panel->SetEmpire(empire_id); }
 
 void BuildDesignatorWnd::ShowSpecialInEncyclopedia(std::string special_name)

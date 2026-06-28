@@ -942,7 +942,7 @@ namespace {
         events.reserve(empire_count);
 
         for (std::size_t empire_idx = 0; empire_idx < empire_count && next != buffer_end; ++empire_idx) {
-            int empire_id = Value(ALL_EMPIRES);
+            EmpireID empire_id = Value(ALL_EMPIRES);
             std::tie(empire_id, success, next) = get_next_int(next, Value(ALL_EMPIRES));
             if (!success)
                 return false;

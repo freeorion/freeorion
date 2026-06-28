@@ -464,13 +464,13 @@ namespace FreeOrionPython {
             .add_property("description",            make_function(&Tech::Description,       py::return_value_policy<py::copy_const_reference>()))
             .add_property("shortDescription",       make_function(&Tech::ShortDescription,  py::return_value_policy<py::copy_const_reference>()))
             .add_property("category",               make_function(&Tech::Category,          py::return_value_policy<py::copy_const_reference>()))
-            .def("researchCost",                    +[](const Tech& t, int empire_id) { return t.ResearchCost(empire_id, IApp::GetApp()->GetContext()); })
-            .def("perTurnCost",                     +[](const Tech& t, int empire_id) { return t.PerTurnCost(empire_id, IApp::GetApp()->GetContext()); })
-            .def("researchTime",                    +[](const Tech& t, int empire_id) { return t.ResearchTime(empire_id, IApp::GetApp()->GetContext()); })
+            .def("researchCost",                    +[](const Tech& t, EmpireID empire_id) { return t.ResearchCost(empire_id, IApp::GetApp()->GetContext()); })
+            .def("perTurnCost",                     +[](const Tech& t, EmpireID empire_id) { return t.PerTurnCost(empire_id, IApp::GetApp()->GetContext()); })
+            .def("researchTime",                    +[](const Tech& t, EmpireID empire_id) { return t.ResearchTime(empire_id, IApp::GetApp()->GetContext()); })
             .add_property("prerequisites",          make_function(&Tech::Prerequisites,     py::return_internal_reference<>()))
             .add_property("unlockedTechs",          make_function(&Tech::UnlockedTechs,     py::return_internal_reference<>()))
             .add_property("unlockedItems",          make_function(&Tech::UnlockedItems,     py::return_internal_reference<>()))
-            .def("recursivePrerequisites",          +[](const Tech& tech, int empire_id) -> std::vector<std::string> { return GetTechManager().RecursivePrereqs(tech.Name(), empire_id, IApp::GetApp()->GetContext()); },
+            .def("recursivePrerequisites",          +[](const Tech& tech, EmpireID empire_id) -> std::vector<std::string> { return GetTechManager().RecursivePrereqs(tech.Name(), empire_id, IApp::GetApp()->GetContext()); },
                                                     py::return_value_policy<py::return_by_value>())
         ;
 
@@ -508,7 +508,7 @@ namespace FreeOrionPython {
             .add_property("category",               make_function(&Policy::Category,            py::return_value_policy<py::copy_const_reference>()))
             .def("adoptionCost",                    +[](const Policy& p)                       { return p.AdoptionCost(IApp::GetApp()->EmpireID(), IApp::GetApp()->GetContext()); })
             .def("adoptionCost",                    +[](const Policy& p, const Empire& empire) { return p.AdoptionCost(empire.EmpireID(), IApp::GetApp()->GetContext()); })
-            .def("adoptionCost",                    +[](const Policy& p, int empire_id)        { return p.AdoptionCost(empire_id, IApp::GetApp()->GetContext()); })
+            .def("adoptionCost",                    +[](const Policy& p, EmpireID empire_id)        { return p.AdoptionCost(empire_id, IApp::GetApp()->GetContext()); })
         ;
 
         def("getPolicy",

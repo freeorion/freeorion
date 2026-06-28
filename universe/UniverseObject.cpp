@@ -151,7 +151,7 @@ std::string UniverseObject::Dump(uint8_t) const {
     return retval;
 }
 
-UniverseObject::IDSet UniverseObject::VisibleContainedObjectIDs(int empire_id, const EmpireObjectVisibilityMap& vis) const {
+UniverseObject::IDSet UniverseObject::VisibleContainedObjectIDs(EmpireID empire_id, const EmpireObjectVisibilityMap& vis) const {
     auto vis_map_it = vis.find(empire_id);
     if (vis_map_it == vis.end())
         return {};
@@ -167,14 +167,14 @@ UniverseObject::IDSet UniverseObject::VisibleContainedObjectIDs(int empire_id, c
 #endif
 }
 
-Visibility UniverseObject::GetVisibility(int empire_id, const EmpireObjectVisibilityMap& v) const {
+Visibility UniverseObject::GetVisibility(EmpireID empire_id, const EmpireObjectVisibilityMap& v) const {
     auto empire_it = v.find(empire_id);
     if (empire_it == v.end())
         return Visibility::VIS_NO_VISIBILITY;
     return empire_it->second.Get(m_id);
 }
 
-Visibility UniverseObject::GetVisibility(int empire_id, const Universe& u) const
+Visibility UniverseObject::GetVisibility(EmpireID empire_id, const Universe& u) const
 { return GetVisibility(empire_id, u.GetEmpireObjectVisibility()); }
 
 void UniverseObject::SetID(int id) {

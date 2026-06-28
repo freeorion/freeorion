@@ -61,7 +61,7 @@ Planet::Planet(PlanetType type, PlanetSize size, int creation_turn) :
         m_rotational_period = -m_rotational_period;
 }
 
-std::shared_ptr<UniverseObject> Planet::Clone(const Universe& universe, int empire_id) const {
+std::shared_ptr<UniverseObject> Planet::Clone(const Universe& universe, EmpireID empire_id) const {
     const Visibility vis = empire_id == ALL_EMPIRES ?
         Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
@@ -73,7 +73,7 @@ std::shared_ptr<UniverseObject> Planet::Clone(const Universe& universe, int empi
     return retval;
 }
 
-void Planet::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
+void Planet::Copy(const UniverseObject& copied_object, const Universe& universe, EmpireID empire_id) {
     if (std::addressof(copied_object) == this)
         return;
 
@@ -85,7 +85,7 @@ void Planet::Copy(const UniverseObject& copied_object, const Universe& universe,
     Copy(static_cast<const Planet&>(copied_object), universe, empire_id);
 }
 
-void Planet::Copy(const Planet& copied_planet, const Universe& universe, int empire_id) {
+void Planet::Copy(const Planet& copied_planet, const Universe& universe, EmpireID empire_id) {
     if (&copied_planet == this)
         return;
 
@@ -140,7 +140,7 @@ void Planet::Copy(const Planet& copied_planet, const Universe& universe, int emp
     }
 }
 
-bool Planet::HostileToEmpire(int empire_id, const EmpireManager& empires) const {
+bool Planet::HostileToEmpire(EmpireID empire_id, const EmpireManager& empires) const {
     if (OwnedBy(empire_id))
         return false;
 
@@ -626,7 +626,7 @@ std::size_t Planet::SizeInMemory() const {
     return retval;
 }
 
-double Planet::AnnexationCost(int empire_id, const ScriptingContext& context) const {
+double Planet::AnnexationCost(EmpireID empire_id, const ScriptingContext& context) const {
     if (m_species_name.empty())
         return 0.0;
     const auto* species = context.species.GetSpecies(m_species_name);
@@ -900,7 +900,7 @@ void Planet::UpdateFocusHistory() {
     }
 }
 
-bool Planet::Colonize(int empire_id, std::string species_name, double population,
+bool Planet::Colonize(EmpireID empire_id, std::string species_name, double population,
                       ScriptingContext& context)
 {
     const Species* species = nullptr;
@@ -993,7 +993,7 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
     return true;
 }
 
-void Planet::SetIsOrderAnnexedByEmpire(int empire_id) {
+void Planet::SetIsOrderAnnexedByEmpire(EmpireID empire_id) {
     const auto initial_empire = m_ordered_annexed_by_empire_id;
     if (empire_id == initial_empire)
         return;
@@ -1063,7 +1063,7 @@ void Planet::SetIsAboutToBeBombarded(bool b) {
 void Planet::ResetIsAboutToBeBombarded()
 { SetIsAboutToBeBombarded(false); }
 
-void Planet::SetGiveToEmpire(int empire_id) {
+void Planet::SetGiveToEmpire(EmpireID empire_id) {
     if (empire_id != m_ordered_given_to_empire_id) {
         m_ordered_given_to_empire_id = empire_id;
         StateChangedSignal();

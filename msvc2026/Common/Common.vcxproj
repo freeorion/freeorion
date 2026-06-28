@@ -217,6 +217,7 @@
     <ClInclude Include="..\..\universe\ConditionAll.h" />
     <ClInclude Include="..\..\universe\Conditions.h" />
     <ClInclude Include="..\..\universe\ConditionSource.h" />
+    <ClInclude Include="..\..\universe\ConstantsFwd.h" />
     <ClInclude Include="..\..\universe\Effects.h" />
     <ClInclude Include="..\..\universe\Effect.h" />
     <ClInclude Include="..\..\universe\Encyclopedia.h" />

@@ -83,7 +83,7 @@ namespace {
     /** Shows specified diplomatic status from specified empire to each other empire. */
     class DiplomaticStatusIndicator : public GG::Control {
     public:
-        DiplomaticStatusIndicator(GG::X w, GG::Y h, int empire_id, DiplomaticStatus diplo_status) :
+        DiplomaticStatusIndicator(GG::X w, GG::Y h, EmpireID empire_id, DiplomaticStatus diplo_status) :
             Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
             m_empire_id(empire_id),
             m_diplo_status(diplo_status)
@@ -192,7 +192,7 @@ namespace {
       * each PlayerRow. */
     class PlayerDataPanel : public GG::Control {
     public:
-        PlayerDataPanel(GG::X w, GG::Y h, int player_id, int empire_id) :
+        PlayerDataPanel(GG::X w, GG::Y h, int player_id, EmpireID empire_id) :
             Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
             m_player_id(player_id),
             m_empire_id(empire_id),
@@ -569,7 +569,7 @@ namespace {
     ////////////////////////////////////////////////
     class PlayerRow : public GG::ListBox::Row {
     public:
-        PlayerRow(GG::X w, GG::Y h, int player_id, int empire_id) :
+        PlayerRow(GG::X w, GG::Y h, int player_id, EmpireID empire_id) :
             GG::ListBox::Row(w, h),
             m_player_id(player_id),
             m_empire_id(empire_id),

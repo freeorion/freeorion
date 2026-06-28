@@ -125,7 +125,7 @@ namespace {
 ///////////////////////////
 //   TechRowBrowseWnd    //
 ///////////////////////////
-std::shared_ptr<GG::BrowseInfoWnd> TechRowBrowseWnd(const std::string& tech_name, int empire_id) {
+std::shared_ptr<GG::BrowseInfoWnd> TechRowBrowseWnd(const std::string& tech_name, EmpireID empire_id) {
     auto& app = GetApp();
     const auto& context = app.GetContext();
     auto empire = context.GetEmpire(empire_id);
@@ -2281,7 +2281,7 @@ void TechTreeWnd::AddTechToResearchQueue(std::string tech_name, bool to_front) {
 
     auto& app = GetApp();
     const ScriptingContext& context = app.GetContext();
-    const int empire_id = GetApp().EmpireID();
+    const EmpireID empire_id = GetApp().EmpireID();
     const auto empire = context.GetEmpire(empire_id);
     if (!empire)
         return;

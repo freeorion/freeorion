@@ -28,7 +28,7 @@ std::shared_ptr<UniverseObject> Building::Clone(const Universe& universe, Empire
     return retval;
 }
 
-void Building::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
+void Building::Copy(const UniverseObject& copied_object, const Universe& universe, EmpireID empire_id) {
     if (std::addressof(copied_object) == this)
         return;
     if (copied_object.ObjectType() != UniverseObjectType::OBJ_BUILDING) {
@@ -39,11 +39,11 @@ void Building::Copy(const UniverseObject& copied_object, const Universe& univers
     Copy(static_cast<const Building&>(copied_object), universe, empire_id);
 }
 
-void Building::Copy(const Building& copied_building, const Universe& universe, int empire_id) {
+void Building::Copy(const Building& copied_building, const Universe& universe, EmpireID empire_id) {
     if (&copied_building == this)
         return;
 
-    const int copied_object_id = copied_building.ID();
+    const auto copied_object_id = copied_building.ID();
     const Visibility vis = empire_id == ALL_EMPIRES ?
         Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
     const auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
@@ -65,7 +65,7 @@ void Building::Copy(const Building& copied_building, const Universe& universe, i
     }
 }
 
-bool Building::HostileToEmpire(int empire_id, const EmpireManager& empires) const {
+bool Building::HostileToEmpire(EmpireID empire_id, const EmpireManager& empires) const {
     if (OwnedBy(empire_id))
         return false;
     return empire_id == ALL_EMPIRES || Unowned() ||
@@ -97,7 +97,7 @@ const std::string& Building::SpeciesName() const {
     return type ? type->SpeciesName() : EMPTY_STRING;
 }
 
-bool Building::ContainedBy(int object_id) const noexcept {
+bool Building::ContainedBy(UniverseObjectID object_id) const noexcept {
     return object_id != INVALID_OBJECT_ID
         && (    object_id == m_planet_id
             ||  object_id == this->SystemID());
@@ -116,11 +116,11 @@ std::string Building::Dump(uint8_t ntabs) const {
     std::stringstream os;
     os << UniverseObject::Dump(ntabs);
     os << " building type: " << m_building_type
-       << " produced by empire id: " << m_produced_by_empire_id;
+       << " produced by empire id: " << to_string(m_produced_by_empire_id);
     return os.str();
 }
 
-void Building::SetPlanetID(int planet_id) {
+void Building::SetPlanetID(UniverseObjectID planet_id) {
     if (planet_id != m_planet_id) {
         m_planet_id = planet_id;
         StateChangedSignal();

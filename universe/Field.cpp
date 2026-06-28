@@ -26,7 +26,7 @@ Field::Field(std::string field_type, double x, double y, double radius, int crea
     UniverseObject::GetMeter(MeterType::METER_SIZE)->Set(radius, radius);
 }
 
-std::shared_ptr<UniverseObject> Field::Clone(const Universe& universe, int empire_id) const {
+std::shared_ptr<UniverseObject> Field::Clone(const Universe& universe, EmpireID empire_id) const {
     const Visibility vis = empire_id == ALL_EMPIRES ?
         Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
@@ -38,7 +38,7 @@ std::shared_ptr<UniverseObject> Field::Clone(const Universe& universe, int empir
     return retval;
 }
 
-void Field::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
+void Field::Copy(const UniverseObject& copied_object, const Universe& universe, EmpireID empire_id) {
     if (std::addressof(copied_object) == this)
         return;
     if (copied_object.ObjectType() != UniverseObjectType::OBJ_FIELD) {
@@ -49,11 +49,11 @@ void Field::Copy(const UniverseObject& copied_object, const Universe& universe, 
     Copy(static_cast<const Field&>(copied_object), universe, empire_id);
 }
 
-void Field::Copy(const Field& copied_field, const Universe& universe, int empire_id) {
+void Field::Copy(const Field& copied_field, const Universe& universe, EmpireID empire_id) {
     if (std::addressof(copied_field) == this)
         return;
 
-    int copied_object_id = copied_field.ID();
+    const auto copied_object_id = copied_field.ID();
     const Visibility vis = empire_id == ALL_EMPIRES ?
         Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
     auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
@@ -82,12 +82,12 @@ std::string Field::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-const std::string& Field::PublicName(int empire_id, const Universe&) const {
+const std::string& Field::PublicName(EmpireID empire_id, const Universe&) const {
     // always just return name since fields (as of this writing) don't have owners
     return UserString(m_type_name);
 }
 
-bool Field::ContainedBy(int object_id) const noexcept
+bool Field::ContainedBy(UniverseObjectID object_id) const noexcept
 { return object_id != INVALID_OBJECT_ID && object_id == this->SystemID(); }
 
 bool Field::InField(std::shared_ptr<const UniverseObject> obj) const

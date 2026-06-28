@@ -1685,7 +1685,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
     if (empire_property_string_key || empire_property_string_key3) {
         std::shared_ptr<const Empire> empire;
         if (m_int_ref1) {
-            int empire_id = m_int_ref1->Eval(context);
+            EmpireID empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
                 return 0;
             empire = context.GetEmpire(empire_id);
@@ -1776,7 +1776,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
     if (empire_property_int_key) {
         std::shared_ptr<const Empire> empire;
         if (m_int_ref1) {
-            int empire_id = m_int_ref1->Eval(context);
+            EmpireID empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
                 return 0;
             empire = context.GetEmpire(empire_id);
@@ -1828,7 +1828,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
     if (m_property == Property::OutpostsOwned) {
         std::shared_ptr<const Empire> empire;
         if (m_int_ref1) {
-            int empire_id = m_int_ref1->Eval(context);
+            EmpireID empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
                 return 0;
             empire = context.GetEmpire(empire_id);
@@ -2127,7 +2127,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return 0;
         const auto& vis_turn_map{ context.empire_object_vis_turns };
 
-        const int empire_id = m_int_ref1->Eval(context);
+        const EmpireID empire_id = m_int_ref1->Eval(context);
         const auto empire_it = vis_turn_map.find(empire_id);
         if (empire_it == vis_turn_map.end())
             return 0;
@@ -2187,7 +2187,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 
         if (m_int_ref1) {
             // single empire ID specified
-            const int empire_id = m_int_ref1->Eval(context);
+            const EmpireID empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
                 return 0.0;
             const auto empire = context.GetEmpire(empire_id);
@@ -2217,7 +2217,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
     if (m_property == Property::EmpireStockpile) {
         std::shared_ptr<const Empire> empire;
         if (m_int_ref1) {
-            int empire_id = m_int_ref1->Eval(context);
+            EmpireID empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
                 return 0;
             empire = context.GetEmpire(empire_id);
@@ -2333,7 +2333,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         if (!design)
             return 0.0;
 
-        const int empire_id = m_int_ref2 ? m_int_ref2->Eval(context) : ALL_EMPIRES;
+        const EmpireID empire_id = m_int_ref2 ? m_int_ref2->Eval(context) : ALL_EMPIRES;
         const int location_id = m_int_ref3 ? m_int_ref3->Eval(context) : INVALID_OBJECT_ID;
 
         return design->ProductionCost(empire_id, location_id, context); // overrides source and local candidate to specify empire and location
@@ -2345,7 +2345,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         if (!building_type)
             return 0.0;
 
-        const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        const EmpireID empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         const int location_id = m_int_ref2 ? m_int_ref2->Eval(context) : INVALID_OBJECT_ID;
 
         return building_type->ProductionCost(empire_id, location_id, context); // overrides source and local candidate to specify empire and location
@@ -2369,7 +2369,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 
     }
     else if (m_property == Property::EmpireAnnexationCost) { // intended for use in UI, not in scripted content, due to ambiguity about what the "source" object would be, since this sets the source to specify the empire
-        const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        const EmpireID empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         const auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return std::numeric_limits<double>::quiet_NaN();
@@ -2442,7 +2442,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 
     }
     else if (m_property == Property::SpeciesEmpireOpinion || m_property == Property::SpeciesEmpireTargetOpinion) {
-        const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        const EmpireID empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         const std::string species_name = m_string_ref1 ? m_string_ref1->Eval(context) : "";
         const bool target = m_property == Property::SpeciesEmpireTargetOpinion;
         static constexpr bool current_value = false;
@@ -2509,14 +2509,14 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 }
 
 namespace {
-    [[nodiscard]] std::vector<std::string> TechsResearchedByEmpire(int empire_id, const ScriptingContext& context) {
+    [[nodiscard]] std::vector<std::string> TechsResearchedByEmpire(EmpireID empire_id, const ScriptingContext& context) {
         auto empire = context.GetEmpire(empire_id);
         if (!empire) return {};
         auto researched_techs_range = empire->ResearchedTechs() | range_keys;
         return {researched_techs_range.begin(), researched_techs_range.end()};
     }
 
-    [[nodiscard]] std::vector<std::string> TechsResearchableByEmpire(int empire_id, const ScriptingContext& context) {
+    [[nodiscard]] std::vector<std::string> TechsResearchableByEmpire(EmpireID empire_id, const ScriptingContext& context) {
         auto empire = context.GetEmpire(empire_id);
         if (!empire) return {};
         const auto res_tech = [&empire](const auto& name_tech) { return empire->ResearchableTech(name_tech.first); };
@@ -2588,7 +2588,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         empire_property = null_property;
 
     if (empire_property) {
-        const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        const EmpireID empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         if (empire_id == ALL_EMPIRES)
             return "";
         auto empire = context.GetEmpire(empire_id);
@@ -2599,7 +2599,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
     }
 
     if (m_property == Property::RandomEnqueuedTech) {
-        const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        const EmpireID empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         if (empire_id == ALL_EMPIRES)
             return "";
         auto empire = context.GetEmpire(empire_id);
@@ -2615,7 +2615,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         return std::move(*std::next(all_enqueued_techs.begin(), idx));
 
     } else if (m_property == Property::RandomResearchableTech) {
-        const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        const EmpireID empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         if (empire_id == ALL_EMPIRES)
             return "";
         const auto empire = context.GetEmpire(empire_id);
@@ -2630,7 +2630,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         return std::move(*std::next(researchable_techs.begin(), idx));
 
     } else if (m_property == Property::RandomCompleteTech) {
-        const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        const EmpireID empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         if (empire_id == ALL_EMPIRES)
             return "";
         const auto empire = context.GetEmpire(empire_id);
@@ -2784,7 +2784,7 @@ std::vector<std::string> ComplexVariable<std::vector<std::string>>::Eval(
 {
     // unindexed empire properties
     if (m_property == Property::EmpireAdoptedPolicies) {
-        const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        const EmpireID empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         if (empire_id == ALL_EMPIRES)
             return {};
         auto empire = context.GetEmpire(empire_id);
@@ -2799,7 +2799,7 @@ std::vector<std::string> ComplexVariable<std::vector<std::string>>::Eval(
         return retval;
 
     } else if (m_property == Property::EmpireAvailablePolices) {
-        const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        const EmpireID empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         if (empire_id == ALL_EMPIRES)
             return {};
         auto empire = context.GetEmpire(empire_id);

@@ -959,11 +959,11 @@ int Pathfinder::PathfinderImpl::JumpDistanceBetweenObjects(int object1_id, int o
 }
 
 std::pair<std::vector<int>, double> Pathfinder::ShortestPath(
-    int system1_id, int system2_id, int empire_id) const
+    int system1_id, int system2_id, EmpireID empire_id) const
 { return pimpl->ShortestPath(system1_id, system2_id, empire_id); }
 
 std::pair<std::vector<int>, double> Pathfinder::PathfinderImpl::ShortestPath(
-    int system1_id, int system2_id, int empire_id) const
+    int system1_id, int system2_id, EmpireID empire_id) const
 {
     const auto get_path = [system1_id, system2_id, this](const auto& graph)
     { return ShortestPathImpl(graph, system1_id, system2_id, m_system_id_to_graph_index); };
@@ -1086,11 +1086,11 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
 }
 
 std::pair<std::vector<int>, int> Pathfinder::LeastJumpsPath(
-    int system1_id, int system2_id, int empire_id, int max_jumps) const
+    int system1_id, int system2_id, EmpireID empire_id, int max_jumps) const
 { return pimpl->LeastJumpsPath(system1_id, system2_id, empire_id, max_jumps); }
 
 std::pair<std::vector<int>, int> Pathfinder::PathfinderImpl::LeastJumpsPath(
-    int system1_id, int system2_id, int empire_id, int max_jumps) const
+    int system1_id, int system2_id, EmpireID empire_id, int max_jumps) const
 {
     bool use_system_graph = false;
     auto empire_view_graph_it = m_graph_impl.empire_system_graph_views.find(empire_id);
@@ -1125,10 +1125,10 @@ std::pair<std::vector<int>, int> Pathfinder::PathfinderImpl::LeastJumpsPath(
     }
 }
 
-bool Pathfinder::SystemsConnected(int system1_id, int system2_id, int empire_id) const
+bool Pathfinder::SystemsConnected(int system1_id, int system2_id, EmpireID empire_id) const
 { return pimpl->SystemsConnected(system1_id, system2_id, empire_id); }
 
-bool Pathfinder::PathfinderImpl::SystemsConnected(int system1_id, int system2_id, int empire_id) const {
+bool Pathfinder::PathfinderImpl::SystemsConnected(int system1_id, int system2_id, EmpireID empire_id) const {
     TraceLogger() << "SystemsConnected(" << system1_id << ", " << system2_id << ", " << empire_id << ")";
     auto path = LeastJumpsPath(system1_id, system2_id, empire_id);
     TraceLogger() << "SystemsConnected returned path of size: " << path.first.size();

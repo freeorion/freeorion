@@ -166,7 +166,7 @@ public:
     void ShowSpecial(std::string special_name);          //!< brings up encyclopedia panel and displays info about the special with name \a special_name
     void ShowSpecies(std::string species_name);          //!< brings up encyclopedia panel and displays info about the species with name \a species_name
     void ShowFieldType(std::string field_type_name);     //!< brings up encyclopedia panel and displays info about the field type with name \a field_type_name
-    void ShowEmpire(int empire_id);                      //!< brings up encyclopedia panel and displays info about the empire with id \a empire_id
+    void ShowEmpire(EmpireID empire_id);                      //!< brings up encyclopedia panel and displays info about the empire with id \a empire_id
     void ShowMeterTypeArticle(std::string meter_string); //!< brings up encyclopedia panel and displays info about the MeterType @a meter_type
     void ShowMeterTypeArticle(MeterType meter_type);     //!< brings up encyclopedia panel and displays info about the MeterType @a meter_type
     void ShowEncyclopediaEntry(std::string str);         //!< brings up encyclopedia panel and displays info about the specified string \a str
@@ -204,24 +204,24 @@ public:
     void Sanitize();                             //!< sanitizes the MapWnd after a game
     void ResetTimeoutClock(int timeout_seconds); //!< start count down \a timeout_seconds seconds
 
-    void SetFleetExploring(const int fleet_id, ScriptingContext& context, int empire_id);
-    void StopFleetExploring(const int fleet_id, ScriptingContext& context, int empire_id);
+    void SetFleetExploring(const int fleet_id, ScriptingContext& context, EmpireID empire_id);
+    void StopFleetExploring(const int fleet_id, ScriptingContext& context, EmpireID empire_id);
     bool IsFleetExploring(const int fleet_id) const;
-    void DispatchFleetsExploring(ScriptingContext& context, int empire_id); //!< called at each turn begin and when a fleet start/stop exploring to redispatch everyone.
+    void DispatchFleetsExploring(ScriptingContext& context, EmpireID empire_id); //!< called at each turn begin and when a fleet start/stop exploring to redispatch everyone.
 
 
 private:
     void RefreshTurnButtonTooltip();
 
     void RefreshInfluenceResourceIndicator();
-    void RefreshFleetResourceIndicator(const ScriptingContext& context, int empire_id);
+    void RefreshFleetResourceIndicator(const ScriptingContext& context, EmpireID empire_id);
     void RefreshResearchResourceIndicator();
     void RefreshIndustryResourceIndicator();
     void RefreshPopulationIndicator();
     void RefreshDetectionIndicator();
 
     /** recalculates production and predicted changes the specied empire's resource and population pools */
-    void UpdateEmpireResourcePools(ScriptingContext& context, int empire_id);
+    void UpdateEmpireResourcePools(ScriptingContext& context, EmpireID empire_id);
 
     /** contains information necessary to render a single fleet movement line
       * on the main map. also contains cached infromation */
@@ -289,11 +289,11 @@ private:
         fleet button for \p fleet_id. */
     std::vector<int> FleetIDsOfFleetButtonsOverlapping(int fleet_id,
                                                        const ScriptingContext& context,
-                                                       int empire_id) const;
+                                                       EmpireID empire_id) const;
     /** Return fleets ids of all fleet buttons containing or overlapping \p fleet_btn. */
     std::vector<int> FleetIDsOfFleetButtonsOverlapping(const FleetButton& fleet_btn,
                                                        const ScriptingContext& context,
-                                                       int empire_id) const;
+                                                       EmpireID empire_id) const;
 
     /** Returns position on map where a moving fleet should be displayed.  This
         is different from the fleet's actual universe position due to the

@@ -86,7 +86,7 @@ public:
     void ShowPolicyInEncyclopedia(std::string policy_name);
     void ShowShipPartInEncyclopedia(std::string part_name);
     void ShowSpeciesInEncyclopedia(std::string species_name);
-    void ShowEmpireInEncyclopedia(int empire_id);
+    void ShowEmpireInEncyclopedia(EmpireID empire_id);
     void ShowSpecialInEncyclopedia(std::string special_name);
     void ShowFieldTypeInEncyclopedia(std::string field_type_name);
 

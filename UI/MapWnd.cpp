@@ -372,7 +372,7 @@ namespace {
     /** BrowseInfoWnd for the fleet icon tooltip */
     class FleetDetailBrowseWnd : public GG::BrowseInfoWnd {
     public:
-        FleetDetailBrowseWnd(int empire_id, GG::X width) :
+        FleetDetailBrowseWnd(EmpireID empire_id, GG::X width) :
             GG::BrowseInfoWnd(GG::X0, GG::Y0, width, GG::Y(ClientUI::Pts())),
             m_empire_id(empire_id),
             m_margin(LAYOUT_MARGIN)
@@ -2010,7 +2010,7 @@ void MapWnd::RenderSystems() {
     const EmpireManager& empires = context.Empires();
     const SupplyManager& supply = context.supply;
 
-    int empire_id =app.EmpireID();
+    EmpireID empire_id =app.EmpireID();
     if (empire_id != ALL_EMPIRES && GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
         fog_scanlines = true;
 
@@ -2051,7 +2051,7 @@ void MapWnd::RenderSystems() {
     const auto empire_colours = empires | range_transform(to_id_clr) | range_to_vec;
 
     const auto neutral_colour = GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color");
-    const auto get_empire_colour = [&empire_colours, neutral_colour](int empire_id) {
+    const auto get_empire_colour = [&empire_colours, neutral_colour](EmpireID empire_id) {
         const auto is_empire_id = [empire_id](const auto& id_clr) noexcept { return empire_id == id_clr.first; };
         auto it = range_find_if(empire_colours, is_empire_id);
         return (it != empire_colours.end()) ? it->second : neutral_colour;
@@ -3679,7 +3679,7 @@ namespace {
     void PrepFullLanesToRender(const std::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons,
                                GG::GL2DVertexBuffer& starlane_vertices,
                                GG::GLRGBAColorBuffer& starlane_colors,
-                               int empire_id, const ScriptingContext& context)
+                               EmpireID empire_id, const ScriptingContext& context)
     {
         const auto& this_client_known_destroyed_objects =
             context.ContextUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
@@ -3753,7 +3753,7 @@ namespace {
     }
 
     void PrepResourceConnectionLanesToRender(const std::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons,
-                                             int empire_id,
+                                             EmpireID empire_id,
                                              std::set<std::pair<int, int>>& rendered_half_starlanes,
                                              GG::GL2DVertexBuffer& rc_starlane_vertices,
                                              GG::GLRGBAColorBuffer& rc_starlane_colors,
@@ -3906,7 +3906,7 @@ namespace {
     }
 
     auto CalculateStarlaneEndpoints(const std::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons,
-                                    const ScriptingContext& context, int empire_id)
+                                    const ScriptingContext& context, EmpireID empire_id)
     {
         std::map<std::pair<int, int>, LaneEndpoints> retval;
 
@@ -3958,7 +3958,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     ClearStarlaneRenderingBuffers();
 
     const auto& app = GetApp();
-    const int empire_id = app.EmpireID();
+    const EmpireID empire_id = app.EmpireID();
     const auto& context = app.GetContext();
 
     // todo: move this somewhere better... fill in starlane endpoint cache
@@ -4422,7 +4422,7 @@ void MapWnd::ShowFieldType(std::string field_type_name) {
     }
 }
 
-void MapWnd::ShowEmpire(int empire_id) {
+void MapWnd::ShowEmpire(EmpireID empire_id) {
     if (m_in_production_view_mode) {
         m_production_wnd->ShowPedia();
         m_production_wnd->ShowEmpireInEncyclopedia(empire_id);
@@ -5394,7 +5394,7 @@ void MapWnd::SystemRightClicked(int system_id, GG::Flags<GG::ModKey> mod_keys) {
             if (!system)
                 return;
 
-            const int empire_id = m_moderator_wnd->SelectedEmpire();
+            const EmpireID empire_id = m_moderator_wnd->SelectedEmpire();
             for (auto* obj : objects.findRaw<const UniverseObject>(system->ContainedObjectIDs())) {
                 UniverseObjectType obj_type = obj->ObjectType();
                 if (obj_type >= UniverseObjectType::OBJ_BUILDING &&
@@ -5461,7 +5461,7 @@ void MapWnd::PlanetRightClicked(int planet_id) {
     if (mas == ModeratorActionSetting::MAS_Destroy) {
         net.SendMessage(ModeratorActionMessage(Moderator::DestroyUniverseObject(planet_id)));
     } else if (mas == ModeratorActionSetting::MAS_SetOwner) {
-        int empire_id = m_moderator_wnd->SelectedEmpire();
+        EmpireID empire_id = m_moderator_wnd->SelectedEmpire();
         net.SendMessage(ModeratorActionMessage(Moderator::SetOwner(planet_id, empire_id)));
     }
 }
@@ -5478,7 +5478,7 @@ void MapWnd::BuildingRightClicked(int building_id) {
     if (mas == ModeratorActionSetting::MAS_Destroy) {
         net.SendMessage(ModeratorActionMessage(Moderator::DestroyUniverseObject(building_id)));
     } else if (mas == ModeratorActionSetting::MAS_SetOwner) {
-        int empire_id = m_moderator_wnd->SelectedEmpire();
+        EmpireID empire_id = m_moderator_wnd->SelectedEmpire();
         net.SendMessage(ModeratorActionMessage(Moderator::SetOwner(building_id, empire_id)));
     }
 }
@@ -5505,7 +5505,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
         TraceLogger() << "PlotfleetMovement";
 
     auto& app = GetApp();
-    const int empire_id = app.EmpireID();
+    const EmpireID empire_id = app.EmpireID();
     auto fleet_ids = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleetIDs();
     ScriptingContext& context = app.GetContext();
     ObjectMap& objects{context.ContextObjects()};
@@ -5567,7 +5567,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
 }
 
 std::vector<int> MapWnd::FleetIDsOfFleetButtonsOverlapping(
-    int fleet_id, const ScriptingContext& context, int empire_id) const
+    int fleet_id, const ScriptingContext& context, EmpireID empire_id) const
 {
     const auto& objects = context.ContextObjects();
     const auto& universe = context.ContextUniverse();
@@ -5649,7 +5649,7 @@ std::vector<int> MapWnd::FleetIDsOfFleetButtonsOverlapping(
 
 std::vector<int> MapWnd::FleetIDsOfFleetButtonsOverlapping(const FleetButton& fleet_btn,
                                                            const ScriptingContext& context,
-                                                           int empire_id) const
+                                                           EmpireID empire_id) const
 {
     // get possible fleets to select from, and a pointer to one of those fleets
     if (fleet_btn.Fleets().empty()) {
@@ -5824,7 +5824,7 @@ void MapWnd::FleetsRightClicked(const std::vector<int>& fleet_ids) {
         for (int fleet_id : fleet_ids)
             net.SendMessage(ModeratorActionMessage(Moderator::DestroyUniverseObject(fleet_id)));
     } else if (mas == ModeratorActionSetting::MAS_SetOwner) {
-        const int empire_id = m_moderator_wnd->SelectedEmpire();
+        const EmpireID empire_id = m_moderator_wnd->SelectedEmpire();
         for (int fleet_id : fleet_ids)
             net.SendMessage(ModeratorActionMessage(Moderator::SetOwner(fleet_id, empire_id)));
     }
@@ -5850,7 +5850,7 @@ void MapWnd::ShipsRightClicked(const std::vector<int>& ship_ids) {
         for (int ship_id : ship_ids)
             net.SendMessage(ModeratorActionMessage(Moderator::DestroyUniverseObject(ship_id)));
     } else if (mas == ModeratorActionSetting::MAS_SetOwner) {
-        int empire_id = m_moderator_wnd->SelectedEmpire();
+        EmpireID empire_id = m_moderator_wnd->SelectedEmpire();
         for (int ship_id : ship_ids)
             net.SendMessage(ModeratorActionMessage(Moderator::SetOwner(ship_id, empire_id)));
     }
@@ -6793,7 +6793,7 @@ void MapWnd::RefreshInfluenceResourceIndicator() {
         true, stockpile_used, stockpile, expected_stockpile));
 }
 
-void MapWnd::RefreshFleetResourceIndicator(const ScriptingContext& context, int empire_id) {
+void MapWnd::RefreshFleetResourceIndicator(const ScriptingContext& context, EmpireID empire_id) {
     if (!GetEmpire(empire_id)) {
         m_fleet->SetValue(0.0);
         return;
@@ -7003,7 +7003,7 @@ void MapWnd::RefreshPopulationIndicator() {
     ));
 }
 
-void MapWnd::UpdateEmpireResourcePools(ScriptingContext& context, int empire_id) {
+void MapWnd::UpdateEmpireResourcePools(ScriptingContext& context, EmpireID empire_id) {
     auto empire = context.GetEmpire(empire_id);
     if (!empire)
         return;
@@ -7338,7 +7338,7 @@ void MapWnd::CloseAllPopups()
 void MapWnd::HideAllPopups()
 { GG::ProcessThenRemoveExpiredPtrs(m_popups, [](auto& wnd) { wnd->Hide(); }); }
 
-void MapWnd::SetFleetExploring(const int fleet_id, ScriptingContext& context, int empire_id) {
+void MapWnd::SetFleetExploring(const int fleet_id, ScriptingContext& context, EmpireID empire_id) {
     m_fleets_exploring.insert(fleet_id);
 
     DispatchFleetsExploring(context, empire_id);
@@ -7350,7 +7350,7 @@ void MapWnd::SetFleetExploring(const int fleet_id, ScriptingContext& context, in
         fleet->StateChangedSignal();
 }
 
-void MapWnd::StopFleetExploring(const int fleet_id, ScriptingContext& context, int empire_id) {
+void MapWnd::StopFleetExploring(const int fleet_id, ScriptingContext& context, EmpireID empire_id) {
     m_fleets_exploring.erase(fleet_id);
 
     DispatchFleetsExploring(context, empire_id);
@@ -7409,7 +7409,7 @@ namespace {
     }
 
     /** Get the shortest suitable route from @p start_id to @p destination_id as known to @p empire_id */
-    OrderedRouteType GetShortestRoute(int empire_id, int start_id, int destination_id,
+    OrderedRouteType GetShortestRoute(EmpireID empire_id, int start_id, int destination_id,
                                       const ScriptingContext& context)
     {
 
@@ -7712,7 +7712,7 @@ namespace {
 
 };
 
-void MapWnd::DispatchFleetsExploring(ScriptingContext& context, int empire_id) {
+void MapWnd::DispatchFleetsExploring(ScriptingContext& context, EmpireID empire_id) {
     const auto& universe{context.ContextUniverse()};
     const auto& objects{context.ContextObjects()};
 

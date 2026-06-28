@@ -318,7 +318,7 @@ bool ShipDesign::ProductionCostTimeLocationInvariant() const {
     return true;
 }
 
-float ShipDesign::ProductionCost(int empire_id, int location_id, const ScriptingContext& context) const {
+float ShipDesign::ProductionCost(EmpireID empire_id, int location_id, const ScriptingContext& context) const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"))
         return 1.0f;
 
@@ -338,12 +338,12 @@ float ShipDesign::ProductionCost(int empire_id, int location_id, const Scripting
     return std::min(std::max(0.0f, cost_accumulator), ARBITRARY_LARGE_COST);
 }
 
-float ShipDesign::PerTurnCost(int empire_id, int location_id, const ScriptingContext& context) const {
+float ShipDesign::PerTurnCost(EmpireID empire_id, int location_id, const ScriptingContext& context) const {
     return ProductionCost(empire_id, location_id, context) /
         std::max(1, ProductionTime(empire_id, location_id, context));
 }
 
-int ShipDesign::ProductionTime(int empire_id, int location_id, const ScriptingContext& context) const {
+int ShipDesign::ProductionTime(EmpireID empire_id, int location_id, const ScriptingContext& context) const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"))
         return 1;
 
@@ -477,7 +477,7 @@ int ShipDesign::PartCount() const {
     return std::accumulate(rng.begin(), rng.end(), 0);
 }
 
-bool ShipDesign::ProductionLocation(int empire_id, int location_id, const ScriptingContext& context) const {
+bool ShipDesign::ProductionLocation(EmpireID empire_id, int location_id, const ScriptingContext& context) const {
     auto empire = context.GetEmpire(empire_id);
     if (!empire) {
         DebugLogger() << "ShipDesign::ProductionLocation: Unable to get pointer to empire " << empire_id;

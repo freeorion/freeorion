@@ -26,7 +26,7 @@ typedef boost::archive::xml_oarchive freeorion_xml_oarchive;
 //! intended recieipient. This is implemented this way so that we don't need to
 //! write custom boost::serialization classes that implement empire-dependent
 //! visibility.
-FO_COMMON_API int& GlobalSerializationEncodingForEmpire();
+FO_COMMON_API EmpireID& GlobalSerializationEncodingForEmpire();
 
 //! @warning
 //!     Do not try to serialize types that contain longs, since longs are

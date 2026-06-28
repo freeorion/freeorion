@@ -142,7 +142,7 @@ void CombatInfo::InitializeObjectVisibility() {
     // visibility state.
     // this function adjusts those values
 
-    for (int empire_id : empire_ids) {
+    for (EmpireID empire_id : empire_ids) {
         DebugLogger(combat) << "Tweaking CombatInfo object visibility and known objects for empire: " << empire_id;
 
         auto& empire_vis{empire_object_visibility[empire_id]};
@@ -1010,7 +1010,7 @@ namespace {
             for (int n = 0; n < number; ++n) {
                 // create / insert fighter into combat objectmap
 
-                //Fighter(int empire_id, int launched_from_id, const std::string& species_name,
+                //Fighter(EmpireID empire_id, int launched_from_id, const std::string& species_name,
                 //        float damage, const ::Condition::Condition* combat_targets,
                 //        int current_turn, const Universe& universe);
                 auto fighter_ptr = std::make_shared<Fighter>(owner_empire_id, from_ship_id,
@@ -1127,7 +1127,7 @@ namespace {
                     // object id destroyed
                     combat_info.destroyed_object_ids.insert(target_id);
                     // all empires in battle know object was destroyed
-                    for (int empire_id : combat_info.empire_ids) {
+                    for (EmpireID empire_id : combat_info.empire_ids) {
                         if (empire_id != ALL_EMPIRES) {
                             DebugLogger(combat) << "Giving knowledge of destroyed object " << target_id
                                                 << " to empire " << empire_id;

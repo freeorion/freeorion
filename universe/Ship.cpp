@@ -22,7 +22,7 @@
 #include <numeric>
 
 
-Ship::Ship(int empire_id, int design_id, std::string species_name,
+Ship::Ship(EmpireID empire_id, int design_id, std::string species_name,
            const Universe& universe, const SpeciesManager& species,
            int produced_by_empire_id, int current_turn) :
     UniverseObject{UniverseObjectType::OBJ_SHIP, "", empire_id, current_turn},
@@ -94,7 +94,7 @@ Ship::Ship(int empire_id, int design_id, std::string species_name,
     }
 }
 
-std::shared_ptr<UniverseObject> Ship::Clone(const Universe& universe, int empire_id) const {
+std::shared_ptr<UniverseObject> Ship::Clone(const Universe& universe, EmpireID empire_id) const {
     const Visibility vis = empire_id == ALL_EMPIRES ?
         Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
@@ -106,7 +106,7 @@ std::shared_ptr<UniverseObject> Ship::Clone(const Universe& universe, int empire
     return retval;
 }
 
-void Ship::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
+void Ship::Copy(const UniverseObject& copied_object, const Universe& universe, EmpireID empire_id) {
     if (std::addressof(copied_object) == this)
         return;
 
@@ -118,7 +118,7 @@ void Ship::Copy(const UniverseObject& copied_object, const Universe& universe, i
     Copy(static_cast<const Ship&>(copied_object), universe, empire_id);
 }
 
-void Ship::Copy(const Ship& copied_ship, const Universe& universe, int empire_id) {
+void Ship::Copy(const Ship& copied_ship, const Universe& universe, EmpireID empire_id) {
     if (std::addressof(copied_ship) == this)
         return;
 
@@ -155,7 +155,7 @@ void Ship::Copy(const Ship& copied_ship, const Universe& universe, int empire_id
     }
 }
 
-bool Ship::HostileToEmpire(int empire_id, const EmpireManager& empires) const {
+bool Ship::HostileToEmpire(EmpireID empire_id, const EmpireManager& empires) const {
     if (OwnedBy(empire_id))
         return false;
     return empire_id == ALL_EMPIRES || Unowned() ||

@@ -772,7 +772,7 @@ namespace {
             if (build_type == BuildType::BT_SHIP) {
                 // for ships, add a set rally point command
                 if (auto system = context.ContextObjects().getRaw<System>(SidePanel::SystemID())) {
-                    int empire_id = app.EmpireID();
+                    EmpireID empire_id = app.EmpireID();
                     std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM"))
                                                               % system->PublicName(empire_id, u));
                     popup->AddMenuItem(std::move(rally_prompt), disabled, false, rally_to_action);
@@ -973,7 +973,7 @@ void ProductionWnd::DoLayout() {
 void ProductionWnd::Render()
 {}
 
-void ProductionWnd::SetEmpireShown(int empire_id, const ScriptingContext& context) {
+void ProductionWnd::SetEmpireShown(EmpireID empire_id, const ScriptingContext& context) {
     if (empire_id != m_empire_shown_id) {
         m_empire_shown_id = empire_id;
         Refresh(context);
@@ -1032,7 +1032,7 @@ void ProductionWnd::ShowShipPartInEncyclopedia(std::string part_name)
 void ProductionWnd::ShowSpeciesInEncyclopedia(std::string species_name)
 { m_build_designator_wnd->ShowSpeciesInEncyclopedia(std::move(species_name)); }
 
-void ProductionWnd::ShowEmpireInEncyclopedia(int empire_id)
+void ProductionWnd::ShowEmpireInEncyclopedia(EmpireID empire_id)
 { m_build_designator_wnd->ShowEmpireInEncyclopedia(empire_id); }
 
 void ProductionWnd::ShowSpecialInEncyclopedia(std::string special_name)

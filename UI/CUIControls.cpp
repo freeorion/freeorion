@@ -1901,7 +1901,7 @@ void ResourceInfoPanel::SetLocalPointsCost(
         UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location_name));
 }
 
-void ResourceInfoPanel::SetEmpireID(int empire_id) {
+void ResourceInfoPanel::SetEmpireID(EmpireID empire_id) {
     int old_empire_id = m_empire_id;
     m_empire_id = empire_id;
     if (old_empire_id != m_empire_id) {

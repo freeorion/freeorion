@@ -52,7 +52,7 @@ namespace {
             | range_transform(to_addr) | range_to_vec;
     }
 
-    const Tech* Cheapest(const std::vector<const Tech*>& next_techs, int empire_id,
+    const Tech* Cheapest(const std::vector<const Tech*>& next_techs, EmpireID empire_id,
                          const ScriptingContext& context)
     {
         if (next_techs.empty())
@@ -481,7 +481,7 @@ std::vector<const Tech*> TechManager::AllNextTechs(const std::vector<std::string
 }
 
 const Tech* TechManager::CheapestNextTech(const std::vector<std::string_view>& researched_techs,
-                                          int empire_id, const ScriptingContext& context)
+                                          EmpireID empire_id, const ScriptingContext& context)
 {
     CheckPendingTechs();
     return Cheapest(NextTechs(researched_techs, m_techs), empire_id, context);
@@ -683,7 +683,7 @@ void TechManager::AllChildren(const Tech* tech, std::map<std::string, std::strin
     }
 }
 
-std::vector<std::string> TechManager::RecursivePrereqs(std::string_view tech_name, int empire_id,
+std::vector<std::string> TechManager::RecursivePrereqs(std::string_view tech_name, EmpireID empire_id,
                                                        const ScriptingContext& context) const
 {
     const Tech* initial_tech = this->GetTech(tech_name);

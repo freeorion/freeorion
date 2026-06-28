@@ -88,7 +88,7 @@ namespace {
 }
 
 SystemResourceSummaryBrowseWnd::SystemResourceSummaryBrowseWnd(ResourceType resource_type,
-                                                               int system_id, int empire_id) :
+                                                               int system_id, EmpireID empire_id) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, LabelWidth() + ValueWidth(), GG::Y1),
     m_resource_type(resource_type),
     m_system_id(system_id),

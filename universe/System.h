@@ -94,7 +94,7 @@ public:
     [[nodiscard]] std::set<int> FreeOrbits() const;                         ///< returns the set of orbit numbers that are unoccupied
 
     [[nodiscard]] auto&         Starlanes() const noexcept { return m_starlanes; }
-    [[nodiscard]] IDSet         VisibleStarlanes(int empire_id, const Universe& universe) const;
+    [[nodiscard]] IDSet         VisibleStarlanes(EmpireID empire_id, const Universe& universe) const;
 
     [[nodiscard]] int           LastTurnBattleHere() const noexcept { return m_last_turn_battle_here; }
 

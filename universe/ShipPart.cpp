@@ -460,7 +460,7 @@ bool ShipPart::ProductionCostTimeLocationInvariant() const {
     return true;
 }
 
-float ShipPart::ProductionCost(int empire_id, int location_id, const ScriptingContext& context,
+float ShipPart::ProductionCost(EmpireID empire_id, int location_id, const ScriptingContext& context,
                                int in_design_id) const
 {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost)
@@ -497,7 +497,7 @@ float ShipPart::ProductionCost(int empire_id, int location_id, const ScriptingCo
     return static_cast<float>(m_production_cost->Eval(design_id_context));
 }
 
-int ShipPart::ProductionTime(int empire_id, int location_id, const ScriptingContext& context,
+int ShipPart::ProductionTime(EmpireID empire_id, int location_id, const ScriptingContext& context,
                              int in_design_id) const
 {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time)

@@ -433,7 +433,7 @@ public:
       * in various Check(Whatever)Progress functions. */
     void UpdateResourcePools(const ScriptingContext& context,
                              const std::vector<std::tuple<std::string_view, double, int>>& research_costs,
-                             const std::vector<std::pair<int, double>>& annex_costs,
+                             const std::vector<std::pair<UniverseObjectID, double>>& annex_costs,
                              const std::vector<std::pair<std::string_view, double>>& policy_costs,
                              const std::vector<std::tuple<std::string_view, int, float, int>>& prod_costs);
     /** Calls Update() on empire's research queue, which recalculates the RPs
@@ -454,9 +454,9 @@ public:
       * CheckInfluenceProgress() will then have the correct allocations of
       * influence. */
     void UpdateInfluenceSpending(const ScriptingContext& context,
-                                 const std::vector<std::pair<int, double>>& annex_costs,
+                                 const std::vector<std::pair<UniverseObjectID, double>>& annex_costs,
                                  const std::vector<std::pair<std::string_view, double>>& policy_costs);
-    std::vector<std::pair<int, double>> PlanetAnnexationCosts(const ScriptingContext& context) const;
+    std::vector<std::pair<UniverseObjectID, double>> PlanetAnnexationCosts(const ScriptingContext& context) const;
     std::vector<std::pair<std::string_view, double>> PolicyAdoptionCosts(const ScriptingContext& context) const;
 
     void UpdatePopulationGrowth(const ObjectMap& objects);
@@ -512,7 +512,7 @@ public:
       * adds them to the build queue of the indicated empires (if it is an
       * empire), deletes them, or leaves them on the build queue of their
       * current empire */
-    static void ConquerProductionQueueItemsAtLocation(int location_id, int empire_id, EmpireManager& empires);
+    static void ConquerProductionQueueItemsAtLocation(UniverseObjectID location_id, ::EmpireID empire_id, EmpireManager& empires);
 
     mutable boost::signals2::signal<void ()> ShipDesignsChangedSignal;
     mutable boost::signals2::signal<void ()> PoliciesChangedSignal;
@@ -520,7 +520,7 @@ public:
 private:
     void Init();
 
-    ::EmpireID         m_id = ALL_EMPIRES;                ///< Empire's unique numeric id
+    ::EmpireID       m_id = ALL_EMPIRES;                ///< Empire's unique numeric id
     UniverseObjectID m_capital_id = INVALID_OBJECT_ID;  ///< the ID of the empire's capital planet
     std::string      m_name;                            ///< Empire's name
     std::string      m_player_name;                     ///< Empire's Player's name
@@ -712,7 +712,8 @@ private:
 
     std::map<int, int>              m_ship_designs_in_production;   ///< how many ships of each design has this empire in active production in its production queue
 
-    std::unordered_set<int>         m_ships_destroyed;
+    std::unordered_set<UniverseObjectID> m_ships_destroyed;
+
     std::map<::EmpireID, int>       m_empire_ships_destroyed;   ///< how many ships of each empire has this empire destroyed?
     std::map<int, int>              m_ship_designs_destroyed;   ///< how many ships of each design has this empire destroyed?
     std::map<std::string, int>      m_species_ships_destroyed;  ///< how many ships crewed by each species has this empire destroyed?

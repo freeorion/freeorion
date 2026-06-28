@@ -132,21 +132,21 @@ namespace {
         return m && m->Initial() > 0.0f;
     }
 
-    std::string EmpireIdToText(int empire_id) {
+    std::string EmpireIdToText(EmpireID empire_id) {
         std::string retval;
         static constexpr std::size_t retval_sz = 24 + 1 + VarText::EMPIRE_ID_TAG.length()*2 + 1 + 8 + 1 + 30 + 3 + 1 + 10 + 20; // semi-guesstimate
         retval.reserve(retval_sz);
         const auto& context = GetApp().GetContext();
         if (const auto empire = context.GetEmpire(empire_id))
             return retval.append(GG::RgbaTag(empire->Color())).append("<").append(VarText::EMPIRE_ID_TAG).append(" ")
-                         .append(std::to_string(empire->EmpireID())).append(">").append(empire->Name()).append("</")
+                         .append(to_string(empire->EmpireID())).append(">").append(empire->Name()).append("</")
                          .append(VarText::EMPIRE_ID_TAG).append(">").append("</rgba>");
         else
             return retval.append(GG::RgbaTag(ClientUI::DefaultLinkColor())).append(UserString("NEUTRAL")).append("</rgba>");
     }
 
     /// converts to "Empire_name: n" text
-    std::string CountToText(int empire_id, int forces_count)
+    std::string CountToText(EmpireID empire_id, int forces_count)
     { return EmpireIdToText(empire_id).append(": ").append(std::to_string(forces_count)); }
 
     class OrderByNameAndId {
@@ -284,7 +284,7 @@ namespace {
         EmpireForcesAccordionPanel(GG::X w,
                                    CombatLogWnd::Impl& log_,
                                    EmpireID viewing_empire_id_,
-                                   int empire_id,
+                                   EmpireID empire_id,
                                    std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces_);
 
         ~EmpireForcesAccordionPanel() = default;
@@ -312,7 +312,7 @@ namespace {
     EmpireForcesAccordionPanel::EmpireForcesAccordionPanel(GG::X w,
                                                            CombatLogWnd::Impl& log_,
                                                            EmpireID viewing_empire_id_,
-                                                           int empire_id,
+                                                           EmpireID empire_id,
                                                            std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces_) :
         AccordionPanel(w, GG::Y(ClientUI::Pts()), true),
         log(log_),

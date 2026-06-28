@@ -68,7 +68,7 @@ public:
     void SetObject(int object_id);
     void SetObject(std::string object_id);
     void SetItem(const std::shared_ptr<const UniverseObject>& obj);
-    void SetEmpire(int empire_id);
+    void SetEmpire(EmpireID empire_id);
     void SetEmpire(std::string empire_id);
     void SetItem(const Empire* empire);
     void SetDesign(int design_id);

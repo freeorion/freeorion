@@ -87,7 +87,7 @@ void FleetButton::Refresh(SizeType size_type) {
     const Universe& u = context.ContextUniverse();
     const ObjectMap& o = context.ContextObjects();
     const EmpireManager& e = context.Empires();
-    const int empire_id = app.EmpireID();
+    const EmpireID empire_id = app.EmpireID();
 
     const auto fleets = o.findRaw<const Fleet>(m_fleets);
 

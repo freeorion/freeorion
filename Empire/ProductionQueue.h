@@ -192,7 +192,7 @@ struct FO_COMMON_API ProductionQueue {
     [[nodiscard]] float ExpectedProjectTransferToStockpile() const noexcept { return m_expected_project_transfer_to_stockpile; }
 
     /** Returns sets of object ids that have more available than allocated PP */
-    [[nodiscard]] std::vector<std::vector<int>> ObjectsWithWastedPP(const ResourcePool& industry_pool) const;
+    [[nodiscard]] std::vector<std::vector<UniverseObjectID>> ObjectsWithWastedPP(const ResourcePool& industry_pool) const;
 
     // STL container-like interface
     [[nodiscard]] bool           empty() const noexcept { return m_queue.empty(); }
@@ -217,13 +217,13 @@ struct FO_COMMON_API ProductionQueue {
     // STL container-like interface
     void     push_back(Element element);
     void     insert(iterator it, Element element);
-    void     erase(UniverseObjectID i);
+    void     erase(int i);
     iterator erase(iterator it);
 
     [[nodiscard]] auto     begin() noexcept { return m_queue.begin(); }
     [[nodiscard]] auto     end() noexcept { return m_queue.end(); }
-    [[nodiscard]] iterator find(UniverseObjectID i);
-    Element&               operator[](UniverseObjectID i);
+    [[nodiscard]] iterator find(int i);
+    Element&               operator[](int i);
 
     void clear();
 
