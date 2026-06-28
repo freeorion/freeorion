@@ -3038,7 +3038,7 @@ sc::result PlayingGame::react(const AutoTurn& msg) {
         return discard_event();
     }
 
-    int empire_id = empire->EmpireID();
+    EmpireID empire_id = empire->EmpireID();
     if (empire->Eliminated()) {
         ErrorLogger(FSM) << "PlayingGame::react(AutoTurn&) received orders from player " << empire->PlayerName() << "(id: "
                          << player_id << ") who controls empire " << empire_id
@@ -3092,7 +3092,7 @@ sc::result PlayingGame::react(const LobbyUpdate& msg) {
     // try to add the player into the game if he choose empire
     for (const auto& player : incoming_lobby_data.players) {
         if (player.first == sender->PlayerID() && player.second.save_game_empire_id != ALL_EMPIRES) {
-            int empire_id = server.AddPlayerIntoGame(sender, player.second.save_game_empire_id);
+            EmpireID empire_id = server.AddPlayerIntoGame(sender, player.second.save_game_empire_id);
             if (empire_id != ALL_EMPIRES) {
                 server.m_fsm.UpdateIngameLobby();
                 return discard_event();
@@ -3247,7 +3247,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
             return discard_event();
         }
 
-        int empire_id = empire->EmpireID();
+        EmpireID empire_id = empire->EmpireID();
         if (empire->Eliminated()) {
             ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnOrders&) received orders from player " << empire->PlayerName() << "(id: "
                              << player_id << ") who controls empire " << empire_id
@@ -3351,7 +3351,7 @@ sc::result WaitingForTurnEnd::react(const TurnPartialOrders& msg) {
             return discard_event();
         }
 
-        int empire_id = empire->EmpireID();
+        EmpireID empire_id = empire->EmpireID();
         if (empire->Eliminated()) {
             ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) received orders from player " << empire->PlayerName()
                              << " (id: " << player_id << ") who controls empire " << empire_id
@@ -3400,7 +3400,7 @@ sc::result WaitingForTurnEnd::react(const RevertOrders& msg) {
         return discard_event();
     }
 
-    const int empire_id = empire->EmpireID();
+    const EmpireID empire_id = empire->EmpireID();
     if (empire->Eliminated()) {
         ErrorLogger(FSM) << "WaitingForTurnEnd::react(RevertOrders&) received orders from player " << empire->PlayerName() << "(id: "
             << player_id << ") who controls empire " << empire_id << " but empire was eliminated";
@@ -3452,7 +3452,7 @@ sc::result WaitingForTurnEnd::react(const RevokeReadiness& msg) {
             return discard_event();
         }
 
-        const int empire_id = empire->EmpireID();
+        const EmpireID empire_id = empire->EmpireID();
         if (empire->Eliminated()) {
             ErrorLogger(FSM) << "WaitingForTurnEnd::react(RevokeReadiness&) received orders from player " << empire->PlayerName() << "(id: "
                              << player_id << ") who controls empire " << empire_id

@@ -83,7 +83,7 @@ public:
     [[nodiscard]] virtual const GalaxySetupData& GetGalaxySetupData() const noexcept = 0;
 
     /** Returns the networking client type for the given empire_id. */
-    [[nodiscard]] virtual Networking::ClientType GetEmpireClientType(int empire_id) const = 0;
+    [[nodiscard]] virtual Networking::ClientType GetEmpireClientType(::EmpireID empire_id) const = 0;
 
     /** Returns the networking client type for the given player_id. */
     [[nodiscard]] virtual Networking::ClientType GetPlayerClientType(int player_id) const = 0;
@@ -144,7 +144,7 @@ protected:
 [[nodiscard]] inline const GalaxySetupData& GetGalaxySetupData() noexcept
 { return IApp::GetApp()->GetGalaxySetupData(); }
 
-[[nodiscard]] inline Networking::ClientType GetEmpireClientType(int empire_id)
+[[nodiscard]] inline Networking::ClientType GetEmpireClientType(EmpireID empire_id)
 { return IApp::GetApp()->GetEmpireClientType(empire_id); }
 
 [[nodiscard]] inline Networking::ClientType GetPlayerClientType(int player_id)

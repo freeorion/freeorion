@@ -67,11 +67,11 @@ namespace {
         }
     }
 
-    auto EmpirePlayerID(int empire_id) -> int
+    auto EmpirePlayerID(EmpireID empire_id) -> int
     {
         int player_id = AIClientApp::GetApp()->EmpirePlayerID(empire_id);
         if (Networking::INVALID_PLAYER_ID == player_id)
-            DebugLogger() << "AIWrapper::EmpirePlayerID(" << empire_id << ") - passed an invalid empire_id";
+            DebugLogger() << "AIWrapper::EmpirePlayerID(" << to_string(empire_id) << ") - passed an invalid empire_id";
         return player_id;
     }
 
@@ -121,7 +121,7 @@ namespace {
     {
         const auto& players = AIClientApp::GetApp()->Players();
         auto rng = players | range_transform([](const auto& id_pi) { return id_pi.second.empire_id; })
-            | range_filter([](int empire_id) { return empire_id != ALL_EMPIRES; });
+            | range_filter([](EmpireID empire_id) { return empire_id != ALL_EMPIRES; });
         std::vector<int> retval;
         retval.reserve(players.size());
         range_copy(rng, std::back_inserter(retval));
@@ -186,7 +186,7 @@ namespace {
 
     void UpdateResourcePools() {
         ScriptingContext& context = IApp::GetApp()->GetContext();
-        const int empire_id = AIClientApp::GetApp()->EmpireID();
+        const EmpireID empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "UpdateResourcePools : couldn't get empire with id " << empire_id;
@@ -201,7 +201,7 @@ namespace {
 
     void UpdateResearchQueue() {
         ScriptingContext& context = IApp::GetApp()->GetContext();
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        EmpireID empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "UpdateResearchQueue : couldn't get empire with id " << empire_id;
@@ -212,7 +212,7 @@ namespace {
 
     void UpdateProductionQueue() {
         ScriptingContext& context = IApp::GetApp()->GetContext();
-        const int empire_id = AIClientApp::GetApp()->EmpireID();
+        const EmpireID empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "UpdateProductionQueue : couldn't get empire with id " << empire_id;
@@ -309,7 +309,7 @@ namespace {
 
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->EmpireID();
         auto empire = context.GetEmpire(empire_id);
 
         if (!empire) {
@@ -330,7 +330,7 @@ namespace {
     {
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->EmpireID();
         auto empire = context.GetEmpire(empire_id);
 
         if (!empire) {
@@ -350,7 +350,7 @@ namespace {
     auto IsProducibleBuilding(const std::string& item_name, int location_id) -> bool
     {
         ScriptingContext& context = IApp::GetApp()->GetContext();
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        EmpireID empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IsProducibleBuilding : couldn't get empire with id " << empire_id;
@@ -362,7 +362,7 @@ namespace {
     auto IsEnqueuableBuilding(const std::string& item_name, int location_id) -> bool
     {
         ScriptingContext& context = IApp::GetApp()->GetContext();
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        EmpireID empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IsEnqueuableBuilding : couldn't get empire with id " << empire_id;
@@ -375,7 +375,7 @@ namespace {
     {
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->EmpireID();
 
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
@@ -401,7 +401,7 @@ namespace {
     auto IsEnqueuableShip(int design_id, int location_id) -> bool
     {
         const ScriptingContext& context = IApp::GetApp()->GetContext();
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        EmpireID empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IsEnqueuableShip : couldn't get empire with id " << empire_id;
@@ -416,7 +416,7 @@ namespace {
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
         const Universe& universe{context.ContextUniverse()};
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->EmpireID();
 
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
@@ -443,7 +443,7 @@ namespace {
     {
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssueChangeProductionQuantityOrder : couldn't get empire with id " << empire_id;
@@ -480,7 +480,7 @@ namespace {
 
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssueRequeueProductionOrder : couldn't get empire with id " << empire_id;
@@ -520,7 +520,7 @@ namespace {
     {
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssueDequeueProductionOrder : couldn't get empire with id " << empire_id;
@@ -548,7 +548,7 @@ namespace {
     {
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssuePauseProductionOrder : couldn't get empire with id " << empire_id;
@@ -576,7 +576,7 @@ namespace {
     {
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssueAllowStockpileProductionOrder : couldn't get empire with id " << empire_id;
@@ -618,7 +618,7 @@ namespace {
 
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->EmpireID();
         const auto uuid = boost::uuids::random_generator()();
 
         // create design from stuff chosen in UI
@@ -708,12 +708,12 @@ namespace FreeOrionPython {
                 "Returns the empire object (Empire) of this AI player");
 
         py::def("getEmpire",
-                +[](int empire_id) -> const Empire* { return AIClientApp::GetApp()->GetEmpire(empire_id); },
+                +[](EmpireID empire_id) -> const Empire* { return AIClientApp::GetApp()->GetEmpire(empire_id); },
                 py::return_value_policy<py::reference_existing_object>(),
                 "Returns the empire object (Empire) with the specified empire ID (int)");
 
         py::def("getDiplomaticStatus",
-                +[](int empire_id1, int empire_id2) -> const DiplomaticStatus { return AIClientApp::GetApp()->Empires().GetDiplomaticStatus(empire_id1, empire_id2); },
+                +[](EmpireID empire_id1, EmpireID empire_id2) -> const DiplomaticStatus { return AIClientApp::GetApp()->Empires().GetDiplomaticStatus(empire_id1, empire_id2); },
                 "Returns the diplomatic status between two empires");
 
         py::def("getUniverse",

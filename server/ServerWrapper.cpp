@@ -69,7 +69,7 @@ namespace {
     }
 
     // Wrappers for generating sitrep messages
-    void GenerateSitRep(int empire_id, const std::string& template_string,
+    void GenerateSitRep(EmpireID empire_id, const std::string& template_string,
                         const py::dict& py_params, const std::string& icon)
     {
         auto& context = GetApp().GetContext();
@@ -281,7 +281,7 @@ namespace {
     }
 
     // Wrappers for Empire class member functions
-    void EmpireSetName(int empire_id, std::string name)
+    void EmpireSetName(EmpireID empire_id, std::string name)
     {
         ScriptingContext& context = ServerApp::GetApp()->GetContext();
         auto empire = context.GetEmpire(empire_id);
@@ -292,7 +292,7 @@ namespace {
         empire->SetName(std::move(name));
     }
 
-    auto EmpireSetHomeworld(int empire_id, int planet_id, const std::string& species_name) -> bool
+    auto EmpireSetHomeworld(EmpireID empire_id, int planet_id, const std::string& species_name) -> bool
     {
         ScriptingContext& context = ServerApp::GetApp()->GetContext();
         auto empire = context.GetEmpire(empire_id);
@@ -303,7 +303,7 @@ namespace {
         return SetEmpireHomeworld(empire.get(), planet_id, species_name, context);
     }
 
-    void EmpireUnlockItem(int empire_id, UnlockableItemType item_type,
+    void EmpireUnlockItem(EmpireID empire_id, UnlockableItemType item_type,
                           const std::string& item_name)
     {
         ScriptingContext& context = ServerApp::GetApp()->GetContext();
@@ -317,7 +317,7 @@ namespace {
         empire->UnlockItem(item, context.ContextUniverse(), context.current_turn);
     }
 
-    void EmpireAddShipDesign(int empire_id, const std::string& design_name) {
+    void EmpireAddShipDesign(EmpireID empire_id, const std::string& design_name) {
         ScriptingContext& context = ServerApp::GetApp()->GetContext();
 
         auto empire = context.GetEmpire(empire_id);
@@ -337,7 +337,7 @@ namespace {
         empire->AddShipDesign(ship_design->ID(), context.ContextUniverse());
     }
 
-    void EmpireSetStockpile(int empire_id, ResourceType resource_type, double value) {
+    void EmpireSetStockpile(EmpireID empire_id, ResourceType resource_type, double value) {
         auto empire = ServerApp::GetApp()->GetContext().GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "EmpireSetStockpile: couldn't get empire with ID " << empire_id;
@@ -746,7 +746,7 @@ namespace {
         return planet->ID();
     }
 
-    auto CreateBuilding(const std::string& building_type, int planet_id, int empire_id) -> int
+    auto CreateBuilding(const std::string& building_type, int planet_id, EmpireID empire_id) -> int
     {
         ScriptingContext& context = ServerApp::GetApp()->GetContext();
         ObjectMap& objects = context.ContextObjects();
@@ -781,7 +781,7 @@ namespace {
         return building->ID();
     }
 
-    auto CreateFleet(const std::string& name, int system_id, int empire_id, bool aggressive = false) -> int
+    auto CreateFleet(const std::string& name, int system_id, EmpireID empire_id, bool aggressive = false) -> int
     {
         ScriptingContext& context = ServerApp::GetApp()->GetContext();
 
@@ -849,7 +849,7 @@ namespace {
         }
 
         // get owner empire of specified fleet
-        int empire_id = fleet->Owner();
+        EmpireID empire_id = fleet->Owner();
         // if we got the id of an actual empire, get the empire object and check if it exists
         std::shared_ptr<Empire> empire;
         if (empire_id != ALL_EMPIRES) {
@@ -1259,7 +1259,7 @@ namespace {
         return py_foci;
     }
 
-    auto PlanetMakeOutpost(int planet_id, int empire_id) -> bool
+    auto PlanetMakeOutpost(int planet_id, EmpireID empire_id) -> bool
     {
         auto& context = ServerApp::GetApp()->GetContext();
 
@@ -1277,7 +1277,7 @@ namespace {
         return planet->Colonize(empire_id, "", 0.0, context);
     }
 
-    auto PlanetMakeColony(int planet_id, int empire_id, const std::string& species, double population) -> bool
+    auto PlanetMakeColony(int planet_id, EmpireID empire_id, const std::string& species, double population) -> bool
     {
         auto& context = ServerApp::GetApp()->GetContext();
 
@@ -1373,7 +1373,7 @@ namespace FreeOrionPython {
         py::def("get_galaxy_setup_data",            GetGalaxySetupData,             py::return_value_policy<py::reference_existing_object>());
         py::def("current_turn",                     +[]() -> int { return GetApp().GetContext().current_turn; });
         py::def("generate_sitrep",                  GenerateSitRep);
-        py::def("generate_sitrep",                  +[](int empire_id, const std::string& template_string, const std::string& icon) { GenerateSitRep(empire_id, template_string, py::dict(), icon); });
+        py::def("generate_sitrep",                  +[](EmpireID empire_id, const std::string& template_string, const std::string& icon) { GenerateSitRep(empire_id, template_string, py::dict(), icon); });
         py::def("generate_starlanes",               +[](int max_jumps_between_systems, int max_starlane_length) { auto& context = GetApp().GetContext(); GenerateStarlanes(max_jumps_between_systems, max_starlane_length, context.ContextUniverse(), context.Empires()); });
 
         py::def("species_preferred_focus",          SpeciesDefaultFocus);

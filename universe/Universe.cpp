@@ -239,7 +239,7 @@ void Universe::Clear() {
     m_universe_width = 1000.0;
 }
 
-void Universe::ResetAllIDAllocation(const std::vector<int>& empire_ids) {
+void Universe::ResetAllIDAllocation(const std::vector<EmpireID>& empire_ids) {
     // Find the highest already allocated id for saved games that did not partition ids by client
     int highest_allocated_id = INVALID_OBJECT_ID;
     for (const auto* obj: m_objects.allRaw())
@@ -352,24 +352,24 @@ Universe::IDSet Universe::EmpireVisibleObjectIDs(EmpireID empire_id, const Empir
     return retval;
 }
 
-int Universe::HighestDestroyedObjectID() const {
+UniverseObjectID Universe::HighestDestroyedObjectID() const {
     if (m_destroyed_object_ids.empty())
         return INVALID_OBJECT_ID;
     return *range_max_element(m_destroyed_object_ids);
 }
 
-const std::unordered_set<int>& Universe::EmpireKnownDestroyedObjectIDs(EmpireID empire_id) const {
+const std::unordered_set<UniverseObjectID>& Universe::EmpireKnownDestroyedObjectIDs(EmpireID empire_id) const {
     auto it = m_empire_known_destroyed_object_ids.find(empire_id);
     if (it != m_empire_known_destroyed_object_ids.end())
         return it->second;
     return m_destroyed_object_ids;
 }
 
-const std::unordered_set<int>& Universe::EmpireStaleKnowledgeObjectIDs(EmpireID empire_id) const {
+const std::unordered_set<UniverseObjectID>& Universe::EmpireStaleKnowledgeObjectIDs(EmpireID empire_id) const {
     auto it = m_empire_stale_knowledge_object_ids.find(empire_id);
     if (it != m_empire_stale_knowledge_object_ids.end())
         return it->second;
-    static const std::unordered_set<int> empty_set;
+    static const std::unordered_set<UniverseObjectID> empty_set;
     return empty_set;
 }
 
@@ -2108,7 +2108,7 @@ void Universe::ApplyObjectVisibilityOverrides() {
     }
 }
 
-void Universe::SetEffectDerivedVisibility(int empire_id, int object_id, int source_id,
+void Universe::SetEffectDerivedVisibility(EmpireID empire_id, int object_id, int source_id,
                                           const ValueRef::ValueRef<Visibility>* vis)
 {
     if (empire_id == ALL_EMPIRES)
@@ -2163,7 +2163,7 @@ void Universe::ApplyEffectDerivedVisibilities(const ScriptingContext& context) {
     // TODO: use SetEmpireObjectVisibility to ensure ship design visibility. needs some tweaks as that only upgrades vis...
 }
 
-void Universe::ForgetKnownObject(int empire_id, int object_id) {
+void Universe::ForgetKnownObject(EmpireID empire_id, int object_id) {
     // Note: Client calls this with empire_id == ALL_EMPIRES to
     // immediately forget information without waiting for the turn update.
     ObjectMap& objects = [empire_id, this]() -> ObjectMap& {
@@ -2221,7 +2221,7 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
     objects.erase(object_id);
 }
 
-void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibility vis) {
+void Universe::SetEmpireObjectVisibility(EmpireID empire_id, int object_id, Visibility vis) {
     if (object_id == INVALID_OBJECT_ID)
         return;
 
@@ -2236,7 +2236,7 @@ void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibilit
     }
 }
 
-void Universe::SetEmpireSpecialVisibility(int empire_id, int object_id,
+void Universe::SetEmpireSpecialVisibility(EmpireID empire_id, int object_id,
                                           const std::string& special_name,
                                           bool visible)
 {
@@ -2575,7 +2575,7 @@ namespace {
 
     /** removes ids of objects that the indicated empire knows have been destroyed */
     template <typename DS>
-    void FilterObjectIDsByKnownDestruction(std::vector<int>& object_ids, int empire_id,
+    void FilterObjectIDsByKnownDestruction(std::vector<int>& object_ids, EmpireID empire_id,
                                            const DS& empire_known_destroyed_object_ids)
     {
         if (empire_id == ALL_EMPIRES)
@@ -3237,7 +3237,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge(EmpireManager& empires) {
     }
 }
 
-void Universe::SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id) {
+void Universe::SetEmpireKnowledgeOfDestroyedObject(int object_id, EmpireID empire_id) {
     if (object_id == INVALID_OBJECT_ID) {
         ErrorLogger() << "SetEmpireKnowledgeOfDestroyedObject called with INVALID_OBJECT_ID";
         return;
@@ -3247,7 +3247,7 @@ void Universe::SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id)
     m_empire_known_destroyed_object_ids[empire_id].insert(object_id);
 }
 
-void Universe::SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id) {
+void Universe::SetEmpireKnowledgeOfShipDesign(int ship_design_id, EmpireID empire_id) {
     if (ship_design_id == INVALID_DESIGN_ID) {
         ErrorLogger() << "SetEmpireKnowledgeOfShipDesign called with INVALID_DESIGN_ID";
         return;

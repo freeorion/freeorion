@@ -295,7 +295,7 @@ public:
       * id \a empire_id or 0.0 if there is no such opinion yet recorded.
       * iff \a target is true, then the target meter is returned, otherwise the active meter is returned.
       * iff \a current is true, then the current meter value is returned, otherwise the initial meter is returned. */
-    [[nodiscard]] float SpeciesEmpireOpinion(const std::string& species_name, int empire_id,
+    [[nodiscard]] float SpeciesEmpireOpinion(const std::string& species_name, EmpireID empire_id,
                                              bool target, bool current) const;
 
     /** returns a map from species name to a map from other species names to the
@@ -326,7 +326,7 @@ public:
     void SetSpeciesSpeciesOpinion(const std::string& opinionated_species,
                                   const std::string& rated_species, float opinion, bool target);
     void SetSpeciesEmpireOpinion(const std::string& opinionated_species,
-                                 int empire_id, float opinion, bool target);
+                                 EmpireID empire_id, float opinion, bool target);
     void ResetSpeciesOpinions(bool active, bool target);
     void BackPropagateOpinions();
 

@@ -116,7 +116,7 @@ namespace {
       * with the MoveTo effect, as otherwise the system wouldn't get explored,
       * and objects being moved into unexplored systems might disappear for
       * players or confuse the AI. */
-    void ExploreSystem(int system_id, int empire_id, ScriptingContext& context) {
+    void ExploreSystem(int system_id, EmpireID empire_id, ScriptingContext& context) {
         if (empire_id == ALL_EMPIRES || system_id == INVALID_OBJECT_ID)
             return;
         if (auto empire = context.GetEmpire(empire_id))
@@ -987,7 +987,7 @@ bool SetEmpireMeter::operator==(const Effect& rhs) const {
 }
 
 namespace {
-    Meter* GetEmpireMeter(ScriptingContext& context, int empire_id, const std::string& meter) {
+    Meter* GetEmpireMeter(ScriptingContext& context, EmpireID empire_id, const std::string& meter) {
         const auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger(effects) << "SetEmpireMeter::Execute unable to find empire with id " << empire_id;
@@ -1222,7 +1222,7 @@ bool SetEmpireStockpile::operator==(const Effect& rhs) const {
 }
 
 void SetEmpireStockpile::Execute(ScriptingContext& context) const {
-    int empire_id = m_empire_id->Eval(context);
+    EmpireID empire_id = m_empire_id->Eval(context);
 
     auto empire = context.GetEmpire(empire_id);
     if (!empire) {
@@ -1303,7 +1303,7 @@ void SetEmpireCapital::Execute(ScriptingContext& context) const {
     if (!context.effect_target || context.effect_target->ObjectType() != UniverseObjectType::OBJ_PLANET)
         return;
 
-    int empire_id = m_empire_id->Eval(context);
+    EmpireID empire_id = m_empire_id->Eval(context);
     if (auto empire = context.GetEmpire(empire_id))
         empire->SetCapitalID(context.effect_target->ID(), context.ContextObjects());
     context.Empires().RefreshCapitalIDs();
@@ -1606,7 +1606,7 @@ void SetOwner::Execute(ScriptingContext& context) const {
     int initial_owner = context.effect_target->Owner();
 
     const ScriptingContext owner_context{context, ScriptingContext::CurrentValueVariant{initial_owner}};
-    int empire_id = m_empire_id->Eval(owner_context);
+    EmpireID empire_id = m_empire_id->Eval(owner_context);
     if (initial_owner == empire_id)
         return;
 
@@ -1691,7 +1691,7 @@ void SetSpeciesEmpireOpinion::Execute(ScriptingContext& context) const {
     if (!m_species_name || !m_opinion || !m_empire_id)
         return;
 
-    const int empire_id = m_empire_id->Eval(context);
+    const EmpireID empire_id = m_empire_id->Eval(context);
     if (empire_id == ALL_EMPIRES)
         return;
 
@@ -4015,7 +4015,7 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
     const int sitrep_turn = context.current_turn + 1;
 
     // send to recipient empires
-    for (int empire_id : recipient_empire_ids) {
+    for (EmpireID empire_id : recipient_empire_ids) {
         auto empire = context.GetEmpire(empire_id);
         if (!empire)
             continue;

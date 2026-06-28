@@ -237,7 +237,7 @@ private:
 
     const CombatSummaryMap& m_summaries;
 
-    GG::Pt GetSideBarSize(int empire_id) const {
+    GG::Pt GetSideBarSize(EmpireID empire_id) const {
         // The client (participant bar) height of this side bar.
         GG::Y calculated_height(GG::Y0);
 

@@ -60,7 +60,7 @@ namespace {
     DeclareThreadSafeLogger(combat);
 
     //If there's only one other empire, return their ID:
-    int EnemyId(int empire_id, const std::set<int> &empire_ids) {
+    int EnemyId(EmpireID empire_id, const std::set<int> &empire_ids) {
         if (empire_ids.size() == 2) {
             for (int enemy_id : empire_ids) {
                 if (enemy_id != empire_id)
@@ -391,7 +391,7 @@ void ServerApp::AsyncIOTimedoutHandler(const boost::system::error_code& error) {
     }
 }
 
-void ServerApp::UpdateEmpireTurnReceived(bool success, int empire_id, int turn) {
+void ServerApp::UpdateEmpireTurnReceived(bool success, EmpireID empire_id, int turn) {
     if (success) {
         if (auto empire = m_empires.GetEmpire(empire_id))
             empire->SetLastTurnReceived(turn);
@@ -1142,7 +1142,7 @@ namespace {
 
     /** Returns index into vector parameter that matches parameter empire id. */
     int VectorIndexForPlayerSaveGameDataForEmpireID(const std::vector<PlayerSaveGameData>& player_save_game_data,
-                                                    int empire_id)
+                                                    EmpireID empire_id)
     {
         if (empire_id == ALL_EMPIRES)
             return -1;
@@ -1425,7 +1425,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             std::move(save_data_it->second) : PlayerSaveGameData{};
 
         // get empire ID for player. safety check on it.
-        const int empire_id = PlayerEmpireID(player_id);
+        const EmpireID empire_id = PlayerEmpireID(player_id);
         if (empire_id != psgd.empire_id)
             ErrorLogger() << "LoadGameInit got inconsistent empire ids between player save game data and result of PlayerEmpireID";
 
@@ -1617,7 +1617,7 @@ std::map<int, PlayerInfo> ServerApp::GetPlayerInfoMap() const {
     std::map<int, PlayerInfo> player_info_map;
     for (const auto& player_connection : m_networking.EstablishedPlayerConnections()) {
         const int player_id = player_connection->PlayerID();
-        const int empire_id = PlayerEmpireID(player_id);
+        const EmpireID empire_id = PlayerEmpireID(player_id);
         if (empire_id == ALL_EMPIRES)
             ErrorLogger() << "ServerApp::GetPlayerInfoMap: couldn't find an empire for player with id " << player_id;
 
@@ -1644,7 +1644,7 @@ int ServerApp::PlayerEmpireID(int player_id) const {
     return (it != m_player_empire_ids.end()) ? it->second : ALL_EMPIRES;
 }
 
-int ServerApp::EmpirePlayerID(int empire_id) const {
+int ServerApp::EmpirePlayerID(EmpireID empire_id) const {
     auto it = range_find_if(m_player_empire_ids,
                             [empire_id](const auto& pid_eid) { return pid_eid.second == empire_id; });
     return (it != m_player_empire_ids.end()) ? it->first : Networking::INVALID_PLAYER_ID;
@@ -1779,7 +1779,7 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
     }
 
     const int player_id = player_connection->PlayerID();
-    const int empire_id = PlayerEmpireID(player_id);
+    const EmpireID empire_id = PlayerEmpireID(player_id);
     if (empire_id == ALL_EMPIRES) {
         player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_NONPLAYER_CANNOT_CONCEDE"), false));
         return false;
@@ -2051,7 +2051,7 @@ std::vector<std::string> ServerApp::GetPlayerDelegation(const std::string& playe
 bool ServerApp::IsHostless() const
 { return GetOptionsDB().Get<bool>("hostless"); }
 
-Networking::ClientType ServerApp::GetEmpireClientType(int empire_id) const
+Networking::ClientType ServerApp::GetEmpireClientType(EmpireID empire_id) const
 { return GetPlayerClientType(ServerApp::EmpirePlayerID(empire_id)); }
 
 Networking::ClientType ServerApp::GetPlayerClientType(int player_id) const {
@@ -2076,7 +2076,7 @@ void ServerApp::AddEmpireData(PlayerSaveGameData psgd) {
         m_player_data.push_back(std::move(psgd));
 }
 
-void ServerApp::RemoveEmpireData(int empire_id) {
+void ServerApp::RemoveEmpireData(EmpireID empire_id) {
     if (empire_id == ALL_EMPIRES)
         return;
     const auto is_empire_id = [empire_id](const auto& pd) noexcept { return pd.empire_id == empire_id; };
@@ -2085,7 +2085,7 @@ void ServerApp::RemoveEmpireData(int empire_id) {
         m_player_data.erase(it);
 }
 
-void ServerApp::ClearEmpireTurnOrders(int empire_id) {
+void ServerApp::ClearEmpireTurnOrders(EmpireID empire_id) {
     if (empire_id == ALL_EMPIRES) {
         for (auto& pd : m_player_data)
             pd.orders.Reset();
@@ -2097,7 +2097,7 @@ void ServerApp::ClearEmpireTurnOrders(int empire_id) {
     }
 }
 
-void ServerApp::UpdatePartialOrders(int empire_id, OrderSet added, const std::set<int>& deleted) {
+void ServerApp::UpdatePartialOrders(EmpireID empire_id, OrderSet added, const std::set<int>& deleted) {
     if (empire_id == ALL_EMPIRES)
         return;
     const auto is_empire_id = [empire_id](const auto& pd) noexcept { return pd.empire_id == empire_id; };
@@ -2113,7 +2113,7 @@ void ServerApp::UpdatePartialOrders(int empire_id, OrderSet added, const std::se
     orders.insert(added.begin(), added.end());
 }
 
-void ServerApp::RevokeEmpireTurnReadyness(int empire_id) {
+void ServerApp::RevokeEmpireTurnReadyness(EmpireID empire_id) {
     if (auto empire = m_empires.GetEmpire(empire_id))
         empire->SetReady(false);
 }
@@ -2150,7 +2150,7 @@ namespace {
     /** Returns true if \a empire has been eliminated by the applicable
       * definition of elimination.  As of this writing, elimination means
       * having no ships and no population on planets. */
-    bool EmpireEliminated(int empire_id, const ObjectMap& objects) {
+    bool EmpireEliminated(EmpireID empire_id, const ObjectMap& objects) {
         // are there any populated planets? if so, not eliminated
         // are there any ships? if so, not eliminated
         return !objects.check_if_any<Planet>([empire_id](const auto* p)
@@ -2341,7 +2341,7 @@ namespace {
 
     template <typename FleetOrPlanet>
     [[nodiscard]] std::vector<const FleetOrPlanet*> GetObjsVisibleToEmpireOrNeutralsAtSystem(
-        int empire_id, int system_id, const auto& override_vis_ids, const ScriptingContext& context)
+        EmpireID empire_id, int system_id, const auto& override_vis_ids, const ScriptingContext& context)
         requires(std::is_same_v<int, std::decay_t<decltype(override_vis_ids.front())>> &&
                  (std::is_same_v<FleetOrPlanet, Fleet> || std::is_same_v<FleetOrPlanet, Planet>))
     {
@@ -2665,7 +2665,7 @@ namespace {
                 if (!all_destroyed_object_ids.contains(fleet_id))
                     continue;   // fleet wasn't destroyed
                 // inform empires
-                for (int empire_id : fleet_empires.second) {
+                for (EmpireID empire_id : fleet_empires.second) {
                     //DebugLogger() << "Setting knowledge of destroyed object " << fleet_id
                     //                       << " for empire " << empire_id;
                     universe.SetEmpireKnowledgeOfDestroyedObject(fleet_id, empire_id);
@@ -2679,7 +2679,7 @@ namespace {
                 // ensure all participants get updates on system.  this ensures
                 // that an empire who lose all objects in the system still
                 // knows about a change in system ownership
-                for (int empire_id : combat_info.empire_ids)
+                for (EmpireID empire_id : combat_info.empire_ids)
                     universe.EmpireKnownObjects(empire_id).CopyObject(system, ALL_EMPIRES, universe);
             }
         }
@@ -2694,7 +2694,7 @@ namespace {
             int log_id = log_manager.AddNewLog(CombatLog{combat_info});
 
             // basic "combat occured" sitreps
-            for (int empire_id : combat_info.empire_ids) {
+            for (EmpireID empire_id : combat_info.empire_ids) {
                 if (auto empire{combat_info.GetEmpire(empire_id)})
                     empire->AddSitRepEntry(CreateCombatSitRep(
                         combat_info.system_id, log_id, EnemyId(empire_id, combat_info.empire_ids),
@@ -2884,7 +2884,7 @@ namespace {
             ErrorLogger() << "ColonizePlanet couldn't get an empire to colonize with";
             return false;
         }
-        const int empire_id = ship->Owner();
+        const EmpireID empire_id = ship->Owner();
 
         // all checks passed.  proceed with colonization.
 
@@ -3225,7 +3225,7 @@ namespace {
                 ground_combat_planet_ids.push_back(planet_id);
             }
 
-            for (int empire_id : all_involved_empires) {
+            for (EmpireID empire_id : all_involved_empires) {
                 if (auto empire = empires.GetEmpire(empire_id))
                     empire->AddSitRepEntry(CreateGroundCombatSitRep(
                         planet_id, EnemyId(empire_id, all_involved_empires), context.current_turn));
@@ -3242,7 +3242,7 @@ namespace {
                     planet->Conquer(victor_id, context);
 
                     // create planet conquered sitrep for all involved empires
-                    for (int empire_id : all_involved_empires) {
+                    for (EmpireID empire_id : all_involved_empires) {
                         if (auto empire = empires.GetEmpire(empire_id))
                             empire->AddSitRepEntry(CreatePlanetCapturedSitRep(planet_id, victor_id, context.current_turn));
                     }
@@ -3259,7 +3259,7 @@ namespace {
                     for (const auto& empire_troops : empires_troops)
                         DebugLogger() << " empire: " << empire_troops.first << ": " << empire_troops.second;
 
-                    for (int empire_id : all_involved_empires) {
+                    for (EmpireID empire_id : all_involved_empires) {
                         if (auto empire = empires.GetEmpire(empire_id))
                             empire->AddSitRepEntry(CreatePlanetRebelledSitRep(planet_id, previous_owner_id, context.current_turn));
                     }
@@ -4197,9 +4197,9 @@ void ServerApp::CacheCostsTimes(const ScriptingContext& context) {
         return m_empires | range_filter(empire_not_null) | range_transform(to_id_and_cache) | range_to<map_t>();
     }();
     m_cached_empire_annexation_costs = [&context]() {
-        std::map<int, std::vector<std::pair<int, double>>> retval;
+        std::map<EmpireID, std::vector<std::pair<UniverseObjectID, double>>> retval;
         // ensure every empire has an entry, even if empty
-        for (const int id : context.EmpireIDs())
+        for (const int auto : context.EmpireIDs())
             retval.emplace(std::piecewise_construct, std::forward_as_tuple(id), std::forward_as_tuple());
         // loop over planets, for each being annexed, store its annexation cost
         const auto being_annexed = [](const Planet& p) { return p.IsAboutToBeAnnexed(); };
@@ -4264,7 +4264,7 @@ void ServerApp::PreCombatProcessTurns() {
                                          m_cached_empire_production_costs_times.end(),
                                          [id{empire_id}](const auto& pct) { return pct.first == id; });
         if (pct_it == m_cached_empire_production_costs_times.end()) {
-            ErrorLogger() << "Couldn't find cached production costs/times in PreCombatProcessTurns for empire " << empire_id;
+            ErrorLogger() << "Couldn't find cached production costs/times in PreCombatProcessTurns for empire " << to_string(empire_id);
             continue;
         }
         empire->UpdateProductionQueue(m_context, pct_it->second);
@@ -4318,7 +4318,7 @@ void ServerApp::PreCombatProcessTurns() {
     // send partial turn updates to all players after orders and movement
     // exclude those without empire and who are not Observer or Moderator
     for (const auto& player : m_networking.EstablishedPlayerConnections()) {
-        const int empire_id = PlayerEmpireID(player->PlayerID());
+        const EmpireID empire_id = PlayerEmpireID(player->PlayerID());
         if (m_empires.GetEmpire(empire_id) || Networking::is_mod_or_obs(player)) {
             bool use_binary_serialization = player->IsBinarySerializationUsed();
             player->SendMessage(TurnPartialUpdateMessage(PlayerEmpireID(player->PlayerID()),
@@ -4675,7 +4675,7 @@ void ServerApp::PostCombatProcessTurns() {
     // send new-turn updates to all players
     // exclude those without empire and who are not Observer or Moderator
     for (const auto& player : m_networking.EstablishedPlayerConnections()) {
-        const int empire_id = PlayerEmpireID(player->PlayerID());
+        const EmpireID empire_id = PlayerEmpireID(player->PlayerID());
         const auto empire = m_empires.GetEmpire(empire_id);
         if (empire || Networking::is_mod_or_obs(player)) {
             const bool use_binary_serialization = player->IsBinarySerializationUsed();

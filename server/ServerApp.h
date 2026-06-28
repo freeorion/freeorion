@@ -65,7 +65,7 @@ public:
     [[nodiscard]] bool IsLocalHumanPlayer(int player_id);
 
     /** Returns the networking client type for the given empire_id. */
-    [[nodiscard]] Networking::ClientType GetEmpireClientType(int empire_id) const override;
+    [[nodiscard]] Networking::ClientType GetEmpireClientType(EmpireID empire_id) const override;
 
     /** Returns the networking client type for the given player_id. */
     [[nodiscard]] Networking::ClientType GetPlayerClientType(int player_id) const override;
@@ -77,7 +77,7 @@ public:
 
     /** Returns the player ID for the player controlling the empire with id \a
         empire_id */
-    [[nodiscard]] int EmpirePlayerID(int empire_id) const;
+    [[nodiscard]] int EmpirePlayerID(EmpireID empire_id) const;
 
     /** Checks if \a player_name are not used by other players. */
     [[nodiscard]] bool IsAvailableName(const std::string& player_name, bool ignore_ai = false) const;
@@ -111,7 +111,7 @@ public:
 
     /** Updated empire orders without changes in readiness status. Removes all \a deleted orders
       * and insert \a added orders. */
-    void UpdatePartialOrders(int empire_id, OrderSet added, const std::set<int>& deleted);
+    void UpdatePartialOrders(EmpireID empire_id, OrderSet added, const std::set<int>& deleted);
 
     /** Revokes turn order's ready state for the given empire. */
     void RevokeEmpireTurnReadyness(EmpireID empire_id);
@@ -369,7 +369,7 @@ private:
     void CacheCostsTimes(const ScriptingContext& context);
     std::map<int, std::vector<std::pair<std::string_view, double>>> m_cached_empire_policy_adoption_costs;
     std::map<int, std::vector<std::tuple<std::string_view, double, int>>> m_cached_empire_research_costs_times;
-    std::map<int, std::vector<std::tuple<std::string_view, int, float, int>>> m_cached_empire_production_costs_times;
+    std::map<int, std::vector<std::tuple<std::string_view, int, float, int>>> m_cached_empire_production_costs_times; // item name, design ID, cost PP, turns
     std::map<int, std::vector<std::pair<int, double>>> m_cached_empire_annexation_costs;
 
     std::map<int, std::vector<int>> m_empire_fleet_combat_initiation_vis_overrides;

@@ -894,7 +894,7 @@ void SpeciesManager::SetSpeciesSpeciesOpinion(const std::string& opinionated_spe
 }
 
 void SpeciesManager::SetSpeciesEmpireOpinion(const std::string& opinionated_species,
-                                             int empire_id, float opinion, bool target)
+                                             EmpireID empire_id, float opinion, bool target)
 {
     auto& [opinion_meter, target_meter] = m_species_empire_opinions[opinionated_species][empire_id];
     if (target)
@@ -939,7 +939,7 @@ void SpeciesManager::BackPropagateOpinions() {
     }
 }
 
-float SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, int empire_id,
+float SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, EmpireID empire_id,
                                            bool target, bool current) const
 {
     const auto sp_it = m_species_empire_opinions.find(species_name);

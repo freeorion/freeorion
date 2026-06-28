@@ -25,7 +25,7 @@ public:
     ShipDesignManager();
     virtual ~ShipDesignManager();
 
-    virtual void StartGame(int empire_id, bool is_new_game);
+    virtual void StartGame(EmpireID empire_id, bool is_new_game);
     virtual void Load(const SaveGameUIData& data);
     virtual void Save(SaveGameUIData& data) const;
 

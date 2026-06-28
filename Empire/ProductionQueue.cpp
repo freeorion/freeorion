@@ -264,7 +264,7 @@ namespace {
                     return time_cost_it->second;
                 } else {
                     ErrorLogger() << "item: " << q_elem.item.name
-                                  << "  somehow failed time cost lookup for location " << location_id;
+                                  << "  somehow failed time cost lookup for location " << to_string(location_id);
                     return decltype(time_cost_it->second){1e6, 1};
                 }
             }(queue_element);
@@ -594,8 +594,8 @@ float ProductionQueue::StockpileCapacity(const ObjectMap& objects) const {
     return retval;
 }
 
-std::vector<std::vector<int>> ProductionQueue::ObjectsWithWastedPP(const ResourcePool& industry_pool) const {
-    std::vector<std::vector<int>> retval;
+std::vector<std::vector<UniverseObjectID>> ProductionQueue::ObjectsWithWastedPP(const ResourcePool& industry_pool) const {
+    std::vector<std::vector<UniverseObjectID>> retval;
 
     if (industry_pool.Type() != ResourceType::RE_INDUSTRY) {
         ErrorLogger() << "ProductionQueue::ObjectsWithWastedPP passed invalid industry resource pool";
@@ -672,7 +672,7 @@ namespace {
 }
 
 void ProductionQueue::Update(const ScriptingContext& context,
-                             const std::vector<std::tuple<std::string_view, int, float, int>>& prod_costs)
+                             const std::vector<std::tuple<std::string_view, int, float, int>>&)
 {
     // TODO: implement determining production costs at call site and use here
 
@@ -898,10 +898,10 @@ void ProductionQueue::insert(iterator it, Element element) {
     m_queue.insert(it, std::move(element));
 }
 
-void ProductionQueue::erase(UniverseObjectID i) {
-    if (i < UniverseObjectID{0} || std::cmp_greater_equal(static_cast<int>(i), m_queue.size()))
+void ProductionQueue::erase(int i) {
+    if (i < 0 || std::cmp_greater_equal(i, m_queue.size()))
         throw std::out_of_range("Tried to erase ProductionQueue item out of bounds.");
-    m_queue.erase(std::next(begin()));
+    m_queue.erase(std::next(begin(), i));
 }
 
 ProductionQueue::iterator ProductionQueue::erase(iterator it) {
@@ -910,11 +910,14 @@ ProductionQueue::iterator ProductionQueue::erase(iterator it) {
     return m_queue.erase(it);
 }
 
-ProductionQueue::iterator ProductionQueue::find(UniverseObjectID i)
-{ return (UniverseObjectID{0} <= i && static_cast<std::size_t>(i) < size()) ? (next(begin())) : end(); }
+ProductionQueue::iterator ProductionQueue::find(int i) {
+    if (i < 0 || std::cmp_greater_equal(i, m_queue.size()))
+        return end();
+    return std::next(begin(), i);
+}
 
-ProductionQueue::Element& ProductionQueue::operator[](UniverseObjectID i) {
-    if (i < UniverseObjectID{0} || static_cast<std::size_t>(i) >= m_queue.size())
+ProductionQueue::Element& ProductionQueue::operator[](int i) {
+    if (i < 0 || std::cmp_greater_equal(i, m_queue.size()))
         throw std::out_of_range("Tried to access ProductionQueue element out of bounds");
     return m_queue[static_cast<std::size_t>(i)];
 }

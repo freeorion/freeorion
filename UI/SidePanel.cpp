@@ -751,7 +751,7 @@ public:
     void Select(bool selected);
 
     void Clear();
-    void Refresh(ScriptingContext& context, int empire_id); ///< updates panels, shows / hides colonize button, redoes layout of infopanels
+    void Refresh(ScriptingContext& context, EmpireID empire_id); ///< updates panels, shows / hides colonize button, redoes layout of infopanels
 
     /** Enables, or disables if \a enable is false, issuing orders via this PlanetPanel. */
     void EnableOrderIssuing(bool enable = true);
@@ -850,7 +850,7 @@ public:
 
     void Clear();
     void SetPlanets(const std::vector<int>& planet_ids, StarType star_type, 
-                    ScriptingContext& context, int empire_id);
+                    ScriptingContext& context, EmpireID empire_id);
     void SelectPlanet(int planet_id); //!< programatically selects a planet with id \a planet_id
     void SetValidSelectionPredicate(std::function<bool(const UniverseObject*)> pred);
     void ClearValidSelectionPedicate();
@@ -860,7 +860,7 @@ public:
      *  @param[in] excluded_planet_id Excludes panels with this planet id
      *  @param[in] require_prerender Set panels to RequirePreRender */
     void RefreshAllPlanetPanels(ScriptingContext& context,
-                                int empire_id,
+                                EmpireID empire_id,
                                 int excluded_planet_id = INVALID_OBJECT_ID,
                                 bool require_prerender = false);
 
@@ -1388,7 +1388,7 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic(PlanetType type, PlanetSize si
 }
 
 namespace {
-    bool IsAvailable(const Ship* ship, int system_id, int empire_id, const ScriptingContext& context) {
+    bool IsAvailable(const Ship* ship, int system_id, EmpireID empire_id, const ScriptingContext& context) {
         if (!ship)
             return false;
         const Universe& universe = context.ContextUniverse();
@@ -1402,7 +1402,7 @@ namespace {
             fleet->FinalDestinationID() == INVALID_OBJECT_ID;
     }
 
-    bool AvailableToColonize(const Ship* ship, int system_id, int empire_id,
+    bool AvailableToColonize(const Ship* ship, int system_id, EmpireID empire_id,
                              const ScriptingContext& context)
     {
         if (!ship)
@@ -1416,7 +1416,7 @@ namespace {
             ship->OrderedColonizePlanet() == INVALID_OBJECT_ID;
     };
 
-    bool AvailableToInvade(const Ship* ship, int system_id, int empire_id,
+    bool AvailableToInvade(const Ship* ship, int system_id, EmpireID empire_id,
                            const ScriptingContext& context)
     {
         if (!ship)
@@ -1429,7 +1429,7 @@ namespace {
             ship->OrderedInvadePlanet() == INVALID_OBJECT_ID;
     };
 
-    bool AvailableToBombard(const Ship* ship, int system_id, int empire_id,
+    bool AvailableToBombard(const Ship* ship, int system_id, EmpireID empire_id,
                             const ScriptingContext& context)
     {
         if (!ship)
@@ -1570,7 +1570,7 @@ namespace {
     }
 
     int AutomaticallyChosenColonyShip(int target_planet_id, ScriptingContext& context) {
-        const int empire_id = GetApp().EmpireID();
+        const EmpireID empire_id = GetApp().EmpireID();
         if (empire_id == ALL_EMPIRES)
             return INVALID_OBJECT_ID;
         const Universe& u = context.ContextUniverse();
@@ -1689,7 +1689,7 @@ namespace {
     auto AutomaticallyChosenInvasionShips(int target_planet_id, const ScriptingContext& context) {
         std::vector<const Ship*> retval;
 
-        const int empire_id = GetApp().EmpireID();
+        const EmpireID empire_id = GetApp().EmpireID();
         if (empire_id == ALL_EMPIRES)
             return retval;
 
@@ -1734,7 +1734,7 @@ namespace {
     auto AutomaticallyChosenBombardShips(int target_planet_id, const ScriptingContext& context) {
         std::vector<const Ship*> retval;
 
-        const int empire_id = GetApp().EmpireID();
+        const EmpireID empire_id = GetApp().EmpireID();
         if (empire_id == ALL_EMPIRES)
             return retval;
 
@@ -1776,7 +1776,7 @@ namespace {
     auto BombardingShips(int target_planet_id, const ScriptingContext& context) {
         std::vector<const Ship*> retval;
 
-        const int empire_id = GetApp().EmpireID(); // TODO pass in app / empire_id
+        const EmpireID empire_id = GetApp().EmpireID(); // TODO pass in app / empire_id
         if (empire_id == ALL_EMPIRES)
             return retval;
 
@@ -1853,7 +1853,7 @@ namespace {
 #endif
 }
 
-void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in, int empire_id) {
+void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in, EmpireID empire_id) {
     Clear();
 
     Universe& u = context_in.ContextUniverse();       // must be mutable for object signal inhibition
@@ -2495,7 +2495,7 @@ void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     auto planet = objects.getRaw<const Planet>(m_planet_id);
     if (!planet)
         return;
-    const int empire_id = app.EmpireID();
+    const EmpireID empire_id = app.EmpireID();
 
 
     auto system = objects.getRaw<const System>(planet->SystemID());
@@ -2780,7 +2780,7 @@ void SidePanel::PlanetPanel::ClickAnnex() {
     if (!planet || !m_order_issuing_enabled)
         return;
 
-    const int empire_id = app.EmpireID();
+    const EmpireID empire_id = app.EmpireID();
     if (empire_id == ALL_EMPIRES)
         return;
 
@@ -2822,7 +2822,7 @@ void SidePanel::PlanetPanel::ClickColonize() {
     if (!planet || planet->GetMeter(MeterType::METER_POPULATION)->Initial() != 0.0 || !m_order_issuing_enabled)
         return;
 
-    const int empire_id = app.EmpireID();
+    const EmpireID empire_id = app.EmpireID();
     if (empire_id == ALL_EMPIRES)
         return;
 
@@ -2867,7 +2867,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
         (planet->GetMeter(MeterType::METER_POPULATION)->Initial() <= 0.0 && planet->Unowned()))
     { return; }
 
-    int empire_id = app.EmpireID();
+    EmpireID empire_id = app.EmpireID();
     if (empire_id == ALL_EMPIRES)
         return;
 
@@ -2908,7 +2908,7 @@ void SidePanel::PlanetPanel::ClickBombard() {
         (planet->GetMeter(MeterType::METER_POPULATION)->Initial() <= 0.0 && planet->Unowned()))
     { return; }
 
-    int empire_id = app.EmpireID();
+    EmpireID empire_id = app.EmpireID();
     if (empire_id == ALL_EMPIRES)
         return;
 
@@ -3086,7 +3086,7 @@ void SidePanel::PlanetPanelContainer::Clear() {
 
 void SidePanel::PlanetPanelContainer::SetPlanets(
     const std::vector<int>& planet_ids, StarType star_type,
-    ScriptingContext& context, int empire_id)
+    ScriptingContext& context, EmpireID empire_id)
 {
     int initial_selected_planet_panel = m_selected_planet_id;
 
@@ -3314,7 +3314,7 @@ void SidePanel::PlanetPanelContainer::VScroll(int pos_top, int pos_bottom, int r
 }
 
 void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels(
-    ScriptingContext& context, int empire_id, int excluded_planet_id, bool require_prerender)
+    ScriptingContext& context, EmpireID empire_id, int excluded_planet_id, bool require_prerender)
 {
     for (auto& panel : m_planet_panels) {
         if (!panel)
@@ -3673,7 +3673,7 @@ void SidePanel::Update() {
             panel->RequirePreRender();
 }
 
-void SidePanel::UpdateImpl(ScriptingContext& context, int empire_id) {
+void SidePanel::UpdateImpl(ScriptingContext& context, EmpireID empire_id) {
     //std::cout << "SidePanel::UpdateImpl" << std::endl;
     if (m_system_resource_summary)
         m_system_resource_summary->Update(std::as_const(context).ContextObjects());

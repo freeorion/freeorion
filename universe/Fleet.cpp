@@ -23,7 +23,7 @@ namespace {
     constexpr double MAX_SHIP_SPEED = 500.0;        // max allowed speed of ship movement
 }
 
-std::shared_ptr<UniverseObject> Fleet::Clone(const Universe& universe, int empire_id) const {
+std::shared_ptr<UniverseObject> Fleet::Clone(const Universe& universe, EmpireID empire_id) const {
     const Visibility vis = empire_id == ALL_EMPIRES ?
         Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
@@ -35,7 +35,7 @@ std::shared_ptr<UniverseObject> Fleet::Clone(const Universe& universe, int empir
     return retval;
 }
 
-void Fleet::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
+void Fleet::Copy(const UniverseObject& copied_object, const Universe& universe, EmpireID empire_id) {
     if (std::addressof(copied_object) == this)
         return;
     if (copied_object.ObjectType() != UniverseObjectType::OBJ_FLEET) {
@@ -46,7 +46,7 @@ void Fleet::Copy(const UniverseObject& copied_object, const Universe& universe, 
     Copy(static_cast<const Fleet&>(copied_object), universe, empire_id);
 }
 
-void Fleet::Copy(const Fleet& copied_fleet, const Universe& universe, int empire_id) {
+void Fleet::Copy(const Fleet& copied_fleet, const Universe& universe, EmpireID empire_id) {
     if (&copied_fleet == this)
         return;
 
@@ -83,7 +83,7 @@ void Fleet::Copy(const Fleet& copied_fleet, const Universe& universe, int empire
     }
 }
 
-bool Fleet::HostileToEmpire(int empire_id, const EmpireManager& empires) const {
+bool Fleet::HostileToEmpire(EmpireID empire_id, const EmpireManager& empires) const {
     if (OwnedBy(empire_id))
         return false;
     return empire_id == ALL_EMPIRES || Unowned() ||
@@ -123,7 +123,7 @@ bool Fleet::Contains(int object_id) const
 bool Fleet::ContainedBy(int object_id) const noexcept
 { return object_id != INVALID_OBJECT_ID && this->SystemID() == object_id; }
 
-const std::string& Fleet::PublicName(int empire_id, const Universe& universe) const {
+const std::string& Fleet::PublicName(EmpireID empire_id, const Universe& universe) const {
     // Disclose real fleet name only to fleet owners.
     if (empire_id == ALL_EMPIRES || OwnedBy(empire_id)) // TODO: GameRule for all objets visible
         return Name();
@@ -1402,7 +1402,7 @@ std::string Fleet::GenerateFleetName(const ScriptingContext& context) const {
     return boost::io::str(FlexibleFormat(UserString(fleet_name_key)) % ID());
 }
 
-void Fleet::SetGiveToEmpire(int empire_id) {
+void Fleet::SetGiveToEmpire(EmpireID empire_id) {
     if (empire_id == m_ordered_given_to_empire_id) return;
     m_ordered_given_to_empire_id = empire_id;
     StateChangedSignal();

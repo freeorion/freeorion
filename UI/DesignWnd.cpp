@@ -369,7 +369,7 @@ namespace {
     }
 
     /** Add \p design to the \p is_front of \p empire_id's list of current designs. */
-    void AddSavedDesignToDisplayedDesigns(boost::uuids::uuid uuid, int empire_id, bool is_front = true) {
+    void AddSavedDesignToDisplayedDesigns(boost::uuids::uuid uuid, EmpireID empire_id, bool is_front = true) {
         auto& app = GetApp();
         ScriptingContext& context = app.GetContext();
 
@@ -1061,7 +1061,7 @@ namespace {
 
     [[nodiscard]] boost::optional<AvailabilityManager::DisplayedAvailabilies>
     AvailabilityManager::DisplayedHullAvailability(const std::string& id) const {
-        int empire_id = GetApp().EmpireID();
+        EmpireID empire_id = GetApp().EmpireID();
         const Empire* empire = GetEmpire(empire_id);  // may be nullptr
         bool available = empire ? empire->ShipHullAvailable(id) : true;
 
@@ -1073,7 +1073,7 @@ namespace {
 
     [[nodiscard]] boost::optional<AvailabilityManager::DisplayedAvailabilies>
     AvailabilityManager::DisplayedPartAvailability(const std::string& id) const {
-        int empire_id = GetApp().EmpireID();
+        EmpireID empire_id = GetApp().EmpireID();
         const Empire* empire = GetEmpire(empire_id);  // may be nullptr
         bool available = empire ? empire->ShipPartAvailable(id) : true;
 
@@ -1113,7 +1113,7 @@ ShipDesignManager::ShipDesignManager() :
 
 ShipDesignManager::~ShipDesignManager() = default;
 
-void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
+void ShipDesignManager::StartGame(EmpireID empire_id, bool is_new_game) {
     auto& app = GetApp();
     ScriptingContext& context = app.GetContext();
     const auto empire = std::as_const(context).GetEmpire(empire_id);
@@ -1369,7 +1369,7 @@ public:
 
 private:
     PartGroupsType GroupAvailableDisplayableParts(const Empire* empire) const;
-    void CullSuperfluousParts(std::vector<const ShipPart*>& this_group, int empire_id, int loc_id) const;
+    void CullSuperfluousParts(std::vector<const ShipPart*>& this_group, EmpireID empire_id, int loc_id) const;
 
     std::set<ShipPartClass>     m_part_classes_shown;   // which part classes should be shown
     bool                        m_show_superfluous_parts = true;
@@ -1540,7 +1540,7 @@ namespace {
     }
 }
 
-void PartsListBox::CullSuperfluousParts(std::vector<const ShipPart*>& this_group, int empire_id, int loc_id) const {
+void PartsListBox::CullSuperfluousParts(std::vector<const ShipPart*>& this_group, EmpireID empire_id, int loc_id) const {
     // This is not merely a check for obsolescence;
     // see PartsListBox::Populate for more info
     const float min_bargain_ratio = GetOptionsDB().Get<double>("ui.design.functional.bargain.ratio");
@@ -1591,7 +1591,7 @@ void PartsListBox::Populate() {
 
     const auto& app = GetApp();
     const auto& context = app.GetContext();
-    const int empire_id = app.EmpireID();
+    const EmpireID empire_id = app.EmpireID();
     const auto empire = context.GetEmpire(empire_id);  // may be nullptr
 
     int cur_col = NUM_COLUMNS;
@@ -2134,7 +2134,7 @@ public:
                              const GG::Wnd* destination) override;
     virtual void QueueItemMoved(const GG::ListBox::iterator row_it,
                                 const GG::ListBox::iterator original_position_it) {}
-    void SetEmpireShown(int empire_id, bool refresh_list = true);
+    void SetEmpireShown(EmpireID empire_id, bool refresh_list = true);
     virtual void Populate();
 
     mutable boost::signals2::signal<void (int)>                 DesignSelectedSignal;
@@ -2413,7 +2413,7 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
     DetachChild(wnds.front());
 }
 
-void BasesListBox::SetEmpireShown(int empire_id, bool refresh_list) {
+void BasesListBox::SetEmpireShown(EmpireID empire_id, bool refresh_list) {
     m_empire_id_shown = empire_id;
 
     // disconnect old signal
@@ -3249,7 +3249,7 @@ public:
 
     void Reset();
     void ToggleAvailability(const Availability::Enum type);
-    void SetEmpireShown(int empire_id, bool refresh_list);
+    void SetEmpireShown(EmpireID empire_id, bool refresh_list);
     void EnableOrderIssuing(bool enable);
 
     mutable boost::signals2::signal<void (int)>                         DesignSelectedSignal;
@@ -3363,7 +3363,7 @@ void DesignWnd::BaseSelector::SizeMove(GG::Pt ul, GG::Pt lr) {
 void DesignWnd::BaseSelector::Reset() {
     ScopedTimer scoped_timer("BaseSelector::Reset");
 
-    const int empire_id = GetApp().EmpireID();
+    const EmpireID empire_id = GetApp().EmpireID();
     SetEmpireShown(empire_id, false);
 
     if (auto base_box = dynamic_cast<BasesListBox*>(m_tabs->CurrentWnd()))
@@ -3384,7 +3384,7 @@ void DesignWnd::BaseSelector::Reset() {
     }
 }
 
-void DesignWnd::BaseSelector::SetEmpireShown(int empire_id, bool refresh_list) {
+void DesignWnd::BaseSelector::SetEmpireShown(EmpireID empire_id, bool refresh_list) {
     m_hulls_list->SetEmpireShown(empire_id, refresh_list);
     m_designs_list->SetEmpireShown(empire_id, refresh_list);
     m_saved_designs_list->SetEmpireShown(empire_id, refresh_list);
@@ -4065,7 +4065,7 @@ boost::optional<int> DesignWnd::MainPanel::GetReplacedDesignID() const
 boost::optional<const ShipDesign*> DesignWnd::MainPanel::CurrentDesignIsRegistered() const {
     auto& app = GetApp();
     const auto& universe = app.GetContext().ContextUniverse();
-    const int empire_id = app.EmpireID();
+    const EmpireID empire_id = app.EmpireID();
     const auto empire = GetEmpire(empire_id);
     if (!empire) {
         ErrorLogger() << "DesignWnd::MainPanel::CurrentDesignIsRegistered couldn't get the current empire.";
@@ -4771,7 +4771,7 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
         auto new_design_id = INVALID_DESIGN_ID;
 
         auto& app = GetApp();
-        int empire_id = app.EmpireID();
+        EmpireID empire_id = app.EmpireID();
 
         // create design from stuff chosen in UI
         ShipDesign design(std::invalid_argument(""),

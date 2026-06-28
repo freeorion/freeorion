@@ -51,7 +51,7 @@ Universe& ParserAppFixture::GetUniverse() noexcept
 const GalaxySetupData& ParserAppFixture::GetGalaxySetupData() const noexcept
 { return m_galaxy_setup_data; }
 
-Networking::ClientType ParserAppFixture::GetEmpireClientType(int empire_id) const
+Networking::ClientType ParserAppFixture::GetEmpireClientType(EmpireID empire_id) const
 { return Networking::ClientType::INVALID_CLIENT_TYPE; }
 
 Networking::ClientType ParserAppFixture::GetPlayerClientType(int player_id) const
@@ -63,7 +63,7 @@ std::string ParserAppFixture::GetVisibleObjectName(const UniverseObject& object)
 EmpireManager& ParserAppFixture::Empires() noexcept
 { return m_empires; }
 
-Empire* ParserAppFixture::GetEmpire(int empire_id)
+Empire* ParserAppFixture::GetEmpire(EmpireID empire_id)
 { return m_empires.GetEmpire(empire_id).get(); }
 
 SpeciesManager& ParserAppFixture::GetSpeciesManager() noexcept

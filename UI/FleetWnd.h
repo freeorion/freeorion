@@ -143,7 +143,7 @@ private:
 
     int         FleetInRow(GG::ListBox::iterator it) const;
     std::string TitleText() const;
-    void        CreateNewFleetFromDrops(const std::vector<int>& ship_ids, ScriptingContext& context, int empire_id);
+    void        CreateNewFleetFromDrops(const std::vector<int>& ship_ids, ScriptingContext& context, EmpireID empire_id);
 
     void ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
     void UniverseObjectDeleted(const std::shared_ptr<const UniverseObject>& obj);

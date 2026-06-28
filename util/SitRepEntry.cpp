@@ -192,7 +192,7 @@ SitRepEntry CreateGroundCombatSitRep(int planet_id, int enemy_id, int current_tu
     return sitrep;
 }
 
-SitRepEntry CreatePlanetCapturedSitRep(int planet_id, int empire_id, int current_turn) {
+SitRepEntry CreatePlanetCapturedSitRep(int planet_id, EmpireID empire_id, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_CAPTURED"),
         current_turn + 1,
@@ -203,7 +203,7 @@ SitRepEntry CreatePlanetCapturedSitRep(int planet_id, int empire_id, int current
     return sitrep;
 }
 
-SitRepEntry CreatePlanetRebelledSitRep(int planet_id, int empire_id, int current_turn) {
+SitRepEntry CreatePlanetRebelledSitRep(int planet_id, EmpireID empire_id, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_CAPTURED_NEUTRALS"),
         current_turn + 1,
@@ -237,7 +237,7 @@ namespace {
 }
 
 SitRepEntry CreateCombatDamagedObjectSitRep(const UniverseObject* obj, int combat_system_id,
-                                            int empire_id, int current_turn)
+                                            EmpireID empire_id, int current_turn)
 {
     if (!obj)
         return GenericCombatDamagedObjectSitrep(combat_system_id, current_turn);
@@ -287,7 +287,7 @@ SitRepEntry CreateCombatDamagedObjectSitRep(const UniverseObject* obj, int comba
 }
 
 SitRepEntry CreateCombatDestroyedObjectSitRep(const UniverseObject* obj, int combat_system_id,
-                                              int empire_id, int current_turn)
+                                              EmpireID empire_id, int current_turn)
 {
     if (!obj) {
         DebugLogger() << "CreateCombatDestroyedObjectSitRep: passed null object";
@@ -482,7 +482,7 @@ SitRepEntry CreatePlanetEstablishFailedArmedSitRep(int planet_id, int ship_id, i
     }
 }
 
-SitRepEntry CreatePlanetGiftedSitRep(int planet_id, int empire_id, int current_turn) {
+SitRepEntry CreatePlanetGiftedSitRep(int planet_id, EmpireID empire_id, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_GIFTED"),
         current_turn + 1,
@@ -493,7 +493,7 @@ SitRepEntry CreatePlanetGiftedSitRep(int planet_id, int empire_id, int current_t
     return sitrep;
 }
 
-SitRepEntry CreateFleetGiftedSitRep(int fleet_id, int empire_id, int current_turn) {
+SitRepEntry CreateFleetGiftedSitRep(int fleet_id, EmpireID empire_id, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_FLEET_GIFTED"),
         current_turn + 1,
@@ -667,7 +667,7 @@ SitRepEntry CreateFleetBlockadedSitRep(int system_id, int blockaded_fleet_id,
     return sitrep;
 }
 
-SitRepEntry CreateEmpireEliminatedSitRep(int empire_id, int current_turn) {
+SitRepEntry CreateEmpireEliminatedSitRep(EmpireID empire_id, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_EMPIRE_ELIMINATED"),
         current_turn + 1,
@@ -677,7 +677,7 @@ SitRepEntry CreateEmpireEliminatedSitRep(int empire_id, int current_turn) {
     return sitrep;
 }
 
-SitRepEntry CreateVictorySitRep(std::string reason_string, int empire_id, int current_turn) {
+SitRepEntry CreateVictorySitRep(std::string reason_string, EmpireID empire_id, int current_turn) {
     SitRepEntry sitrep(std::move(reason_string), current_turn + 1,
                        "icons/sitrep/victory.png", UserStringNop("SITREP_VICTORY_LABEL"), true);
     sitrep.AddVariable(VarText::EMPIRE_ID_TAG, std::to_string(empire_id));

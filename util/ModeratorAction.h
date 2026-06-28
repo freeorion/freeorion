@@ -40,7 +40,7 @@ private:
 class FO_COMMON_API DestroyUniverseObject final : public ModeratorAction {
 public:
     DestroyUniverseObject() = default;
-    explicit DestroyUniverseObject(int object_id) :
+    explicit DestroyUniverseObject(UniverseObjectID object_id) :
         m_object_id(object_id)
     {}
 
@@ -48,7 +48,7 @@ public:
     [[nodiscard]] std::string Dump() const override;
 
 private:
-    int m_object_id = INVALID_OBJECT_ID;
+    UniverseObjectID m_object_id = INVALID_OBJECT_ID;
 
     friend class boost::serialization::access;
     template <typename Archive>
@@ -58,7 +58,7 @@ private:
 class FO_COMMON_API SetOwner final : public ModeratorAction {
 public:
     SetOwner() = default;
-    SetOwner(int object_id, int new_owner_empire_id) :
+    SetOwner(UniverseObjectID object_id, EmpireID new_owner_empire_id) :
         m_object_id(object_id),
         m_new_owner_empire_id(new_owner_empire_id)
     {}
@@ -67,8 +67,8 @@ public:
     [[nodiscard]] std::string Dump() const override;
 
 private:
-    int m_object_id = INVALID_OBJECT_ID;
-    int m_new_owner_empire_id = ALL_EMPIRES;
+    UniverseObjectID m_object_id = INVALID_OBJECT_ID;
+    EmpireID m_new_owner_empire_id = ALL_EMPIRES;
 
     friend class boost::serialization::access;
     template <typename Archive>
@@ -78,7 +78,7 @@ private:
 class FO_COMMON_API AddStarlane final : public ModeratorAction {
 public:
     AddStarlane() = default;
-    AddStarlane(int system_1_id, int system_2_id) :
+    AddStarlane(UniverseObjectID system_1_id, UniverseObjectID system_2_id) :
         m_id_1(system_1_id),
         m_id_2(system_2_id)
     {}
@@ -87,8 +87,8 @@ public:
     [[nodiscard]] std::string Dump() const override;
 
 private:
-    int m_id_1 = INVALID_OBJECT_ID;
-    int m_id_2 = INVALID_OBJECT_ID;
+    UniverseObjectID m_id_1 = INVALID_OBJECT_ID;
+    UniverseObjectID m_id_2 = INVALID_OBJECT_ID;
 
     friend class boost::serialization::access;
     template <typename Archive>
@@ -98,7 +98,7 @@ private:
 class FO_COMMON_API RemoveStarlane final : public ModeratorAction {
 public:
     RemoveStarlane() = default;
-    RemoveStarlane(int system_1_id, int system_2_id) :
+    RemoveStarlane(UniverseObjectID system_1_id, UniverseObjectID system_2_id) :
         m_id_1(system_1_id),
         m_id_2(system_2_id)
     {}
@@ -107,8 +107,8 @@ public:
     [[nodiscard]] std::string Dump() const override;
 
 private:
-    int m_id_1 = INVALID_OBJECT_ID;
-    int m_id_2 = INVALID_OBJECT_ID;
+    UniverseObjectID m_id_1 = INVALID_OBJECT_ID;
+    UniverseObjectID m_id_2 = INVALID_OBJECT_ID;
 
     friend class boost::serialization::access;
     template <typename Archive>
@@ -140,7 +140,7 @@ private:
 class FO_COMMON_API CreatePlanet final : public ModeratorAction {
 public:
     CreatePlanet() = default;
-    CreatePlanet(int system_id, PlanetType planet_type, PlanetSize planet_size) :
+    CreatePlanet(UniverseObjectID system_id, PlanetType planet_type, PlanetSize planet_size) :
         m_system_id(system_id),
         m_planet_type(planet_type),
         m_planet_size(planet_size)
@@ -150,9 +150,9 @@ public:
     [[nodiscard]] std::string Dump() const override;
 
 private:
-    int         m_system_id = INVALID_OBJECT_ID;
-    PlanetType  m_planet_type = PlanetType::PT_SWAMP;
-    PlanetSize  m_planet_size = PlanetSize::SZ_MEDIUM;
+    UniverseObjectID m_system_id = INVALID_OBJECT_ID;
+    PlanetType       m_planet_type = PlanetType::PT_SWAMP;
+    PlanetSize       m_planet_size = PlanetSize::SZ_MEDIUM;
 
     friend class boost::serialization::access;
     template <typename Archive>

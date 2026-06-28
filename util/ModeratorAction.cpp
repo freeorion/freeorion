@@ -75,10 +75,8 @@ void Moderator::AddStarlane::Execute() const {
 }
 
 std::string Moderator::AddStarlane::Dump() const {
-    std::string retval = "Moderator::AddStarlane system_id_1 = "
-                       + std::to_string(m_id_1)
-                       + " system_id_2 = "
-                       + std::to_string(m_id_2);
+    std::string retval = "Moderator::AddStarlane system_id_1 = " + to_string(m_id_1)
+                       + " system_id_2 = " + to_string(m_id_2);
     return retval;
 }
 
@@ -93,12 +91,12 @@ void Moderator::RemoveStarlane::Execute() const {
 
     auto sys1 = objects.getRaw<System>(m_id_1);
     if (!sys1) {
-        ErrorLogger() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << m_id_1;
+        ErrorLogger() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << to_string(m_id_1);
         return;
     }
     auto sys2 = objects.getRaw<System>(m_id_2);
     if (!sys2) {
-        ErrorLogger() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << m_id_2;
+        ErrorLogger() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << to_string(m_id_2);
         return;
     }
     sys1->RemoveStarlane(m_id_2);
@@ -107,10 +105,8 @@ void Moderator::RemoveStarlane::Execute() const {
 }
 
 std::string Moderator::RemoveStarlane::Dump() const {
-    std::string retval = "Moderator::RemoveStarlane system_id_1 = "
-                       + std::to_string(m_id_1)
-                       + " system_id_2 = "
-                       + std::to_string(m_id_2);
+    std::string retval = "Moderator::RemoveStarlane system_id_1 = " + to_string(m_id_1)
+                       + " system_id_2 = " + to_string(m_id_2);
     return retval;
 }
 
@@ -194,7 +190,7 @@ void Moderator::CreatePlanet::Execute() const {
 
 std::string Moderator::CreatePlanet::Dump() const {
     std::string retval = "Moderator::CreatePlanet system_id = "
-                       + std::to_string(m_system_id)
+                       + to_string(m_system_id)
                        + " planet_type = ";
     retval.append(to_string(m_planet_type)).append(" planet_size = ").append(to_string(m_planet_size));
     return retval;

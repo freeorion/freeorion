@@ -27,7 +27,7 @@ public:
 
     void Render() override;
 
-    void SetEmpireShown(int empire_id, const ScriptingContext& context);
+    void SetEmpireShown(EmpireID empire_id, const ScriptingContext& context);
 
     void Refresh(const ScriptingContext& context);
     void Reset(const ScriptingContext& context);
@@ -40,7 +40,7 @@ public:
     void ShowPolicyInEncyclopedia(std::string policy_name);         //! Shows @a policy_name in production encyclopedia window
     void ShowShipPartInEncyclopedia(std::string part_name);         //! Shows @a part_name in production encyclopedia window
     void ShowSpeciesInEncyclopedia(std::string species_name);       //! Shows \a species in production encyclopedia window
-    void ShowEmpireInEncyclopedia(int empire_id);                   //! Shows \a empire in production encyclopedia window
+    void ShowEmpireInEncyclopedia(EmpireID empire_id);                   //! Shows \a empire in production encyclopedia window
     void ShowSpecialInEncyclopedia(std::string special_name);       //! Shows \a special in production encyclopedia window
     void ShowFieldTypeInEncyclopedia(std::string field_type_name);  //! Shows \a field_type in production encyclopedia window
 

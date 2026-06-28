@@ -1344,7 +1344,7 @@ namespace {
         return retval;
     }
 
-    [[nodiscard]] int DefaultLocationForEmpire(int empire_id, const ScriptingContext& context) {
+    [[nodiscard]] int DefaultLocationForEmpire(EmpireID empire_id, const ScriptingContext& context) {
         if (empire_id == ALL_EMPIRES)
             return INVALID_OBJECT_ID;
 
@@ -2024,7 +2024,7 @@ namespace {
                                             std::string&/* specific_type*/, std::string& detailed_description,
                                             GG::Clr&/* color*/, bool only_description = false)
     {
-        const int empire_id = ToInt(item_name, ALL_EMPIRES);
+        const EmpireID empire_id = ToInt(item_name, ALL_EMPIRES);
         const auto& app = GetApp();
         const auto& context = app.GetContext();
         const auto empire = context.GetEmpire(empire_id);
@@ -4561,7 +4561,7 @@ void EncyclopediaDetailPanel::SetObject(std::string object_id) {
     AddItem(UNIVERSE_OBJECT, std::move(object_id));
 }
 
-void EncyclopediaDetailPanel::SetEmpire(int empire_id) {
+void EncyclopediaDetailPanel::SetEmpire(EmpireID empire_id) {
     int current_item_id = ToInt(m_items_it->second, ALL_EMPIRES);
     if (empire_id == current_item_id)
         return;

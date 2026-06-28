@@ -36,7 +36,7 @@ namespace {
     public:
         QueueTechPanel(GG::X x, GG::Y y, GG::X w, std::string_view tech_name,
                        double allocated_rp, int turns_left, double turns_completed,
-                       int empire_id, bool paused);
+                       EmpireID empire_id, bool paused);
 
         void CompleteConstruction() override;
         void Render() override;
@@ -130,7 +130,7 @@ namespace {
 
     QueueTechPanel::QueueTechPanel(GG::X x, GG::Y y, GG::X w, std::string_view tech_name,
                                    double turn_spending, int turns_left,
-                                   double turns_completed, int empire_id, bool paused) :
+                                   double turns_completed, EmpireID empire_id, bool paused) :
         GG::Control(x, y, w, DefaultHeight(), GG::NO_WND_FLAGS),
         m_tech_name(tech_name),
         m_empire_id(empire_id),
@@ -548,7 +548,7 @@ void ResearchWnd::QueueItemMoved(GG::ListBox::iterator row_it,
     const auto direction = original_position < new_position;
     const int corrected_new_position = new_position + (direction ? 1 : 0);
 
-    const int empire_id = app.EmpireID();
+    const EmpireID empire_id = app.EmpireID();
     if (empire_id == ALL_EMPIRES)
         return;
 
@@ -571,7 +571,7 @@ void ResearchWnd::Render() {
     }
 }
 
-void ResearchWnd::SetEmpireShown(int empire_id, const ScriptingContext& context) {
+void ResearchWnd::SetEmpireShown(EmpireID empire_id, const ScriptingContext& context) {
     if (empire_id != m_empire_shown_id) {
         m_empire_shown_id = empire_id;
         m_refresh_needed.store(true);
@@ -638,7 +638,7 @@ void ResearchWnd::AddTechsToQueueSlot(std::vector<std::string> tech_vec, int pos
     auto& app = GetApp();
     auto& context = app.GetContext();
 
-    const int empire_id = app.EmpireID();
+    const EmpireID empire_id = app.EmpireID();
     auto empire = context.GetEmpire(empire_id);
     if (!empire)
         return;
@@ -679,7 +679,7 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
 
     auto& app = GetApp();
     ScriptingContext& context = app.GetContext();
-    const int empire_id = app.EmpireID();
+    const EmpireID empire_id = app.EmpireID();
     OrderSet& orders = app.Orders();
     if (auto queue_row = dynamic_cast<const QueueRow*>(it->get()))
         orders.IssueOrder<ResearchQueueOrder>(context, empire_id, queue_row->elem.name);

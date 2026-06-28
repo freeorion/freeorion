@@ -105,7 +105,7 @@ namespace ObjectMapPredicateTypeTraits {
 /////////////////////////////////////////////
 // class ObjectMap
 /////////////////////////////////////////////
-void ObjectMap::Copy(const ObjectMap& copied_map, const Universe& universe, int empire_id) {
+void ObjectMap::Copy(const ObjectMap& copied_map, const Universe& universe, EmpireID empire_id) {
     if (&copied_map == this)
         return;
 
@@ -124,7 +124,7 @@ void ObjectMap::CopyForSerialize(const ObjectMap& copied_map) {
 }
 
 void ObjectMap::CopyObject(std::shared_ptr<const UniverseObject> source,
-                           int empire_id, const Universe& universe)
+                           EmpireID empire_id, const Universe& universe)
 {
     if (!source)
         return;
@@ -145,13 +145,13 @@ void ObjectMap::CopyObject(std::shared_ptr<const UniverseObject> source,
     }
 }
 
-std::unique_ptr<ObjectMap> ObjectMap::Clone(const Universe& universe, int empire_id) const {
+std::unique_ptr<ObjectMap> ObjectMap::Clone(const Universe& universe, EmpireID empire_id) const {
     auto result = std::make_unique<ObjectMap>();
     result->Copy(*this, universe, empire_id);
     return result;
 }
 
-int ObjectMap::HighestObjectID() const {
+UniverseObjectID ObjectMap::HighestObjectID() const {
     if (m_objects.empty())
         return INVALID_OBJECT_ID;
     return m_objects.rbegin()->first;

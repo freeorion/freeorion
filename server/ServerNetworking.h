@@ -42,7 +42,7 @@ struct CookieData {
 };
 
 struct OutgoingMessage {
-    OutgoingMessage(Message&& message, int empire_id, int turn) :
+    OutgoingMessage(Message&& message, EmpireID empire_id, int turn) :
        m_message(std::move(message)),
        m_empire_id(empire_id),
        m_turn(turn)
@@ -108,7 +108,7 @@ public:
 
     /** Sends \a synchronous message to out on the connection. */
     void SendMessage(const Message& message);
-    void SendMessage(const Message& message, int empire_id, int turn);
+    void SendMessage(const Message& message, EmpireID empire_id, int turn);
 
     /** Set player properties to use them after authentication successed. */
     void AwaitPlayer(Networking::ClientType client_type, std::string client_version_string);
@@ -148,11 +148,11 @@ private:
     static void HandleMessageWrite(PlayerConnectionPtr self,
                                    boost::system::error_code error,
                                    std::size_t bytes_transferred,
-                                   int empire_id, int turn);
+                                   EmpireID empire_id, int turn);
 
     /** Places message to the end of sending queue and start asynchronous write if \a message was
         first in the queue. */
-    static void SendMessageImpl(PlayerConnectionPtr self, Message message, int empire_id, int turn);
+    static void SendMessageImpl(PlayerConnectionPtr self, Message message, EmpireID empire_id, int turn);
     static void AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error,
                                   boost::system::error_code error);
 

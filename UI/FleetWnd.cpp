@@ -186,7 +186,7 @@ namespace {
 
     void CreateNewFleetFromShips(const std::vector<int>& ship_ids,
                                  FleetAggression aggression, ScriptingContext& context,
-                                 int empire_id)
+                                 EmpireID empire_id)
     {
         if (ClientPlayerIsModerator())
             return; // TODO: handle moderator actions for this...
@@ -230,7 +230,7 @@ namespace {
 
     void CreateNewFleetFromShipsWithDesign(const auto& ship_ids,
                                            int design_id, FleetAggression aggression,
-                                           ScriptingContext& context, int empire_id)
+                                           ScriptingContext& context, EmpireID empire_id)
     {
         DebugLogger() << "CreateNewFleetFromShipsWithDesign with " << ship_ids.size()
                                << " ship ids and design id: " << design_id;
@@ -253,7 +253,7 @@ namespace {
     void CreateNewFleetsFromShipsForEachDesign(const auto& ship_ids,
                                                FleetAggression aggression,
                                                ScriptingContext& context,
-                                               int empire_id)
+                                               EmpireID empire_id)
     {
         DebugLogger() << "CreateNewFleetsFromShipsForEachDesign with " << ship_ids.size() << " ship ids";
         if (ship_ids.empty())
@@ -771,7 +771,7 @@ namespace {
         const ScriptingContext& context = app.GetContext();
         const Universe& universe = context.ContextUniverse();
         const ObjectMap& objects = context.ContextObjects();
-        const int empire_id = app.EmpireID();
+        const EmpireID empire_id = app.EmpireID();
         auto& ui = app.GetUI();
 
         auto ship = objects.get<Ship>(m_ship_id);
@@ -3830,7 +3830,7 @@ std::string FleetWnd::TitleText() const {
 }
 
 void FleetWnd::CreateNewFleetFromDrops(const std::vector<int>& ship_ids,
-                                       ScriptingContext& context, int empire_id)
+                                       ScriptingContext& context, EmpireID empire_id)
 {
     DebugLogger() << "FleetWnd::CreateNewFleetFromDrops with " << ship_ids.size() << " ship ids";
 

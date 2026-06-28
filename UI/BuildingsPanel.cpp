@@ -329,7 +329,7 @@ void BuildingIndicator::Refresh() {
 
         // Scanlines for not currently-visible objects?
         if (GetOptionsDB().Get<bool>("ui.map.scanlines.shown")) {
-            const int empire_id = app.EmpireID();
+            const EmpireID empire_id = app.EmpireID();
             if (empire_id != ALL_EMPIRES &&
                 context.ContextUniverse().GetObjectVisibilityByEmpire(m_building_id, empire_id) < Visibility::VIS_BASIC_VISIBILITY)
             { AttachChild(m_scanlines); }

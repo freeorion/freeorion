@@ -571,7 +571,7 @@ public:
     void    SetLocalPointsCost(float local_points, float local_cost, float local_stockpile_use,
                                float local_stockpile_use_max, const std::string& location_name,
                                const ScriptingContext& context);
-    void    SetEmpireID(int empire_id);
+    void    SetEmpireID(EmpireID empire_id);
     void    ClearLocalInfo();
     void    Clear();
 

@@ -393,7 +393,7 @@ public:
 
     [[nodiscard]] std::string       Dump(uint8_t ntabs = 0) const override;
 
-    [[nodiscard]] IDSet             VisibleContainedObjectIDs(int empire_id, const EmpireObjectVisibilityMap& vis) const; ///< returns the subset of contained object IDs that is visible to empire with id \a empire_id
+    [[nodiscard]] IDSet             VisibleContainedObjectIDs(EmpireID empire_id, const EmpireObjectVisibilityMap& vis) const; ///< returns the subset of contained object IDs that is visible to empire with id \a empire_id
 
 protected:
     [[nodiscard]] static constexpr auto ToSpan(auto& in) {
@@ -417,8 +417,8 @@ public:
     [[nodiscard]] MeterSpan         Meters() override { return ToSpan(m_meters); }
     [[nodiscard]] ConstMeterSpan    Meters() const override { return ToSpan(m_meters); }
 
-    [[nodiscard]] Visibility        GetVisibility(int empire_id, const EmpireObjectVisibilityMap& v) const;
-    [[nodiscard]] Visibility        GetVisibility(int empire_id, const Universe& u) const;
+    [[nodiscard]] Visibility        GetVisibility(EmpireID empire_id, const EmpireObjectVisibilityMap& v) const;
+    [[nodiscard]] Visibility        GetVisibility(EmpireID empire_id, const Universe& u) const;
 
     [[nodiscard]] const std::string& PublicName(EmpireID, const Universe&) const override { return m_name; };
 

@@ -27,13 +27,13 @@ struct FO_COMMON_API CombatLog {
     CombatLog(const CombatInfo& combat_info);
 
     int                         turn = INVALID_GAME_TURN;
-    int                         system_id = INVALID_OBJECT_ID;
-    std::set<int>               empire_ids;
-    std::set<int>               object_ids;
-    std::set<int>               damaged_object_ids;
-    std::set<int>               destroyed_object_ids;
+    UniverseObjectID            system_id = INVALID_OBJECT_ID;
+    std::set<EmpireID>          empire_ids;
+    std::set<UniverseObjectID>  object_ids;
+    std::set<UniverseObjectID>  damaged_object_ids;
+    std::set<UniverseObjectID>  destroyed_object_ids;
     std::vector<CombatEventPtr> combat_events;
-    boost::container::flat_map<int, CombatParticipantState> participant_states;
+    boost::container::flat_map<UniverseObjectID, CombatParticipantState> participant_states;
 };
 
 

@@ -999,7 +999,7 @@ bool ClientUI::ZoomToShipDesign(int design_id) {
     return true;
 }
 
-bool ClientUI::ZoomToEmpire(int empire_id) {
+bool ClientUI::ZoomToEmpire(EmpireID empire_id) {
     if (!m_app.GetContext().GetEmpire(empire_id))
         return false;
     if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER))

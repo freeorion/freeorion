@@ -15,8 +15,8 @@
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
-int& GlobalSerializationEncodingForEmpire() {
-    static int s_encoding_empire = ALL_EMPIRES;
+EmpireID& GlobalSerializationEncodingForEmpire() {
+    static EmpireID s_encoding_empire = ALL_EMPIRES;
     return s_encoding_empire;
 }
 

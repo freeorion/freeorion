@@ -468,7 +468,7 @@ void NewFleetOrder::ExecuteImpl(ScriptingContext& context) const {
 ////////////////////////////////////////////////
 // FleetMoveOrder
 ////////////////////////////////////////////////
-FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
+FleetMoveOrder::FleetMoveOrder(EmpireID empire_id, int fleet_id, int dest_system_id,
                                bool append, const ScriptingContext& context) :
     Order(empire_id),
     m_fleet(fleet_id),
@@ -517,7 +517,7 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
 std::string FleetMoveOrder::Dump() const
 { return boost::io::str(FlexibleFormat(UserString("ORDER_FLEET_MOVE")) % m_fleet % m_dest_system) + ExecutedTag(this); }
 
-bool FleetMoveOrder::Check(int empire_id, int fleet_id, int dest_system_id,
+bool FleetMoveOrder::Check(EmpireID empire_id, int fleet_id, int dest_system_id,
                            bool, const ScriptingContext& context)
 {
     auto fleet = context.ContextObjects().getRaw<Fleet>(fleet_id);
@@ -629,7 +629,7 @@ std::string FleetTransferOrder::Dump() const {
     return boost::io::str(FlexibleFormat(UserString("ORDER_FLEET_TRANSFER")) % ships % m_dest_fleet) + ExecutedTag(this);
 }
 
-bool FleetTransferOrder::Check(int empire_id, int dest_fleet_id, const std::vector<int>& ship_ids,
+bool FleetTransferOrder::Check(EmpireID empire_id, int dest_fleet_id, const std::vector<int>& ship_ids,
                                const ScriptingContext& context)
 {
     const ObjectMap& objects{context.ContextObjects()};
@@ -770,7 +770,7 @@ AnnexOrder::AnnexOrder(int empire, int planet, const ScriptingContext& context) 
 std::string AnnexOrder::Dump() const
 { return boost::io::str(FlexibleFormat(UserString("ORDER_ANNEX")) % m_planet) + ExecutedTag(this); }
 
-bool AnnexOrder::Check(int empire_id, int planet_id, const ScriptingContext& context) {
+bool AnnexOrder::Check(EmpireID empire_id, int planet_id, const ScriptingContext& context) {
     const ObjectMap& o = context.ContextObjects();
 
     const auto* planet = o.getRaw<const Planet>(planet_id);
@@ -853,7 +853,7 @@ ColonizeOrder::ColonizeOrder(int empire, int ship, int planet, const ScriptingCo
 std::string ColonizeOrder::Dump() const
 { return boost::io::str(FlexibleFormat(UserString("ORDER_COLONIZE")) % m_planet % m_ship) + ExecutedTag(this); }
 
-bool ColonizeOrder::Check(int empire_id, int ship_id, int planet_id, const ScriptingContext& context) {
+bool ColonizeOrder::Check(EmpireID empire_id, int ship_id, int planet_id, const ScriptingContext& context) {
     const Universe& u = context.ContextUniverse();
     const ObjectMap& o = context.ContextObjects();
     const SpeciesManager& sm = context.species;
@@ -1000,7 +1000,7 @@ InvadeOrder::InvadeOrder(int empire, int ship, int planet, const ScriptingContex
 std::string InvadeOrder::Dump() const
 { return boost::io::str(FlexibleFormat(UserString("ORDER_INVADE")) % m_planet % m_ship) + ExecutedTag(this); }
 
-bool InvadeOrder::Check(int empire_id, int ship_id, int planet_id, const ScriptingContext& context) {
+bool InvadeOrder::Check(EmpireID empire_id, int ship_id, int planet_id, const ScriptingContext& context) {
     const Universe& u = context.ContextUniverse();
     const ObjectMap& o = context.ContextObjects();
 
@@ -1139,7 +1139,7 @@ BombardOrder::BombardOrder(int empire, int ship, int planet, const ScriptingCont
 std::string BombardOrder::Dump() const
 { return boost::io::str(FlexibleFormat(UserString("ORDER_BOMBARD")) % m_planet % m_ship) + ExecutedTag(this); }
 
-bool BombardOrder::Check(int empire_id, int ship_id, int planet_id,
+bool BombardOrder::Check(EmpireID empire_id, int ship_id, int planet_id,
                          const ScriptingContext& context)
 {
     const Universe& universe = context.ContextUniverse();
@@ -1256,7 +1256,7 @@ StopBombardOrder::StopBombardOrder(int empire, int ship, int planet, const Scrip
 std::string StopBombardOrder::Dump() const
 { return boost::io::str(FlexibleFormat(UserString("ORDER_STOP_BOMBARD")) % m_planet % m_ship) + ExecutedTag(this); }
 
-bool StopBombardOrder::Check(int empire_id, int ship_id, int planet_id,
+bool StopBombardOrder::Check(EmpireID empire_id, int ship_id, int planet_id,
                          const ScriptingContext& context)
 {
     const Universe& universe = context.ContextUniverse();
@@ -1379,7 +1379,7 @@ ChangeFocusOrder::ChangeFocusOrder(int empire, int planet, std::string focus, co
 std::string ChangeFocusOrder::Dump() const
 { return boost::io::str(FlexibleFormat(UserString("ORDER_FOCUS_CHANGE")) % m_planet % m_focus) + ExecutedTag(this); }
 
-bool ChangeFocusOrder::Check(int empire_id, int planet_id, const std::string& focus,
+bool ChangeFocusOrder::Check(EmpireID empire_id, int planet_id, const std::string& focus,
                              const ScriptingContext& context)
 {
     auto planet = context.ContextObjects().getRaw<Planet>(planet_id);
@@ -1810,7 +1810,7 @@ void ShipDesignOrder::ExecuteImpl(ScriptingContext& context) const {
     }
 }
 
-bool ShipDesignOrder::CheckRemember(int empire_id, int existing_design_id_to_remember,
+bool ShipDesignOrder::CheckRemember(EmpireID empire_id, int existing_design_id_to_remember,
                                     const ScriptingContext& context)
 {
     const auto empire = context.GetEmpire(empire_id);
@@ -1839,7 +1839,7 @@ bool ShipDesignOrder::CheckRemember(int empire_id, int existing_design_id_to_rem
     return true;
 }
 
-bool ShipDesignOrder::CheckErase(int empire_id, int design_id_to_erase, bool, const ScriptingContext& context) {
+bool ShipDesignOrder::CheckErase(EmpireID empire_id, int design_id_to_erase, bool, const ScriptingContext& context) {
     const auto empire = context.GetEmpire(empire_id);
     if (!empire) {
         ErrorLogger() << "ShipDesignOrder : given invalid empire id";
@@ -1856,7 +1856,7 @@ bool ShipDesignOrder::CheckErase(int empire_id, int design_id_to_erase, bool, co
     return true;
 }
 
-bool ShipDesignOrder::CheckNew(int empire_id, const std::string&/* name*/, const std::string&/* desc*/,
+bool ShipDesignOrder::CheckNew(EmpireID empire_id, const std::string&/* name*/, const std::string&/* desc*/,
                                const std::string&/* hull*/, const std::vector<std::string>&/* parts*/,
                                const ScriptingContext& context)
 {
@@ -1871,7 +1871,7 @@ bool ShipDesignOrder::CheckNew(int empire_id, const std::string&/* name*/, const
     return true;
 }
 
-bool ShipDesignOrder::CheckRename(int empire_id, int existing_design_id, const std::string&/* new_name*/,
+bool ShipDesignOrder::CheckRename(EmpireID empire_id, int existing_design_id, const std::string&/* new_name*/,
                                   const std::string&/* new_description*/, const ScriptingContext& context)
 {
     const auto empire = context.GetEmpire(empire_id);
@@ -1927,7 +1927,7 @@ ScrapOrder::ScrapOrder(int empire, int object_id, const ScriptingContext& contex
 std::string ScrapOrder::Dump() const
 { return UserString("ORDER_SCRAP"); }
 
-bool ScrapOrder::Check(int empire_id, int object_id, const ScriptingContext& context) {
+bool ScrapOrder::Check(EmpireID empire_id, int object_id, const ScriptingContext& context) {
     auto obj = context.ContextObjects().get(object_id);
 
     if (!obj) {
@@ -1969,7 +1969,7 @@ void ScrapOrder::ExecuteImpl(ScriptingContext& context) const {
 
 bool ScrapOrder::UndoImpl(ScriptingContext& context) const {
     GetValidatedEmpire(context);
-    int empire_id = EmpireID();
+    EmpireID empire_id = EmpireID();
 
     ObjectMap& objects{context.ContextObjects()};
 
@@ -1998,7 +1998,7 @@ AggressiveOrder::AggressiveOrder(int empire, int object_id, FleetAggression aggr
 std::string AggressiveOrder::Dump() const
 { return UserString("ORDER_FLEET_AGGRESSION"); }
 
-bool AggressiveOrder::Check(int empire_id, int object_id, FleetAggression, const ScriptingContext& context) {
+bool AggressiveOrder::Check(EmpireID empire_id, int object_id, FleetAggression, const ScriptingContext& context) {
     const ObjectMap& objects{context.ContextObjects()};
 
     auto fleet = objects.get<Fleet>(object_id);
@@ -2040,7 +2040,7 @@ GiveObjectToEmpireOrder::GiveObjectToEmpireOrder(int empire, int object_id, int 
 std::string GiveObjectToEmpireOrder::Dump() const
 { return UserString("ORDER_GIVE_TO_EMPIRE"); }
 
-bool GiveObjectToEmpireOrder::Check(int empire_id, int object_id, int recipient_empire_id,
+bool GiveObjectToEmpireOrder::Check(EmpireID empire_id, int object_id, int recipient_empire_id,
                                     const ScriptingContext& context)
 {
     if (!context.GetEmpire(recipient_empire_id)) {
@@ -2113,7 +2113,7 @@ void GiveObjectToEmpireOrder::ExecuteImpl(ScriptingContext& context) const {
 
 bool GiveObjectToEmpireOrder::UndoImpl(ScriptingContext& context) const {
     GetValidatedEmpire(context);
-    int empire_id = EmpireID();
+    EmpireID empire_id = EmpireID();
 
     ObjectMap& objects{context.ContextObjects()};
 
@@ -2144,7 +2144,7 @@ std::string ForgetOrder::Dump() const
 
 void ForgetOrder::ExecuteImpl(ScriptingContext& context) const {
     GetValidatedEmpire(context);
-    int empire_id = EmpireID();
+    EmpireID empire_id = EmpireID();
 
     DebugLogger() << "ForgetOrder::ExecuteImpl empire: " << empire_id
                   << " for object: " << m_object_id;

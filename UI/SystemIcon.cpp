@@ -60,7 +60,7 @@ namespace {
             std::string retval;
             int start = 0;
 
-            for (int empire_id : owner_empire_ids) {
+            for (EmpireID empire_id : owner_empire_ids) {
                 int current_length = piece_length;
                 if (extra > 0) { // Use left over letters as long as we have them
                     ++current_length;

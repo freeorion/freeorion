@@ -317,7 +317,7 @@ std::string MultiplayerLobbyData::Dump() const {
 ////////////////////////////////////////////////////
 // PlayerSaveGameData
 /////////////////////////////////////////////////////
-PlayerSaveGameData::PlayerSaveGameData(std::string name, int empire_id,
+PlayerSaveGameData::PlayerSaveGameData(std::string name, EmpireID empire_id,
                                        OrderSet orders_, SaveGameUIData ui_data_,
                                        std::string save_state_string_,
                                        Networking::ClientType client_type) :
@@ -336,6 +336,6 @@ PlayerSaveGameData::PlayerSaveGameData(std::string name, int empire_id,
         save_state_string = "NO_STATE_YET";
 }
 
-PlayerSaveGameData::PlayerSaveGameData(std::string name, int empire_id, Networking::ClientType client_type) :
+PlayerSaveGameData::PlayerSaveGameData(std::string name, EmpireID empire_id, Networking::ClientType client_type) :
     PlayerSaveGameData(std::move(name), empire_id, OrderSet{}, SaveGameUIData{}, std::string{}, client_type)
 {}
