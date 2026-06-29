@@ -111,13 +111,15 @@ void Planet::Copy(const Planet& copied_planet, const Universe& universe, int emp
         this->m_turn_last_colonized =       copied_planet.m_turn_last_colonized;
         this->m_turn_last_annexed =         copied_planet.m_turn_last_annexed;
 
+        if (vis >= Visibility::VIS_TARGETABLE_VISIBILITY) {
+            this->m_last_turn_attacked_by_ship = copied_planet.m_last_turn_attacked_by_ship;
+        }
         if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
             this->m_species_name =                          copied_planet.m_species_name;
             this->m_focus =                                 copied_planet.m_focus;
             this->m_last_turn_focus_changed =               copied_planet.m_last_turn_focus_changed;
             this->m_focus_turn_initial =                    copied_planet.m_focus_turn_initial;
             this->m_last_turn_focus_changed_turn_initial =  copied_planet.m_last_turn_focus_changed_turn_initial;
-            this->m_last_turn_attacked_by_ship =            copied_planet.m_last_turn_attacked_by_ship;
             this->m_ordered_annexed_by_empire_id =          copied_planet.m_ordered_annexed_by_empire_id;
             this->m_is_about_to_be_colonized =              copied_planet.m_is_about_to_be_colonized;
             this->m_is_about_to_be_invaded =                copied_planet.m_is_about_to_be_invaded;
