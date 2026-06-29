@@ -113,30 +113,31 @@ void Planet::Copy(const Planet& copied_planet, const Universe& universe, int emp
 
         if (vis >= Visibility::VIS_TARGETABLE_VISIBILITY) {
             this->m_last_turn_attacked_by_ship = copied_planet.m_last_turn_attacked_by_ship;
-        }
-        if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
-            this->m_species_name =                          copied_planet.m_species_name;
-            this->m_focus =                                 copied_planet.m_focus;
-            this->m_last_turn_focus_changed =               copied_planet.m_last_turn_focus_changed;
-            this->m_focus_turn_initial =                    copied_planet.m_focus_turn_initial;
-            this->m_last_turn_focus_changed_turn_initial =  copied_planet.m_last_turn_focus_changed_turn_initial;
-            this->m_ordered_annexed_by_empire_id =          copied_planet.m_ordered_annexed_by_empire_id;
-            this->m_is_about_to_be_colonized =              copied_planet.m_is_about_to_be_colonized;
-            this->m_is_about_to_be_invaded =                copied_planet.m_is_about_to_be_invaded;
-            this->m_is_about_to_be_bombarded =              copied_planet.m_is_about_to_be_bombarded;
-            this->m_owner_before_last_conquered =           copied_planet.m_owner_before_last_conquered;
-            this->m_last_invaded_by_empire_id =             copied_planet.m_last_invaded_by_empire_id;
-            this->m_last_colonized_by_empire_id =           copied_planet.m_last_colonized_by_empire_id;
-            this->m_last_annexed_by_empire_id =             copied_planet.m_last_annexed_by_empire_id;
 
-            if (vis >= Visibility::VIS_FULL_VISIBILITY) {
-                this->m_ordered_given_to_empire_id = copied_planet.m_ordered_given_to_empire_id;
+            if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
+                this->m_species_name =                          copied_planet.m_species_name;
+                this->m_focus =                                 copied_planet.m_focus;
+                this->m_last_turn_focus_changed =               copied_planet.m_last_turn_focus_changed;
+                this->m_focus_turn_initial =                    copied_planet.m_focus_turn_initial;
+                this->m_last_turn_focus_changed_turn_initial =  copied_planet.m_last_turn_focus_changed_turn_initial;
+                this->m_ordered_annexed_by_empire_id =          copied_planet.m_ordered_annexed_by_empire_id;
+                this->m_is_about_to_be_colonized =              copied_planet.m_is_about_to_be_colonized;
+                this->m_is_about_to_be_invaded =                copied_planet.m_is_about_to_be_invaded;
+                this->m_is_about_to_be_bombarded =              copied_planet.m_is_about_to_be_bombarded;
+                this->m_owner_before_last_conquered =           copied_planet.m_owner_before_last_conquered;
+                this->m_last_invaded_by_empire_id =             copied_planet.m_last_invaded_by_empire_id;
+                this->m_last_colonized_by_empire_id =           copied_planet.m_last_colonized_by_empire_id;
+                this->m_last_annexed_by_empire_id =             copied_planet.m_last_annexed_by_empire_id;
 
-            } else {
-                // copy system name if at partial visibility, as it won't be copied
-                // by UniverseObject::Copy unless at full visibility, but players
-                // should know planet names even if they don't own the planet
-                m_name = copied_planet.Name();
+                if (vis >= Visibility::VIS_FULL_VISIBILITY) {
+                    this->m_ordered_given_to_empire_id = copied_planet.m_ordered_given_to_empire_id;
+
+                } else {
+                    // copy system name if at partial visibility, as it won't be copied
+                    // by UniverseObject::Copy unless at full visibility, but players
+                    // should know planet names even if they don't own the planet
+                    m_name = copied_planet.Name();
+                }
             }
         }
     }
