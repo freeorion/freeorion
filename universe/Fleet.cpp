@@ -50,7 +50,7 @@ void Fleet::Copy(const Fleet& copied_fleet, const Universe& universe, EmpireID e
     if (&copied_fleet == this)
         return;
 
-    const int copied_object_id = copied_fleet.ID();
+    const auto copied_object_id = copied_fleet.ID();
     const Visibility vis = empire_id == ALL_EMPIRES ?
         Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
     const auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
@@ -94,33 +94,33 @@ std::string Fleet::Dump(uint8_t ntabs) const {
     std::string retval = UniverseObject::Dump(ntabs);
     retval.reserve(2048);
     retval.append(" aggression: ").append(to_string(m_aggression))
-          .append(" ordered given to: ").append(std::to_string(m_ordered_given_to_empire_id))
-          .append(" cur system: ").append(std::to_string(SystemID()))
-          .append(" moving to: ").append(std::to_string(FinalDestinationID()))
-          .append(" prev system: ").append(std::to_string(m_prev_system))
-          .append(" next system: ").append(std::to_string(m_next_system))
-          .append(" arrival lane: ").append(std::to_string(m_arrival_starlane))
+          .append(" ordered given to: ").append(to_string(m_ordered_given_to_empire_id))
+          .append(" cur system: ").append(to_string(SystemID()))
+          .append(" moving to: ").append(to_string(FinalDestinationID()))
+          .append(" prev system: ").append(to_string(m_prev_system))
+          .append(" next system: ").append(to_string(m_next_system))
+          .append(" arrival lane: ").append(to_string(m_arrival_starlane))
           .append(" arrived this turn?: ").append(std::to_string(m_arrived_this_turn))
           .append(" last turn move ordered: ").append(std::to_string(m_last_turn_move_ordered))
           .append(" route(").append(std::to_string(m_travel_route.size())).append("): ");
     for (auto it = m_travel_route.begin(); it != m_travel_route.end();) {
-        int sys_id = *it;
+        const auto sys_id = *it;
         ++it;
-        retval.append(std::to_string(sys_id)).append(it == m_travel_route.end() ? "" : " -> ");
+        retval.append(to_string(sys_id)).append(it == m_travel_route.end() ? "" : " -> ");
     }
     retval.append(" ships(").append(std::to_string(m_ships.size())).append("): ");
     for (auto it = m_ships.begin(); it != m_ships.end();) {
-        int ship_id = *it;
+        const auto ship_id = *it;
         ++it;
-        retval.append(std::to_string(ship_id)).append(it == m_ships.end() ? "" : ", ");
+        retval.append(to_string(ship_id)).append(it == m_ships.end() ? "" : ", ");
     }
     return retval;
 }
 
-bool Fleet::Contains(int object_id) const
+bool Fleet::Contains(UniverseObjectID object_id) const
 { return object_id != INVALID_OBJECT_ID && m_ships.contains(object_id); }
 
-bool Fleet::ContainedBy(int object_id) const noexcept
+bool Fleet::ContainedBy(UniverseObjectID object_id) const noexcept
 { return object_id != INVALID_OBJECT_ID && this->SystemID() == object_id; }
 
 const std::string& Fleet::PublicName(EmpireID empire_id, const Universe& universe) const {
@@ -1162,12 +1162,12 @@ bool Fleet::Blockaded(const ScriptingContext& context) const {
     return false;
 }
 
-bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id,
+bool Fleet::BlockadedAtSystem(UniverseObjectID start_system_id, UniverseObjectID dest_system_id,
                               const ScriptingContext& context) const
 { return !BlockadingFleetsAtSystem(start_system_id, dest_system_id, context).empty(); }
 
-std::vector<int> Fleet::BlockadingFleetsAtSystem(int start_system_id, int dest_system_id,
-                                                 const ScriptingContext& context) const
+std::vector<UniverseObjectID> Fleet::BlockadingFleetsAtSystem(
+    UniverseObjectID start_system_id, UniverseObjectID dest_system_id, const ScriptingContext& context) const
 {
     /** If a newly arrived fleet joins a non-blockaded fleet of the same empire
       * (perhaps should include allies?) already at the system, the newly
@@ -1187,9 +1187,9 @@ std::vector<int> Fleet::BlockadingFleetsAtSystem(int start_system_id, int dest_s
         //DebugLogger() << "Fleet::BlockadingFleetsAtSystem fleet " << ID() << " has cleared blockade flag for system (" << start_system_id << ")";
         return {};
     }
-    bool not_yet_in_system = SystemID() != start_system_id;
+    bool not_yet_in_system = (SystemID() != start_system_id);
 
-    if (!not_yet_in_system && m_arrival_starlane == dest_system_id)
+    if (!not_yet_in_system && (m_arrival_starlane == dest_system_id))
         return {};
 
     // find which empires have blockading aggressive armed ships in system;
@@ -1197,7 +1197,8 @@ std::vector<int> Fleet::BlockadingFleetsAtSystem(int start_system_id, int dest_s
     // reinforce a preexisting blockade, and may possibly contribute to detection
     auto const current_system = objects.getRaw<System>(start_system_id);
     if (!current_system) {
-        DebugLogger() << "Fleet::BlockadingFleetsAtSystem fleet " << ID() << " considering system (" << start_system_id
+        DebugLogger() << "Fleet::BlockadingFleetsAtSystem fleet " << to_string(ID())
+                      << " considering system (" << to_string(start_system_id)
                       << ") but can't retrieve system copy";
         return {};
     }
@@ -1208,7 +1209,9 @@ std::vector<int> Fleet::BlockadingFleetsAtSystem(int start_system_id, int dest_s
         if (this_owner_empire->PreservedLaneTravel(start_system_id, dest_system_id)) {
             return {};
         } else {
-            TraceLogger() << "Fleet::BlockadingFleetsAtSystem fleet " << ID() << " considering travel from system (" << start_system_id << ") to system (" << dest_system_id << ")";
+            TraceLogger() << "Fleet::BlockadingFleetsAtSystem fleet " << to_string(ID())
+                          << " considering travel from system (" << to_string(start_system_id)
+                          << ") to system (" << to_string(dest_system_id) << ")";
         }
     }
 
@@ -1241,7 +1244,7 @@ std::vector<int> Fleet::BlockadingFleetsAtSystem(int start_system_id, int dest_s
 
     // collect fleets that can blockade. this function may still return empty vector if a
     // blockade-preventing ship is also present
-    std::vector<int> fleets_that_can_blockade;
+    std::vector<UniverseObjectID> fleets_that_can_blockade;
     fleets_that_can_blockade.reserve(this_system_fleets.size());
 
     for (auto* system_fleet : this_system_fleets) {

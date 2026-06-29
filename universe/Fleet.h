@@ -15,7 +15,8 @@
   * other UniverseObject. */
 struct MovePathNode {
     [[nodiscard]] constexpr MovePathNode(double x_, double y_, bool turn_end_, uint8_t eta_,
-                                         int id_, int lane_start_id_, int lane_end_id_,
+                                         UniverseObjectID id_, UniverseObjectID lane_start_id_,
+                                         UniverseObjectID lane_end_id_,
                                          bool blockade_here_, bool post_blockade_) noexcept :
         x(x_),
         y(y_),
@@ -27,14 +28,14 @@ struct MovePathNode {
         blockaded_here(blockade_here_),
         post_blockade(post_blockade_)
     {}
-    double  x, y;           ///< location in Universe of node
-    int     object_id;      ///< id of object (most likely a system) located at this node, or INVALID_OBJECT_ID if there is no object here
-    int     lane_start_id;  ///< id of object (most likely a system) at the start of the starlane on which this MovePathNode is located, or INVALID_OBJECT_ID if not on a starlane
-    int     lane_end_id;    ///< id of object (most likely a system) at the end of the starlane on which this MovePathNode is located, or INVALID_OBJECT_ID if not on a starlane
-    uint8_t eta;            ///< estimated turns to reach this node
-    bool    turn_end;       ///< is this node a location where the fleet will end a turn?
-    bool    blockaded_here; ///< is there a blockade at this node?
-    bool    post_blockade;  ///< is this node past a blockade for the subject fleet?
+    double           x, y;           ///< location in Universe of node
+    UniverseObjectID object_id;      ///< id of object (most likely a system) located at this node, or INVALID_OBJECT_ID if there is no object here
+    UniverseObjectID lane_start_id;  ///< id of object (most likely a system) at the start of the starlane on which this MovePathNode is located, or INVALID_OBJECT_ID if not on a starlane
+    UniverseObjectID lane_end_id;    ///< id of object (most likely a system) at the end of the starlane on which this MovePathNode is located, or INVALID_OBJECT_ID if not on a starlane
+    uint8_t          eta;            ///< estimated turns to reach this node
+    bool             turn_end;       ///< is this node a location where the fleet will end a turn?
+    bool             blockaded_here; ///< is there a blockade at this node?
+    bool             post_blockade;  ///< is this node past a blockade for the subject fleet?
 };
 
 //! How to Fleets control or not their system?
