@@ -9,7 +9,7 @@
 #define FO_STRONG_ID_TYPEDEF(typeName, underlyingType)                                          \
 struct typeName {                                                                               \
 private:                                                                                        \
-    underlyingType value{};                                                                     \
+    underlyingType value{-1};                                                                   \
 public:                                                                                         \
     constexpr typeName() noexcept = default;                                                    \
     constexpr explicit typeName(underlyingType utv) noexcept : value(utv) {}                    \

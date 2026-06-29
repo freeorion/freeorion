@@ -27,7 +27,6 @@ class Universe;
     require coordination between clients and servers and does not leak any information to clients
     about other client's allocations.
 */
-
 class IDAllocator {
 public:
     using ID_t = int;
@@ -40,14 +39,14 @@ public:
                 const ID_t temp_id,
                 const ID_t highest_pre_allocated_id);
 
-    template <typename ID_like_t> requires requires(ID_like_t id) { static_cast<ID_t>(id); }
+
     IDAllocator(const int server_id,
                 const std::vector<int>& client_ids,
-                const ID_like_t invalid_id,
-                const ID_like_t temp_id,
-                const ID_like_t highest_pre_allocated_id) :
-        IDAllocator(server_id, client_ids, static_cast<ID_t>(invalid_id),
-                    static_cast<ID_t>(temp_id), static_cast<ID_t>((highest_pre_allocated_id)))
+                const UniverseObjectID invalid_id,
+                const UniverseObjectID temp_id,
+                const UniverseObjectID highest_pre_allocated_id) :
+        IDAllocator(server_id, client_ids, static_cast<ID_t>(Value(invalid_id)),
+                    static_cast<ID_t>(Value(temp_id)), static_cast<ID_t>(Value(highest_pre_allocated_id)))
     {}
 
     IDAllocator& operator=(IDAllocator&& other) noexcept = default;
@@ -55,17 +54,12 @@ public:
     /// Return a valid new id.  This is used by both clients and servers.
     ID_t NewID(const Universe& universe);
 
-    template <typename ID_like_t> requires requires(ID_t id) { static_cast<ID_like_t>(id); }
-    ID_like_t NewID(const Universe& universe)
-    { return static_cast<ID_like_t>(NewID(universe)); }
-
     /** Return {hard_success, soft_success} where \p hard_success determines if
         \p id is unused and valid and \p soft_success determines if \p id is in
         the id space of \p empire_id.  This allows errors that are probably due
-        to legacy loading and order processing to be ignored for now.
-     */
-    std::pair<bool, bool> IsIDValidAndUnused(const ID_t id, const EmpireID empire_id);
-    auto IsValidAndUnused(auto id, const EmpireID empire_id) { return IsIDValidAndUnused(static_cast<ID_t>(id), empire_id); }
+        to legacy loading and order processing to be ignored for now. */
+    std::pair<bool, bool> IsIDValidAndUnused(ID_t id, EmpireID empire_id);
+    std::pair<bool, bool> IsIDValidAndUnused(UniverseObjectID id, EmpireID empire_id) { return IsIDValidAndUnused(Value(id), empire_id); }
 
     /** UpdateIDAndCheckIfOwned behaves differently on the server and clients.
 
@@ -76,7 +70,10 @@ public:
 
         On the client it returns true iff this client allocated \p id and does
         nothing else. That means that id modulo m_stride == client's offset.*/
-    bool UpdateIDAndCheckIfOwned(const ID_t id);
+    bool UpdateIDAndCheckIfOwned(ID_t id);
+
+    bool UpdateIDAndCheckIfOwned(UniverseObjectID id)
+    { return UpdateIDAndCheckIfOwned(static_cast<ID_t>(Value(id))); }
 
     /** ObfuscateBeforeSerialization randomizes which client is using which modulus each turn
         before IDAllocator is serialized and sent to the clients. */

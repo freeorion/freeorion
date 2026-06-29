@@ -545,13 +545,15 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
     DebugLogger() << "Universe::serialize : " << serializing_label << " " << destroyed_object_ids.size() << " destroyed object ids";
     if constexpr (Archive::is_loading::value) {
         u.m_destroyed_object_ids.clear();
-        u.m_destroyed_object_ids.insert(destroyed_object_ids.begin(), destroyed_object_ids.end());
+        auto as_ids_rng = destroyed_object_ids | range_transform([](int id) noexcept { return UniverseObjectID{id}; });
+        u.m_destroyed_object_ids.insert(as_ids_rng.begin(), as_ids_rng.end());
         u.m_objects.UpdateCurrentDestroyedObjects(u.m_destroyed_object_ids);
     }
 
     timer.EnterSection("latest known objects");
     ar  & make_nvp("empire_latest_known_objects", empire_latest_known_objects);
-    DebugLogger() << "Universe::serialize : " << serializing_label << " empire known objects for " << empire_latest_known_objects.size() << " empires";
+    DebugLogger() << "Universe::serialize : " << serializing_label << " empire known objects for "
+                  << empire_latest_known_objects.size() << " empires";
     if constexpr (Archive::is_loading::value)
         u.m_empire_latest_known_objects.swap(empire_latest_known_objects);
 
@@ -563,8 +565,8 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
         u.m_design_id_allocator->SerializeForEmpire(ar, version, GlobalSerializationEncodingForEmpire());
     } else {
         if constexpr (Archive::is_loading::value) {
-            int dummy_last_allocated_object_id = INVALID_OBJECT_ID;
-            int dummy_last_allocated_design_id = INVALID_DESIGN_ID;
+            int dummy_last_allocated_object_id = Value(INVALID_OBJECT_ID);
+            int dummy_last_allocated_design_id = Value(INVALID_DESIGN_ID);
             DebugLogger() << "Universe::serialize : " << serializing_label << " legacy last allocated ids version = " << version;
             ar  & boost::serialization::make_nvp("m_last_allocated_object_id", dummy_last_allocated_object_id);
             DebugLogger() << "Universe::serialize : " << serializing_label << " legacy last allocated ids2";
@@ -573,11 +575,7 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
             DebugLogger() << "Universe::serialize : " << serializing_label << " legacy id allocator";
             // For legacy loads pre-dating the use of the IDAllocator the server
             // allocators need to be initialized with a list of the empires.
-            std::vector<int> allocating_empire_ids;
-            allocating_empire_ids.reserve(u.m_empire_latest_known_objects.size());
-            std::transform(u.m_empire_latest_known_objects.begin(), u.m_empire_latest_known_objects.end(),
-                           std::back_inserter(allocating_empire_ids), [](const auto& ii) { return ii.first; });
-
+            const auto allocating_empire_ids = u.m_empire_latest_known_objects | range_keys | range_to_vec;
             u.ResetAllIDAllocation(allocating_empire_ids);
         }
     }

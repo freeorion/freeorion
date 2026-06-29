@@ -15,6 +15,7 @@ class OrderSet;
 class Universe;
 class UniverseObject;
 class Visibilities;
+struct EmpireID;
 
 typedef boost::archive::binary_iarchive freeorion_bin_iarchive;
 typedef boost::archive::binary_oarchive freeorion_bin_oarchive;

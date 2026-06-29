@@ -140,7 +140,7 @@ std::pair<bool, bool> IDAllocator::IsIDValidAndUnused(const ID_t checked_id, con
     return complete_success;
 }
 
-bool IDAllocator::UpdateIDAndCheckIfOwned(const ID_t checked_id) {
+bool IDAllocator::UpdateIDAndCheckIfOwned(ID_t checked_id) {
     auto valid = IsIDValidAndUnused(checked_id, m_empire_id);
 
     // Hard failure
