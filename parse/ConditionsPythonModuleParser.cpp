@@ -151,10 +151,16 @@ namespace {
         if (kw.has_key("turn"))
             throw std::runtime_error(std::string("Not implemented ") + __func__);
 
-        if (kw.has_key("visibility"))
-            throw std::runtime_error(std::string("Not implemented ") + __func__);
+        std::unique_ptr<ValueRef::ValueRef<Visibility>> visibility;
+        if (kw.has_key("visibility")) {
+            auto vis_arg = boost::python::extract<value_ref_wrapper<Visibility>>(kw["visibility"]);
+            if (vis_arg.check())
+                visibility = ValueRef::CloneUnique(vis_arg().value_ref);
+            else
+                visibility = std::make_unique<ValueRef::Constant<Visibility>>(boost::python::extract<enum_wrapper<Visibility>>(kw["visibility"])().value);
+        }
 
-        return make_wrapped<Condition::VisibleToEmpire>(std::move(empire));
+        return make_wrapped<Condition::VisibleToEmpire>(std::move(empire), /*since_turn*/ nullptr, std::move(visibility));
     }
 
     condition_wrapper insert_planet_(const boost::python::tuple& args, const boost::python::dict& kw) {
