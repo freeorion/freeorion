@@ -162,10 +162,8 @@ Tech(
                 ),
                 AddSpecial(name=base_stealth_special, capacity=Value(Target.Stealth)), # record server value
                 Conditional( # if there is a discrepancy between server and client value, sync to server value
-                    #condition=0.01 > Abs(SpecialCapacity(name=base_stealth_special, object=Target.ID) - Value(Target.Stealth)),
                     condition=HasSpecial(name=base_stealth_special) # should be false iff the ship was built this turn
-                        & (0.001 < ((SpecialCapacity(name=base_stealth_special, object=LocalCandidate.ID) - Value(LocalCandidate.Stealth))
-                                     *(SpecialCapacity(name=base_stealth_special, object=LocalCandidate.ID) - Value(LocalCandidate.Stealth)))),
+                        & (0.01 < Abs(float, SpecialCapacity(name=base_stealth_special, object=Target.ID) - Value(Target.Stealth))),
                     effects=[
                         SetStealth(value=SpecialCapacity(name=base_stealth_special, object=Target.ID)),
                     ],
