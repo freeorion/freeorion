@@ -9,9 +9,11 @@ for i in {1..2}; do
 
   rm -f freeoriond${i}.log freeorion${i}.log
 
+  RANDOM_SEED=$SRANDOM
+
   /snap/bin/freeorion.freeoriond \
       --hostless \
-      --setup.seed RANDOM \
+      --setup.seed "$RANDOM_SEED" \
       --network.server.human.max 1 \
       --network.server.unconn-human-empire-players.max 0 \
       --setup.ai.player.count 3 \
