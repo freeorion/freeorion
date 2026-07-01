@@ -337,6 +337,10 @@ public:
     static std::shared_ptr<Texture> GetTexture(const std::filesystem::path& path, bool mipmap = false)
     { return GetTextureManager().GetTexture(path, mipmap); }
 
+    /** Returns if file \a path is a supported texture format. */
+    static bool IsSupportedTextureFilenameExtension(const std::filesystem::path& path)
+    { return TextureManager::IsSupportedTextureFilenameExtension(path); }
+
     /** Removes the desired texture from the managed pool; since shared_ptr
       * are used, the texture may be deleted much later. */
     static void FreeTexture(const std::filesystem::path& path)

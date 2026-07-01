@@ -235,6 +235,9 @@ public:
         from disk. */
     std::shared_ptr<Texture> GetTexture(const std::filesystem::path& path, bool mipmap = false);
 
+    /** Returns if file \a path is a supported texture format. */
+    static bool IsSupportedTextureFilenameExtension(const std::filesystem::path& path);
+
     /** Returns a shared_ptr to the texture created/stored with name \a texture_name
         or nullptr if not present in the manager's pool. */
     std::shared_ptr<Texture> GetTextureByName(const std::string& texture_name) const;

@@ -511,6 +511,19 @@ std::shared_ptr<Texture> TextureManager::GetTexture(const std::filesystem::path&
     return LoadTexture(path, mipmap);
 }
 
+bool TextureManager::IsSupportedTextureFilenameExtension(const std::filesystem::path& path) {
+    std::string extension = boost::algorithm::to_lower_copy(path.extension().string());
+#if GG_HAVE_LIBPNG
+    if (extension == ".png")
+        return true;
+#endif
+#if GG_HAVE_LIBTIFF
+    if (extension == ".tif" || extension == ".tiff")
+        return true;
+#endif
+    return false;
+}
+
 std::shared_ptr<Texture> TextureManager::GetTextureByName(const std::string& texture_name) const
 {
     std::scoped_lock lock(m_texture_access_guard);
