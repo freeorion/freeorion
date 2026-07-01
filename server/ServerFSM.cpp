@@ -737,6 +737,7 @@ sc::result Idle::react(const Hostless&) {
             lobby_data->players.emplace_back(Networking::INVALID_PLAYER_ID, std::move(player_setup_data));
         }
 
+        server.InitGlobalRNGSeedFromGalaxySetupData();
         const SpeciesManager& sm = server.GetSpeciesManager();
         auto max_ai = GetOptionsDB().Get<int>("network.server.ai.max");
         const int ai_count = GetOptionsDB().Get<int>("setup.ai.player.count");

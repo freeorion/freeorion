@@ -219,6 +219,10 @@ public:
 
     [[nodiscard]] ServerNetworking& Networking() noexcept { return m_networking; };
 
+    /** Randomly generate and set the galaxy setup data's seed
+      * if none or "RANDOM" was specified. */
+    int InitGlobalRNGSeedFromGalaxySetupData();
+
 private:
     /** Initialize the python engine if not already running.*/
     void InitializePython();
