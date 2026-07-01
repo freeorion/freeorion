@@ -4,6 +4,8 @@
 #include <boost/test/unit_test_monitor.hpp>
 #include <boost/test/output/compiler_log_formatter.hpp>
 
+#include "util/Directories.h"
+
 // Produces an GCC-ish message prefix for various frontends that understand gcc output.
 struct gcc_log_formatter : 
     public boost::unit_test::output::compiler_log_formatter
@@ -19,6 +21,8 @@ struct boost_test_config
     boost_test_config()
     {
         boost::unit_test::unit_test_log.set_formatter(new gcc_log_formatter);
+        BOOST_TEST_MESSAGE("Init util tests " << boost::unit_test::framework::master_test_suite().argv[0]);
+        InitDirs(boost::unit_test::framework::master_test_suite().argv[0], true);
     }
 };
 
