@@ -2,6 +2,7 @@ find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS unit_test_framework REQUI
 
 add_executable(fo_unittest_util
     main.cpp
+    $<TARGET_OBJECTS:freeorionparseobj>
 )
 
 target_include_directories(fo_unittest_util
@@ -10,10 +11,8 @@ target_include_directories(fo_unittest_util
 )
 
 target_link_libraries(fo_unittest_util
-    Threads::Threads
-    Boost::boost
-    Boost::disable_autolinking
-    Boost::dynamic_linking
+    freeorioncommon
+    freeorionparse
     Boost::unit_test_framework
 )
 
@@ -24,6 +23,7 @@ add_dependencies(unittest
 )
 
 set(FO_TEST_UTIL
+    TestPathOptions
 )
 
 foreach(_TEST ${FO_TEST_UTIL})
