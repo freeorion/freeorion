@@ -150,7 +150,7 @@ namespace {
 
 
         // recalculate route from the shortest path between first system on path and final destination
-        int start_system = fleet->SystemID();
+        auto start_system = fleet->SystemID();
         if (start_system == INVALID_OBJECT_ID)
             start_system = new_next_system;
 
@@ -522,7 +522,7 @@ void SetMeter::Execute(ScriptingContext& context,
         TraceLogger(effects) << "SetMeter execute " << targets.size() << " before:" << TargetsDump(targets);\
     }
 
-    const int source_id{context.source ? context.source->ID() : INVALID_OBJECT_ID};
+    const auto source_id{context.source ? context.source->ID() : INVALID_OBJECT_ID};
     const auto& accounting_label{m_accounting_label.empty() ? effect_cause.custom_label : m_accounting_label};
     static std::decay_t<decltype(*accounting_map)> EMPTY_ACCOUNTING = {}; // dummy thing to bind lambda capture reference to
     auto& accounting = accounting_map ? *accounting_map : EMPTY_ACCOUNTING;
@@ -530,7 +530,7 @@ void SetMeter::Execute(ScriptingContext& context,
     auto update_meter =
         [source_id, &accounting_label, &effect_cause, meter_type{m_meter},
          have_accounting{accounting_map != nullptr}, &accounting]
-        (float new_meter_value, int target_id, Meter* meter) -> void
+        (float new_meter_value, UniverseObjectID target_id, Meter* meter) -> void
     {
         auto old_value = meter->Current();
         meter->SetCurrent(new_meter_value);
@@ -1009,10 +1009,10 @@ void SetEmpireMeter::Execute(ScriptingContext& context) const {
         ErrorLogger(effects) << "SetEmpireMeter::Execute missing empire id or value ValueRefs, or given empty meter name";
         return;
     }
-    const auto empire_id = m_empire_id->Eval(context);
+    const EmpireID empire_id{m_empire_id->Eval(context)};
     auto* meter = GetEmpireMeter(context, empire_id, m_meter);
     if (!meter) {
-        ErrorLogger(effects) << "SetEmpireMeter::Execute found no empire " << empire_id << " meter named " << m_meter;
+        ErrorLogger(effects) << "SetEmpireMeter::Execute found no empire " << to_string(empire_id) << " meter named " << m_meter;
         return;
     }
     if (m_value->TargetInvariant()) {
@@ -1062,7 +1062,7 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
             for (auto* target : targets) {
                 if (target) {
                     ScriptingContext target_context{context, ScriptingContext::Target{}, target, ZERO_INT_CURRENT_VALUE};
-                    const auto empire_id = m_empire_id->Eval(target_context);
+                    const EmpireID empire_id{m_empire_id->Eval(target_context)};
                     if (auto* meter = GetEmpireMeter(context, empire_id, m_meter))
                         meter->SetCurrent(new_val);
                 }
@@ -1080,7 +1080,7 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
             for (auto* target : targets) {
                 if (target) {
                     ScriptingContext target_context{context, ScriptingContext::Target{}, target, ZERO_INT_CURRENT_VALUE};
-                    const auto empire_id = m_empire_id->Eval(target_context);
+                    const EmpireID empire_id{m_empire_id->Eval(target_context)};
                     if (auto* meter = GetEmpireMeter(context, empire_id, m_meter)) {
                         const auto new_val = OperateData(op_type, static_cast<double>(meter->Current()), rhs);
                         meter->SetCurrent(static_cast<float>(new_val));

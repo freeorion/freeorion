@@ -572,10 +572,10 @@ namespace {
 
                 // for reverse-lookup System universe ID from graph index
                 const auto& sys_id_property_map = boost::get(vertex_system_id_t(), *m_graph);
-                int sys_graph_index_1 = boost::source(edge, *m_graph);
-                UniverseObjectID sys_id_1 = sys_id_property_map[sys_graph_index_1];
-                int sys_graph_index_2 = boost::target(edge, *m_graph);
-                UniverseObjectID sys_id_2 = sys_id_property_map[sys_graph_index_2];
+                const auto sys_graph_index_1 = boost::source(edge, *m_graph);
+                const auto sys_id_1 = sys_id_property_map[sys_graph_index_1];
+                const auto sys_graph_index_2 = boost::target(edge, *m_graph);
+                const auto sys_id_2 = sys_id_property_map[sys_graph_index_2];
 
                 // look up objects in system
                 auto system1 = m_objects->getRaw<System>(sys_id_1);

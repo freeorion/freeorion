@@ -1308,7 +1308,7 @@ void EmpireAffiliation::Eval(const ScriptingContext& parent_context, ObjectSet& 
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        EmpireID empire_id = m_empire_id ? m_empire_id->Eval(parent_context) : ALL_EMPIRES;
+        EmpireID empire_id = m_empire_id ? EmpireID{m_empire_id->Eval(parent_context)} : ALL_EMPIRES;
         EvalImpl(matches, non_matches, search_domain,
                  EmpireAffiliationSimpleMatch(empire_id, m_affiliation, parent_context));
     } else {
@@ -1320,7 +1320,7 @@ void EmpireAffiliation::Eval(const ScriptingContext& parent_context, ObjectSet& 
 std::string EmpireAffiliation::Description(bool negated) const {
     std::string empire_str;
     if (m_empire_id) {
-        EmpireID empire_id = m_empire_id->ConstantExpr() ? m_empire_id->Eval() : ALL_EMPIRES;
+        EmpireID empire_id = m_empire_id->ConstantExpr() ? EmpireID{m_empire_id->Eval()} : ALL_EMPIRES;
         if (auto empire = IApp::GetApp()->GetContext().GetEmpire(empire_id))
             empire_str = empire->Name();
         else
@@ -1397,7 +1397,7 @@ bool EmpireAffiliation::Match(const ScriptingContext& local_context) const {
         return false;
     }
     if (EmpireAffiliationSimpleMatch::AffiliationTypeUsesEmpireID(m_affiliation) && m_empire_id) {
-        EmpireID empire_id = m_empire_id->Eval(local_context);
+        EmpireID empire_id{m_empire_id->Eval(local_context)};
         return EmpireAffiliationSimpleMatch(empire_id, m_affiliation, local_context)(candidate);
     } else {
         return EmpireAffiliationSimpleMatch(m_affiliation, local_context)(candidate);
@@ -1551,8 +1551,11 @@ bool Homeworld::operator==(const Homeworld& rhs_) const {
 
 namespace {
     // gets a planet ID from \a obj considering obj as a planet or a building on a planet
-    int PlanetIDFromObject(const auto* obj) noexcept {
-        if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+    UniverseObjectID PlanetIDFromObject(const auto* obj) noexcept {
+        if (!obj) {
+            return INVALID_OBJECT_ID;
+
+        } else if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             return obj->ID();
 
         } else if (obj->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
@@ -1685,7 +1688,7 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
     }
 
     // is it a planet or a building on a planet?
-    const int planet_id = PlanetIDFromObject(candidate);
+    const auto planet_id = PlanetIDFromObject(candidate);
     if (planet_id == INVALID_OBJECT_ID)
         return false;
 
@@ -1780,7 +1783,7 @@ bool Capital::EvalAny(const ScriptingContext& parent_context,
     return range_any_of(candidates, is_capital);
 }
 
-bool Capital::EvalAny(const ScriptingContext& parent_context, std::span<const int> candidate_ids) const {
+bool Capital::EvalAny(const ScriptingContext& parent_context, std::span<const UniverseObjectID> candidate_ids) const {
     // check if candidate ids are capitals of any empire
     const auto is_capital_id = [capitals{parent_context.Empires().CapitalIDs()}](const auto id)
     { return range_contains(capitals, id); };
@@ -1843,7 +1846,7 @@ void CapitalWithID::Eval(const ScriptingContext& parent_context, ObjectSet& matc
              (parent_context.condition_root_candidate || RootCandidateInvariant()));
 
         if (simple_eval_safe) {
-            const auto empire = parent_context.GetEmpire(m_empire_id->Eval(parent_context));
+            const auto empire = parent_context.GetEmpire(EmpireID{m_empire_id->Eval(parent_context)});
             if (!empire) {
                 // no such empire, match nothing
                 if (search_domain == SearchDomain::MATCHES && (std::addressof(matches) != std::addressof(non_matches))) {
@@ -1861,7 +1864,7 @@ void CapitalWithID::Eval(const ScriptingContext& parent_context, ObjectSet& matc
             // get empire ID (and thus its capital ID) separately for each object
             auto is_specific_capital = [this, &parent_context](const auto* candidate) {
                 const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, candidate};
-                const auto* empire = local_context.GetEmpire(m_empire_id->Eval(local_context)).get();
+                const auto* empire = local_context.GetEmpire(EmpireID{m_empire_id->Eval(local_context)}).get();
                 return empire && empire->CapitalID() == candidate->ID();
             };
 
@@ -9162,8 +9165,8 @@ bool Stationary::Match(const ScriptingContext& local_context) const {
         // next system is a system and isn't the current system.  This will
         // mean fleets that have arrived at a system on the current turn will
         // be stationary, but fleets departing won't be stationary.
-        const int next_id = fleet->NextSystemID();
-        const int cur_id = fleet->SystemID();
+        const auto next_id = fleet->NextSystemID();
+        const auto cur_id = fleet->SystemID();
         if (next_id != INVALID_OBJECT_ID && next_id != cur_id)
             return false;
     }
@@ -9250,7 +9253,7 @@ namespace {
             return it->second.contains(candidate->SystemID());
         }
 
-        int m_empire_id;
+        EmpireID m_empire_id;
         const SupplyManager& m_supply;
     };
 }
@@ -9263,7 +9266,7 @@ void FleetSupplyableByEmpire::Eval(const ScriptingContext& parent_context, Objec
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        EmpireID empire_id = m_empire_id->Eval(parent_context);
+        EmpireID empire_id{m_empire_id->Eval(parent_context)};
         EvalImpl(matches, non_matches, search_domain,
                  FleetSupplyableSimpleMatch(empire_id, parent_context.supply));
     } else {
@@ -9275,7 +9278,7 @@ void FleetSupplyableByEmpire::Eval(const ScriptingContext& parent_context, Objec
 std::string FleetSupplyableByEmpire::Description(bool negated) const {
     std::string empire_str;
     if (m_empire_id) {
-        EmpireID empire_id = m_empire_id->ConstantExpr() ? m_empire_id->Eval() : ALL_EMPIRES;
+        EmpireID empire_id = m_empire_id->ConstantExpr() ? EmpireID{m_empire_id->Eval()} : ALL_EMPIRES;
         if (auto empire = IApp::GetApp()->GetContext().GetEmpire(empire_id))
             empire_str = empire->Name();
         else

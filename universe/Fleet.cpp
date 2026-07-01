@@ -599,7 +599,7 @@ namespace {
         // Searching for each Ship one at a time is possibly faster than find(ship_ids),
         // because an early exit avoids searching the remaining ids.
         return range_any_of(ship_ids,
-                           [&pred, &objects](const int ship_id) {
+                           [&pred, &objects](const auto ship_id) {
                                const auto ship = objects.getRaw<const Ship>(ship_id);
                                return ship && pred(ship);
                            });
