@@ -324,20 +324,25 @@ void PythonCommon::SetModulesDirs(std::vector<std::filesystem::path>&& modules_d
 }
 
 py::object PythonCommon::find_spec(const std::string& fullname, const py::object& path, const py::object& target) const {
+    std::vector<std::filesystem::path> namespace_dirs;
+    std::string parent;
+    std::string current;
+    for (auto it = boost::algorithm::make_split_iterator(fullname, boost::algorithm::token_finder(boost::algorithm::is_any_of(".")));
+        it != boost::algorithm::split_iterator<std::string::const_iterator>(); ++it)
+    {
+        if (!current.empty()) {
+            if (parent.empty())
+                parent = std::move(current);
+            else
+                parent = parent + "." + current;
+        }
+        current = boost::copy_range<std::string>(*it);
+    }
     for (auto module_path : m_modules_dirs) {
-        std::string parent;
-        std::string current;
         for (auto it = boost::algorithm::make_split_iterator(fullname, boost::algorithm::token_finder(boost::algorithm::is_any_of(".")));
             it != boost::algorithm::split_iterator<std::string::const_iterator>(); ++it)
         {
             module_path = module_path / boost::copy_range<std::string>(*it);
-            if (!current.empty()) {
-                if (parent.empty())
-                    parent = std::move(current);
-                else
-                    parent = parent + "." + current;
-            }
-            current = boost::copy_range<std::string>(*it);
         }
 
         if (IsExistingDir(module_path)) {
@@ -352,15 +357,8 @@ py::object PythonCommon::find_spec(const std::string& fullname, const py::object
                     .parent = parent,
                     .python = *this
                 });
-            } else {
-                return py::object(module_spec{
-                    .submodule_search_locations = search_locations,
-                    .origin = py::object(),
-                    .fullname = fullname,
-                    .parent = parent,
-                    .python = *this
-                });
             }
+            namespace_dirs.push_back(module_path);
         } else {
             module_path.replace_extension("py");
             if (IsExistingFile(module_path)) {
@@ -373,6 +371,20 @@ py::object PythonCommon::find_spec(const std::string& fullname, const py::object
                 });
             }
         }
+    }
+
+    if (!namespace_dirs.empty()) {
+        py::list search_locations;
+        for (const auto& dir : namespace_dirs) {
+            search_locations.append(path_to_pyobject(dir.native()));
+        }
+        return py::object(module_spec{
+            .submodule_search_locations = search_locations,
+            .origin = py::object(),
+            .fullname = fullname,
+            .parent = parent,
+            .python = *this
+        });
     }
 
     WarnLogger() << "Couldn't find file for module spec " << fullname;
