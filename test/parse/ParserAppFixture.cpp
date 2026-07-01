@@ -20,7 +20,7 @@ ParserAppFixture::ParserAppFixture(bool test_scripting) :
 #else
     std::filesystem::path resource_dir = GetBinDir() / "default";
 #endif
-    GetOptionsDB().Set<std::string>("resource.path", PathToString(resource_dir));
+    GetOptionsDB().Set("resource.path", resource_dir);
 
     if (test_scripting) {
 #if defined(FREEORION_MACOSX)

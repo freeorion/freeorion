@@ -151,7 +151,7 @@ void FreeOrionNode::_init() {
     {
         DebugLogger() << "Resources directory " << PathToString(GetResourceDir()) << " from config.xml missing or does not contain expected files. Resetting to default.";
 
-        GetOptionsDB().Set<std::string>("resource.path", PathToString(std::filesystem::canonical("../default"))); // Temporary default for Godot client prototype development
+        GetOptionsDB().Set<std::filesystem::path>("resource.path", std::filesystem::canonical("../default")); // Temporary default for Godot client prototype development
 
         // double-check that resetting actually fixed things...
         if (!std::filesystem::exists(GetResourceDir()) ||
