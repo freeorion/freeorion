@@ -15328,6 +15328,10 @@ SHIP_STEALTH_MODIFIERS
 BASIC_PLANET_STEALTH
 Universal Basic Stealth
 
+# stealth as reported by the server before applying fleet unstealthiness
+FLEET_UNSTEALTHINESS_PRESYNC_LABEL
+Unexpected Effect
+
 FLEET_UNSTEALTHINESS_INSYSTEM_LABEL
 Fleet Unstealthiness (In System)
 
