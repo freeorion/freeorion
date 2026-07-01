@@ -650,17 +650,17 @@ private:
 
     // inserts \a obj into the map / vec for existing objects of type of ObjectType
     template <typename ObjectType = ::UniverseObject>
-    void TypedInsertExisting(int ID, std::shared_ptr<ObjectType> obj);
+    void TypedInsertExisting(UniverseObjectID ID, std::shared_ptr<ObjectType> obj);
 
     // dispatches to the appropriate TypedInsertExisting for the dynamic object type in \a obj
-    void AutoTypedInsertExisting(int ID, auto&& obj);
+    void AutoTypedInsertExisting(UniverseObjectID ID, auto&& obj);
 
     // inserts \a obj into the map / vecs for the type ObjectType
     template <typename ObjectType = ::UniverseObject>
-    void TypedInsert(int ID, bool destroyed, std::shared_ptr<ObjectType> obj);
+    void TypedInsert(UniverseObjectID ID, bool destroyed, std::shared_ptr<ObjectType> obj);
 
     // dispatches to the appropriate TypedInsert for the dynamic object type in \a obj
-    void AutoTypedInsert(int ID, bool destroyed, auto&& obj);
+    void AutoTypedInsert(UniverseObjectID ID, bool destroyed, auto&& obj);
 
     container_type<UniverseObjectCXBase> m_cx_objects;
     container_type<UniverseObject>       m_objects;

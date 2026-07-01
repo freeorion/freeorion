@@ -53,11 +53,14 @@ namespace {
 }
 
 namespace ObjectMapPredicateTypeTraits {
-    static_assert(!int_iterable<int>);
-    static_assert(!int_iterable<std::array<float, 5>>);
-    static_assert(int_iterable<std::array<const int, 42>>);
-    static_assert(int_iterable<boost::container::flat_set<int, std::greater<>>>);
-    static_assert(int_iterable<std::vector<int>>);
+    static_assert(!id_iterable<int>);
+    static_assert(!id_iterable<UniverseObjectID>);
+    static_assert(!id_iterable<EmpireID>);
+    static_assert(!id_iterable<std::array<float, 5>>);
+    static_assert(id_iterable<std::array<const UniverseObjectID, 42>>);
+    static_assert(id_iterable<boost::container::flat_set<UniverseObjectID, std::greater<>>>);
+    static_assert(id_iterable<std::vector<UniverseObjectID>>);
+    static_assert(!id_iterable<std::vector<EmpireID>>);
 
     static_assert(is_sorted<std::set<int>>);
     static_assert(is_sorted<std::set<std::string, std::less<>>>);
@@ -86,18 +89,18 @@ namespace ObjectMapPredicateTypeTraits {
     invokable_on_const_reference, invokable_on_mutable_reference,
     invokable, is_visitor, is_int_range, invokable_on_int
     */
-    constexpr auto fsiv = ObjectMap::CheckTypes<Ship, std::vector<int>>();
+    constexpr auto fsiv = ObjectMap::CheckTypes<Ship, std::vector<UniverseObjectID>>();
     static_assert(fsiv == std::array{false, false, false, false, false, false, false, false, false, false, true, false});
 
-    constexpr auto fcuifs = ObjectMap::CheckTypes<UniverseObject, boost::container::flat_set<int>>();
+    constexpr auto fcuifs = ObjectMap::CheckTypes<UniverseObject, boost::container::flat_set<UniverseObjectID>>();
     static_assert(fcuifs == std::array{false, false, false, false, false, false, false, false, false, false, true, false});
 
     constexpr auto ship_p_lambda = [](const Ship*) -> bool { return false; };
     constexpr auto lspbicsp = ObjectMap::CheckTypes<Ship, decltype(ship_p_lambda)>();
     static_assert(lspbicsp == std::array{true, true, false, false, false, false, false, false, true, false, false, false});
 
-    constexpr auto int_lambda = [](const int) -> bool { return false; };
-    constexpr auto libi = ObjectMap::CheckTypes<Ship, decltype(int_lambda)>();
+    constexpr auto id_lambda = [](const UniverseObjectID) -> bool { return false; };
+    constexpr auto libi = ObjectMap::CheckTypes<Ship, decltype(id_lambda)>();
     static_assert(libi == std::array{false, false, false, false, false, false, false, false, true, false, false, true});
 }
 
@@ -129,7 +132,7 @@ void ObjectMap::CopyObject(std::shared_ptr<const UniverseObject> source,
     if (!source)
         return;
 
-    const int source_id = source->ID();
+    const auto source_id = source->ID();
 
     // can empire see object at all?  if not, skip copying object's info
     if (empire_id != ALL_EMPIRES &&
@@ -223,7 +226,7 @@ namespace {
 }
 
 template <typename ObjectType>
-void ObjectMap::TypedInsertExisting(int ID, std::shared_ptr<ObjectType> obj) {
+void ObjectMap::TypedInsertExisting(UniverseObjectID ID, std::shared_ptr<ObjectType> obj) {
     using OT = std::decay_t<ObjectType>;
 
     auto& evec = ExistingVec<OT>();
@@ -238,7 +241,7 @@ void ObjectMap::TypedInsertExisting(int ID, std::shared_ptr<ObjectType> obj) {
     emap.insert_or_assign(ID, std::move(obj));
 }
 
-void ObjectMap::AutoTypedInsertExisting(int ID, auto&& obj) {
+void ObjectMap::AutoTypedInsertExisting(UniverseObjectID ID, auto&& obj) {
     if (!obj)
         return;
     switch (obj->ObjectType()) {
@@ -254,7 +257,7 @@ void ObjectMap::AutoTypedInsertExisting(int ID, auto&& obj) {
 }
 
 template <typename ObjectType>
-void ObjectMap::TypedInsert(int ID, bool destroyed, std::shared_ptr<ObjectType> obj) {
+void ObjectMap::TypedInsert(UniverseObjectID ID, bool destroyed, std::shared_ptr<ObjectType> obj) {
     if (!obj) {
         //std::cout << "null -> " << ID << " as " << typeid(ObjectType).name() << std::endl;
         return;
@@ -267,7 +270,7 @@ void ObjectMap::TypedInsert(int ID, bool destroyed, std::shared_ptr<ObjectType> 
     Map<std::decay_t<ObjectType>>().insert_or_assign(ID, std::move(obj));
 }
 
-void ObjectMap::AutoTypedInsert(int ID, bool destroyed, auto&& obj) {
+void ObjectMap::AutoTypedInsert(UniverseObjectID ID, bool destroyed, auto&& obj) {
     if (!obj)
         return;
     switch (obj->ObjectType()) {
@@ -292,7 +295,7 @@ void ObjectMap::insertCore(std::shared_ptr<UniverseObject> obj, bool destroyed) 
     AutoTypedInsert(ID, destroyed, std::move(obj));
 }
 
-std::shared_ptr<UniverseObject> ObjectMap::erase(int id) {
+std::shared_ptr<UniverseObject> ObjectMap::erase(UniverseObjectID id) {
     // search for object in objects map
     auto it = m_objects.find(id);
     if (it == m_objects.end())
@@ -325,12 +328,12 @@ void ObjectMap::clear() {
     ApplyToCoreMaps(clear_container);
 }
 
-std::vector<int> ObjectMap::FindExistingObjectIDs() const {
+std::vector<UniverseObjectID> ObjectMap::FindExistingObjectIDs() const {
     auto key_rng = m_existing_objects | range_keys;
     return {key_rng.begin(), key_rng.end()};
 }
 
-void ObjectMap::UpdateCurrentDestroyedObjects(const std::unordered_set<int>& destroyed_object_ids) {
+void ObjectMap::UpdateCurrentDestroyedObjects(const std::unordered_set<UniverseObjectID>& destroyed_object_ids) {
     ApplyToExistingVecs(clear_container);
     ApplyToExistingMaps(clear_container);
 
@@ -346,22 +349,22 @@ void ObjectMap::UpdateCurrentDestroyedObjects(const std::unordered_set<int>& des
     //ApplyToExistingMaps([](auto& map) { std::cout << "map " << typeid(map).name() << " sz: " << map.size() << std::endl; }, true);
 }
 
-void ObjectMap::AuditContainment(const std::unordered_set<int>& destroyed_object_ids) {
+void ObjectMap::AuditContainment(const std::unordered_set<UniverseObjectID>& destroyed_object_ids) {
     // determine all objects that some other object thinks contains them
-    std::map<int, std::set<int>> contained_objs; // TODO: use boost flat / unordered sets?
-    std::map<int, std::set<int>> contained_planets;
-    std::map<int, std::set<int>> contained_buildings;
-    std::map<int, std::set<int>> contained_fleets;
-    std::map<int, std::set<int>> contained_ships;
-    std::map<int, std::set<int>> contained_fields;
+    std::map<UniverseObjectID, std::set<UniverseObjectID>> contained_objs; // TODO: use boost flat / unordered sets?
+    std::map<UniverseObjectID, std::set<UniverseObjectID>> contained_planets;
+    std::map<UniverseObjectID, std::set<UniverseObjectID>> contained_buildings;
+    std::map<UniverseObjectID, std::set<UniverseObjectID>> contained_fleets;
+    std::map<UniverseObjectID, std::set<UniverseObjectID>> contained_ships;
+    std::map<UniverseObjectID, std::set<UniverseObjectID>> contained_fields;
 
     for (const auto* contained : allRaw()) {
         if (destroyed_object_ids.contains(contained->ID()))
             continue;
 
-        const int contained_id = contained->ID();
-        const int sys_id = contained->SystemID();
-        const int alt_id = contained->ContainerObjectID(); // planet or fleet id for a building or ship, or system id again for a fleet, field, or planet
+        const auto contained_id = contained->ID();
+        const auto sys_id = contained->SystemID();
+        const auto alt_id = contained->ContainerObjectID(); // planet or fleet id for a building or ship, or system id again for a fleet, field, or planet
         const UniverseObjectType type = contained->ObjectType();
         if (type == UniverseObjectType::OBJ_SYSTEM)
             continue;
@@ -396,7 +399,7 @@ void ObjectMap::AuditContainment(const std::unordered_set<int>& destroyed_object
 
     // set contained objects of all possible containers
     for (auto* obj : allRaw()) {
-        const int ID = obj->ID();
+        const auto ID = obj->ID();
         const auto TYPE = obj->ObjectType();
         if (TYPE == UniverseObjectType::OBJ_SYSTEM) {
             auto sys = static_cast<System*>(obj);
@@ -442,7 +445,7 @@ std::string ObjectMap::Dump(uint8_t ntabs) const {
     return dump_stream.str();
 }
 
-std::shared_ptr<const UniverseObject> ObjectMap::getExisting(int id) const {
+std::shared_ptr<const UniverseObject> ObjectMap::getExisting(UniverseObjectID id) const {
     auto it = m_existing_objects.find(id);
     if (it != m_existing_objects.end())
         return it->second;
