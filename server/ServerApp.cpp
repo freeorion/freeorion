@@ -2315,7 +2315,7 @@ namespace {
         const auto id_to_planet = [&objects](int id) { return objects.getRaw<Planet>(id); };
 
         const auto& planet_ids = system->PlanetIDs();
-        std::vector<int> empire_ids;
+        std::vector<EmpireID> empire_ids;
         empire_ids.reserve(planet_ids.size());
 
         auto plt_rng = planet_ids | range_transform(id_to_planet);

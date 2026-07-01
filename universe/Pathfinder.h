@@ -51,8 +51,8 @@ public:
       * visibility if \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if either system ID
       * is out of range, or if the empire ID is not known. */
-    std::pair<std::vector<int>, double> ShortestPath(UniverseObjectID system1_id, UniverseObjectID system2_id,
-                                                     EmpireID empire_id = ALL_EMPIRES) const;
+    std::pair<std::vector<UniverseObjectID>, double> ShortestPath(UniverseObjectID system1_id, UniverseObjectID system2_id,
+                                                                  EmpireID empire_id = ALL_EMPIRES) const;
 
     /** Shortest path known to an empire between two systems, excluding routes
      *  for systems containing objects for @p system_predicate.
@@ -63,8 +63,8 @@ public:
      *                         if it is or contains a matched object
      * 
      * @returns list of System ids, distance between systems */
-    std::pair<std::vector<int>, double> ShortestPath(UniverseObjectID system1_id, UniverseObjectID system2_id,
-                                                     const SystemExclusionPredicateType& system_predicate,
+    std::pair<std::vector<UniverseObjectID>, double> ShortestPath(UniverseObjectID system1_id, UniverseObjectID system2_id,
+                                                                  const SystemExclusionPredicateType& system_predicate,
                                                      const ObjectMap& objects) const;
 
     /** Returns the shortest starlane path distance between any two objects, accounting
@@ -81,8 +81,8 @@ public:
       * \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function
       * will throw if either system ID is out of range or if the empire ID is
       * not known. */
-    std::pair<std::vector<int>, int> LeastJumpsPath(UniverseObjectID system1_id, UniverseObjectID system2_id,
-                                                    EmpireID empire_id = ALL_EMPIRES, int max_jumps = INT_MAX) const;
+    std::pair<std::vector<UniverseObjectID>, int> LeastJumpsPath(UniverseObjectID system1_id, UniverseObjectID system2_id,
+                                                                 EmpireID empire_id = ALL_EMPIRES, int max_jumps = INT_MAX) const;
 
     /** Returns whether there is a path known to empire \a empire_id between
       * system \a system1 and system \a system2.  The path is calculated using
@@ -110,12 +110,12 @@ public:
       * ID is out of range. */
     //TODO empire_id is never set to anything other than self, which in
     //the AI's is the same as ALL_EMPIRES
-    std::vector<std::pair<double, int>> ImmediateNeighbors(UniverseObjectID system_id, EmpireID empire_id = ALL_EMPIRES) const;
+    std::vector<std::pair<double, UniverseObjectID>> ImmediateNeighbors(UniverseObjectID system_id, EmpireID empire_id = ALL_EMPIRES) const;
 
     /** Returns the system ids of systems that are within \p jumps of the \p
         candidates system ids.*/
-    std::vector<int> WithinJumps(std::size_t jumps, std::vector<UniverseObjectID> candidates) const;
-    std::vector<int> WithinJumps(std::size_t jumps, UniverseObjectID candidate) const;
+    std::vector<UniverseObjectID> WithinJumps(std::size_t jumps, std::vector<UniverseObjectID> candidates) const;
+    std::vector<UniverseObjectID> WithinJumps(std::size_t jumps, UniverseObjectID candidate) const;
 
     /** Returns the partition (near, far) of the \p candidate objects into two sets,
         those that are within \p jumps of the \p stationary objects and that are not.*/
@@ -127,7 +127,7 @@ public:
 
     /** Returns the id of the System object that is closest to the specified
       * (\a x, \a y) location on the map, by direct-line distance. */
-    int NearestSystemTo(double x, double y, const ObjectMap& objects) const;
+    UniverseObjectID NearestSystemTo(double x, double y, const ObjectMap& objects) const;
 
     /** Fills pathfinding data structure and determines least jumps distances
       * between systems. */

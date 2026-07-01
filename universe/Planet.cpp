@@ -794,7 +794,7 @@ void Planet::Conquer(int conquerer, ScriptingContext& context) {
 
     ObjectMap& objects{context.ContextObjects()};
     const auto& ids_as_flatset{context.EmpireIDs()};
-    const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()};
+    const std::vector<EmpireID> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()};
 
     // deal with UniverseObjects (eg. buildings) located on this planet
     for (auto* building : objects.findRaw<Building>(m_buildings)) {

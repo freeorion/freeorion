@@ -116,7 +116,7 @@ namespace {
       * with the MoveTo effect, as otherwise the system wouldn't get explored,
       * and objects being moved into unexplored systems might disappear for
       * players or confuse the AI. */
-    void ExploreSystem(int system_id, EmpireID empire_id, ScriptingContext& context) {
+    void ExploreSystem(UniverseObjectID system_id, EmpireID empire_id, ScriptingContext& context) {
         if (empire_id == ALL_EMPIRES || system_id == INVALID_OBJECT_ID)
             return;
         if (auto empire = context.GetEmpire(empire_id))
@@ -127,8 +127,8 @@ namespace {
      * resets the fleet's move route.  Used after a fleet has been moved with
      * the MoveTo effect, as its previous route was assigned based on its
      * previous location, and may not be valid for its new location. */
-    void UpdateFleetRoute(Fleet* fleet, int new_next_system,
-                          int new_previous_system, const ScriptingContext& context)
+    void UpdateFleetRoute(Fleet* fleet, UniverseObjectID new_next_system,
+                          UniverseObjectID new_previous_system, const ScriptingContext& context)
     {
         if (!fleet) {
             ErrorLogger(effects) << "UpdateFleetRoute passed a null fleet pointer";
@@ -139,12 +139,12 @@ namespace {
 
         const auto next_system = objects.getRaw<System>(new_next_system);
         if (!next_system) {
-            ErrorLogger(effects) << "UpdateFleetRoute couldn't get new next system with id: " << new_next_system;
+            ErrorLogger(effects) << "UpdateFleetRoute couldn't get new next system with id: " << to_string(new_next_system);
             return;
         }
 
         if (new_previous_system != INVALID_OBJECT_ID && !objects.getRaw<System>(new_previous_system))
-            ErrorLogger(effects) << "UpdateFleetRoute couldn't get new previous system with id: " << new_previous_system;
+            ErrorLogger(effects) << "UpdateFleetRoute couldn't get new previous system with id: " << to_string(new_previous_system);
 
         fleet->SetNextAndPreviousSystems(new_next_system, new_previous_system);
 
@@ -4240,7 +4240,7 @@ void SetVisibility::Execute(ScriptingContext& context) const {
 
     // whom to set visbility for?
     const auto all_empire_ids{context.EmpireIDs()};
-    std::vector<int> empire_ids;
+    std::vector<EmpireID> empire_ids;
 
     switch (m_affiliation) {
     case EmpireAffiliationType::AFFIL_SELF: {
@@ -4305,10 +4305,10 @@ void SetVisibility::Execute(ScriptingContext& context) const {
 
     // what to set visibility of?
     const auto object_ids = GetUniqueMatchesIDs(context, m_condition.get());
-    const int source_id = context.source ? context.source->ID() : INVALID_OBJECT_ID;
+    const auto source_id = context.source ? context.source->ID() : INVALID_OBJECT_ID;
 
-    for (const int emp_id : empire_ids) {
-        for (const int obj_id : object_ids) {
+    for (const auto emp_id : empire_ids) {
+        for (const auto obj_id : object_ids) {
             // store source object id and ValueRef to evaluate to determine
             // what visibility level to set at time of application
             context.ContextUniverse().SetEffectDerivedVisibility(emp_id, obj_id, source_id, m_vis.get());
