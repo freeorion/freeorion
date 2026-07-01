@@ -3,6 +3,7 @@
 
 #include <GG/Wnd.h>
 
+#include "../universe/ConstantsFwd.h"
 #include "../universe/EnumsFwd.h"
 
 class StatisticIcon;
@@ -16,9 +17,9 @@ class MultiIconValueIndicator : public GG::Wnd {
 public:
     /** Initializes with no icons shown. */
     MultiIconValueIndicator(GG::X w);
-    MultiIconValueIndicator(GG::X w, int object_id,
+    MultiIconValueIndicator(GG::X w, UniverseObjectID object_id,
                             std::vector<std::pair<MeterType, MeterType>> meter_types);
-    MultiIconValueIndicator(GG::X w, std::vector<int> object_ids,
+    MultiIconValueIndicator(GG::X w, std::vector<UniverseObjectID> object_ids,
                             std::vector<std::pair<MeterType, MeterType>> meter_types);
 
     void CompleteConstruction() override;
@@ -34,7 +35,7 @@ public:
 private:
     std::vector<std::shared_ptr<StatisticIcon>>         m_icons;
     const std::vector<std::pair<MeterType, MeterType>>  m_meter_types;
-    std::vector<int>                                    m_object_ids;
+    std::vector<UniverseObjectID>                       m_object_ids;
 };
 
 #endif

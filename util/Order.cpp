@@ -387,7 +387,7 @@ void NewFleetOrder::ExecuteImpl(ScriptingContext& context) const {
     Universe& u = context.ContextUniverse();
     ObjectMap& o = context.ContextObjects();
     const auto& ids_as_flatset{context.EmpireIDs()};
-    const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()};
+    const std::vector<EmpireID> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()};
 
     u.InhibitUniverseObjectSignals(true);
 
@@ -743,7 +743,7 @@ void FleetTransferOrder::ExecuteImpl(ScriptingContext& context) const {
     // signal change to fleet states
     modified_fleets.insert(target_fleet.get());
     const auto& ids_as_flatset{context.EmpireIDs()};
-    const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()};
+    const std::vector<EmpireID> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()};
 
     for (auto* modified_fleet : modified_fleets) {
         if (!modified_fleet) {

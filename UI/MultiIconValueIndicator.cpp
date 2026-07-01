@@ -22,16 +22,16 @@ namespace {
 }
 
 MultiIconValueIndicator::MultiIconValueIndicator(GG::X w) :
-    MultiIconValueIndicator(w, {}, {})
+    MultiIconValueIndicator(w, std::vector<UniverseObjectID>{}, std::vector<std::pair<MeterType, MeterType>>{})
 {}
 
 MultiIconValueIndicator::MultiIconValueIndicator(
-    GG::X w, int object_id,
+    GG::X w, UniverseObjectID object_id,
     std::vector<std::pair<MeterType, MeterType>> meter_types) :
-    MultiIconValueIndicator(w, std::vector<int>{object_id}, std::move(meter_types))
+    MultiIconValueIndicator(w, std::vector<UniverseObjectID>{object_id}, std::move(meter_types))
 {}
 
-MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, std::vector<int> object_ids,
+MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, std::vector<UniverseObjectID> object_ids,
                                                  std::vector<std::pair<MeterType, MeterType>> meter_types) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_meter_types(std::move(meter_types)),

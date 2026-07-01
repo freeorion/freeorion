@@ -580,7 +580,7 @@ private:
 
     std::string m_units_str;
     std::string m_title_str;
-    int         m_empire_id = ALL_EMPIRES;
+    EmpireID    m_empire_id = ALL_EMPIRES;
 
     std::shared_ptr<GG::Label>  m_empire_column_label;
     std::shared_ptr<GG::Label>  m_local_column_label;

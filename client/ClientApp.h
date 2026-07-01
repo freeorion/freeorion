@@ -4,6 +4,7 @@
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
 #include "../network/Message.h"
+#include "../universe/ConstantsFwd.h"
 #include "../universe/Species.h"
 #include "../universe/ScriptingContext.h"
 #include "../universe/Universe.h"
@@ -43,7 +44,7 @@ public:
      *
      * @return An empire identifier.
      */
-    [[nodiscard]] EmpireID EmpireID() const noexcept override { return m_empire_id; }
+    [[nodiscard]] ::EmpireID EmpireID() const noexcept override { return m_empire_id; }
 
     /** @brief Return the current game turn
      *
@@ -58,7 +59,7 @@ public:
      *
      * @return The player identifier of the client controlling the empire.
      */
-    [[nodiscard]] int EmpirePlayerID(EmpireID empire_id) const noexcept;
+    [[nodiscard]] int EmpirePlayerID(::EmpireID empire_id) const noexcept;
 
     /** @brief Return the players in game as ::PlayerInfo map
      *
@@ -120,7 +121,7 @@ public:
      * @return the networking client type of the empire represented by @a
      *      empire_id parameter.
      */
-    [[nodiscard]] Networking::ClientType GetEmpireClientType(EmpireID empire_id) const override;
+    [[nodiscard]] Networking::ClientType GetEmpireClientType(::EmpireID empire_id) const override;
 
     /** @brief Return the Networking::ClientType of the player @a player_id
      *
@@ -176,8 +177,8 @@ public:
      *      If there is no Empire with this @a empire_id or if the Empire is
      *      not yet known to this client a nullptr is returned.
      */
-    [[nodiscard]] Empire* GetEmpire(EmpireID empire_id) override;
-    [[nodiscard]] const Empire* GetEmpire(EmpireID empire_id) const;
+    [[nodiscard]] Empire* GetEmpire(::EmpireID empire_id) override;
+    [[nodiscard]] const Empire* GetEmpire(::EmpireID empire_id) const;
 
     [[nodiscard]] SpeciesManager& GetSpeciesManager() noexcept override { return m_species_manager; }
     [[nodiscard]] const SpeciesManager& GetSpeciesManager() const noexcept { return m_species_manager; }
@@ -231,7 +232,7 @@ protected:
 
     // other client local info
     std::shared_ptr<ClientNetworking> m_networking;
-    EmpireID                          m_empire_id = ALL_EMPIRES;
+    ::EmpireID                        m_empire_id = ALL_EMPIRES;
     int                               m_current_turn = INVALID_GAME_TURN;
 
     ScriptingContext m_context;
