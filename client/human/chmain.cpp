@@ -206,7 +206,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         {
             DebugLogger() << "Resources directory from config.xml missing or does not contain expected files. Resetting to default.";
 
-            db.Set<std::string>("resource.path", "");
+            db.Set<std::filesystem::path>("resource.path", {});
 
             // double-check that resetting actually fixed things...
             if (!std::filesystem::exists(GetResourceDir()) ||

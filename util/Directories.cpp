@@ -669,9 +669,9 @@ namespace {
         std::scoped_lock res_dir_lock(res_dir_mutex);
         // if resource dir option has been set, use specified location. otherwise,
         // use default location
-        res_dir = FilenameToPath(GetOptionsDB().Get<std::string>("resource.path"));
+        res_dir = GetOptionsDB().Get<fs::path>("resource.path");
         if (!fs::exists(res_dir) || !fs::is_directory(res_dir))
-            res_dir = FilenameToPath(GetOptionsDB().GetDefault<std::string>("resource.path"));
+            res_dir = GetOptionsDB().GetDefault<fs::path>("resource.path");
         DebugLogger() << "Refreshed ResDir";
     }
 }
@@ -682,9 +682,9 @@ auto GetResourceDir() -> fs::path const
     if (init) {
         [[unlikely]]
         init = false;
-        res_dir = FilenameToPath(GetOptionsDB().Get<std::string>("resource.path"));
+        res_dir = GetOptionsDB().Get<fs::path>("resource.path");
         if (!fs::exists(res_dir) || !fs::is_directory(res_dir))
-            res_dir = FilenameToPath(GetOptionsDB().GetDefault<std::string>("resource.path"));
+            res_dir = GetOptionsDB().GetDefault<fs::path>("resource.path");
         GetOptionsDB().OptionChangedSignal("resource.path").connect(&RefreshResDir);
         TraceLogger() << "Initialized ResDir and connected change signal";
     }
