@@ -611,8 +611,10 @@ private:
 
 template <typename T>
 bool OptionsDB::Option::SetFromValue(T&& value_) {
-    if constexpr (!std::is_same_v<std::decay_t<decltype(value_)>, std::string> &&
-                  std::is_convertible_v<decltype(value_), std::string>)
+    if constexpr (!std::is_same_v<std::decay_t<decltype(value_)>, std::filesystem::path> &&
+                  !std::is_same_v<std::decay_t<decltype(value_)>, std::string> &&
+                  std::is_convertible_v<decltype(value_), std::string> &&
+                  std::is_convertible_v<std::string, decltype(value_)>)
     {
         return SetFromValue(std::string(value_));
 
