@@ -10,7 +10,12 @@ from focs._value_refs import (
     UsedInDesignID,
 )
 from macros.base_prod import RESEARCH_PER_POP
-from macros.misc_pre import MIN_RECOLONIZING_HAPPINESS, MIN_RECOLONIZING_SIZE, SHIP_STRUCTURE_FACTOR
+from macros.misc_pre import (
+    MIN_RECOLONIZING_HAPPINESS,
+    MIN_RECOLONIZING_SIZE,
+    SHIP_STRUCTURE_FACTOR,
+    SYSTEM_MINES_DAMAGE_FACTOR,
+)
 from ship_hulls.hull_structures import HULL_STRUCTURES
 
 # Proposed naming convention: <EFFECT_NAME> _ <METER_NAME> _ FLAT/PERPOP/<others>
@@ -123,3 +128,24 @@ LIVING_HULL_NAMED("SH_PROTOPLASMIC")
 LIVING_HULL_NAMED("SH_RAVENOUS")
 LIVING_HULL_NAMED("SH_SENTIENT")
 LIVING_HULL_NAMED("SH_SYMBIOTIC")
+
+# Black hole and hyper dam
+NamedReal(name="BLD_BLACK_HOLE_POW_GEN_MIN_STABILITY", value=20)
+
+NamedReal(name="PLC_LIBERTY_DISLIKE_FACTOR", value=2.0)
+
+NamedReal(name="PLC_CONFORMANCE_DISLIKE_FACTOR", value=0.5)
+
+
+NamedReal(name="FLD_NEBULA_SPEED_MALUS", value=20)
+NamedReal(name="FLD_NEBULA_STEALTH_BONUS", value=20)
+NamedReal(name="FLD_NEBULA_DETECTION_MALUS", value=20)
+
+NamedReal(name="SHP_LIVING_HULL_REPAIR", value=2 * SHIP_STRUCTURE_FACTOR)
+NamedReal(name="SHP_LIVING_HULL_FUEL_REGEN", value=0.3)
+NamedReal(name="SHP_ROBOTIC_REPAIR", value=2 * SHIP_STRUCTURE_FACTOR)
+
+NamedReal(name="FORTRESS_SPECIAL_SYSTEM_MINES", value=3 * SYSTEM_MINES_DAMAGE_FACTOR)
+NamedReal(name="DEF_SYST_DEF_MINE_1_DAMAGE", value=2 * SYSTEM_MINES_DAMAGE_FACTOR)
+NamedReal(name="DEF_SYST_DEF_MINE_2_DAMAGE", value=6 * SYSTEM_MINES_DAMAGE_FACTOR)
+NamedReal(name="DEF_SYST_DEF_MINE_3_DAMAGE", value=14 * SYSTEM_MINES_DAMAGE_FACTOR)
