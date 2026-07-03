@@ -115,7 +115,7 @@ public:
 #if (USING_STD_RANGES)
             auto rng = pred | range_transform(find_in_map);
 #else
-            // avoids error: no type named 'type' in 'boost::range_iterator<const std::span<const int>>'
+            // avoids error: no type named 'type' in 'boost::range_iterator<const std::span<const UniverseObjectID>>'
             auto rng = boost::make_iterator_range(pred.begin(), pred.end()) | range_transform(find_in_map);
 #endif
 

@@ -361,8 +361,8 @@ private:
     template <typename V>
     using flat_set = boost::container::flat_set<V, std::less<>>;
 
-    flat_map<std::string, flat_set<int>>                                  m_species_homeworlds;
-    flat_map<std::string, flat_map<int, std::pair<Meter, Meter>>>         m_species_empire_opinions;
+    flat_map<std::string, flat_set<UniverseObjectID>>                     m_species_homeworlds;
+    flat_map<std::string, flat_map<EmpireID, std::pair<Meter, Meter>>>    m_species_empire_opinions;
     flat_map<std::string, flat_map<std::string, std::pair<Meter, Meter>>> m_species_species_opinions;
     flat_map<std::string, flat_map<std::string, int>>                     m_species_species_ships_destroyed;
 
