@@ -235,7 +235,8 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<UniverseObjectID>& r
     auto prev_system = context.ContextObjects().getRaw<System>(this->PreviousSystemID()); // may be 0 if this fleet is not moving or ordered to move
     auto next_system = context.ContextObjects().getRaw<System>(*route_it);                // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
     if (!next_system) {
-        ErrorLogger() << "Fleet::MovePath couldn't get next system with id " << *route_it << " for fleet " << this->Name() << "(" << this->ID() << ")";
+        ErrorLogger() << "Fleet::MovePath couldn't get next system with id " << to_string(*route_it)
+                      << " for fleet " << this->Name() << "(" << to_string(this->ID()) << ")";
         return retval;
     }
 
@@ -418,7 +419,7 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<UniverseObjectID>& r
                                   << ") blockaded for fleet " << this->Name();
                     blockaded_here = true;
                 } else {
-                    TraceLogger() << "Fleet::MovePath finds system " << cur_system->Name() << " (" << cur_system->ID()
+                    TraceLogger() << "Fleet::MovePath finds system " << cur_system->Name() << " (" << to_string(cur_system->ID())
                                   << ") NOT blockaded for fleet " << this->Name();
                 }
             }
@@ -427,7 +428,7 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<UniverseObjectID>& r
                 break;
 
             if (!next_system) {
-                ErrorLogger() << "Fleet::MovePath couldn't get system with id " << *route_it;
+                ErrorLogger() << "Fleet::MovePath couldn't get system with id " << to_string(*route_it);
                 break;
             }
             next_x = next_system->X();
@@ -450,8 +451,8 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<UniverseObjectID>& r
         }
 
         // blockade debug logging
-        TraceLogger() << "Fleet::MovePath for fleet " << this->Name() << " id " << this->ID()
-                      << " adding node at sysID " << (cur_system ? cur_system->ID() : INVALID_OBJECT_ID)
+        TraceLogger() << "Fleet::MovePath for fleet " << this->Name() << " id " << to_string(this->ID())
+                      << " adding node at sysID " << to_string(cur_system ? cur_system->ID() : INVALID_OBJECT_ID)
                       << " " << (blockaded_here ? "(blockade here)" : "")
                       << "  " << (past_blockade ? "(past blockade)" : "")
                       << "  ETA " << turns_taken;
@@ -705,7 +706,7 @@ void Fleet::SetRoute(std::vector<UniverseObjectID> route, const ObjectMap& objec
     if (route.empty()) {
         if (SystemID() == INVALID_OBJECT_ID) {
             ErrorLogger() << "Fleet::SetRoute() : Attempted to change fleet " << this->Name()
-                          << " (" << this->ID() << ") route to empty while not in a system.";
+                          << " (" << to_string(this->ID()) << ") route to empty while not in a system.";
             return;
         }
     } else if (m_prev_system != SystemID() &&
@@ -713,13 +714,13 @@ void Fleet::SetRoute(std::vector<UniverseObjectID> route, const ObjectMap& objec
                !CanChangeDirectionEnRoute())
     {
         ErrorLogger() << "Fleet::SetRoute() : Illegally attempted to change fleet " << this->Name()
-                      << " (" << this->ID() << ") direction while in transit.";
+                      << " (" << to_string(this->ID()) << ") direction while in transit.";
         return;
     }
 
     m_travel_route = std::move(route);
 
-    TraceLogger() << "Fleet::SetRoute: " << this->Name() << " (" << this->ID() << ")  input: " << [&]() {
+    TraceLogger() << "Fleet::SetRoute: " << this->Name() << " (" << to_string(this->ID()) << ")  input: " << [&]() {
         std::stringstream ss;
         for (auto id : m_travel_route)
             if (const auto obj = objects.getRaw<UniverseObject>(id))
@@ -757,7 +758,8 @@ void Fleet::SetRoute(std::vector<UniverseObjectID> route, const ObjectMap& objec
 
     } else {    // m_travel_route.empty() && this->SystemID() == INVALID_OBJECT_ID
         if (m_next_system != INVALID_OBJECT_ID) {
-            ErrorLogger() << "Fleet::SetRoute fleet " << this->Name() << " has empty route but fleet is not in a system. Resetting route to end at next system: " << m_next_system;
+            ErrorLogger() << "Fleet::SetRoute fleet " << this->Name()
+                          << " has empty route but fleet is not in a system. Resetting route to end at next system: " << to_string(m_next_system);
             m_travel_route.push_back(m_next_system);
         } else {
             ErrorLogger() << "Fleet::SetRoute fleet " << this->Name() << " has empty route but fleet is not in a system, and has no next system set.";
@@ -864,7 +866,7 @@ void Fleet::MoveAlongPath(ScriptingContext& context, const std::vector<MovePathN
     {
         m_arrived_this_turn = false;
         m_next_system = m_prev_system = INVALID_OBJECT_ID;
-        DebugLogger() << "Fleet " << Name() << " (" << ID() << ") movement blockaded at "
+        DebugLogger() << "Fleet " << Name() << " (" << to_string(ID()) << ") movement blockaded at "
                       << [&context](UniverseObjectID sys_id) {
                             const auto* sys = context.ContextObjects().getRaw<const System>(sys_id);
                             return (sys ? sys->Name() : "") + " (" + to_string(sys_id) + ")";
@@ -1109,7 +1111,7 @@ void Fleet::CalculateRouteTo(UniverseObjectID target_system_id, const Universe& 
         }
         obj = objects.getRaw(sys_list2.front());
         if (!obj) {
-            ErrorLogger() << "Fleet::CalculateRoute couldn't get path start object with id " << path2.first.front();
+            ErrorLogger() << "Fleet::CalculateRoute couldn't get path start object with id " << to_string(path2.first.front());
             return;
         }
         dist_x = obj->X() - this->X();
@@ -1400,7 +1402,7 @@ std::string Fleet::GenerateFleetName(const ScriptingContext& context) const {
     else
         fleet_name_key = UserStringNop("NEW_FLEET_NAME");
 
-    return boost::io::str(FlexibleFormat(UserString(fleet_name_key)) % ID());
+    return boost::io::str(FlexibleFormat(UserString(fleet_name_key)) % to_string(ID()));
 }
 
 void Fleet::SetGiveToEmpire(EmpireID empire_id) {

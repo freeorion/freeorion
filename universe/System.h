@@ -88,10 +88,10 @@ public:
     [[nodiscard]] auto&         FieldIDs() const noexcept         { return m_fields; }
     [[nodiscard]] auto&         PlanetIDsByOrbit() const noexcept { return m_orbits; }
 
-    [[nodiscard]] int           PlanetInOrbit(int orbit) const;             ///< returns the ID of the planet in the specified \a orbit, or INVALID_OBJECT_ID if there is no planet in that orbit or it is an invalid orbit
-    [[nodiscard]] int           OrbitOfPlanet(int object_id) const;         ///< returns the orbit ID in which the planet with \a object_id is located, or -1 the specified ID is not a planet in an orbit of this system
-    [[nodiscard]] bool          OrbitOccupied(int orbit) const;             ///< returns true if there is an object in \a orbit
-    [[nodiscard]] std::set<int> FreeOrbits() const;                         ///< returns the set of orbit numbers that are unoccupied
+    [[nodiscard]] UniverseObjectID  PlanetInOrbit(int orbit) const;                 ///< returns the ID of the planet in the specified \a orbit, or INVALID_OBJECT_ID if there is no planet in that orbit or it is an invalid orbit
+    [[nodiscard]] int               OrbitOfPlanet(UniverseObjectID object_id) const;///< returns the orbit ID in which the planet with \a object_id is located, or -1 the specified ID is not a planet in an orbit of this system
+    [[nodiscard]] bool              OrbitOccupied(int orbit) const;                 ///< returns true if there is an object in \a orbit
+    [[nodiscard]] std::set<int>     FreeOrbits() const;                             ///< returns the set of orbit numbers that are unoccupied
 
     [[nodiscard]] auto&         Starlanes() const noexcept { return m_starlanes; }
     [[nodiscard]] IDSet         VisibleStarlanes(EmpireID empire_id, const Universe& universe) const;
@@ -105,9 +105,9 @@ public:
 
 
     /** fleets are inserted into system */
-    mutable boost::signals2::signal<void (std::vector<int>, const ObjectMap&)> FleetsInsertedSignal;
+    mutable boost::signals2::signal<void (std::vector<UniverseObjectID>, const ObjectMap&)> FleetsInsertedSignal;
     /** fleets are removed from system */
-    mutable boost::signals2::signal<void (std::vector<int>)> FleetsRemovedSignal;
+    mutable boost::signals2::signal<void (std::vector<UniverseObjectID>)> FleetsRemovedSignal;
 
     void Copy(const UniverseObject& copied_object, const Universe& universe, EmpireID empire_id = ALL_EMPIRES) override;
     void Copy(const System& copied_system, const Universe& universe, EmpireID empire_id = ALL_EMPIRES);
