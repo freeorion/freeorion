@@ -295,10 +295,23 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, Em
         & BOOST_SERIALIZATION_NVP(m_exhausted_threshold);
 
     if constexpr (Archive::is_loading::value) {
-        // Always load whatever is there.
-        ar  & BOOST_SERIALIZATION_NVP(m_empire_id)
-            & BOOST_SERIALIZATION_NVP(m_empire_id_to_next_assigned_object_id)
-            & BOOST_SERIALIZATION_NVP(m_offset_to_empire_id);
+        ar  & boost::serialization::make_nvp("m_empire_id", UnderRef(m_empire_id));
+
+        // Always load whatever ID info was saved / sent, ignoring what is expected for \a empire_id and 
+
+        {
+            std::unordered_map<int, IDAllocator::ID_t> eid_to_naoi;
+            ar  & boost::serialization::make_nvp("m_empire_id_to_next_assigned_object_id", eid_to_naoi);
+            m_empire_id_to_next_assigned_object_id.clear();
+            for (const auto& [eid, oid] : eid_to_naoi)
+                m_empire_id_to_next_assigned_object_id.emplace(EmpireID{eid}, oid);
+        }
+        {
+            std::vector<int> offset_to_eid;
+            ar  & boost::serialization::make_nvp("m_offset_to_empire_id", offset_to_eid);
+            static constexpr auto to_eid = [](const auto& oeid) noexcept { return EmpireID{oeid}; };
+            m_offset_to_empire_id = offset_to_eid | range_transform(to_eid) | range_to_vec;
+        }
 
         DebugLogger(IDallocator) << "Deserialized [" << [this]() {
             std::stringstream ss;
@@ -307,42 +320,50 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, Em
             return ss.str();
         }() << "]";
 
-    } else {
-
+    } else { // is saving
         if (m_empire_id != empire_id && Value(m_empire_id) != m_server_id)
             ErrorLogger() << "An empire with id = " << to_string(m_empire_id) << " which is not the server "
                           << "is attempting to serialize the IDAllocator for a different empire " << to_string(empire_id);
 
         // If the target empire is the server, provide the full map.
         if (Value(empire_id) == m_server_id) {
-            ar  & BOOST_SERIALIZATION_NVP(m_empire_id)
-                & BOOST_SERIALIZATION_NVP(m_empire_id_to_next_assigned_object_id)
-                & BOOST_SERIALIZATION_NVP(m_offset_to_empire_id);
+            ar  & boost::serialization::make_nvp("m_empire_id", UnderRef(m_empire_id));
+            {
+                std::unordered_map<int, int> eid_to_naoi;
+                for (const auto& [eid, naoi] : m_empire_id_to_next_assigned_object_id)
+                    eid_to_naoi.emplace(Value(eid), static_cast<int>(naoi));
+                ar  & boost::serialization::make_nvp("m_empire_id_to_next_assigned_object_id", eid_to_naoi);
+            }
+            {
+                static constexpr auto to_value = [](const auto& oeid) noexcept { return Value(oeid); };
+                auto offset_to_eid = m_offset_to_empire_id | range_transform(to_value) | range_to_vec;
+                ar  & boost::serialization::make_nvp("m_offset_to_empire_id", offset_to_eid);
+            }
         } else {
-            ar  & boost::serialization::make_nvp(BOOST_PP_STRINGIZE(m_empire_id), empire_id);
+            ar  & boost::serialization::make_nvp(BOOST_PP_STRINGIZE(m_empire_id), UnderRef(empire_id));
 
             // Filter the map for empires so they only have their own actual next id and no
             // information about other clients.
-            std::unordered_map<EmpireID, ID_t> temp_empire_id_to_object_id{};
-            auto temp_offset_to_empire_id = std::vector<EmpireID>(m_offset_to_empire_id.size(), static_cast<EmpireID>(m_server_id));
+            std::unordered_map<int, ID_t> temp_empire_id_to_object_id{};
+            auto temp_offset_to_empire_id = std::vector<int>(m_offset_to_empire_id.size(), m_server_id);
 
             auto it = m_empire_id_to_next_assigned_object_id.find(empire_id);
             if (it == m_empire_id_to_next_assigned_object_id.end()) {
                 ErrorLogger() << "Attempt to serialize allocator for an empire_id "
                               << to_string(empire_id) << " not in id manager table.";
             } else {
-                temp_empire_id_to_object_id.insert(*it);
+                temp_empire_id_to_object_id.emplace(Value(it->first), it->second);
                 std::size_t idx = static_cast<std::size_t>(it->second - m_zero) % static_cast<std::size_t>(m_stride);
-                temp_offset_to_empire_id[idx] = empire_id;
+                temp_offset_to_empire_id[idx] = Value(empire_id);
             }
 
-            ar & boost::serialization::make_nvp(BOOST_PP_STRINGIZE(m_empire_id_to_next_assigned_object_id), temp_empire_id_to_object_id);
-            ar & boost::serialization::make_nvp(BOOST_PP_STRINGIZE(m_offset_to_empire_id), temp_offset_to_empire_id);
+            ar & boost::serialization::make_nvp("m_empire_id_to_next_assigned_object_id", temp_empire_id_to_object_id);
+            ar & boost::serialization::make_nvp("m_offset_to_empire_id", temp_offset_to_empire_id);
 
             DebugLogger(IDallocator) << "Serialized [" << [&temp_empire_id_to_object_id]() {
                 std::stringstream ss;
                 for (const auto& [next_empire_id, next_id] : temp_empire_id_to_object_id)
-                    ss << "empire = " << to_string(next_empire_id) << " next id = " << next_id << ", ";
+                    ss << "empire = " << next_empire_id << " next id = " << next_id << ", ";
                 return ss.str();
             }() << "]";
         }
