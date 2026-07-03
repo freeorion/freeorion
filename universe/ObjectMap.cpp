@@ -451,5 +451,3 @@ std::shared_ptr<const UniverseObject> ObjectMap::getExisting(UniverseObjectID id
         return it->second;
     return nullptr;
 }
-
-

@@ -1661,7 +1661,7 @@ private:
 class ObjectRow : public GG::ListBox::Row {
 public:
     ObjectRow(GG::X w, GG::Y h, std::shared_ptr<const UniverseObject> obj, bool expanded,
-              int container_object_panel, const std::span<const int> contained_object_panels,
+              int container_object_panel, const std::span<const UniverseObjectID> contained_object_panels,
               int indent) :
         GG::ListBox::Row(w, h),
         m_container_object_panel(container_object_panel),
@@ -1712,7 +1712,7 @@ public:
         m_panel->RequirePreRender();
     }
 
-    void SetContainedPanels(const std::span<const int> contained_object_panels) {
+    void SetContainedPanels(const std::span<const UniverseObjectID> contained_object_panels) {
         m_contained_object_panels.clear();
         m_contained_object_panels.insert(contained_object_panels.begin(), contained_object_panels.end());
         m_panel->SetHasContents(!m_contained_object_panels.empty());
@@ -2449,15 +2449,15 @@ public:
     mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
 
 private:
-    void AddObjectRow(int object_id, int container, int indent, const std::span<const int> contents)
+    void AddObjectRow(UniverseObjectID object_id, UniverseObjectID container, int indent, const std::span<const UniverseObjectID> contents)
     { AddObjectRow(Objects().get(object_id), container, indent, contents); }
 
-    void AddObjectRow(std::shared_ptr<const UniverseObject> obj, int container,
-                      int indent, const std::span<const int> contents = {})
+    void AddObjectRow(std::shared_ptr<const UniverseObject> obj, UniverseObjectID container,
+                      int indent, const std::span<const UniverseObjectID> contents = {})
     {
         if (!obj)
             return;
-        const int OBJ_ID = obj->ID();
+        const auto OBJ_ID = obj->ID();
 
         m_object_change_connections[OBJ_ID].disconnect();
         m_object_change_connections[OBJ_ID] = obj->StateChangedSignal.connect(
@@ -2476,10 +2476,10 @@ private:
 
     // Removes row of indicated object, and all contained rows, recursively.
     // Also updates contents tracking of containing row, if any.
-    void RemoveObjectRow(int object_id) {
+    void RemoveObjectRow(UniverseObjectID object_id) {
         if (object_id == INVALID_OBJECT_ID)
             return;
-        int container_object_id = INVALID_OBJECT_ID;
+        auto container_object_id = INVALID_OBJECT_ID;
         for (GG::ListBox::iterator it = this->begin(); it != this->end(); ++it) {
             if (ObjectRow* object_row = dynamic_cast<ObjectRow*>(it->get())) {
                 if (object_row->ObjectID() == object_id) {
@@ -2534,7 +2534,7 @@ private:
         this->Erase(it);
     }
 
-    void ObjectExpandCollapseClicked(int object_id) {
+    void ObjectExpandCollapseClicked(UniverseObjectID object_id) {
         if (object_id == INVALID_OBJECT_ID)
             return;
         if (ObjectCollapsed(object_id))
@@ -2544,7 +2544,7 @@ private:
         ExpandCollapseSignal();
     }
 
-    void ObjectStateChanged(int object_id) {
+    void ObjectStateChanged(UniverseObjectID object_id) {
         if (object_id == INVALID_OBJECT_ID)
             return;
         const auto& app = GetApp();
@@ -2563,12 +2563,12 @@ private:
     void UniverseObjectDeleted(const std::shared_ptr<const UniverseObject>& obj)
     { if (obj) RemoveObjectRow(obj->ID()); }
 
-    std::map<int, boost::signals2::scoped_connection>   m_object_change_connections;
-    std::set<int>                                       m_collapsed_objects;
-    std::unique_ptr<Condition::Condition>               m_filter_condition;
-    VisMap                                              m_visibilities;
-    std::shared_ptr<ObjectHeaderRow>                    m_header_row;
-    boost::signals2::scoped_connection                  m_obj_deleted_connection;
+    std::map<UniverseObjectID, boost::signals2::scoped_connection>  m_object_change_connections;
+    std::set<UniverseObjectID>                                      m_collapsed_objects;
+    std::unique_ptr<Condition::Condition>                           m_filter_condition;
+    VisMap                                                          m_visibilities;
+    std::shared_ptr<ObjectHeaderRow>                                m_header_row;
+    boost::signals2::scoped_connection                              m_obj_deleted_connection;
 };
 
 ////////////////////////////////////////////////

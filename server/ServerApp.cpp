@@ -1824,7 +1824,7 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
         m_universe.RecursiveDestroy(id, m_empires.EmpireIDs());
 #else
         const auto empire_ids_vec = m_empires.EmpireIDs() | range_to_vec;
-        const std::span<const int> empire_ids_span(empire_ids_vec);
+        const std::span<const UniverseObjectID> empire_ids_span(empire_ids_vec);
         m_universe.RecursiveDestroy(id, empire_ids_span);
 #endif
     };
@@ -2607,16 +2607,16 @@ namespace {
         // ObjectMaps.
 
 #if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
-        const auto empire_ids = std::span<const int>(empires.EmpireIDs());
+        const auto empire_ids = std::span<const EmpireID>(empires.EmpireIDs());
 #else
         const auto empire_ids_vec = empires.EmpireIDs() | range_to_vec;
-        const auto empire_ids = std::span<const int>(empire_ids_vec);
+        const auto empire_ids = std::span<const EmpireID>(empire_ids_vec);
 #endif
 
         for (const CombatInfo& combat_info : combats) {
             // update visibilities from combat, in case anything was revealed
             // by shooting during combat
-            static constexpr auto id_0_plus = [](auto id) noexcept { return id.first >= 0; };
+            static constexpr auto id_0_plus = [](auto id) noexcept { return Value(id.first) >= 0; };
             for (const auto& [vis_empire_id, empire_vis] : combat_info.empire_object_visibility) {
                 for (const auto& [vis_object_id, object_vis] : empire_vis | range_filter(id_0_plus))
                     universe.SetEmpireObjectVisibility(vis_empire_id, vis_object_id, object_vis);  // does not lower visibility
@@ -2624,7 +2624,7 @@ namespace {
 
 
             // indexed by fleet id, which empire ids to inform that a fleet is destroyed
-            std::map<int, std::set<int>> empires_to_update_of_fleet_destruction;
+            std::map<UniverseObjectID, std::set<EmpireID>> empires_to_update_of_fleet_destruction;
 
             // update which empires know objects are destroyed.  this may
             // duplicate the destroyed object knowledge that is set when the
@@ -2633,7 +2633,7 @@ namespace {
             // as determined for galaxy map purposes, but which do know it has
             // been destroyed from having observed it during the battle.
             for (const auto& [empire_id, obj_ids] : combat_info.destroyed_object_knowers) {
-                for (int object_id : obj_ids) {
+                for (auto object_id : obj_ids) {
                     //DebugLogger() << "Setting knowledge of destroyed object " << object_id
                     //                       << " for empire " << empire_id;
                     universe.SetEmpireKnowledgeOfDestroyedObject(object_id, empire_id);
@@ -2651,8 +2651,8 @@ namespace {
             // destroy, in main universe, objects that were destroyed in combat,
             // and any associated objects that should now logically also be
             // destroyed
-            std::set<int> all_destroyed_object_ids;
-            for (int destroyed_object_id : combat_info.destroyed_object_ids) {
+            std::set<UniverseObjectID> all_destroyed_object_ids;
+            for (auto destroyed_object_id : combat_info.destroyed_object_ids) {
                 auto dest_obj_ids = universe.RecursiveDestroy(destroyed_object_id, empire_ids);
                 all_destroyed_object_ids.insert(dest_obj_ids.begin(), dest_obj_ids.end());
             }
@@ -2661,13 +2661,13 @@ namespace {
             // after recursive object destruction, fleets might have been
             // destroyed. If so, need to also update empires knowledge of this
             for (const auto& fleet_empires : empires_to_update_of_fleet_destruction) {
-                int fleet_id = fleet_empires.first;
+                auto fleet_id = fleet_empires.first;
                 if (!all_destroyed_object_ids.contains(fleet_id))
                     continue;   // fleet wasn't destroyed
                 // inform empires
                 for (EmpireID empire_id : fleet_empires.second) {
-                    //DebugLogger() << "Setting knowledge of destroyed object " << fleet_id
-                    //                       << " for empire " << empire_id;
+                    //DebugLogger() << "Setting knowledge of destroyed object " << to_string(fleet_id)
+                    //                       << " for empire " << to_string(empire_id);
                     universe.SetEmpireKnowledgeOfDestroyedObject(fleet_id, empire_id);
                 }
             }
@@ -2832,7 +2832,7 @@ namespace {
     }
 
     /** Records info in Empires about where they invaded. */
-    void UpdateEmpireInvasionInfo(const std::map<int, std::map<int, double>>& planet_empire_invasion_troops,
+    void UpdateEmpireInvasionInfo(const std::map<UniverseObjectID, std::map<EmpireID, double>>& planet_empire_invasion_troops,
                                   EmpireManager& empires, const ObjectMap& objects)
     {
         const auto get_empire = [&empires](const auto empire_id) { return empires.GetEmpire(empire_id); };
@@ -2848,18 +2848,20 @@ namespace {
     }
 
     /** Does colonization, with safety checks */
-    bool ColonizePlanet(int ship_id, int planet_id, ScriptingContext& context, const std::span<const int> empire_ids) {
+    bool ColonizePlanet(UniverseObjectID ship_id, UniverseObjectID planet_id,
+                        ScriptingContext& context, const std::span<const EmpireID> empire_ids)
+    {
         auto& objects = context.ContextObjects();
         auto& universe = context.ContextUniverse();
 
         auto* ship = objects.getRaw<Ship>(ship_id);
         if (!ship) {
-            ErrorLogger() << "ColonizePlanet couldn't get ship with id " << ship_id;
+            ErrorLogger() << "ColonizePlanet couldn't get ship with id " << to_string(ship_id);
             return false;
         }
         auto* planet = objects.getRaw<Planet>(planet_id);
         if (!planet) {
-            ErrorLogger() << "ColonizePlanet couldn't get planet with id " << planet_id;
+            ErrorLogger() << "ColonizePlanet couldn't get planet with id " << to_string(planet_id);
             return false;
         }
 
@@ -2903,13 +2905,13 @@ namespace {
             if (fleet->Empty()) {
                 if (system)
                     system->Remove(fleet->ID());
-                universe.Destroy(fleet->ID(), std::span(empire_ids));
+                universe.Destroy(fleet->ID(), empire_ids);
             }
         }
 
         if (system)
             system->Remove(ship->ID());
-        universe.RecursiveDestroy(ship->ID(), std::span(empire_ids)); // does not count as a loss of a ship for the species / empire
+        universe.RecursiveDestroy(ship->ID(), empire_ids); // does not count as a loss of a ship for the species / empire
 
         return true;
     }
@@ -2918,29 +2920,29 @@ namespace {
       * appropriate colonization, and cleans up after colonization orders.
       * Returns the IDs of planets that were colonized and IDs of ships that
       * colonized. */
-    [[nodiscard]] std::pair<std::vector<int>, std::vector<int>> HandleColonization(ScriptingContext& context) {
+    [[nodiscard]] std::pair<std::vector<UniverseObjectID>, std::vector<UniverseObjectID>> HandleColonization(ScriptingContext& context) {
         Universe& universe = context.ContextUniverse();
         ObjectMap& objects = context.ContextObjects();
 #if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
-        const std::span<const int> empire_ids(context.EmpireIDs());
+        const std::span<const EmpireID> empire_ids(context.EmpireIDs());
 #else
         const auto& empire_ids_fs = context.EmpireIDs();
         const auto empire_ids_vec = empire_ids_fs | range_to_vec;
-        const std::span<const int> empire_ids(empire_ids_vec);
+        const std::span<const EmpireID> empire_ids(empire_ids_vec);
 #endif
 
         // collect, for each planet, what ships have been ordered to colonize it
-        std::map<int, std::map<int, std::set<int>>> planet_empire_colonization_ship_ids; // map from planet ID to map from empire ID to set of ship IDs
+        std::map<UniverseObjectID, std::map<EmpireID, std::set<UniverseObjectID>>> planet_empire_colonization_ship_ids; // map from planet ID to map from empire ID to set of ship IDs
 
         for (auto* ship : objects.allRaw<Ship>()) {
             if (ship->Unowned())
                 continue;
-            const int owner_empire_id = ship->Owner();
-            const int ship_id = ship->ID();
+            const auto owner_empire_id = ship->Owner();
+            const auto ship_id = ship->ID();
             if (ship_id == INVALID_OBJECT_ID)
                 continue;
 
-            const int colonize_planet_id = ship->OrderedColonizePlanet();
+            const auto colonize_planet_id = ship->OrderedColonizePlanet();
             if (colonize_planet_id == INVALID_OBJECT_ID)
                 continue;
 
@@ -2959,9 +2961,9 @@ namespace {
         }
 
 
-        std::vector<int> colonized_planet_ids;
+        std::vector<UniverseObjectID> colonized_planet_ids;
         colonized_planet_ids.reserve(planet_empire_colonization_ship_ids.size());
-        std::vector<int> colonizing_ship_ids;
+        std::vector<UniverseObjectID> colonizing_ship_ids;
         colonizing_ship_ids.reserve(planet_empire_colonization_ship_ids.size()); // possibly an underestimate
 
         // execute colonization except when:
@@ -2970,13 +2972,13 @@ namespace {
         for (const auto& [planet_id, empires_ships_colonizing] : planet_empire_colonization_ship_ids) {
             const auto* const planet = objects.getRaw<Planet>(planet_id);
             if (!planet) {
-                ErrorLogger() << "HandleColonization couldn't get planet with id " << planet_id;
+                ErrorLogger() << "HandleColonization couldn't get planet with id " << to_string(planet_id);
                 continue;
             }
-            const int system_id = planet->SystemID();
+            const auto system_id = planet->SystemID();
             const auto* const system = objects.getRaw<System>(system_id);
             if (!system) {
-                ErrorLogger() << "HandleColonization couldn't get system with id " << system_id;
+                ErrorLogger() << "HandleColonization couldn't get system with id " << to_string(system_id);
                 continue;
             }
 
@@ -2986,17 +2988,17 @@ namespace {
                 for (const auto& [empire_id, colonizing_ships] : empires_ships_colonizing) {
                     const auto empire = context.GetEmpire(empire_id);
                     if (!empire) {
-                        ErrorLogger() << "HandleColonization couldn't get empire with id " << empire_id;
+                        ErrorLogger() << "HandleColonization couldn't get empire with id " << to_string(empire_id);
                         continue;
                     }
 
                     const auto is_visible =
                         [empire_it{context.empire_object_vis.find(empire_id)},
-                         end_it{context.empire_object_vis.end()}](const int obj_id) -> bool
+                         end_it{context.empire_object_vis.end()}](const UniverseObjectID obj_id) -> bool
                     { return empire_it != end_it && empire_it->second.Get(obj_id) >= Visibility::VIS_BASIC_VISIBILITY; };
 
 
-                    for (const int ship_id : colonizing_ships) {
+                    for (const auto ship_id : colonizing_ships) {
                         bool created_empire_specific_message = false;
 
                         // check other ships colonizing here...
@@ -3019,16 +3021,16 @@ namespace {
                 }
                 continue;
             }
-            const int colonizing_empire_id = empires_ships_colonizing.begin()->first;
+            const auto colonizing_empire_id = empires_ships_colonizing.begin()->first;
             auto empire = context.GetEmpire(colonizing_empire_id);
 
             const auto& empire_ships_colonizing = empires_ships_colonizing.begin()->second;
             if (empire_ships_colonizing.empty())
                 continue;
-            const int colonizing_ship_id = *empire_ships_colonizing.begin();
+            const auto colonizing_ship_id = *empire_ships_colonizing.begin();
 
             // find which empires have obstructive armed ships in system
-            std::set<int> empires_with_armed_ships_in_system;
+            std::set<EmpireID> empires_with_armed_ships_in_system;
             for (auto* fleet : objects.findRaw<const Fleet>(system->FleetIDs())) {
                 if (fleet->Obstructive() && fleet->CanDamageShips(context))
                     empires_with_armed_ships_in_system.insert(fleet->Owner());  // may include ALL_EMPIRES, which is fine; this makes monsters prevent colonization
@@ -3036,7 +3038,7 @@ namespace {
 
             // are any of the empires with armed ships in the system enemies of the colonzing empire?
             bool colonize_blocked = false;
-            for (int armed_ship_empire_id : empires_with_armed_ships_in_system) {
+            for (auto armed_ship_empire_id : empires_with_armed_ships_in_system) {
                 if (armed_ship_empire_id == colonizing_empire_id)
                     continue;
                 if (armed_ship_empire_id == ALL_EMPIRES ||
@@ -3056,7 +3058,7 @@ namespace {
             // before actual colonization, which deletes the colony ship, store ship info for later use with sitrep generation
             auto* ship = objects.getRaw<Ship>(colonizing_ship_id);
             if (!ship)
-                ErrorLogger() << "HandleColonization couldn't get ship with id " << colonizing_ship_id;
+                ErrorLogger() << "HandleColonization couldn't get ship with id " << to_string(colonizing_ship_id);
             const auto& species_name = ship ? ship->SpeciesName() : "";
             float colonist_capacity = ship ? ship->ColonyCapacity(universe) : 0.0f;
 
@@ -3070,7 +3072,7 @@ namespace {
 
             // sitrep about colonization / outposting
             if (!empire) {
-                ErrorLogger() << "HandleColonization couldn't get empire with id " << colonizing_empire_id;
+                ErrorLogger() << "HandleColonization couldn't get empire with id " << to_string(colonizing_empire_id);
             } else {
                 if (species_name.empty() || colonist_capacity <= 0.0f)
                     empire->AddSitRepEntry(CreatePlanetOutpostedSitRep(planet_id, context.current_turn));
@@ -3085,18 +3087,18 @@ namespace {
     /** Determines which ships ordered to invade planets, does invasion and
       * ground combat resolution. Returns IDs of planets that had ground combat
       * occur on them and IDs of ships that invaded a planet. */
-    [[nodiscard]] std::pair<std::vector<int>, std::vector<int>> HandleInvasion(ScriptingContext& context) {
-        std::map<int, std::map<int, double>> planet_empire_troops;  // map from planet ID to map from empire ID to pair consisting of set of ship IDs and amount of troops empires have at planet
+    [[nodiscard]] std::pair<std::vector<UniverseObjectID>, std::vector<UniverseObjectID>> HandleInvasion(ScriptingContext& context) {
+        std::map<UniverseObjectID, std::map<EmpireId, double>> planet_empire_troops;  // map from planet ID to map from empire ID to pair consisting of set of ship IDs and amount of troops empires have at planet
         std::vector<Ship*> invade_ships;
         Universe& universe = context.ContextUniverse();
         ObjectMap& objects = context.ContextObjects();
         EmpireManager& empires = context.Empires();
 #if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
-        const std::span<const int> empire_ids(context.EmpireIDs());
+        const std::span<const EmpireID> empire_ids(context.EmpireIDs());
 #else
         const auto& empire_ids_fs = context.EmpireIDs();
         const auto empire_ids_vec = empire_ids_fs | range_to_vec;
-        const std::span<const int> empire_ids(empire_ids_vec);
+        const std::span<const EmpireID> empire_ids(empire_ids_vec);
 #endif
 
         const auto is_invading_ship = [&universe](const Ship& s)
@@ -3119,9 +3121,9 @@ namespace {
             // how many troops are invading?
             planet_empire_troops[ship->OrderedInvadePlanet()][ship->Owner()] += ship->TroopCapacity(universe);
 
-            DebugLogger() << "HandleInvasion has accounted for "<< ship->TroopCapacity(universe)
+            DebugLogger() << "HandleInvasion has accounted for " << ship->TroopCapacity(universe)
                           << " troops to invade " << planet->Name()
-                          << " and is destroying ship " << ship->ID()
+                          << " and is destroying ship " << to_string(ship->ID())
                           << " named " << ship->Name();
         }
 
@@ -3300,10 +3302,10 @@ namespace {
     /** Determines which fleets or planets ordered given to other empires,
       * and sets their new ownership. Returns the IDs of anything gifted. */
     std::vector<int> HandleGifting(EmpireManager& empires, ObjectMap& objects, int current_turn,
-                                   const std::span<const int> invaded_planet_ids,
-                                   const std::span<const int> invading_ship_ids,
-                                   const std::span<const int> colonizing_ship_ids,
-                                   const std::span<const int> annexed_planets_ids) // TODO: disallow annexed planets
+                                   const std::span<const UniverseObjectID> invaded_planet_ids,
+                                   const std::span<const UniverseObjectID> invading_ship_ids,
+                                   const std::span<const UniverseObjectID> colonizing_ship_ids,
+                                   const std::span<const UniverseObjectID> annexed_planets_ids) // TODO: disallow annexed planets
     {
         // determine system IDs where empires can receive gifts
         std::map<int, std::set<int>> empire_receiving_locations;
@@ -3423,20 +3425,20 @@ namespace {
 
     /** Destroys suitable objects that have been ordered scrapped.*/
     void HandleScrapping(Universe& universe, EmpireManager& empires,
-                         const std::span<const int> invading_ship_ids,
-                         const std::span<const int> invaded_planet_ids,
-                         const std::span<const int> colonizing_ship_ids,
-                         const std::span<const int> colonized_planet_ids,
-                         const std::span<const int> gifted_ids,
-                         const std::span<const int> annexed_planet_ids) // TODO: disallow scrapping during annexation
+                         const std::span<const UniverseObjectID> invading_ship_ids,
+                         const std::span<const UniverseObjectID> invaded_planet_ids,
+                         const std::span<const UniverseObjectID> colonizing_ship_ids,
+                         const std::span<const UniverseObjectID> colonized_planet_ids,
+                         const std::span<const UniverseObjectID> gifted_ids,
+                         const std::span<const UniverseObjectID> annexed_planet_ids) // TODO: disallow scrapping during annexation
     {
         ObjectMap& objects{universe.Objects()};
 #if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
-        const std::span<const int> empire_ids(empires.EmpireIDs());
+        const std::span<const EmpireID> empire_ids(empires.EmpireIDs());
 #else
         const auto& empire_ids_fs = empires.EmpireIDs();
         const auto empire_ids_vec = empire_ids_fs | range_to_vec;
-        const std::span<const int> empire_ids(empire_ids_vec);
+        const std::span<const EmpireID> empire_ids(empire_ids_vec);
 #endif
 
         // only scap ships that aren't being gifted and that aren't invading or colonizing this turn
@@ -3667,11 +3669,11 @@ namespace {
         Universe& universe{context.ContextUniverse()};
         ObjectMap& objects{context.ContextObjects()};
 #if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
-        const std::span<const int> empire_ids(context.EmpireIDs());
+        const std::span<const EmpireID> empire_ids(context.EmpireIDs());
 #else
         const auto& empire_ids_fs = context.EmpireIDs();
         const auto empire_ids_vec = empire_ids_fs | range_to_vec;
-        const std::span<const int> empire_ids(empire_ids_vec);
+        const std::span<const EmpireID> empire_ids(empire_ids_vec);
 #endif
 
         // need to remove empty fleets from systems and call RecursiveDestroy for each fleet
