@@ -77,28 +77,6 @@ CommonParams::CommonParams(std::unique_ptr<ValueRef::ValueRef<double>>&& product
 CommonParams::~CommonParams() = default;
 
 
-/////////////////////////////////////
-//       ParsedShipDesign          //
-/////////////////////////////////////
-ParsedShipDesign::ParsedShipDesign(
-    std::string&& name, std::string&& description, int designed_on_turn,
-    int designed_by_empire, std::string&& hull, std::vector<std::string>&& parts,
-    std::string&& icon, std::string&& model, bool name_desc_in_stringtable,
-    bool monster, boost::uuids::uuid uuid) :
-    m_name(std::move(name)),
-    m_description(std::move(description)),
-    m_uuid(std::move(uuid)),
-    m_designed_on_turn(designed_on_turn),
-    m_designed_by_empire(designed_by_empire),
-    m_hull(std::move(hull)),
-    m_parts(std::move(parts)),
-    m_icon(std::move(icon)),
-    m_3D_model(std::move(model)),
-    m_is_monster(monster),
-    m_name_desc_in_stringtable(name_desc_in_stringtable)
-{}
-
-
 ////////////////////////////////////////////////
 // ShipDesign
 ////////////////////////////////////////////////
@@ -106,7 +84,7 @@ ShipDesign::ShipDesign() = default;
 
 ShipDesign::ShipDesign(const boost::optional<std::invalid_argument>& should_throw,
                        std::string name, std::string description,
-                       int designed_on_turn, int designed_by_empire,
+                       int designed_on_turn, EmpireID designed_by_empire,
                        std::string hull, std::vector<std::string> parts,
                        std::string icon, std::string model,
                        bool name_desc_in_stringtable, Monster monster,
@@ -318,7 +296,7 @@ bool ShipDesign::ProductionCostTimeLocationInvariant() const {
     return true;
 }
 
-float ShipDesign::ProductionCost(EmpireID empire_id, int location_id, const ScriptingContext& context) const {
+float ShipDesign::ProductionCost(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"))
         return 1.0f;
 
@@ -338,12 +316,12 @@ float ShipDesign::ProductionCost(EmpireID empire_id, int location_id, const Scri
     return std::min(std::max(0.0f, cost_accumulator), ARBITRARY_LARGE_COST);
 }
 
-float ShipDesign::PerTurnCost(EmpireID empire_id, int location_id, const ScriptingContext& context) const {
+float ShipDesign::PerTurnCost(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const {
     return ProductionCost(empire_id, location_id, context) /
         std::max(1, ProductionTime(empire_id, location_id, context));
 }
 
-int ShipDesign::ProductionTime(EmpireID empire_id, int location_id, const ScriptingContext& context) const {
+int ShipDesign::ProductionTime(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"))
         return 1;
 
@@ -477,17 +455,17 @@ int ShipDesign::PartCount() const {
     return std::accumulate(rng.begin(), rng.end(), 0);
 }
 
-bool ShipDesign::ProductionLocation(EmpireID empire_id, int location_id, const ScriptingContext& context) const {
+bool ShipDesign::ProductionLocation(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const {
     auto empire = context.GetEmpire(empire_id);
     if (!empire) {
-        DebugLogger() << "ShipDesign::ProductionLocation: Unable to get pointer to empire " << empire_id;
+        DebugLogger() << "ShipDesign::ProductionLocation: Unable to get pointer to empire " << to_string(empire_id);
         return false;
     }
 
     // must own the production location...
     auto location = context.ContextObjects().getRaw(location_id);
     if (!location) {
-        WarnLogger() << "ShipDesign::ProductionLocation unable to get location object with id " << location_id;
+        WarnLogger() << "ShipDesign::ProductionLocation unable to get location object with id " << to_string(location_id);
         return false;
     }
     if (!location->OwnedBy(empire_id))
@@ -536,9 +514,6 @@ bool ShipDesign::ProductionLocation(EmpireID empire_id, int location_id, const S
     // location matched all hull and part conditions, so is a valid build location
     return true;
 }
-
-void ShipDesign::SetID(int id)
-{ m_id = id; }
 
 bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::string>& parts_in)
 { return !MaybeInvalidDesign(hull, std::vector<std::string>(parts_in), true); }
@@ -881,7 +856,7 @@ uint32_t ShipDesign::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_description);
     CheckSums::CheckSumCombine(retval, m_designed_on_turn);
-    CheckSums::CheckSumCombine(retval, m_designed_by_empire);
+    CheckSums::CheckSumCombine(retval, Value(m_designed_by_empire));
     CheckSums::CheckSumCombine(retval, m_hull);
     CheckSums::CheckSumCombine(retval, m_parts);
     CheckSums::CheckSumCombine(retval, m_is_monster);
@@ -1112,8 +1087,8 @@ LoadShipDesignsAndManifestOrderFromParseResults(
 
         // Make sure the design is an out of universe object
         // This should not be needed.
-        if (design->ID() != INVALID_OBJECT_ID) {
-            design->SetID(INVALID_OBJECT_ID);
+        if (design->ID() != INVALID_DESIGN_ID) {
+            design->SetID(INVALID_DESIGN_ID);
             ErrorLogger() << "Loaded ship design has an id implying it is in an ObjectMap for UUID "
                           << design->UUID() << " for name " << design->Name();
         }
