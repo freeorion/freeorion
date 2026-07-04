@@ -22,7 +22,19 @@ struct FO_COMMON_API ParsedShipDesign {
                      std::string&& hull, std::vector<std::string>&& parts,
                      std::string&& icon, std::string&& model,
                      bool name_desc_in_stringtable = false, bool monster = false,
-                     boost::uuids::uuid uuid = boost::uuids::nil_uuid());
+                     boost::uuids::uuid uuid = boost::uuids::nil_uuid()) :
+        m_name(std::move(name)),
+        m_description(std::move(description)),
+        m_uuid(std::move(uuid)),
+        m_designed_on_turn(designed_on_turn),
+        m_designed_by_empire(designed_by_empire),
+        m_hull(std::move(hull)),
+        m_parts(std::move(parts)),
+        m_icon(std::move(icon)),
+        m_3D_model(std::move(model)),
+        m_is_monster(monster),
+        m_name_desc_in_stringtable(name_desc_in_stringtable)
+    {}
 
     std::string                 m_name;
     std::string                 m_description;
@@ -70,7 +82,7 @@ public:
     */
     ShipDesign(const boost::optional<std::invalid_argument>& should_throw,
                std::string name, std::string description,
-               int designed_on_turn, int designed_by_empire, std::string hull,
+               int designed_on_turn, EmpireID designed_by_empire, std::string hull,
                std::vector<std::string> parts,
                std::string icon, std::string model,
                bool name_desc_in_stringtable = false, Monster monster = Monster::NOTMONSTER,
@@ -171,7 +183,7 @@ public:
     [[nodiscard]] bool ProductionLocation(EmpireID empire_id, UniverseObjectID location_id,
                                           const ScriptingContext& context) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id
 
-    void SetID(int id);                                                  ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
+    void SetID(int id) noexcept { m_id = id; }                                      ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
     void SetUUID(boost::uuids::uuid uuid) { m_uuid = uuid; }
     void Rename(std::string name) noexcept { m_name = std::move(name); } ///< renames this design to \a name
     void SetMonster(bool is_monster) noexcept { m_is_monster = is_monster; }

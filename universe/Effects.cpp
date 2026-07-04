@@ -154,7 +154,7 @@ namespace {
         if (start_system == INVALID_OBJECT_ID)
             start_system = new_next_system;
 
-        const int dest_system = fleet->FinalDestinationID();
+        const auto dest_system = fleet->FinalDestinationID();
 
         auto route = context.ContextUniverse().GetPathfinder().ShortestPath(
             start_system, dest_system, fleet->Owner()).first;
@@ -583,7 +583,7 @@ void SetMeter::Execute(ScriptingContext& context,
 
     } else {
         // calculate new meter values before modifying anything...
-        std::vector<std::tuple<decltype(Meter().Current()), int, Meter*>> target_new_meter_vals;
+        std::vector<std::tuple<decltype(Meter().Current()), UniverseObjectID, Meter*>> target_new_meter_vals;
         target_new_meter_vals.reserve(targets.size());
         for (auto* target : targets) {
             if (!target)
@@ -990,7 +990,7 @@ namespace {
     Meter* GetEmpireMeter(ScriptingContext& context, EmpireID empire_id, const std::string& meter) {
         const auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger(effects) << "SetEmpireMeter::Execute unable to find empire with id " << empire_id;
+            ErrorLogger(effects) << "SetEmpireMeter::Execute unable to find empire with id " << to_string(empire_id);
             return nullptr;
         } else if (Meter* m = empire->GetMeter(meter)) {
             return m;
@@ -1096,7 +1096,7 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
             for (auto* target : targets) {
                 if (target) {
                     ScriptingContext target_context{context, ScriptingContext::Target{}, target, ZERO_INT_CURRENT_VALUE};
-                    const auto empire_id = m_empire_id->Eval(target_context);
+                    const EmpireID empire_id{m_empire_id->Eval(target_context)};
                     if (auto* meter = GetEmpireMeter(context, empire_id, m_meter)) {
                         const ScriptingContext::CurrentValueVariant cvv{meter->Current()};
                         const ScriptingContext target_meter_context{context, ScriptingContext::Target{}, target, cvv};
@@ -1112,10 +1112,10 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
 
 
     // empire id doesn't depend on target, so determine it with a single ValueRef evaluation
-    const auto empire_id = m_empire_id->Eval(context);
+    const EmpireID empire_id{m_empire_id->Eval(context)};
     auto* meter = GetEmpireMeter(context, empire_id, m_meter);
     if (!meter) {
-        ErrorLogger() << "SetEmpireMeter couldn't get empire id " << empire_id << " meter " << m_meter;
+        ErrorLogger() << "SetEmpireMeter couldn't get empire id " << to_string(empire_id) << " meter " << m_meter;
         return;
     }
 
@@ -1222,11 +1222,11 @@ bool SetEmpireStockpile::operator==(const Effect& rhs) const {
 }
 
 void SetEmpireStockpile::Execute(ScriptingContext& context) const {
-    EmpireID empire_id = m_empire_id->Eval(context);
+    const EmpireID empire_id{m_empire_id->Eval(context)};
 
     auto empire = context.GetEmpire(empire_id);
     if (!empire) {
-        DebugLogger(effects) << "SetEmpireStockpile::Execute couldn't find an empire with id " << empire_id;
+        DebugLogger(effects) << "SetEmpireStockpile::Execute couldn't find an empire with id " << to_string(empire_id);
         return;
     }
 
@@ -1303,7 +1303,7 @@ void SetEmpireCapital::Execute(ScriptingContext& context) const {
     if (!context.effect_target || context.effect_target->ObjectType() != UniverseObjectType::OBJ_PLANET)
         return;
 
-    EmpireID empire_id = m_empire_id->Eval(context);
+    const EmpireID empire_id{m_empire_id->Eval(context)};
     if (auto empire = context.GetEmpire(empire_id))
         empire->SetCapitalID(context.effect_target->ID(), context.ContextObjects());
     context.Empires().RefreshCapitalIDs();
@@ -1603,10 +1603,10 @@ SetOwner::SetOwner(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
 void SetOwner::Execute(ScriptingContext& context) const {
     if (!context.effect_target)
         return;
-    int initial_owner = context.effect_target->Owner();
+    const auto initial_owner = context.effect_target->Owner();
 
-    const ScriptingContext owner_context{context, ScriptingContext::CurrentValueVariant{initial_owner}};
-    EmpireID empire_id = m_empire_id->Eval(owner_context);
+    const ScriptingContext owner_context{context, ScriptingContext::CurrentValueVariant{Value(initial_owner)}};
+    const EmpireID empire_id{m_empire_id->Eval(owner_context)};
     if (initial_owner == empire_id)
         return;
 
@@ -1691,7 +1691,7 @@ void SetSpeciesEmpireOpinion::Execute(ScriptingContext& context) const {
     if (!m_species_name || !m_opinion || !m_empire_id)
         return;
 
-    const EmpireID empire_id = m_empire_id->Eval(context);
+    const EmpireID empire_id{m_empire_id->Eval(context)};
     if (empire_id == ALL_EMPIRES)
         return;
 
@@ -2114,11 +2114,11 @@ void CreateShip::Execute(ScriptingContext& context) const {
     EmpireID empire_id = ALL_EMPIRES;
     std::shared_ptr<Empire> empire;
     if (m_empire_id) {
-        empire_id = m_empire_id->Eval(context);
+        empire_id = EmpireID{m_empire_id->Eval(context)};
         if (empire_id != ALL_EMPIRES) {
             empire = context.GetEmpire(empire_id);
             if (!empire) {
-                ErrorLogger(effects) << "CreateShip::Execute couldn't get empire with id " << empire_id;
+                ErrorLogger(effects) << "CreateShip::Execute couldn't get empire with id " << to_string(empire_id);
                 return;
             }
         }
@@ -2533,7 +2533,7 @@ void Destroy::Execute(ScriptingContext& context) const {
         return;
     }
 
-    int source_id = INVALID_OBJECT_ID;
+    auto source_id = INVALID_OBJECT_ID;
     if (context.source)
         source_id = context.source->ID();
 
@@ -2756,7 +2756,7 @@ void RemoveStarlanes::Execute(ScriptingContext& context) const {
         target_system = context.ContextObjects().getRaw<System>(context.effect_target->SystemID());
     if (!target_system)
         return; // nothing to do!
-    const int target_system_id = target_system->ID();
+    const auto target_system_id = target_system->ID();
 
     // get other endpoint systems...
 
@@ -2986,8 +2986,8 @@ void MoveTo::Execute(ScriptingContext& context) const {
 
 
         const bool same_owner = !ship->Unowned() && (ship->Owner() == destination->Owner());
-        const int dest_sys_id = destination->SystemID();
-        const int initial_ship_sys_id = ship->SystemID();
+        const auto dest_sys_id = destination->SystemID();
+        const auto initial_ship_sys_id = ship->SystemID();
         //DebugLogger() << "owners same: " << same_owner << "  dest sys: " << dest_sys_id
         //            << "  initial ship sys: " << initial_ship_sys_id;
 
@@ -3541,13 +3541,13 @@ void SetDestination::Execute(ScriptingContext& context) const {
     // "randomly" pick a destination
     int destination_idx = RandInt(0, valid_locations.size() - 1);
     auto destination = valid_locations[destination_idx];
-    int destination_system_id = destination->SystemID();
+    auto destination_system_id = destination->SystemID();
 
     // early exit if destination is not / in a system
     if (destination_system_id == INVALID_OBJECT_ID)
         return;
 
-    int start_system_id = target_fleet->SystemID();
+    auto start_system_id = target_fleet->SystemID();
     if (start_system_id == INVALID_OBJECT_ID)
         start_system_id = target_fleet->NextSystemID();
     // abort if no valid starting system
@@ -3694,7 +3694,7 @@ SetEmpireTechProgress::SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRef<
 
 void SetEmpireTechProgress::Execute(ScriptingContext& context) const {
     if (!m_empire_id) return;
-    auto empire = context.GetEmpire(m_empire_id->Eval(context));
+    auto empire = context.GetEmpire(EmpireID{m_empire_id->Eval(context)});
     if (!empire) return;
 
     if (!m_tech_name) {
@@ -3771,7 +3771,7 @@ GiveEmpireContent::GiveEmpireContent(std::unique_ptr<ValueRef::ValueRef<std::str
 
 void GiveEmpireContent::Execute(ScriptingContext& context) const {
     if (!m_empire_id || !m_content_name) return;
-    auto empire = context.GetEmpire(m_empire_id->Eval(context));
+    auto empire = context.GetEmpire(EmpireID{m_empire_id->Eval(context)});
     if (!empire) return;
 
     switch (m_unlock_type) {
@@ -3892,7 +3892,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(std::string message_string,
 {}
 
 void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
-    const int recipient_id = m_recipient_empire_id ? m_recipient_empire_id->Eval(context) : ALL_EMPIRES;
+    const auto recipient_id = m_recipient_empire_id ? EmpireID{m_recipient_empire_id->Eval(context)} : ALL_EMPIRES;
 
     // track any ship designs used in message, which any recipients must be
     // made aware of so sitrep won't have errors
@@ -3919,12 +3919,12 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
         parameter_tag_values.emplace_back(param_tag, std::move(param_val));
     }
 
-    const auto not_recipient = [recipient_id](const auto empire_id) { return recipient_id != empire_id; };
+    const auto not_recipient = [recipient_id](const auto empire_id) noexcept { return recipient_id != empire_id; };
     const auto to_id_status = [&context, recipient_id](const auto empire_id)
     { return std::pair(empire_id, context.ContextDiploStatus(recipient_id, empire_id)); };
 
     // whom to send to?
-    std::set<int> recipient_empire_ids;
+    std::set<EmpireID> recipient_empire_ids;
     switch (m_affiliation) {
     case EmpireAffiliationType::AFFIL_SELF: {
         // add just specified empire
@@ -4204,7 +4204,7 @@ SetVisibility::SetVisibility(std::unique_ptr<ValueRef::ValueRef<Visibility>> vis
 namespace {
     constexpr auto to_id = [](const auto* o) noexcept(noexcept(o->ID())) { return o->ID(); };
 
-    std::vector<int> GetUniqueMatchesIDs(const ScriptingContext& context, const Condition::Condition* cond) {
+    std::vector<UniverseObjectID> GetUniqueMatchesIDs(const ScriptingContext& context, const Condition::Condition* cond) {
         if (!cond && !context.effect_target)
             return {};
         if (!cond)
@@ -4232,7 +4232,7 @@ void SetVisibility::Execute(ScriptingContext& context) const {
     if (!m_vis)
         return; // nothing to evaluate!
 
-    const int main_empire_id = m_empire_id ? m_empire_id->Eval(context) : ALL_EMPIRES;
+    const auto main_empire_id = m_empire_id ? ::EmpireID{m_empire_id->Eval(context)} : ALL_EMPIRES;
     const auto not_main_empire = [main_empire_id](const auto other_id) { return main_empire_id != other_id; };
     const auto to_id_status = [&context, main_empire_id](const auto other_empire_id)
     { return std::pair(other_empire_id, context.ContextDiploStatus(main_empire_id, other_empire_id)); };
@@ -4240,7 +4240,7 @@ void SetVisibility::Execute(ScriptingContext& context) const {
 
     // whom to set visbility for?
     const auto all_empire_ids{context.EmpireIDs()};
-    std::vector<EmpireID> empire_ids;
+    std::vector<::EmpireID> empire_ids;
 
     switch (m_affiliation) {
     case EmpireAffiliationType::AFFIL_SELF: {
