@@ -818,7 +818,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data, Empire
         // use map key for empire ID so that the calling code can get the
         // correct empire for each player in player_setup_data
         if (empire_id == ALL_EMPIRES)
-            ErrorLogger() << "InitEmpires empire id (" << empire_id << ") is invalid";
+            ErrorLogger() << "InitEmpires empire id (" << to_string(empire_id) << ") is invalid";
 
         const auto& player_name =   psd.player_name;
         auto        empire_colour = psd.empire_color;
@@ -849,7 +849,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data, Empire
         // set generic default empire name
         std::string empire_name = UserString("EMPIRE") + std::to_string(empire_id);
 
-        DebugLogger() << "Universe::InitEmpires creating new empire" << " with ID: " << empire_id
+        DebugLogger() << "Universe::InitEmpires creating new empire" << " with ID: " << to_string(empire_id)
                       << " for player: " << player_name << " in team: " << psd.starting_team;
 
         // create new Empire object through empire manager

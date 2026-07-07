@@ -54,6 +54,11 @@ template<> struct std::hash<typeName> {                                         
                                                                                                 \
 std::ostream& operator<<(std::ostream& os, typeName t) = delete; // TODO: implement
     
-
+/*
+constexpr typeName& operator=(const typeName&) = default;                                   \
+constexpr typeName& operator=(typeName&&) = default;                                        \
+constexpr typeName(const typeName&) noexcept = default;                                     \
+constexpr typeName(typeName&&) noexcept = default;                                          \
+*/
 
 #endif

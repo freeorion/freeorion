@@ -143,7 +143,7 @@ void CombatInfo::InitializeObjectVisibility() {
     // this function adjusts those values
 
     for (EmpireID empire_id : empire_ids) {
-        DebugLogger(combat) << "Tweaking CombatInfo object visibility and known objects for empire: " << empire_id;
+        DebugLogger(combat) << "Tweaking CombatInfo object visibility and known objects for empire: " << to_string(empire_id);
 
         auto& empire_vis{empire_object_visibility[empire_id]};
 
@@ -1130,7 +1130,7 @@ namespace {
                     for (EmpireID empire_id : combat_info.empire_ids) {
                         if (empire_id != ALL_EMPIRES) {
                             DebugLogger(combat) << "Giving knowledge of destroyed object " << target_id
-                                                << " to empire " << empire_id;
+                                                << " to empire " << to_string(empire_id);
                             combat_info.destroyed_object_knowers[empire_id].insert(target_id);
                         }
                     }
@@ -1197,13 +1197,13 @@ namespace {
 
             for (auto& empire_id : no_obj_info_ids) {
                 empire_infos.erase(empire_id);
-                DebugLogger(combat) << "No objects left for empire with id: " << empire_id;
+                DebugLogger(combat) << "No objects left for empire with id: " << to_string(empire_id);
             }
 
             if (!empire_infos.empty()) {
                 DebugLogger(combat) << "Empires with objects remaining:";
                 for (const auto& [empire_id, empire_info] : empire_infos) {
-                    DebugLogger(combat) << " ... " << empire_id;
+                    DebugLogger(combat) << " ... " << to_string(empire_id);
                     for (const auto obj_id : empire_info.attacker_ids)
                         TraceLogger(combat) << " ... ... " << obj_id;
                 }
@@ -1387,7 +1387,7 @@ namespace {
             std::stringstream ss;
 
             for (auto& [empire_id, obj_vis] : eov) {
-                ss << "Empire " << empire_id << " sees: ";
+                ss << "Empire " << to_string(empire_id) << " sees: ";
                 for (auto& [obj_id, vis] : obj_vis) {
                     if (vis > Visibility::VIS_NO_VISIBILITY)
                         ss << obj_id << "  ";

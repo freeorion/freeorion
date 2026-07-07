@@ -754,7 +754,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
                 m_propagated_supply_distances[system_id];
         }
 
-        //TraceLogger(supply) << "For empire: " << empire_id << " system supply distances: ";
+        //TraceLogger(supply) << "For empire: " << to_string(empire_id) << " system supply distances: ";
         //for (auto& entry : m_empire_propagated_supply_distances[empire_id]) {
         //    TraceLogger(supply) << entry.first << " : " << entry.second;
         //}

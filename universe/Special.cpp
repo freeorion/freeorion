@@ -195,7 +195,7 @@ std::string Special::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-float Special::InitialCapacity(int object_id, const ScriptingContext& context) const {
+float Special::InitialCapacity(UniverseObjectID object_id, const ScriptingContext& context) const {
     if (!m_initial_capacity)
         return 0.0f;
 

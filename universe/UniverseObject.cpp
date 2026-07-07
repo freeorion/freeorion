@@ -18,12 +18,12 @@
 
 
 UniverseObject::UniverseObject(UniverseObjectType type, std::string name,
-                               double x, double y, int owner_id, int creation_turn) :
+                               double x, double y, EmpireID owner_id, int creation_turn) :
     UniverseObjectCXBase(type, owner_id, creation_turn, x, y),
     m_name(std::move(name))
 {}
 
-UniverseObject::UniverseObject(UniverseObjectType type, std::string name, int owner_id, int creation_turn) :
+UniverseObject::UniverseObject(UniverseObjectType type, std::string name, EmpireID owner_id, int creation_turn) :
     UniverseObjectCXBase(type, owner_id, creation_turn),
     m_name(std::move(name))
 {}
@@ -112,23 +112,23 @@ std::string UniverseObject::Dump(uint8_t) const {
     std::string retval;
     retval.reserve(2048); // guesstimate
     retval.append(to_string(m_type)).append(" ")
-          .append(std::to_string(this->ID())).append(": ").append(this->Name());
+          .append(to_string(this->ID())).append(": ").append(this->Name());
 
     if (system) {
         auto& sys_name = system->Name();
         if (sys_name.empty())
-            retval.append("  at: (System ").append(std::to_string(system->ID())).append(")");
+            retval.append("  at: (System ").append(to_string(system->ID())).append(")");
         else
             retval.append("  at: ").append(sys_name);
     } else {
         retval.append("  at: (").append(std::to_string(this->X())).append(", ")
               .append(std::to_string(this->Y())).append(")");
-        int near_id = universe.GetPathfinder().NearestSystemTo(this->X(), this->Y(), objects);
+        const auto near_id = universe.GetPathfinder().NearestSystemTo(this->X(), this->Y(), objects);
         auto near_system = objects.get<System>(near_id);
         if (near_system) {
             auto& sys_name = near_system->Name();
             if (sys_name.empty())
-                retval.append(" nearest (System ").append(std::to_string(near_system->ID())).append(")");
+                retval.append(" nearest (System ").append(to_string(near_system->ID())).append(")");
             else
                 retval.append(" nearest ").append(near_system->Name());
         }
@@ -156,7 +156,7 @@ UniverseObject::IDSet UniverseObject::VisibleContainedObjectIDs(EmpireID empire_
     if (vis_map_it == vis.end())
         return {};
 
-    const auto object_id_visible = [vis_map_it, &vis](int object_id) -> bool
+    const auto object_id_visible = [vis_map_it, &vis](UniverseObjectID object_id) -> bool
     { return vis_map_it->second.Get(object_id) >= Visibility::VIS_BASIC_VISIBILITY; };
 
 #if BOOST_VERSION >= 107900
@@ -177,7 +177,7 @@ Visibility UniverseObject::GetVisibility(EmpireID empire_id, const EmpireObjectV
 Visibility UniverseObject::GetVisibility(EmpireID empire_id, const Universe& u) const
 { return GetVisibility(empire_id, u.GetEmpireObjectVisibility()); }
 
-void UniverseObject::SetID(int id) {
+void UniverseObject::SetID(UniverseObjectID id) {
     m_id = id;
     StateChangedSignal();
 }
@@ -205,7 +205,7 @@ void UniverseObject::BackPropagateMeters() noexcept {
         m.BackPropagate();
 }
 
-void UniverseObject::SetOwner(int id) {
+void UniverseObject::SetOwner(EmpireID id) {
     if (m_owner_empire_id != id) {
         m_owner_empire_id = id;
         StateChangedSignal();
@@ -215,7 +215,7 @@ void UniverseObject::SetOwner(int id) {
      * to call empire->AddExploredSystem(system_id, context.current_turn, context.ContextObjects()); */
 }
 
-void UniverseObject::SetSystem(int sys) {
+void UniverseObject::SetSystem(UniverseObjectID sys) {
     //DebugLogger() << "UniverseObject::SetSystem(int sys)";
     if (sys != m_system_id) {
         m_system_id = sys;

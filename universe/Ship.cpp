@@ -24,7 +24,7 @@
 
 Ship::Ship(EmpireID empire_id, int design_id, std::string species_name,
            const Universe& universe, const SpeciesManager& species,
-           int produced_by_empire_id, int current_turn) :
+           EmpireID produced_by_empire_id, int current_turn) :
     UniverseObject{UniverseObjectType::OBJ_SHIP, "", empire_id, current_turn},
     m_species_name(std::move(species_name)),
     m_design_id(design_id),
@@ -122,7 +122,7 @@ void Ship::Copy(const Ship& copied_ship, const Universe& universe, EmpireID empi
     if (std::addressof(copied_ship) == this)
         return;
 
-    const int copied_object_id = copied_ship.ID();
+    const auto copied_object_id = copied_ship.ID();
     const Visibility vis = empire_id == ALL_EMPIRES ?
         Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
     const auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
@@ -193,9 +193,9 @@ std::string Ship::Dump(uint8_t ntabs) const {
     std::string retval = UniverseObject::Dump(ntabs);
     retval.reserve(2048); // guesstimate
     retval.append(" design id: ").append(std::to_string(m_design_id))
-          .append(" fleet id: ").append(std::to_string(m_fleet_id))
+          .append(" fleet id: ").append(to_string(m_fleet_id))
           .append(" species name: ").append(m_species_name)
-          .append(" produced by empire id: ").append(std::to_string(m_produced_by_empire_id))
+          .append(" produced by empire id: ").append(to_string(m_produced_by_empire_id))
           .append(" arrived on turn: ").append(std::to_string(m_arrived_on_turn))
           .append(" last resupplied on turn: ").append(std::to_string(m_last_resupplied_on_turn));
     if (!m_part_meters.empty()) {

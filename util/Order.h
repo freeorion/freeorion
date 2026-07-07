@@ -9,6 +9,7 @@
 #include <boost/uuid/nil_generator.hpp>
 #include "Export.h"
 #include "../Empire/Empire.h"
+#include "../universe/ConstantsFwd.h"
 #include "../universe/EnumsFwd.h"
 
 
@@ -31,8 +32,8 @@ public:
     constexpr Order() noexcept = default;
 
     /** ctor taking the ID of the Empire issuing the order. */
-    constexpr Order(int empire) noexcept :
-        m_empire(empire)
+    constexpr Order(EmpireID empire) noexcept :
+        m_empire(Value(empire))
     {}
 
     constexpr virtual ~Order() noexcept = default;
@@ -40,7 +41,7 @@ public:
     [[nodiscard]] virtual std::string Dump() const { return ""; }
 
     /** Returns the ID of the Empire issuing the order. */
-    [[nodiscard]] int EmpireID() const noexcept { return m_empire; }
+    [[nodiscard]] auto GetEmpireID() const noexcept { return EmpireID{m_empire}; }
 
     /** Returns true iff this order has been executed (a second execution
       * indicates server-side execution). */
@@ -70,11 +71,18 @@ protected:
      *  Throws an std::runtime_error if not valid. */
     std::shared_ptr<Empire> GetValidatedEmpire(ScriptingContext& context) const;
 
+    std::vector<int> ToIntValueVec(auto&& in) const
+    { return in | range_transform([](const auto& stv) noexcept { return Value(stv); }) | range_to_vec; }
+
+    template <typename T>
+    std::vector<T> ToVec(auto&& in) const
+    { return in | range_transform([](const auto& val) noexcept { return T{val}; }) | range_to_vec; }
+
 private:
     virtual void ExecuteImpl(ScriptingContext& context) const = 0;
     virtual bool UndoImpl(ScriptingContext& context) const { return false; }
 
-    int m_empire = ALL_EMPIRES;
+    int m_empire = Value(ALL_EMPIRES);
 
     /** Indicates that Execute() has occured, and so an undo is legal. */
     mutable bool m_executed = false;
@@ -91,19 +99,19 @@ private:
 /** the Order subclass that represents the renaming of a UniverseObject. */
 class FO_COMMON_API RenameOrder final : public Order {
 public:
-    RenameOrder(int empire, int object, std::string name, const ScriptingContext& context);
+    RenameOrder(EmpireID empire, UniverseObjectID object, std::string name, const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of fleet selected in this order. */
-    [[nodiscard]] int ObjectID() const noexcept { return m_object; }
+    [[nodiscard]] UniverseObjectID ObjectID() const noexcept { return UniverseObjectID{m_object}; }
 
     /** Returns the new name of the fleet. */
     [[nodiscard]] const std::string& Name() const noexcept { return m_name; }
 
     //! Returns true when the Order parameters are valid.
-    [[nodiscard]] static bool Check(int empire, int object, std::string new_name,
-                                    const ScriptingContext& context);
+    [[nodiscard]] static bool Check(EmpireID empire, UniverseObjectID object,
+                                    std::string new_name, const ScriptingContext& context);
 
 private:
     RenameOrder() = default;
@@ -118,7 +126,7 @@ private:
      */
     void ExecuteImpl(ScriptingContext& context) const override;
 
-    int m_object = INVALID_OBJECT_ID;
+    int m_object = Value(INVALID_OBJECT_ID);
     std::string m_name;
 
     friend class boost::serialization::access;
@@ -134,27 +142,27 @@ private:
     Only one of system or position will be used to place the new fleet.*/
 class FO_COMMON_API NewFleetOrder final : public Order {
 public:
-    NewFleetOrder(int empire, std::string fleet_name,
-                  std::vector<int> ship_ids, const ScriptingContext& context,
+    NewFleetOrder(EmpireID empire, std::string fleet_name,
+                  std::vector<UniverseObjectID> ship_ids, const ScriptingContext& context,
                   bool aggressive, bool passive = false, bool defensive = false);
-    NewFleetOrder(int empire, std::string fleet_name,
-                  std::vector<int> ship_ids, FleetAggression aggression,
+    NewFleetOrder(EmpireID empire, std::string fleet_name,
+                  std::vector<UniverseObjectID> ship_ids, FleetAggression aggression,
                   const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
     [[nodiscard]] const std::string& FleetName() const noexcept { return m_fleet_name; }
 
-    [[nodiscard]] const int& FleetID() const noexcept { return m_fleet_id; }
+    [[nodiscard]] const UniverseObjectID FleetID() const noexcept { return UniverseObjectID{m_fleet_id}; }
 
-    [[nodiscard]] const std::vector<int>& ShipIDs() const noexcept { return m_ship_ids; }
+    [[nodiscard]] std::vector<UniverseObjectID> ShipIDs() const noexcept { return ToVec<UniverseObjectID>(m_ship_ids); }
 
     [[nodiscard]] bool Aggressive() const noexcept;
 
     [[nodiscard]] FleetAggression Aggression() const noexcept { return m_aggression; }
 
-    [[nodiscard]] static bool Check(int empire, const std::string& fleet_name,
-                                    const std::vector<int>& ship_ids, FleetAggression aggression,
+    [[nodiscard]] static bool Check(EmpireID empire, const std::string& fleet_name,
+                                    const std::vector<UniverseObjectID>& ship_ids, FleetAggression aggression,
                                     const ScriptingContext& context);
 private:
     NewFleetOrder() = default;
@@ -171,7 +179,7 @@ private:
 
     std::string m_fleet_name;
     /** m_fleet_id is mutable because ExecuteImpl generates the fleet id. */
-    mutable int m_fleet_id = INVALID_OBJECT_ID;
+    mutable int m_fleet_id = Value(INVALID_OBJECT_ID);
     std::vector<int> m_ship_ids;
     FleetAggression m_aggression{0};
 
@@ -188,22 +196,22 @@ private:
     These orders change the current destination of a fleet */
 class FO_COMMON_API FleetMoveOrder final : public Order {
 public:
-    FleetMoveOrder(EmpireID empire_id, int fleet_id, int dest_system_id, bool append,
-                   const ScriptingContext& context);
+    FleetMoveOrder(EmpireID empire_id, UniverseObjectID fleet_id, UniverseObjectID dest_system_id,
+                   bool append, const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of fleet selected in this order. */
-    [[nodiscard]] int FleetID() const noexcept { return m_fleet; }
+    [[nodiscard]] UniverseObjectID FleetID() const noexcept { return UniverseObjectID{m_fleet}; }
 
     /* Returns ID of system set as destination for this order. */
-    [[nodiscard]] int DestinationSystemID() const noexcept { return m_dest_system; }
+    [[nodiscard]] UniverseObjectID DestinationSystemID() const noexcept { return UniverseObjectID{m_dest_system}; }
 
     /* Returns the IDs of the systems in the route specified by this Order. */
-    [[nodiscard]] const std::vector<int>& Route() const noexcept { return m_route; }
+    [[nodiscard]] std::vector<UniverseObjectID> Route() const noexcept { return ToVec<UniverseObjectID>(m_route); }
 
-    static bool Check(EmpireID empire_id, int fleet_id, int dest_fleet_id, bool append,
-                      const ScriptingContext& context);
+    static bool Check(EmpireID empire_id, UniverseObjectID fleet_id, UniverseObjectID dest_fleet_id,
+                      bool append, const ScriptingContext& context);
 private:
     FleetMoveOrder() = default;
 
@@ -220,8 +228,8 @@ private:
      */
     void ExecuteImpl(ScriptingContext& context) const override;
 
-    int              m_fleet = INVALID_OBJECT_ID;
-    int              m_dest_system = INVALID_OBJECT_ID;
+    int              m_fleet = Value(INVALID_OBJECT_ID);
+    int              m_dest_system = Value(INVALID_OBJECT_ID);
     std::vector<int> m_route;
     bool             m_append = false;
 
@@ -239,18 +247,19 @@ private:
   * another. */
 class FO_COMMON_API FleetTransferOrder final : public Order {
 public:
-    FleetTransferOrder(int empire, int dest_fleet, std::vector<int> ships,
+    FleetTransferOrder(EmpireID empire, UniverseObjectID dest_fleet, std::vector<UniverseObjectID> ships,
                        const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
     /* Returns ID of the fleet that the ships will go into. */
-    [[nodiscard]] int DestinationFleet() const noexcept { return m_dest_fleet; }
+    [[nodiscard]] UniverseObjectID DestinationFleet() const noexcept { return UniverseObjectID{m_dest_fleet}; }
 
     /** Returns IDs of the ships selected for addition to the fleet. */
-    [[nodiscard]] const std::vector<int>& Ships() const noexcept { return m_add_ships; }
+    [[nodiscard]] std::vector<UniverseObjectID> Ships() const noexcept { return ToVec<UniverseObjectID>(m_add_ships); }
 
-    [[nodiscard]] static bool Check(EmpireID empire_id, int dest_fleet_id, const std::vector<int>& ship_ids,
+    [[nodiscard]] static bool Check(EmpireID empire_id, UniverseObjectID dest_fleet_id,
+                                    const std::vector<UniverseObjectID>& ship_ids,
                                     const ScriptingContext& context);
 
 private:
@@ -267,7 +276,7 @@ private:
      */
     void ExecuteImpl(ScriptingContext& context) const override;
 
-    int m_dest_fleet = INVALID_OBJECT_ID;
+    int m_dest_fleet = Value(INVALID_OBJECT_ID);
     std::vector<int> m_add_ships;
 
     friend class boost::serialization::access;
@@ -282,14 +291,14 @@ private:
 /** the Order subclass that represents a planet colonization action*/
 class FO_COMMON_API AnnexOrder final : public Order {
 public:
-    AnnexOrder(int empire, int planet, const ScriptingContext& context);
+    AnnexOrder(EmpireID empire, UniverseObjectID planet, const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of the planet to be colonized. */
-    [[nodiscard]] int PlanetID() const noexcept { return m_planet; }
+    [[nodiscard]] UniverseObjectID PlanetID() const noexcept { return UniverseObjectID{m_planet}; }
 
-    static bool Check(EmpireID empire_id, int planet_id, const ScriptingContext& context);
+    static bool Check(EmpireID empire_id, UniverseObjectID planet_id, const ScriptingContext& context);
 
 private:
     AnnexOrder() = default;
@@ -305,7 +314,7 @@ private:
 
     bool UndoImpl(ScriptingContext& context) const override;
 
-    int m_planet = INVALID_OBJECT_ID;
+    int m_planet = Value(INVALID_OBJECT_ID);
 
     friend class boost::serialization::access;
     template <typename Archive>
@@ -319,17 +328,17 @@ private:
 /** the Order subclass that represents a planet colonization action*/
 class FO_COMMON_API ColonizeOrder final : public Order {
 public:
-    ColonizeOrder(int empire, int ship, int planet, const ScriptingContext& context);
+    ColonizeOrder(EmpireID empire, UniverseObjectID ship, UniverseObjectID planet, const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of the planet to be colonized. */
-    [[nodiscard]] int PlanetID() const noexcept { return m_planet; }
+    [[nodiscard]] UniverseObjectID PlanetID() const noexcept { return UniverseObjectID{m_planet}; }
 
     /** Returns ID of the ship which is colonizing the planet. */
-    [[nodiscard]] int ShipID() const noexcept { return m_ship; }
+    [[nodiscard]] UniverseObjectID ShipID() const noexcept { return UniverseObjectID{m_ship}; }
 
-    static bool Check(EmpireID empire_id, int ship_id, int planet_id, const ScriptingContext& context);
+    static bool Check(EmpireID empire_id, UniverseObjectID ship_id, UniverseObjectID planet_id, const ScriptingContext& context);
 
 private:
     ColonizeOrder() = default;
@@ -349,8 +358,8 @@ private:
 
     bool UndoImpl(ScriptingContext& context) const override;
 
-    int m_ship = INVALID_OBJECT_ID;
-    int m_planet = INVALID_OBJECT_ID;
+    int m_ship = Value(INVALID_OBJECT_ID);
+    int m_planet = Value(INVALID_OBJECT_ID);
 
     friend class boost::serialization::access;
     template <typename Archive>
@@ -364,17 +373,17 @@ private:
 /** the Order subclass that represents a planet invasion action*/
 class FO_COMMON_API InvadeOrder final : public Order {
 public:
-    InvadeOrder(int empire, int ship, int planet, const ScriptingContext& context);
+    InvadeOrder(EmpireID empire, UniverseObjectID ship, UniverseObjectID planet, const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of the planet to be invaded. */
-    [[nodiscard]] int PlanetID() const noexcept { return m_planet; }
+    [[nodiscard]] UniverseObjectID PlanetID() const noexcept { return UniverseObjectID{m_planet}; }
 
     /** Returns ID of the ship which is invading the planet. */
-    [[nodiscard]] int ShipID() const noexcept { return m_ship; }
+    [[nodiscard]] UniverseObjectID ShipID() const noexcept { return UniverseObjectID{m_ship}; }
 
-    static bool Check(EmpireID empire_id, int ship_id, int planet_id, const ScriptingContext& context);
+    static bool Check(EmpireID empire_id, UniverseObjectID ship_id, UniverseObjectID planet_id, const ScriptingContext& context);
 
 private:
     InvadeOrder() = default;
@@ -394,8 +403,8 @@ private:
 
     bool UndoImpl(ScriptingContext& context) const override;
 
-    int m_ship = INVALID_OBJECT_ID;
-    int m_planet = INVALID_OBJECT_ID;
+    int m_ship = Value(INVALID_OBJECT_ID);
+    int m_planet = Value(INVALID_OBJECT_ID);
 
     friend class boost::serialization::access;
     template <typename Archive>
@@ -409,17 +418,17 @@ private:
 /** the Order subclass that represents starting a planet bombardment action*/
 class FO_COMMON_API BombardOrder final : public Order {
 public:
-    BombardOrder(int empire, int ship, int planet, const ScriptingContext& context);
+    BombardOrder(EmpireID empire, UniverseObjectID ship, UniverseObjectID planet, const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of the planet to be bombarded. */
-    [[nodiscard]] int PlanetID() const noexcept { return m_planet; }
+    [[nodiscard]] UniverseObjectID PlanetID() const noexcept { return UniverseObjectID{m_planet}; }
 
     /** Returns ID of the ship which is bombarding the planet. */
-    [[nodiscard]] int ShipID() const noexcept { return m_ship; }
+    [[nodiscard]] UniverseObjectID ShipID() const noexcept { return UniverseObjectID{m_ship}; }
 
-    static bool Check(EmpireID empire_id, int ship_id, int planet_id, const ScriptingContext& context);
+    static bool Check(EmpireID empire_id, UniverseObjectID ship_id, UniverseObjectID planet_id, const ScriptingContext& context);
 
 private:
     BombardOrder() = default;
@@ -437,8 +446,8 @@ private:
 
     bool UndoImpl(ScriptingContext& context) const override;
 
-    int m_ship = INVALID_OBJECT_ID;
-    int m_planet = INVALID_OBJECT_ID;
+    int m_ship = Value(INVALID_OBJECT_ID);
+    int m_planet = Value(INVALID_OBJECT_ID);
 
     friend class boost::serialization::access;
     template <typename Archive>
@@ -451,17 +460,17 @@ private:
 /** the Order subclass that represents a stopping planet bombardment action*/
 class FO_COMMON_API StopBombardOrder final : public Order {
 public:
-    StopBombardOrder(int empire, int ship, int planet, const ScriptingContext& context);
+    StopBombardOrder(EmpireID empire, UniverseObjectID ship, UniverseObjectID planet, const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of the planet where to stop the bombardment of this ship. Mostly for diagnostic purposes. */
-    [[nodiscard]] int PlanetID() const noexcept { return m_planet; }
+    [[nodiscard]] UniverseObjectID PlanetID() const noexcept { return UniverseObjectID{m_planet}; }
 
     /** Returns ID of the ship which is bombarding the planet. */
-    [[nodiscard]] int ShipID() const noexcept { return m_ship; }
+    [[nodiscard]] UniverseObjectID ShipID() const noexcept { return UniverseObjectID{m_ship}; }
 
-    static bool Check(EmpireID empire_id, int ship_id, int planet_id, const ScriptingContext& context);
+    static bool Check(EmpireID empire_id, UniverseObjectID ship_id, UniverseObjectID planet_id, const ScriptingContext& context);
 
 private:
     StopBombardOrder() = default;
@@ -470,8 +479,8 @@ private:
 
     bool UndoImpl(ScriptingContext& context) const override;
 
-    int m_ship = INVALID_OBJECT_ID;
-    int m_planet = INVALID_OBJECT_ID;
+    int m_ship = Value(INVALID_OBJECT_ID);
+    int m_planet = Value(INVALID_OBJECT_ID);
 
     friend class boost::serialization::access;
     template <typename Archive>
@@ -485,15 +494,15 @@ private:
 /** the Order subclass that represents changing a planet focus*/
 class FO_COMMON_API ChangeFocusOrder final : public Order {
 public:
-    ChangeFocusOrder(int empire, int planet, std::string focus,
+    ChangeFocusOrder(EmpireID empire, UniverseObjectID planet, std::string focus,
                      const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
     /* Returns ID of the fleet to be deleted. */
-    [[nodiscard]] int PlanetID() const noexcept { return m_planet; }
+    [[nodiscard]] UniverseObjectID PlanetID() const noexcept { return UniverseObjectID{m_planet}; }
 
-    static bool Check(EmpireID empire_id, int planet_id, const std::string& focus, const ScriptingContext& context);
+    static bool Check(EmpireID empire_id, UniverseObjectID planet_id, const std::string& focus, const ScriptingContext& context);
 
 private:
     ChangeFocusOrder() = default;
@@ -507,7 +516,7 @@ private:
      */
     void ExecuteImpl(ScriptingContext& context) const override;
 
-    int m_planet = INVALID_OBJECT_ID;
+    int m_planet = Value(INVALID_OBJECT_ID);
     std::string m_focus;
 
     friend class boost::serialization::access;
@@ -521,7 +530,7 @@ private:
 /** the Order subclass that represents the adoptiong imperial polices. */
 class FO_COMMON_API PolicyOrder final : public Order {
 public:
-    PolicyOrder(int empire, std::string name, std::string category, int slot = -1) : // adopt
+    PolicyOrder(EmpireID empire, std::string name, std::string category, int slot = -1) : // adopt
         Order(empire),
         m_policy_name(std::move(name)),
         m_category(std::move(category)),
@@ -529,12 +538,12 @@ public:
         m_adopt(true)
     {}
 
-    PolicyOrder(int empire, std::string name) : // de-adopt
+    PolicyOrder(EmpireID empire, std::string name) : // de-adopt
         Order(empire),
         m_policy_name(std::move(name))
     {}
 
-    PolicyOrder(int empire) : // revert all changes
+    PolicyOrder(EmpireID empire) : // revert all changes
         Order(empire),
         m_revert{true}
     {}
@@ -572,9 +581,9 @@ private:
   * ctor places \a tech_name at position \a position in \a empire's research queue. */
 class FO_COMMON_API ResearchQueueOrder final : public Order {
 public:
-    ResearchQueueOrder(int empire, std::string tech_name);
-    ResearchQueueOrder(int empire, std::string tech_name, int position);
-    ResearchQueueOrder(int empire, std::string tech_name, bool pause, float dummy);
+    ResearchQueueOrder(EmpireID empire, std::string tech_name);
+    ResearchQueueOrder(EmpireID empire, std::string tech_name, int position);
+    ResearchQueueOrder(EmpireID empire, std::string tech_name, bool pause, float dummy);
 
     [[nodiscard]] std::string Dump() const override;
 
@@ -627,10 +636,10 @@ public:
         NUM_PROD_QUEUE_ACTIONS
     };
 
-    ProductionQueueOrder(ProdQueueOrderAction action, int empire, ProductionQueue::ProductionItem item,
+    ProductionQueueOrder(ProdQueueOrderAction action, EmpireID empire, ProductionQueue::ProductionItem item,
                          int number, int location, int pos = -1);
     // num1 and num2 may be quantity and blocksize, or just quantity, or rally point id, or new index in queue
-    ProductionQueueOrder(ProdQueueOrderAction action, int empire, boost::uuids::uuid uuid,
+    ProductionQueueOrder(ProdQueueOrderAction action, EmpireID empire, boost::uuids::uuid uuid,
                          int num1 = -1, int num2 = -1);
 
     [[nodiscard]] std::string Dump() const override;
@@ -641,11 +650,11 @@ private:
     void ExecuteImpl(ScriptingContext& context) const override;
 
     ProductionQueue::ProductionItem m_item;
-    int                             m_location = INVALID_OBJECT_ID;
+    int                             m_location = Value(INVALID_OBJECT_ID);
     int                             m_new_quantity = INVALID_QUANTITY;
     int                             m_new_blocksize = INVALID_QUANTITY;
     int                             m_new_index = INVALID_INDEX;
-    int                             m_rally_point_id = INVALID_OBJECT_ID;
+    int                             m_rally_point_id = Value(INVALID_OBJECT_ID);
     boost::uuids::uuid              m_uuid = boost::uuids::nil_uuid();
     boost::uuids::uuid              m_uuid2 = boost::uuids::nil_uuid();
     ProdQueueOrderAction            m_action = ProdQueueOrderAction::INVALID_PROD_QUEUE_ACTION;
@@ -756,14 +765,14 @@ private:
   * a building or ship owned by an empire. */
 class FO_COMMON_API ScrapOrder final : public Order {
 public:
-    ScrapOrder(int empire, int object_id, const ScriptingContext& context);
+    ScrapOrder(EmpireID empire, UniverseObjectID object_id, const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of object selected in this order. */
-    [[nodiscard]] int ObjectID() const noexcept { return m_object_id; }
+    [[nodiscard]] UniverseObjectID ObjectID() const noexcept { return UniverseObjectID{m_object_id}; }
 
-    static bool Check(EmpireID empire_id, int object_id, const ScriptingContext& context);
+    static bool Check(EmpireID empire_id, UniverseObjectID object_id, const ScriptingContext& context);
 private:
     ScrapOrder() = default;
 
@@ -779,7 +788,7 @@ private:
 
     bool UndoImpl(ScriptingContext& context) const override;
 
-    int m_object_id = INVALID_OBJECT_ID;
+    int m_object_id = Value(INVALID_OBJECT_ID);
 
     friend class boost::serialization::access;
     template <typename Archive>
@@ -794,18 +803,18 @@ private:
   * controlled by an empire. */
 class FO_COMMON_API AggressiveOrder final : public Order {
 public:
-    AggressiveOrder(int empire, int object_id, FleetAggression aggression,
+    AggressiveOrder(EmpireID empire, UniverseObjectID object_id, FleetAggression aggression,
                     const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of object selected in this order. */
-    [[nodiscard]] int ObjectID() const noexcept { return m_object_id; }
+    [[nodiscard]] UniverseObjectID ObjectID() const noexcept { return UniverseObjectID{m_object_id}; }
 
     /** Returns aggression state to set object to. */
     [[nodiscard]] FleetAggression Aggression() const noexcept { return m_aggression; }
 
-    static bool Check(EmpireID empire_id, int object_id, FleetAggression aggression,
+    static bool Check(EmpireID empire_id, UniverseObjectID object_id, FleetAggression aggression,
                       const ScriptingContext& context);
 
 private:
@@ -821,7 +830,7 @@ private:
      */
     void ExecuteImpl(ScriptingContext& context) const override;
 
-    int m_object_id = INVALID_OBJECT_ID;
+    int m_object_id = Value(INVALID_OBJECT_ID);
     FleetAggression m_aggression{};
 
     friend class boost::serialization::access;
@@ -837,18 +846,18 @@ private:
   * another empire */
 class FO_COMMON_API GiveObjectToEmpireOrder final : public Order {
 public:
-    GiveObjectToEmpireOrder(int empire, int object_id, int recipient,
+    GiveObjectToEmpireOrder(EmpireID empire, UniverseObjectID object_id, EmpireID recipient,
                             const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of object selected in this order. */
-    [[nodiscard]] int ObjectID() const noexcept { return m_object_id; }
+    [[nodiscard]] UniverseObjectID ObjectID() const noexcept { return UniverseObjectID{m_object_id}; }
 
     /** Returns ID of empire to which object is given. */
-    [[nodiscard]] int RecipientEmpireID() const noexcept { return m_recipient_empire_id; }
+    [[nodiscard]] EmpireID RecipientEmpireID() const noexcept { return EmpireID{m_recipient_empire_id}; }
 
-    static bool Check(EmpireID empire_id, int object_id, int recipient_empire_id,
+    static bool Check(EmpireID empire_id, UniverseObjectID object_id, EmpireID recipient_empire_id,
                       const ScriptingContext& context);
 private:
     GiveObjectToEmpireOrder() = default;
@@ -865,8 +874,8 @@ private:
 
     bool UndoImpl(ScriptingContext& context) const override;
 
-    int m_object_id = INVALID_OBJECT_ID;
-    int m_recipient_empire_id = ALL_EMPIRES;
+    int m_object_id = Value(INVALID_OBJECT_ID);
+    int m_recipient_empire_id = Value(ALL_EMPIRES);
 
     friend class boost::serialization::access;
     template <typename Archive>
@@ -879,7 +888,7 @@ private:
 /** ForgetOrder removes the object from the empire's known objects. */
 class FO_COMMON_API ForgetOrder final : public Order {
 public:
-    ForgetOrder(int empire, int object_id);
+    ForgetOrder(EmpireID empire, UniverseObjectID object_id);
 
     [[nodiscard]] std::string Dump() const override;
 
@@ -898,7 +907,7 @@ private:
      */
     void ExecuteImpl(ScriptingContext& context) const override;
 
-    int m_object_id = INVALID_OBJECT_ID;
+    int m_object_id = Value(INVALID_OBJECT_ID);
 
     friend class boost::serialization::access;
     template <typename Archive>

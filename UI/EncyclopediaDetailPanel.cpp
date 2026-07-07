@@ -1350,7 +1350,7 @@ namespace {
 
         const auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            DebugLogger() << "DefaultLocationForEmpire: Unable to get empire with ID: " << empire_id;
+            DebugLogger() << "DefaultLocationForEmpire: Unable to get empire with ID: " << to_string(empire_id);
             return INVALID_OBJECT_ID;
         }
         // get a location where the empire might build something.
@@ -3225,7 +3225,7 @@ namespace {
                 universe.ApplyMeterEffectsAndUpdateMeters(planet_id_vec, context, false);
             } catch (const std::exception& e) {
                 ErrorLogger() << "Caught exception applying species name " << species_name
-                              << " and owner empire id " << empire_id << " : " << e.what();
+                              << " and owner empire id " << to_string(empire_id) << " : " << e.what();
             }
 
             try {

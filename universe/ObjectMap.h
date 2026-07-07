@@ -65,6 +65,16 @@ public:
     template <typename T = UniverseObject, bool only_existing = false>
     [[nodiscard]] const std::decay_t<T>* getRaw(UniverseObjectID id) const;
 
+    // explicitly delete get/getRaw overloads taking int
+    template <typename T = UniverseObject, bool only_existing = false>
+    const T* get(int) const = delete;
+    template <typename T = UniverseObject, bool only_existing = false>
+    T* get(int) = delete;
+    template <typename T = UniverseObject, bool only_existing = false>
+    const T* getRaw(int) const = delete;
+    template <typename T = UniverseObject, bool only_existing = false>
+    T* getRaw(int) = delete;
+
     /** Returns pointer to an object of type T that matches predicate \a pred.
       * returns nullptr if none exists. */
     template <typename T = UniverseObject, typename Pred, bool only_existing = false>
