@@ -690,25 +690,25 @@ namespace {
 
             const auto tct_it = range_find_if(tech_costs_times, is_empire);
             if (tct_it == tech_costs_times.end()) {
-                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find tech costs/times for empire " << empire_id;
+                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find tech costs/times for empire " << to_string(empire_id);
                 continue;
             }
 
             const auto ac_it = range_find_if(annex_costs, is_empire);
             if (ac_it == annex_costs.end()) {
-                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find annex costs for empire " << empire_id;
+                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find annex costs for empire " << to_string(empire_id);
                 continue;
             }
 
             const auto pc_it = range_find_if(policy_costs, is_empire);
             if (pc_it == policy_costs.end()) {
-                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find policy costs for empire " << empire_id;
+                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find policy costs for empire " << to_string(empire_id);
                 continue;
             }
 
             const auto pct_it = range_find_if(prod_costs, is_empire);
             if (pct_it == prod_costs.end()) {
-                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find production costs/times for empire " << empire_id;
+                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find production costs/times for empire " << to_string(empire_id);
                 continue;
             }
 
@@ -1957,7 +1957,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, E
     const auto is_empire_id = [empire_id](const auto& pd) noexcept { return pd.empire_id == empire_id; };
     auto orders_it = range_find_if(m_player_data, is_empire_id);
     if (orders_it == m_player_data.end()) {
-        WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << empire_id
+        WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << to_string(empire_id)
                      << " for \"" << player_connection->PlayerName()
                      << "\" doesn't wait for orders";
         return ALL_EMPIRES;
@@ -1974,7 +1974,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, E
 
     // drop previous connection to that empire
     if (previous_player_id != Networking::INVALID_PLAYER_ID && previous_player_id != player_connection->PlayerID()) {
-        WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << empire_id
+        WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << to_string(empire_id)
                      << " previous player " << previous_player_id << " was kicked.";
 
         DropPlayerEmpireLink(previous_player_id);
@@ -1991,7 +1991,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, E
         }
     }
 
-    InfoLogger() << "ServerApp::AddPlayerIntoGame empire " << empire_id << " connected to " << player_connection->PlayerID();
+    InfoLogger() << "ServerApp::AddPlayerIntoGame empire " << to_string(empire_id) << " connected to " << player_connection->PlayerID();
 
     if (GetOptionsDB().Get<bool>("network.server.drop-empire-ready")) {
         // drop ready status
@@ -2103,7 +2103,7 @@ void ServerApp::UpdatePartialOrders(EmpireID empire_id, OrderSet added, const st
     const auto is_empire_id = [empire_id](const auto& pd) noexcept { return pd.empire_id == empire_id; };
     auto it = range_find_if(m_player_data, is_empire_id);
     if (it == m_player_data.end()) {
-        ErrorLogger() << "Server given partial orders for unknown empire id: " << empire_id;
+        ErrorLogger() << "Server given partial orders for unknown empire id: " << to_string(empire_id);
         return;
     }
     auto& orders = it->orders;
@@ -2355,7 +2355,7 @@ namespace {
             return {}; // no such system
 
         TraceLogger(combat) << "\t** GetObjsVisibleToEmpire<" << typeid(FleetOrPlanet).name()
-                            << "> " << empire_id << " at system " << system->Name();
+                            << "> " << to_string(empire_id) << " at system " << system->Name();
 
         // check visibility of object by empire/neutrals
         const auto is_visible_to_empire = [&context, &override_vis_ids, empire_id](const auto* obj) {
@@ -2635,7 +2635,7 @@ namespace {
             for (const auto& [empire_id, obj_ids] : combat_info.destroyed_object_knowers) {
                 for (auto object_id : obj_ids) {
                     //DebugLogger() << "Setting knowledge of destroyed object " << object_id
-                    //                       << " for empire " << empire_id;
+                    //                       << " for empire " << to_string(empire_id);
                     universe.SetEmpireKnowledgeOfDestroyedObject(object_id, empire_id);
 
                     // record if empire should be informed of potential fleet
@@ -3774,7 +3774,7 @@ namespace {
         // at the same system are only counted once per blockading fleet
         for (auto& [empire_id, fleet_ids] : empires_blockaded_by_fleets) {
             Uniquify(fleet_ids);
-            DebugLogger(combat) << "empire id " << empire_id
+            DebugLogger(combat) << "empire id " << to_string(empire_id)
                                 << " is blockaded by fleets: " << to_string(fleet_ids);
         }
 
@@ -4487,7 +4487,7 @@ void ServerApp::PostCombatProcessTurns() {
 
         const auto cached_tech_cost_it = m_cached_empire_research_costs_times.find(empire_id);
         if (cached_tech_cost_it == m_cached_empire_research_costs_times.end()) {
-            ErrorLogger() << "no cached research costs info for empire " << empire_id;
+            ErrorLogger() << "no cached research costs info for empire " << to_string(empire_id);
         } else {
             const auto& costs_times = cached_tech_cost_it->second;
             const auto new_techs = empire->CheckResearchProgress(m_context, costs_times);
@@ -4497,7 +4497,7 @@ void ServerApp::PostCombatProcessTurns() {
 
         const auto cached_prod_cost_it = m_cached_empire_production_costs_times.find(empire_id);
         if (cached_prod_cost_it == m_cached_empire_production_costs_times.end()) {
-            ErrorLogger() << "no cached production costs info for empire " << empire_id;
+            ErrorLogger() << "no cached production costs info for empire " << to_string(empire_id);
         } else {
             const auto& costs_times = cached_prod_cost_it->second;
             empire->CheckProductionProgress(m_context, costs_times);
@@ -4505,14 +4505,14 @@ void ServerApp::PostCombatProcessTurns() {
 
         //const auto cached_policy_cost_it = m_cached_empire_policy_adoption_costs.find(empire_id);
         //if (cached_policy_cost_it == m_cached_empire_policy_adoption_costs.end())
-        //    ErrorLogger() << "no cached policy costs info for empire " << empire_id;
+        //    ErrorLogger() << "no cached policy costs info for empire " << to_string(empire_id);
         //static CONSTEXPR_VEC const decltype(cached_policy_cost_it->second) EMPTY_POLICY_COSTS;
         //const auto& policy_costs = (cached_policy_cost_it == m_cached_empire_policy_adoption_costs.end()) ?
         //    EMPTY_POLICY_COSTS : cached_policy_cost_it->second;
 
         //const auto cached_annex_cost_it = m_cached_empire_annexation_costs.find(empire_id);
         //if (cached_annex_cost_it == m_cached_empire_annexation_costs.end())
-        //    ErrorLogger() << "no cached annex costs info for empire " << empire_id;
+        //    ErrorLogger() << "no cached annex costs info for empire " << to_string(empire_id);
         //static CONSTEXPR_VEC const decltype(cached_annex_cost_it->second) EMPTY_ANNEX_COSTS;
         //const auto& annex_costs = (cached_annex_cost_it == m_cached_empire_annexation_costs.end()) ?
         //    EMPTY_ANNEX_COSTS : cached_annex_cost_it->second;
@@ -4712,7 +4712,7 @@ void ServerApp::CheckForEmpireElimination() {
             const int player_id = EmpirePlayerID(empire_id);
             const auto player = m_networking.GetPlayer(player_id);
             const auto& name = player ? player->PlayerName() : EMPTY_STRING;
-            DebugLogger() << "ServerApp::CheckForEmpireElimination empire #" << empire_id << " " << empire->Name()
+            DebugLogger() << "ServerApp::CheckForEmpireElimination empire #" << to_string(empire_id) << " " << empire->Name()
                           << " of player #" << player_id << " named " << name << " has been eliminated!";
 
             if (Networking::is_ai(player))

@@ -3607,7 +3607,7 @@ namespace {
                 if (!planet)
                     continue;
 
-                //DebugLogger() << "Empire " << empire_id << "; Planet (" << object_id << ") is named " << planet->Name();
+                //DebugLogger() << "Empire " << to_string(empire_id) << "; Planet (" << object_id << ") is named " << planet->Name();
 
                 int system_id = planet->SystemID();
                 auto* system = objects.getRaw<System>(system_id);
@@ -3617,8 +3617,8 @@ namespace {
                 res_pool_systems[available_pp_group.first].insert(system_id);
             }
             // this_pool += ")";
-            //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << available_pp_group.second << " PP available";
-            //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << allocated_pp[available_pp_group.first] << " PP allocated";
+            //DebugLogger() << "Empire " << to_string(empire_id) << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << available_pp_group.second << " PP available";
+            //DebugLogger() << "Empire " << to_string(empire_id) << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << allocated_pp[available_pp_group.first] << " PP allocated";
         }
 
 
@@ -4141,7 +4141,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
             continue;
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "InitVisibilityRadiiRenderingBuffers couldn't find empire with id: " << empire_id;
+            ErrorLogger() << "InitVisibilityRadiiRenderingBuffers couldn't find empire with id: " << to_string(empire_id);
             continue;
         }
 

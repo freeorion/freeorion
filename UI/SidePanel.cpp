@@ -2361,7 +2361,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in, EmpireID empi
             }
             else {
                 visibility_info += "  " + UserString("PL_NEVER_SEEN");
-                ErrorLogger() << "Empire " << empire_id << " knows about planet " << planet->Name() <<
+                ErrorLogger() << "Empire " << to_string(empire_id) << " knows about planet " << planet->Name() <<
                                  " (id: " << m_planet_id << ") without having seen it before!";
             }
 
@@ -2795,7 +2795,7 @@ void SidePanel::PlanetPanel::ClickAnnex() {
     } else {
         const auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "No empire with id " << empire_id;
+            ErrorLogger() << "No empire with id " << to_string(empire_id);
             return;
         }
         const auto source = empire->Source(context.ContextObjects()).get();

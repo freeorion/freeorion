@@ -102,7 +102,7 @@ namespace {
     class ProductionItemPanel : public GG::Control {
     public:
         ProductionItemPanel(GG::X w, GG::Y h, const ProductionQueue::ProductionItem& item,
-                            EmpireID empire_id, int location_id) :
+                            EmpireID empire_id, UniverseObjectID location_id) :
             Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
             m_item(item),
             m_empire_id(empire_id),
@@ -605,7 +605,7 @@ namespace {
     class ProductionItemRow : public GG::ListBox::Row {
     public:
         ProductionItemRow(GG::X w, GG::Y h, const ProductionQueue::ProductionItem& item,
-                          EmpireID empire_id, int location_id) :
+                          EmpireID empire_id, UniverseObjectID location_id) :
             GG::ListBox::Row(w, h),
             m_item(item)
         {
@@ -707,7 +707,7 @@ public:
     /** Sets build location for this selector, which may be used to filter
       * items in the list or enable / disable them at some point in the
       * future. */
-    void SetBuildLocation(int location_id, bool refresh_list = true);
+    void SetBuildLocation(UniverseObjectID location_id, bool refresh_list = true);
 
     /** Sets id of empire (or ALL_EMPIRES) for which to show items in this
       * BuildSelector. */
@@ -866,7 +866,7 @@ void BuildDesignatorWnd::BuildSelector::SizeMove(GG::Pt ul, GG::Pt lr) {
         DoLayout();
 }
 
-void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id, bool refresh_list) {
+void BuildDesignatorWnd::BuildSelector::SetBuildLocation(UniverseObjectID location_id, bool refresh_list) {
     if (m_production_location != location_id) {
         m_production_location = location_id;
         if (refresh_list)
@@ -1313,17 +1313,17 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
     auto& app = GetApp();
     auto& context = app.GetContext();
     const auto& objects = context.ContextObjects();
-    const EmpireID empire_id = app.EmpireID();
+    const auto empire_id = app.EmpireID();
 
     auto empire = std::as_const(context).GetEmpire(empire_id);
     if (!empire) {
-        ErrorLogger() << "BuildDesignatorWnd::CenterOnBuild couldn't get empire with id " << empire_id;
+        ErrorLogger() << "BuildDesignatorWnd::CenterOnBuild couldn't get empire with id " << to_string(empire_id);
         return;
     }
 
     const auto& queue = empire->GetProductionQueue();
     if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
-        const int location_id = queue[queue_idx].location;
+        const auto location_id = queue[queue_idx].location;
         if (auto build_location = objects.get(location_id)) {
             // centre map on system of build location
             const int system_id = build_location->SystemID();
@@ -1345,7 +1345,7 @@ void BuildDesignatorWnd::SetBuild(int queue_idx) {
     const auto empire = context.GetEmpire(empire_id);
 
     if (!empire) {
-        ErrorLogger() << "BuildDesignatorWnd::SetBuild couldn't get empire with id " << empire_id;
+        ErrorLogger() << "BuildDesignatorWnd::SetBuild couldn't get empire with id " << to_string(empire_id);
         return;
     }
 

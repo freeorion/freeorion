@@ -94,7 +94,7 @@ namespace {
         } else {
             auto empire = context.GetEmpire(empire_id);
             if (!empire) {
-                ErrorLogger() << "GenerateSitRep: couldn't get empire with ID " << empire_id;
+                ErrorLogger() << "GenerateSitRep: couldn't get empire with ID " << to_string(empire_id);
                 return;
             }
             empire->AddSitRepEntry(CreateSitRep(template_string, sitrep_turn, icon,
@@ -286,7 +286,7 @@ namespace {
         ScriptingContext& context = ServerApp::GetApp()->GetContext();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "EmpireSetName: couldn't get empire with ID " << empire_id;
+            ErrorLogger() << "EmpireSetName: couldn't get empire with ID " << to_string(empire_id);
             return;
         }
         empire->SetName(std::move(name));
@@ -297,7 +297,7 @@ namespace {
         ScriptingContext& context = ServerApp::GetApp()->GetContext();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "EmpireSetHomeworld: couldn't get empire with ID " << empire_id;
+            ErrorLogger() << "EmpireSetHomeworld: couldn't get empire with ID " << to_string(empire_id);
             return false;
         }
         return SetEmpireHomeworld(empire.get(), planet_id, species_name, context);
@@ -310,7 +310,7 @@ namespace {
 
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "EmpireUnlockItem: couldn't get empire with ID " << empire_id;
+            ErrorLogger() << "EmpireUnlockItem: couldn't get empire with ID " << to_string(empire_id);
             return;
         }
         auto item = UnlockableItem{item_type, item_name};
@@ -322,7 +322,7 @@ namespace {
 
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "EmpireAddShipDesign: couldn't get empire with ID " << empire_id;
+            ErrorLogger() << "EmpireAddShipDesign: couldn't get empire with ID " << to_string(empire_id);
             return;
         }
 
@@ -340,7 +340,7 @@ namespace {
     void EmpireSetStockpile(EmpireID empire_id, ResourceType resource_type, double value) {
         auto empire = ServerApp::GetApp()->GetContext().GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "EmpireSetStockpile: couldn't get empire with ID " << empire_id;
+            ErrorLogger() << "EmpireSetStockpile: couldn't get empire with ID " << to_string(empire_id);
             return;
         }
 
@@ -764,7 +764,7 @@ namespace {
 
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "CreateBuilding: couldn't get empire with ID " << empire_id;
+            ErrorLogger() << "CreateBuilding: couldn't get empire with ID " << to_string(empire_id);
             return INVALID_OBJECT_ID;
         }
 
@@ -855,7 +855,7 @@ namespace {
         if (empire_id != ALL_EMPIRES) {
             empire = context.GetEmpire(empire_id);
             if (!empire) {
-                ErrorLogger() << "CreateShip: couldn't get empire with ID " << empire_id;
+                ErrorLogger() << "CreateShip: couldn't get empire with ID " << to_string(empire_id);
                 return INVALID_OBJECT_ID;
             }
         }
@@ -1270,7 +1270,7 @@ namespace {
         }
 
         if (!context.GetEmpire(empire_id)) {
-            ErrorLogger() << "PlanetMakeOutpost: couldn't get empire with ID " << empire_id;
+            ErrorLogger() << "PlanetMakeOutpost: couldn't get empire with ID " << to_string(empire_id);
             return false;
         }
 
@@ -1288,7 +1288,7 @@ namespace {
         }
 
         if (!context.GetEmpire(empire_id)) {
-            ErrorLogger() << "PlanetMakeColony: couldn't get empire with ID " << empire_id;
+            ErrorLogger() << "PlanetMakeColony: couldn't get empire with ID " << to_string(empire_id);
             return false;
         }
 

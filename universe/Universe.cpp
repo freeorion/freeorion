@@ -2943,7 +2943,7 @@ namespace {
                     // if special is 0 stealth, or has stealth less than empire's detection strength, mark as visible
                     if (stealth <= 0.0f || stealth <= detection_strength) {
                         visible_specials.insert(special_entry.first);
-                        //DebugLogger() << "Special " << special_entry.first << " on " << obj->Name() << " is visible to empire " << empire_id;
+                        //DebugLogger() << "Special " << special_entry.first << " on " << obj->Name() << " is visible to empire " << to_string(empire_id);
                     }
                 }
             }
@@ -3108,7 +3108,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns(int current_turn
                 known_object_map.insert(full_object->Clone(*this, empire_id), destroyed);
             }
 
-            //DebugLogger() << "Empire " << empire_id << " can see object " << object_id << " with vis level " << vis;
+            //DebugLogger() << "Empire " << to_string(empire_id) << " can see object " << object_id << " with vis level " << vis;
 
             // update empire's visibility turn history for current vis, and lesser vis levels
             SetObjectVisibilityTurnsByEmpire(object_id, empire_id, vis, current_turn);
@@ -3227,7 +3227,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge(EmpireManager& empires) {
 
         //for (int stale_id : stale_set) {
         //    auto obj = latest_known_objects.Object(stale_id);
-        //    DebugLogger() << "Object " << stale_id << " : " << (obj ? obj->Name() : "(unknown)") << " is stale for empire " << empire_id ;
+        //    DebugLogger() << "Object " << stale_id << " : " << (obj ? obj->Name() : "(unknown)") << " is stale for empire " << to_string(empire_id) ;
         //}
     }
 }

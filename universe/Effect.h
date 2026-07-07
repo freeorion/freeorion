@@ -151,9 +151,9 @@ namespace Effect {
     /** Accounting information about what the causes are and changes produced
       * by effects groups acting on meters of objects. */
     struct FO_COMMON_API AccountingInfo : public EffectCause {
-        AccountingInfo() = default;
+        CONSTEXPR_STRING AccountingInfo() noexcept = default;
 
-        AccountingInfo(float meter_change_, float running_meter_total_)
+        CONSTEXPR_STRING AccountingInfo(float meter_change_, float running_meter_total_)
             noexcept(noexcept(EffectCause{EffectsCauseType::ECT_UNKNOWN_CAUSE})) :
             EffectCause(EffectsCauseType::ECT_UNKNOWN_CAUSE),
             source_id(INVALID_OBJECT_ID),
@@ -161,7 +161,7 @@ namespace Effect {
             running_meter_total(running_meter_total_)
         {}
 
-        AccountingInfo(UniverseObjectID source_id_, EffectsCauseType cause_type_,
+        CONSTEXPR_STRING AccountingInfo(UniverseObjectID source_id_, EffectsCauseType cause_type_,
                        float meter_change_, float running_meter_total_)
             noexcept(noexcept(EffectCause{std::declval<EffectsCauseType>()})) :
             EffectCause(cause_type_),
@@ -171,8 +171,8 @@ namespace Effect {
         {}
 
         template <typename S1, typename S2 = const char*>
-        AccountingInfo(UniverseObjectID source_id_, EffectsCauseType cause_type_, float meter_change_,
-                       float running_meter_total_, S1&& specific_cause_, S2&& custom_label_ = "")
+        CONSTEXPR_STRING AccountingInfo(UniverseObjectID source_id_, EffectsCauseType cause_type_, float meter_change_,
+                                        float running_meter_total_, S1&& specific_cause_, S2&& custom_label_ = "")
             noexcept(noexcept(EffectCause{std::declval<EffectsCauseType>(), std::declval<S1>(), std::declval<S2>()})) :
             EffectCause(cause_type_, std::forward<S1>(specific_cause_), std::forward<S2>(custom_label_)),
             source_id(source_id_),

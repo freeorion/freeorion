@@ -1118,7 +1118,7 @@ void ShipDesignManager::StartGame(EmpireID empire_id, bool is_new_game) {
     ScriptingContext& context = app.GetContext();
     const auto empire = std::as_const(context).GetEmpire(empire_id);
     if (!empire) {
-        ErrorLogger() << "Unable to initialize ShipDesignManager because empire id, " << empire_id << ", is invalid";
+        ErrorLogger() << "Unable to initialize ShipDesignManager because empire id, " << to_string(empire_id) << ", is invalid";
         return;
     }
 
