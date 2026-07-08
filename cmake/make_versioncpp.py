@@ -112,6 +112,7 @@ required_boost_libraries = [
     "boost_locale",
     "boost_log",
     "boost_log_setup",
+    "boost_process",
     "boost_python%s" % boost_python_suffix,
     "boost_serialization",
     "boost_signals",
