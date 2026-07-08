@@ -33,8 +33,6 @@ public:
 
     /** Initializes AI Python imports. */
     bool InitImports() override;
-    /** Initializes AI Python modules. */
-    bool InitModules() override;
 
     /** @brief Call when the server has sent a new turn update.
      *

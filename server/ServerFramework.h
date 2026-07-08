@@ -14,7 +14,7 @@ public:
     /** Initializes server Python imports. */
     bool InitImports() override;
     /** Initializes server Python modules. */
-    bool InitModules() override;
+    bool InitModules();
 
     bool CreateUniverse(std::map<int, PlayerSetupData>& player_setup_data); // Wraps call to the main Python universe generator function
     bool ExecuteTurnEvents();    // Wraps call to the main Python turn events function
