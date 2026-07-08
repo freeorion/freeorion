@@ -134,6 +134,8 @@ ServerApp::ServerApp() :
         boost::bind(&ServerApp::UpdateEmpireTurnReceived, this, ph::_1, ph::_2, ph::_3));
 
     m_signals.async_wait(boost::bind(&ServerApp::SignalHandler, this, ph::_1, ph::_2));
+
+    m_python_server.InitModules();
 }
 
 ServerApp::~ServerApp() {

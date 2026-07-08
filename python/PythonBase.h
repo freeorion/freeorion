@@ -22,8 +22,6 @@ public:
     bool         Initialize();                         // initializes and runs the Python interpreter, prepares the Python environment
     virtual bool InitCommonImports() override;         // initializes Python imports, must be implemented by derived classes
     virtual bool InitImports() = 0;                    // initializes Python imports, must be implemented by derived classes
-    virtual bool InitModules() = 0;                    // initializes Python modules, must be implemented by derived classes
-    void         AddToSysPath(const std::filesystem::path& dir);  // adds directory to Python sys.path or throws error_already_set
     void         SetErrorModule(boost::python::object& module);     // sets Python module that contains error report function defined on the Python side
 
     std::vector<std::string> ErrorReport();            // wraps call to error report function defined on the Python side

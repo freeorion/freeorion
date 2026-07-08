@@ -94,10 +94,14 @@ auto PythonServer::InitModules() -> bool
         return false;
     }
 
-    AddToSysPath(python_universe_generator_dir);
-    AddToSysPath(python_turn_events_dir);
-    AddToSysPath(python_auth_dir);
-    AddToSysPath(python_chat_dir);
+    SetModulesDirs({
+        GetPythonCommonDir(),
+        python_universe_generator_dir,
+        python_turn_events_dir,
+        python_auth_dir,
+        python_chat_dir
+    });
+    InitModuleLoader();
 
     // import universe generator script file
     m_python_module_turn_events = py::import("turn_events");
@@ -292,16 +296,6 @@ auto PythonServer::PutChatHistoryEntity(const ChatHistoryEntity& chat_history_en
 
 auto PythonServer::CreateUniverse(std::map<int, PlayerSetupData>& player_setup_data) -> bool
 {
-    // Confirm existence of the directory containing the universe generation
-    // Python scripts and add it to Pythons sys.path to make sure Python will
-    // find our scripts
-    auto python_universe_generator_dir = GetPythonUniverseGeneratorDir();
-    if (!fs::exists(python_universe_generator_dir)) {
-        ErrorLogger() << "Can't find folder containing universe generation scripts: " << PathToString(python_universe_generator_dir);
-        return false;
-    }
-    AddToSysPath(python_universe_generator_dir);
-
     // import universe generator script file
     m_python_module_universe_generator = py::import("universe_generator");
 
