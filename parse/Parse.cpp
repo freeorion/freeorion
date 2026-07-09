@@ -337,6 +337,16 @@ namespace parse {
 
         DebugLogger() << "Start background parsing...";
 
+        // Pre-initialize the lexer on this thread before any async
+        // parsing threads start. Solves use-after-free and crash
+        // without .focs.txt in named values.
+        {
+            std::string dummy;
+            auto df = dummy.cbegin();
+            auto dl = dummy.cend();
+            GetLexer().begin(df, dl);
+        }
+
         // named value ref parsing can be done in parallel as the referencing happens after parsing
         if (IsExistingDir(rdir / "scripting/macros")) {
             GetNamedValueRefManager().SetNamedValueRefParse(Pending::ParseSynchronously(parse::named_value_refs, python, rdir / "scripting/macros"));
