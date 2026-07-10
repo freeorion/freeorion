@@ -1,0 +1,22 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="FreeOrion Godot 4 Client"
+config/version="0.5.2+"
+run/main_scene="uid://badnwt3uvk5lb"
+config/features=PackedStringArray("4.4", "GL Compatibility")
+config/icon="uid://cj7u2a5f57ueg"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"

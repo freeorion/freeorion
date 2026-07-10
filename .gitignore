@@ -114,6 +114,3 @@ build/
 .coverage
 htmlcov
 
-# Godot
-*.import
-

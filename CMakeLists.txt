@@ -1125,6 +1125,7 @@ if(NOT APPLE AND NOT ANDROID)
             PATTERN "*~" EXCLUDE
             PATTERN "*.pyc" EXCLUDE
             PATTERN "tox.ini" EXCLUDE
+            PATTERN "*.import" EXCLUDE
         )
 
         if(NOT WIN32)
@@ -1147,6 +1148,7 @@ if(NOT APPLE AND NOT ANDROID)
             PATTERN "*.png" EXCLUDE
             PATTERN "*.ogg" EXCLUDE
             PATTERN "tox.ini" EXCLUDE
+            PATTERN "*.import" EXCLUDE
         )
     endif()
 endif()
