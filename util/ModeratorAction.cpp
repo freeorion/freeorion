@@ -22,13 +22,13 @@ void Moderator::DestroyUniverseObject::Execute() const {
     auto* app = IApp::GetApp();
     const auto& empires = app->Empires();
     auto& universe = app->GetUniverse();
-    const auto& ids_as_flatset = empires.EmpireIDs();
-    universe.RecursiveDestroy(m_object_id, std::vector<int>{ids_as_flatset.begin(), ids_as_flatset.end()});
+    const auto empire_ids_as_vec = empires.EmpireIDs() | range_to_vec;
+    universe.RecursiveDestroy(m_object_id, empire_ids_as_vec);
     universe.InitializeSystemGraph(empires);
 }
 
 std::string Moderator::DestroyUniverseObject::Dump() const
-{ return "Moderator::DestroyUniverseObject object_id = " + std::to_string(m_object_id); }
+{ return "Moderator::DestroyUniverseObject object_id = " + to_string(m_object_id); }
 
 /////////////////////////////////////////////////////
 // Moderator::SetOwner
@@ -36,17 +36,15 @@ std::string Moderator::DestroyUniverseObject::Dump() const
 void Moderator::SetOwner::Execute() const {
     auto obj = IApp::GetApp()->GetUniverse().Objects().getRaw(m_object_id);
     if (!obj) {
-        ErrorLogger() << "Moderator::SetOwner::Execute couldn't get object with id: " << m_object_id;
+        ErrorLogger() << "Moderator::SetOwner::Execute couldn't get object with id: " << to_string(m_object_id);
         return;
     }
     obj->SetOwner(m_new_owner_empire_id);
 }
 
 std::string Moderator::SetOwner::Dump() const {
-    std::string retval = "Moderator::SetOwner object_id = "
-                       + std::to_string(m_object_id)
-                       + " new_owner_empire_id = "
-                       + std::to_string(m_new_owner_empire_id);
+    std::string retval = "Moderator::SetOwner object_id = " + to_string(m_object_id)
+                       + " new_owner_empire_id = " + to_string(m_new_owner_empire_id);
     return retval;
 }
 
@@ -59,14 +57,14 @@ void Moderator::AddStarlane::Execute() const {
     auto& objects = universe.Objects();
     const auto& empires = app->Empires();
 
-    auto sys1 = objects.getRaw<System>(m_id_1);
+    auto* sys1 = objects.getRaw<System>(m_id_1);
     if (!sys1) {
-        ErrorLogger() << "Moderator::AddStarlane::Execute couldn't get system with id: " << m_id_1;
+        ErrorLogger() << "Moderator::AddStarlane::Execute couldn't get system with id: " << to_string(m_id_1);
         return;
     }
-    auto sys2 = objects.getRaw<System>(m_id_2);
+    auto* sys2 = objects.getRaw<System>(m_id_2);
     if (!sys2) {
-        ErrorLogger() << "Moderator::AddStarlane::Execute couldn't get system with id: " << m_id_2;
+        ErrorLogger() << "Moderator::AddStarlane::Execute couldn't get system with id: " << to_string(m_id_2);
         return;
     }
     sys1->AddStarlane(m_id_2);
@@ -89,12 +87,12 @@ void Moderator::RemoveStarlane::Execute() const {
     auto& objects = universe.Objects();
     const auto& empires = app->Empires();
 
-    auto sys1 = objects.getRaw<System>(m_id_1);
+    auto* sys1 = objects.getRaw<System>(m_id_1);
     if (!sys1) {
         ErrorLogger() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << to_string(m_id_1);
         return;
     }
-    auto sys2 = objects.getRaw<System>(m_id_2);
+    auto* sys2 = objects.getRaw<System>(m_id_2);
     if (!sys2) {
         ErrorLogger() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << to_string(m_id_2);
         return;
@@ -164,7 +162,7 @@ void Moderator::CreatePlanet::Execute() const {
     const auto current_turn = app->CurrentTurn();
     auto& universe = app->GetUniverse();
 
-    auto location = universe.Objects().getRaw<System>(m_system_id);
+    auto* location = universe.Objects().getRaw<System>(m_system_id);
     if (!location) {
         ErrorLogger() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
         return;
@@ -189,9 +187,7 @@ void Moderator::CreatePlanet::Execute() const {
 }
 
 std::string Moderator::CreatePlanet::Dump() const {
-    std::string retval = "Moderator::CreatePlanet system_id = "
-                       + to_string(m_system_id)
-                       + " planet_type = ";
+    std::string retval = "Moderator::CreatePlanet system_id = " + to_string(m_system_id) + " planet_type = ";
     retval.append(to_string(m_planet_type)).append(" planet_size = ").append(to_string(m_planet_size));
     return retval;
 }

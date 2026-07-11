@@ -110,25 +110,41 @@ namespace {
     constexpr std::size_t ten_pow_int_digits = [](int exp) { std::size_t retval = 1; while (exp--) retval *= 10; return retval; }(int_digits + 1);
     static_assert(ten_pow_int_digits > static_cast<std::size_t>(int_max)); // biggest possible int should fit in buffer
 
-    inline std::string ToString(const auto& data)
-        requires requires { data.size(); } && std::is_same_v<int, std::decay_t<decltype(*data.begin())>>
+    constexpr std::string ToString(const auto& data)
+        requires requires { data.size(); } && (
+            std::is_same_v<int, std::decay_t<decltype(*data.begin())>> || (
+                requires { Value(*data.begin()); to_string(*data.begin()); } &&
+                std::is_convertible_v<decltype(Value(*data.begin())), int>)
+        )
     {
         std::string retval;
+        retval.reserve(data.size() * (int_digits + 1) + int_digits + 2); // space for count and all values and gaps
 
-        try {
-            retval.reserve(data.size() * (int_digits + 1) + int_digits + 2); // space for count and all values and gaps
-        } catch(...) {}
+        std::array<std::string::value_type, int_digits + 1> sz_buf{};
+        auto written_chars = ToChars(data.size(), sz_buf.data(), sz_buf.data() + sz_buf.size());
+        retval.append(sz_buf.data(), written_chars);
 
-        retval.append(std::to_string(data.size()));
-
-        for (const auto& v : data)
-            retval.append(" ").append(std::to_string(v));
+        for (const auto& v : data) {
+            if constexpr (requires(const char* c) { ToChars(v, c, c); }) {
+                std::array<std::string::value_type, (int_digits + 1)> number_buf{" "};
+                written_chars = ToChars(v, number_buf.data() + 1, number_buf.data() + number_buf.size());
+                retval.append(number_buf.data(), written_chars + 1);
+            } else if constexpr (requires { ToChars(Value(v), nullptr, nullptr); }) {
+                std::array<std::string::value_type, (int_digits + 1)> number_buf{" "};
+                written_chars = ToChars(Value(v), number_buf.data() + 1, number_buf.data() + number_buf.size());
+                retval.append(number_buf.data(), written_chars + 1);
+            } else {
+                using std::to_string;
+                retval.append(" ").append(to_string(v));
+            }
+        }
 
         return retval;
     }
 
-    inline CONSTEXPR_FROM_CHARS void FillIntContainer(auto& container, std::string_view buffer)
-        requires requires { container.push_back(1); } || requires { container.insert(1); }
+    template <typename ContainerT, typename ContainedT = ContainerT::value_type>
+    inline CONSTEXPR_FROM_CHARS void FillIntContainer(ContainerT& container, std::string_view buffer)
+        requires (requires { container.push_back(ContainedT{1}); } || requires { container.insert(ContainedT{1}); })
     {
         if (buffer.empty())
             return;
@@ -169,14 +185,14 @@ namespace {
         for (std::size_t idx = 0; idx < static_cast<std::size_t>(count) && next != buffer_end; ++idx) {
             int num = 0;
 
-            std::tie(num, success, next) = get_int_from_chars(next, INVALID_OBJECT_ID);
+            std::tie(num, success, next) = get_int_from_chars(next, Value(INVALID_OBJECT_ID));
             if (!success)
                 break;
 
-            if constexpr (requires { container.push_back(num); })
-                container.push_back(num);
-            else if constexpr (requires { container.insert(num); })
-                container.insert(num);
+            if constexpr (requires { container.push_back(ContainedT{num}); })
+                container.push_back(ContainedT{num});
+            else if constexpr (requires { container.insert(ContainedT{num}); })
+                container.insert(ContainedT{num});
             else
                 static_assert(sizeof(container) == 0); // unsupported container type...
         }

@@ -3485,31 +3485,29 @@ void Universe::UpdateStatRecords(const ScriptingContext& context) {
     }
 }
 
-const Universe::ShipDesignMap& Universe::GetShipDesignsToSerialize(
-    ShipDesignMap& designs_to_serialize, EmpireID encoding_empire) const
-{
+Universe::ShipDesignMap Universe::GetShipDesignsToSerialize(EmpireID encoding_empire) const {
     if (encoding_empire == ALL_EMPIRES)
         return m_ship_designs;
 
-    designs_to_serialize.clear();
+    ShipDesignMap retval;
 
     // add generic monster ship designs so they always appear in players' pedias
     for (const auto& [design_id, design] : m_ship_designs) {
         if (design.IsMonster() && design.DesignedByEmpire() == ALL_EMPIRES)
-            designs_to_serialize.emplace(design_id, design);
+            retval.emplace(design_id, design);
     }
 
     // get empire's known ship designs
     auto it = m_empire_known_ship_design_ids.find(encoding_empire);
     if (it == m_empire_known_ship_design_ids.end())
-        return designs_to_serialize;
+        return retval;
 
     // add all ship designs of ships this empire knows about
     const auto& empire_designs = it->second;
     for (int design_id : empire_designs) {
         auto universe_design_it = m_ship_designs.find(design_id);
         if (universe_design_it != m_ship_designs.end()) {
-            designs_to_serialize.emplace(design_id, universe_design_it->second);
+            retval.emplace(design_id, universe_design_it->second);
         } else {
             ErrorLogger() << "Universe::GetShipDesignsToSerialize empire " << to_string(encoding_empire)
                             << " should know about design with id " << design_id
@@ -3517,158 +3515,140 @@ const Universe::ShipDesignMap& Universe::GetShipDesignsToSerialize(
         }
     }
 
-    return designs_to_serialize;
+    return retval;
 }
 
-void Universe::GetObjectsToSerialize(ObjectMap& objects, EmpireID encoding_empire) const {
-    if (std::addressof(objects) == std::addressof(m_objects))
-        return;
-
-    objects.clear();
+ObjectMap Universe::GetObjectsToSerialize(EmpireID encoding_empire) const {
+    ObjectMap retval;
 
     if (encoding_empire == ALL_EMPIRES) {
         // if encoding for all empires, copy true full universe state, and use the
         // streamlined option
-        objects.CopyForSerialize(m_objects);
+        retval.CopyForSerialize(m_objects);
 
     } else if constexpr (!ENABLE_VISIBILITY_EMPIRE_MEMORY) {
         // if encoding without memory, copy all info visible to specified empire
-        objects.Copy(m_objects, *this, encoding_empire);
-
+        retval.Copy(m_objects, *this, encoding_empire);
+    
     } else {
         // if encoding for a specific empire with memory...
 
         // find indicated empire's knowledge about objects, current and previous
         auto it = m_empire_latest_known_objects.find(encoding_empire);
-        if (it == m_empire_latest_known_objects.end())
-            return;                 // empire has no object knowledge, so there is nothing to send
+        if (it != m_empire_latest_known_objects.end()) {
+            // the empire_latest_known_objects are already processed for visibility
+            retval.CopyForSerialize(it->second);
 
-        //the empire_latest_known_objects are already processed for visibility, so can be copied streamlined
-        objects.CopyForSerialize(it->second);
-
-        auto destroyed_ids_it = m_empire_known_destroyed_object_ids.find(encoding_empire);
-        if (destroyed_ids_it != m_empire_known_destroyed_object_ids.end())
-            objects.AuditContainment(destroyed_ids_it->second);
-    }
-}
-
-void Universe::GetDestroyedObjectsToSerialize(std::set<int>& destroyed_object_ids,
-                                              EmpireID encoding_empire) const
-{
-    destroyed_object_ids.clear();
-
-    static constexpr auto as_int = [](UniverseObjectID id) noexcept { return Value(id); };
-
-    if (encoding_empire == ALL_EMPIRES) {
-        // all destroyed objects
-        auto as_int_rng = m_destroyed_object_ids | range_transform(as_int);
-        destroyed_object_ids.insert(as_int_rng.begin(), as_int_rng.end());
-    } else {
-        // get empire's known destroyed objects
-        auto it = m_empire_known_destroyed_object_ids.find(encoding_empire);
-        if (it != m_empire_known_destroyed_object_ids.end()) {
-            auto as_int_rng = it->second | range_transform(as_int);
-            destroyed_object_ids.insert(as_int_rng.begin(), as_int_rng.end());
+            auto destroyed_ids_it = m_empire_known_destroyed_object_ids.find(encoding_empire);
+            if (destroyed_ids_it != m_empire_known_destroyed_object_ids.end())
+                retval.AuditContainment(destroyed_ids_it->second);
         }
     }
+
+    return retval;
 }
 
-void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_known_objects,
-                                                EmpireID encoding_empire) const
-{
-    if (std::addressof(empire_latest_known_objects) == std::addressof(m_empire_latest_known_objects))
-        return;
+std::set<int> Universe::GetDestroyedObjectsToSerialize(EmpireID encoding_empire) const {
+    static constexpr auto as_int = [](UniverseObjectID id) noexcept { return Value(id); };
 
+    if (encoding_empire == ALL_EMPIRES) { // all destroyed objects
+        return m_destroyed_object_ids | range_transform(as_int) | range_to<std::set<int>>();
+    } else { // get empire's known destroyed objects
+        auto it = m_empire_known_destroyed_object_ids.find(encoding_empire);
+        if (it == m_empire_known_destroyed_object_ids.end())
+            return {};
+        return it->second | range_transform(as_int) | range_to<std::set<int>>();
+    }
+}
+
+std::map<int, ObjectMap> Universe::GetEmpireKnownObjectsToSerialize(EmpireID encoding_empire) const {
     DebugLogger() << "GetEmpireKnownObjectsToSerialize encoding empire: " << to_string(encoding_empire);
 
-    for (auto& entry : empire_latest_known_objects)
-        entry.second.clear();
-
-    empire_latest_known_objects.clear();
+    std::map<int, ObjectMap> retval;
 
     if constexpr (!ENABLE_VISIBILITY_EMPIRE_MEMORY)
-        return;
+        return retval;
 
     if (encoding_empire == ALL_EMPIRES) {
         // copy all ObjectMaps' contents
         for (const auto& [empire_id, map] : m_empire_latest_known_objects) {
             //the maps in m_empire_latest_known_objects are already processed for visibility, so can be copied fully
-            empire_latest_known_objects[empire_id].CopyForSerialize(map);
+            retval[Value(empire_id)].CopyForSerialize(map);
         }
     }
+
+    return retval;
 }
 
-void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility,
-                                            EmpireID encoding_empire) const
-{
+std::map<int, Visibilities> Universe::GetEmpireObjectVisibilityMapToSerialize(EmpireID encoding_empire) const {
+    std::map<int, Visibilities> retval;
+
     if (encoding_empire == ALL_EMPIRES) {
-        empire_object_visibility = m_empire_object_visibility;
-        return;
+        for (auto& [eid, vis] : m_empire_object_visibility)
+            retval.emplace(Value(eid), vis);
+        return retval;
     }
 
     // include just requested empire's visibility for each object it has better
     // than no visibility of.
-    // TODO: include what requested empire knows about other empires' visibilites of objects
-    empire_object_visibility.clear();
+    // TODO: include what requested empire knows about other empires' visibilites of objects    
     for (const auto& object : m_objects.all()) {
         Visibility vis = (encoding_empire == ALL_EMPIRES) ?
             Visibility::VIS_FULL_VISIBILITY : GetObjectVisibilityByEmpire(object->ID(), encoding_empire);
         if (vis > Visibility::VIS_NO_VISIBILITY)
-            empire_object_visibility[encoding_empire].Set(object->ID(), vis);
+            retval[Value(encoding_empire)].Set(object->ID(), vis);
     }
+    return retval;
 }
 
-void Universe::GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnsVecMap& empire_object_visibility_turns,
-                                                EmpireID encoding_empire) const
+std::map<int, std::vector<ObjVisTurns>> Universe::GetEmpireObjectVisibilityTurnMapToSerialize(EmpireID encoding_empire) const
 {
+    std::map<int, std::vector<ObjVisTurns>> retval;
     if (encoding_empire == ALL_EMPIRES) {
         // include all empires' visibility turn info
-        empire_object_visibility_turns = m_empire_object_visibility_turns;
+        for (auto& [eid, vis] : m_empire_object_visibility_turns)
+            retval.emplace(Value(eid), vis);
     } else {
         // include just requested empire's visibility turn info
-        empire_object_visibility_turns.clear();
         auto it = m_empire_object_visibility_turns.find(encoding_empire);
         if (it != m_empire_object_visibility_turns.end())
-            empire_object_visibility_turns[encoding_empire] = it->second;
+            retval.emplace(Value(encoding_empire), it->second);
+    }
+    return retval;
+}
+
+namespace {
+    constexpr auto to_int_value = [](const auto& val) noexcept -> int { return Value(val); };
+
+    auto ToIntValueUSet(const auto& in)
+    { return in | range_transform(to_int_value) | range_to<std::unordered_set<int>>(); }
+
+    auto ToIntValueMapUSet(const auto& in) {
+        std::map<int, std::unordered_set<int>> retval;
+        for (auto& [key, vals] : in)
+            retval.emplace(to_int_value(key), ToIntValueUSet(vals));
+        return retval;
+    }
+
+    auto ToIntValueMapUSet(const auto& in, auto single_idx) {
+        std::map<int, std::unordered_set<int>> retval;
+        auto it = in.find(single_idx);
+        if (it != in.end())
+            retval.emplace(to_int_value(it->first), ToIntValueUSet(it->second));
+        return retval;
     }
 }
 
-void Universe::GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids,
-                                              EmpireID encoding_empire) const
-{
-    if (std::addressof(empire_known_destroyed_object_ids) == std::addressof(m_empire_known_destroyed_object_ids))
-        return;
-
-    if (encoding_empire == ALL_EMPIRES) {
-        empire_known_destroyed_object_ids = m_empire_known_destroyed_object_ids;
-        return;
-    }
-
-    empire_known_destroyed_object_ids.clear();
-
-    // copy info about what encoding empire knows
-    auto it = m_empire_known_destroyed_object_ids.find(encoding_empire);
-    if (it != m_empire_known_destroyed_object_ids.end())
-        empire_known_destroyed_object_ids[encoding_empire] = it->second;
+std::map<int, std::unordered_set<int>> Universe::GetEmpireKnownDestroyedObjectsToSerialize(EmpireID encoding_empire) const {
+    if (encoding_empire == ALL_EMPIRES)
+        return ToIntValueMapUSet(m_empire_known_destroyed_object_ids);
+    return ToIntValueMapUSet(m_empire_known_destroyed_object_ids, encoding_empire);
 }
 
-void Universe::GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_knowledge_object_ids,
-                                              EmpireID encoding_empire) const
-{
-    if (std::addressof(empire_stale_knowledge_object_ids) == std::addressof(m_empire_stale_knowledge_object_ids))
-        return;
-
-    if (encoding_empire == ALL_EMPIRES) {
-        empire_stale_knowledge_object_ids = m_empire_stale_knowledge_object_ids;
-        return;
-    }
-
-    empire_stale_knowledge_object_ids.clear();
-
-    // copy stale data for this empire
-    auto it = m_empire_stale_knowledge_object_ids.find(encoding_empire);
-    if (it != m_empire_stale_knowledge_object_ids.end())
-        empire_stale_knowledge_object_ids[encoding_empire] = it->second;
+std::map<int, std::unordered_set<int>> Universe::GetEmpireStaleKnowledgeObjectsToSerialize(EmpireID encoding_empire) const {
+    if (encoding_empire == ALL_EMPIRES)
+        return ToIntValueMapUSet(m_empire_stale_knowledge_object_ids);
+    return ToIntValueMapUSet(m_empire_stale_knowledge_object_ids, encoding_empire);
 }
 
 std::map<std::string, unsigned int> CheckSumContent(const SpeciesManager& species) {

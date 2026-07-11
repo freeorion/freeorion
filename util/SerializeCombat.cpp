@@ -34,7 +34,7 @@ namespace {
     // for backwards compatability
     struct BoutBeginEvent final : public CombatEvent {
         std::string DebugString(const ScriptingContext&) const override { return ""; }
-        std::string CombatLogDescription(int, const ScriptingContext&) const override { return ""; }
+        std::string CombatLogDescription(EmpireID, const ScriptingContext&) const override { return ""; }
         int bout = 0;
     };
 }
@@ -60,7 +60,7 @@ namespace {
     struct IncapacitationEvent : public CombatEvent {
         constexpr IncapacitationEvent() noexcept = default;
         std::string DebugString(const ScriptingContext&) const override { return ""; }
-        std::string CombatLogDescription(int, const ScriptingContext&) const override { return ""; }
+        std::string CombatLogDescription(EmpireID, const ScriptingContext&) const override { return ""; }
 
         int object_id = INVALID_OBJECT_ID;
         int object_owner_id = ALL_EMPIRES;
@@ -290,11 +290,11 @@ namespace {
         { return GetIntFromChars<int>(buffer_end, next, default_val); };
 
         for (std::size_t idx = 0; idx < static_cast<std::size_t>(count) && next != buffer_end; ++idx) {
-            int obj_id = INVALID_OBJECT_ID;
+            UniverseObjectID obj_id = INVALID_OBJECT_ID;
             int cur_int = Meter::DEFAULT_INT;
             int max_int = Meter::DEFAULT_INT;
 
-            std::tie(obj_id, success, next) = get_int_from_chars(next, INVALID_OBJECT_ID);
+            std::tie(UnderRef(obj_id), success, next) = get_int_from_chars(next, Value(INVALID_OBJECT_ID));
             if (!success)
                 break;
             std::tie(cur_int, success, next) = get_int_from_chars(next, Meter::DEFAULT_INT);
@@ -582,10 +582,10 @@ namespace {
         try {
             retval.reserve(7 * (int_digits + 1) + obj.weapon_name.size());
         } catch (...) {}
-        retval.append(std::to_string(obj.attacker_id)).append(" ")
-              .append(std::to_string(obj.target_id)).append(" ")
-              .append(std::to_string(obj.attacker_owner_id)).append(" ")
-              .append(std::to_string(obj.target_owner_id)).append(" ")
+        retval.append(to_string(obj.attacker_id)).append(" ")
+              .append(to_string(obj.target_id)).append(" ")
+              .append(to_string(obj.attacker_owner_id)).append(" ")
+              .append(to_string(obj.target_owner_id)).append(" ")
               .append(std::to_string(Meter::FromFloat(obj.power))).append(" ")
               .append(std::to_string(Meter::FromFloat(obj.shield))).append(" ")
               .append(std::to_string(Meter::FromFloat(obj.damage))).append(" ")
@@ -603,16 +603,16 @@ namespace {
         const auto get_next_int = [buffer_end](const char* next, const int default_val)
         { return GetIntFromChars<int>(buffer_end, next, default_val); };
 
-        std::tie(obj.attacker_id, success, next) = get_next_int(next, INVALID_OBJECT_ID);
+        std::tie(UnderRef(obj.attacker_id), success, next) = get_next_int(next, Value(INVALID_OBJECT_ID));
         if (!success)
             return false;
-        std::tie(obj.target_id, success, next) = get_next_int(next, INVALID_OBJECT_ID);
+        std::tie(UnderRef(obj.target_id), success, next) = get_next_int(next, Value(INVALID_OBJECT_ID));
         if (!success)
             return false;
-        std::tie(obj.attacker_owner_id, success, next) = get_next_int(next, ALL_EMPIRES);
+        std::tie(UnderRef(obj.attacker_owner_id), success, next) = get_next_int(next, Value(ALL_EMPIRES));
         if (!success)
             return false;
-        std::tie(obj.target_owner_id, success, next) = get_next_int(next, ALL_EMPIRES);
+        std::tie(UnderRef(obj.target_owner_id), success, next) = get_next_int(next, Value(ALL_EMPIRES));
         if (!success)
             return false;
 
@@ -677,14 +677,14 @@ namespace {
             ar  & make_nvp(short_tags ? "b" : "bout", ignored)
                 & make_nvp(short_tags ? "r" : "round", ignored);
         }
-        ar  & make_nvp(short_tags ? "a" : "attacker_id", obj.attacker_id)
-            & make_nvp(short_tags ? "t" : "target_id", obj.target_id)
+        ar  & make_nvp(short_tags ? "a" : "attacker_id", UnderRef(obj.attacker_id))
+            & make_nvp(short_tags ? "t" : "target_id", UnderRef(obj.target_id))
             & make_nvp(short_tags ? "w" : "weapon_name", obj.weapon_name)
             & make_nvp(short_tags ? "p" : "power", obj.power)
             & make_nvp(short_tags ? "s" : "shield", obj.shield)
             & make_nvp(short_tags ? "d" : "damage", obj.damage)
-            & make_nvp(short_tags ? "to" : "target_owner_id", obj.target_owner_id)
-            & make_nvp(short_tags ? "ao" : "attacker_owner_id", obj.attacker_owner_id);
+            & make_nvp(short_tags ? "to" : "target_owner_id", UnderRef(obj.target_owner_id))
+            & make_nvp(short_tags ? "ao" : "attacker_owner_id", UnderRef(obj.attacker_owner_id));
     }
 }
 
@@ -730,7 +730,7 @@ namespace {
     constexpr auto to_second_size = [](const auto& id_vec) noexcept { return id_vec.second.size(); };
 
     // for vectors (of pairs (of ints and vectors of castable-to-int))
-    std::string ToString(const std::vector<std::pair<int, std::vector<IncapacitationsEvent::IncapacitationDetail>>>& events) {
+    std::string ToString(const std::vector<std::pair<EmpireID, std::vector<IncapacitationsEvent::IncapacitationDetail>>>& events) {
         auto events_sizes_rng = events | range_transform(to_second_size);
         const std::size_t event_count = std::accumulate(events_sizes_rng.begin(), events_sizes_rng.end(), std::size_t{0});
 
@@ -741,10 +741,10 @@ namespace {
 
         retval.append(std::to_string(events.size()));
         for (const auto& [empire_id, objs_ids] : events) {
-            retval.append("  ").append(std::to_string(empire_id)).append(" ")
+            retval.append("  ").append(to_string(empire_id)).append(" ")
                   .append(std::to_string(objs_ids.size()));
             for (const auto& obj_id : objs_ids)
-                retval.append(" ").append(std::to_string(static_cast<int>(obj_id)));
+                retval.append(" ").append(to_string(obj_id));
         }
 
         return retval;
@@ -752,7 +752,7 @@ namespace {
 
     // for vectors (of pairs (of ints and vectors of wrapper-of-int))
     void FillVecOfIntAndVecOfIncapDetailEvent(
-        std::vector<std::pair<int, std::vector<IncapacitationsEvent::IncapacitationDetail>>>& events,
+        std::vector<std::pair<EmpireID, std::vector<IncapacitationsEvent::IncapacitationDetail>>>& events,
         std::string_view buffer, UniverseObjectType object_type)
     {
         const auto* const buffer_end = buffer.data() + buffer.size();
@@ -775,7 +775,7 @@ namespace {
 
         for (std::size_t empire_idx = 0; empire_idx < empire_count && next != buffer_end; ++empire_idx) {
             EmpireID empire_id = ALL_EMPIRES;
-            std::tie(empire_id, success, next) = get_next_int(next, ALL_EMPIRES);
+            std::tie(UnderRef(empire_id), success, next) = get_next_int(next, Value(ALL_EMPIRES));
             if (!success)
                 return;
             std::tie(count_ui, success, next) = get_next_uint(next, 0u);
@@ -789,11 +789,11 @@ namespace {
             obj_ids.reserve(id_count);
 
             for (std::size_t obj_id_idx = 0; obj_id_idx < id_count && next != buffer_end; ++obj_id_idx) {
-                int object_id = INVALID_OBJECT_ID;
-                std::tie(object_id, success, next) = get_next_int(next, INVALID_OBJECT_ID);
+                int object_id = Value(INVALID_OBJECT_ID);
+                std::tie(object_id, success, next) = get_next_int(next, Value(INVALID_OBJECT_ID));
                 if (!success)
                     return;
-                obj_ids.emplace_back(object_id, object_type);
+                obj_ids.emplace_back(UniverseObjectID{object_id}, object_type);
             }
         }
     }
@@ -942,8 +942,8 @@ namespace {
         events.reserve(empire_count);
 
         for (std::size_t empire_idx = 0; empire_idx < empire_count && next != buffer_end; ++empire_idx) {
-            EmpireID empire_id = Value(ALL_EMPIRES);
-            std::tie(empire_id, success, next) = get_next_int(next, Value(ALL_EMPIRES));
+            EmpireID empire_id = ALL_EMPIRES;
+            std::tie(UnderRef(empire_id), success, next) = get_next_int(next, Value(ALL_EMPIRES));
             if (!success)
                 return false;
             std::tie(count_ui, success, next) = get_next_uint(next, 0u);
@@ -1082,10 +1082,10 @@ namespace {
         const auto* next = buffer.data();
         bool success = false;
 
-        std::tie(obj.attacker_id, success, next) = GetIntFromChars<int>(buffer_end, next, INVALID_OBJECT_ID);
+        std::tie(obj.attacker_id, success, next) = GetIntFromChars<int>(buffer_end, next, Value(INVALID_OBJECT_ID));
         if (!success)
             return false;
-        std::tie(obj.attacker_owner_id, success, next) = GetIntFromChars<int>(buffer_end, next, ALL_EMPIRES);
+        std::tie(obj.attacker_owner_id, success, next) = GetIntFromChars<int>(buffer_end, next, Value(ALL_EMPIRES));
         return success;
     }
 
@@ -1104,7 +1104,7 @@ namespace {
             WeaponFireEvent wfe;
             bool success = FillWeaponFireEvent(wfe, wfe_buffer);
             if (!success) continue;
-            const int target_id = wfe.target_id;
+            const auto target_id = wfe.target_id;
             obj.events[target_id].push_back(std::move(wfe));
         }
     }
@@ -1117,15 +1117,15 @@ namespace {
 
         int ingored = 0;
         ar >> make_nvp("bout", ingored)
-           >> make_nvp("attacker_id", obj.attacker_id)
-           >> make_nvp("attacker_owner_id", obj.attacker_owner_id);
+           >> make_nvp("attacker_id", UnderRef(obj.attacker_id))
+           >> make_nvp("attacker_owner_id", UnderRef(obj.attacker_owner_id));
 
         using WeaponFireEventPtr = std::shared_ptr<WeaponFireEvent>;
         std::map<int, std::vector<WeaponFireEventPtr>> shared_wfes;
 
         ar >> make_nvp("events", shared_wfes);
 
-        static_assert(std::is_same_v<std::decay_t<decltype(obj.events)>, std::map<int, std::vector<WeaponFireEvent>>>);
+        static_assert(std::is_same_v<std::decay_t<decltype(obj.events)>, std::map<UniverseObjectID, std::vector<WeaponFireEvent>>>);
 
 
         obj.events.clear();
@@ -1147,8 +1147,8 @@ namespace {
             int ignored = -1;
             ar  & make_nvp("bout", ignored);
         }
-        ar  & make_nvp("attacker_id", obj.attacker_id)
-            & make_nvp("attacker_owner_id", obj.attacker_owner_id)
+        ar  & make_nvp("attacker_id", UnderRef(obj.attacker_id))
+            & make_nvp("attacker_owner_id", UnderRef(obj.attacker_owner_id))
             & make_nvp("events", obj.events);
     }
 }

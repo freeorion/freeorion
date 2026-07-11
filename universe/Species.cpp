@@ -266,7 +266,7 @@ namespace {
         return std::make_unique<ValueRef::StaticCast<int, double>>(
             std::make_unique<ValueRef::Operation<int>>(
                 ValueRef::OpType::COMPARE_NOT_EQUAL,
-                std::make_unique<ValueRef::Constant<int>>(ALL_EMPIRES),
+                std::make_unique<ValueRef::Constant<int>>(Value(ALL_EMPIRES)),
                 LocalCandidateOwner()
             )
         );
@@ -874,15 +874,6 @@ const std::string& SpeciesManager::RandomPlayableSpeciesName() const
 const std::string& SpeciesManager::SequentialPlayableSpeciesName(int id) const
 { return PickIdxOrEmpty(AllSpecies() | range_filter(is_playable) | range_keys, static_cast<std::size_t>(id)); }
         
-void SpeciesManager::SetSpeciesHomeworlds(std::map<std::string, std::set<int>>&& species_homeworld_ids) {
-    m_species_homeworlds.clear();
-    using homeworlds_value_t = decltype(m_species_homeworlds)::value_type;
-    std::transform(species_homeworld_ids.begin(), species_homeworld_ids.end(),
-                   std::inserter(m_species_homeworlds, m_species_homeworlds.end()),
-                   [](auto& sp_ids) -> homeworlds_value_t
-                   { return {sp_ids.first, {sp_ids.second.begin(), sp_ids.second.end()}}; });
-}
-
 void SpeciesManager::SetSpeciesSpeciesOpinion(const std::string& opinionated_species,
                                               const std::string& rated_species, float opinion, bool target)
 {
@@ -992,7 +983,7 @@ std::vector<std::string_view> SpeciesManager::SpeciesThatDislike(std::string_vie
     return retval;
 }
 
-void SpeciesManager::AddSpeciesHomeworld(std::string species, int homeworld_id) {
+void SpeciesManager::AddSpeciesHomeworld(std::string species, UniverseObjectID homeworld_id) {
     if (homeworld_id == INVALID_OBJECT_ID)
         return;
     if (species.empty())
@@ -1000,7 +991,7 @@ void SpeciesManager::AddSpeciesHomeworld(std::string species, int homeworld_id) 
     m_species_homeworlds[std::move(species)].insert(homeworld_id);
 }
 
-void SpeciesManager::RemoveSpeciesHomeworld(const std::string& species, int homeworld_id) {
+void SpeciesManager::RemoveSpeciesHomeworld(const std::string& species, UniverseObjectID homeworld_id) {
     if (homeworld_id == INVALID_OBJECT_ID)
         return;
     if (species.empty())
