@@ -43,10 +43,10 @@ void OrderSet::ApplyOrders(ScriptingContext& context) {
         }
 
         try {
-            const auto order_empire_id = order->EmpireID();
+            const auto order_empire_id = order->GetEmpireID();
             const auto order_empire = context.GetEmpire(order_empire_id);
             if (!order_empire) {
-                ErrorLogger() << "ApplyOrders couldn't get empire with id " << order_empire_id;
+                ErrorLogger() << "ApplyOrders couldn't get empire with id " << to_string(order_empire_id);
                 return;
             }
             const auto source = order_empire->Source(context.ContextObjects()).get();

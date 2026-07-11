@@ -330,8 +330,8 @@ public:
     void ResetSpeciesOpinions(bool active, bool target);
     void BackPropagateOpinions();
 
-    void AddSpeciesHomeworld(std::string species, int homeworld_id);
-    void RemoveSpeciesHomeworld(const std::string& species, int homeworld_id);
+    void AddSpeciesHomeworld(std::string species, UniverseObjectID homeworld_id);
+    void RemoveSpeciesHomeworld(const std::string& species, UniverseObjectID homeworld_id);
     void ClearSpeciesHomeworlds();
 
     [[nodiscard]] const auto& SpeciesShipsDestroyed() const noexcept { return m_species_species_ships_destroyed; }
@@ -344,10 +344,6 @@ public:
     void SetSpeciesTypes(PendingT&& future);
 
 private:
-    /** sets the homeworld ids of species in this SpeciesManager to those
-      * specified in \a species_homeworld_ids */
-    void SetSpeciesHomeworlds(std::map<std::string, std::set<int>>&& species_homeworld_ids);
-
     /** Assigns any m_pending_types to m_species. */
     void CheckPendingSpeciesTypes() const;
 

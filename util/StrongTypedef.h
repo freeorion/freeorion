@@ -11,6 +11,7 @@
 #define FO_STRONG_ID_TYPEDEF(typeName, underlyingType)                                          \
 static_assert(std::is_integral_v<underlyingType> && std::is_signed_v<underlyingType>);          \
 struct typeName {                                                                               \
+    using UnderlyingType = underlyingType;                                                      \
 private:                                                                                        \
     underlyingType value{-1};                                                                   \
     static constexpr auto MAX = std::numeric_limits<underlyingType>::max();                     \

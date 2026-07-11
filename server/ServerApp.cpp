@@ -2635,7 +2635,7 @@ namespace {
             for (const auto& [empire_id, obj_ids] : combat_info.destroyed_object_knowers) {
                 for (auto object_id : obj_ids) {
                     //DebugLogger() << "Setting knowledge of destroyed object " << object_id
-                    //                       << " for empire " << to_string(empire_id);
+                    //              << " for empire " << to_string(empire_id);
                     universe.SetEmpireKnowledgeOfDestroyedObject(object_id, empire_id);
 
                     // record if empire should be informed of potential fleet
@@ -2649,8 +2649,7 @@ namespace {
 
 
             // destroy, in main universe, objects that were destroyed in combat,
-            // and any associated objects that should now logically also be
-            // destroyed
+            // and any associated objects that should now logically also be destroyed
             std::set<UniverseObjectID> all_destroyed_object_ids;
             for (auto destroyed_object_id : combat_info.destroyed_object_ids) {
                 auto dest_obj_ids = universe.RecursiveDestroy(destroyed_object_id, empire_ids);
@@ -2792,30 +2791,30 @@ namespace {
             // If a ship was attacked multiple times during a combat in which it dies, it will get
             // processed multiple times here.  The below set will keep it from being logged as
             // multiple destroyed ships for its owner.
-            std::unordered_set<int> already_logged__target_ships;
-            std::unordered_map<int, int> empire_destroyed_ship_ids;
+            std::unordered_set<UniverseObjectID> already_logged__target_ships;
+            //std::unordered_map<EmpireID, int> empire_destroyed_ship_ids; // TODO: should this be filled in and used somehow?
 
             for (const auto* attack_event : events_that_killed) {
                 auto attacker = combat_objects.get(attack_event->attacker_id);
                 if (!attacker)
                     continue;
-                const int attacker_empire_id = attacker->Owner();
+                const auto attacker_empire_id = attacker->Owner();
                 auto attacker_empire = context.GetEmpire(attacker_empire_id);
 
                 auto* target_ship = combat_objects.getRaw<Ship>(attack_event->target_id);
                 if (!target_ship)
                     continue;
-                const int target_empire_id = target_ship->Owner();
+                const auto target_empire_id = target_ship->Owner();
                 auto target_empire = context.GetEmpire(target_empire_id);
 
                 const auto attacker_object_type = attacker->ObjectType();
 
                 DebugLogger() << "Attacker " << to_string(attacker_object_type)
-                              << " " << attacker->Name() << " (id: " << attacker->ID()
-                              << "  empire: " << std::to_string(attacker_empire_id)
+                              << " " << attacker->Name() << " (id: " << to_string(attacker->ID())
+                              << "  empire: " << to_string(attacker_empire_id)
                               << ")  attacks " << target_ship->Name()
-                              << " (id: " << target_ship->ID()
-                              << "  empire: " << std::to_string(target_empire_id)
+                              << " (id: " << to_string(target_ship->ID())
+                              << "  empire: " << to_string(target_empire_id)
                               << "  species: " << target_ship->SpeciesName() << ")";
 
                 if (attacker_empire)
