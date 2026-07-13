@@ -1,0 +1,66 @@
+FieldType
+    name = "FLD_CORROSIVE_NANITE_SWARM"
+    description = "FLD_NANITE_SWARM_DESC"
+    stealth = 0.01
+    tags = [ "EXOTIC" ]
+    effectsgroups = [
+        EffectsGroup    // move around
+            scope = Source
+            effects = [
+                SetSpeed value = 10
+                MoveTowards speed = Source.Speed/2.8 x = UniverseCentreX y = UniverseCentreY
+                MoveInOrbit speed = Source.Speed/1.4 x = UniverseCentreX y = UniverseCentreY
+            ]
+
+        EffectsGroup    // grow size when young
+            scope = Source
+            activation = And [
+                (Source.Age <= max((UniverseWidth ^ 1.1) / 50, 20))
+                Size high = 50
+            ]
+            effects = SetSize value = Value + min(max(Value * RandomNumber(0.05, 0.1), 1.0), 3.0)
+
+        EffectsGroup    // shrink size when old
+            scope = Source
+            activation = (Source.Age >= max((UniverseWidth ^ 1.1) / 50, 20))
+            effects = SetSize value = Value - min(max(Value * RandomNumber(0.05, 0.1), 1.0), 3.0)
+
+        EffectsGroup    // decrease ship structure
+            scope = And [
+                Ship
+                WithinDistance distance = Source.Size * 0.9 condition = Source
+                Not Monster
+            ]
+            stackinggroup = "NANITE_SWARM_SHIP_REPAIR"
+            effects = SetStructure value = Value - (NamedReal name = "FLD_NANITE_SWARM_STRUCTURE_FLAT" value = 5 * [[SHIP_STRUCTURE_FACTOR]]) /
+                max(1.0, Statistic Count condition = And [
+                    Ship
+                    WithinDistance distance = Source.Size * 0.9 condition = Source
+                    Not Monster
+                ])
+
+        EffectsGroup    // shrink when ships are in...
+            scope = Source
+            activation = Number low = 1 condition = And [
+                Ship
+                WithinDistance distance = Source.Size * 0.9 condition = Source
+                Not Monster
+            ]
+            effects = SetSize value = Value - Statistic Count condition = And [
+                Ship
+                WithinDistance distance = Source.Size * 0.9 condition = Source
+                Not Monster
+            ]
+
+        EffectsGroup    // after reaching a certain age, dissipate when small
+            scope = Source
+            activation = And [
+                (Source.Age >= 10)
+                Size high = 10
+            ]
+            effects = Destroy
+
+    ]
+    graphic = "fields/corrosive_nanite_swarm.png"
+
+#include "/scripting/common/misc.macros"
