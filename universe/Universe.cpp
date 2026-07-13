@@ -2695,22 +2695,30 @@ namespace {
 
     auto GetBestNeutralDetectionAtSystems(const ObjectMap& objects) {
         // determine neutral / monster detection strengths at each system, which is
-        // the highest detection strength of unowned ships at each
+        // the highest detection strength of unowned ships or planets at that system
 
-        static constexpr auto is_unowned_ship_in_system = [](const Ship* ship) noexcept
+        static constexpr auto is_unowned_actor_in_system = [](const UniverseObject* ship) noexcept
         { return ship && ship->Unowned() && ship->SystemID() != INVALID_OBJECT_ID; };
 
-        const auto neutral_ships_in_systems = objects.findRaw<Ship>(is_unowned_ship_in_system);
+        const auto neutral_ships_in_systems = objects.findRaw<Ship>(is_unowned_actor_in_system);
+        const auto neutral_planets_in_systems = objects.findRaw<Planet>(is_unowned_actor_in_system);
 
-        static constexpr auto to_system_id_and_ship_detection = [](const Ship* ship) noexcept
+        static constexpr auto to_system_id_and_ship_detection = [](const UniverseObject* ship) noexcept
         { return std::pair{ship->SystemID(), ship->GetMeter(MeterType::METER_DETECTION)->Initial()}; };
 
+        // c++26 ranges::view::concat(neutral_ships_in_systems, neutral_planets_in_systems)
         auto neutral_ship_systems_detections = neutral_ships_in_systems
+            | range_transform(to_system_id_and_ship_detection);
+        auto neutral_planet_systems_detections = neutral_planets_in_systems
             | range_transform(to_system_id_and_ship_detection);
 
         std::map<int, float> best_neutral_detection_strengths_at_systems;
 
         for (const auto [sys_id, det] : neutral_ship_systems_detections) {
+            auto& best_det = best_neutral_detection_strengths_at_systems[sys_id];
+            best_det = std::max(best_det, det);
+        }
+        for (const auto [sys_id, det] : neutral_planet_systems_detections) {
             auto& best_det = best_neutral_detection_strengths_at_systems[sys_id];
             best_det = std::max(best_det, det);
         }

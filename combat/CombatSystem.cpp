@@ -1781,17 +1781,17 @@ namespace {
                     TraceLogger(combat) << "Pre-attack visibility of launching carrier id: " << attacker->ID()
                                         << " by empire: " << detector_empire_id << " was: " << initial_vis;
 
-                    if (initial_vis >= Visibility::VIS_BASIC_VISIBILITY)
+                    if (initial_vis >= Visibility::VIS_TARGETABLE_VISIBILITY)
                         continue;
 
-                    combat_info.empire_object_visibility[detector_empire_id].Set(attacker->ID(), Visibility::VIS_BASIC_VISIBILITY);
+                    combat_info.empire_object_visibility[detector_empire_id].Set(attacker->ID(), Visibility::VIS_TARGETABLE_VISIBILITY);
 
-                    DebugLogger(combat) << " ... Setting post-attack visability to " << Visibility::VIS_BASIC_VISIBILITY;
+                    DebugLogger(combat) << " ... Setting post-attack visability to " << Visibility::VIS_TARGETABLE_VISIBILITY;
 
                     // record visibility change event due to attack
                     // FIXME attacker, TARGET, attacker empire, target empire, visibility
                     stealth_change_event->AddEvent(attacker->ID(), attacker->Owner(), detector_empire_id,
-                                                   Visibility::VIS_BASIC_VISIBILITY);
+                                                   Visibility::VIS_TARGETABLE_VISIBILITY);
                 }
             }
         }
@@ -1806,16 +1806,16 @@ namespace {
                 TraceLogger(combat) << "Pre-attack visibility of attacker id: " << attack_event->attacker_id
                                     << " by empire: " << detector_empire_id << " was: " << initial_vis;
 
-                if (initial_vis >= Visibility::VIS_BASIC_VISIBILITY)
+                if (initial_vis >= Visibility::VIS_TARGETABLE_VISIBILITY)
                     continue;
 
-                combat_info.empire_object_visibility[detector_empire_id].Set(attack_event->attacker_id, Visibility::VIS_BASIC_VISIBILITY);
+                combat_info.empire_object_visibility[detector_empire_id].Set(attack_event->attacker_id, Visibility::VIS_TARGETABLE_VISIBILITY);
 
-                DebugLogger(combat) << " ... Setting post-attack visability to " << Visibility::VIS_BASIC_VISIBILITY;
+                DebugLogger(combat) << " ... Setting post-attack visability to " << Visibility::VIS_TARGETABLE_VISIBILITY;
 
                 // record visibility change event due to attack
                 stealth_change_event->AddEvent(attack_event->attacker_id, attack_event->target_id, attack_event->attacker_owner_id,
-                                               attack_event->target_owner_id, Visibility::VIS_BASIC_VISIBILITY);
+                                               attack_event->target_owner_id, Visibility::VIS_TARGETABLE_VISIBILITY);
             }
         };
 
