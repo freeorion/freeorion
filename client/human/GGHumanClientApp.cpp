@@ -401,7 +401,7 @@ void GGHumanClientApp::Initialize() {
     GG::Wnd::SetDefaultBrowseInfoWnd(std::move(default_browse_info_wnd));
 
 #ifndef FREEORION_WIN32
-    if(const auto icon = m_ui.GetTexture(ClientUI::ArtDir() / "icons" / "FO_Icon_256x256.png"))
+    if (const auto icon = m_ui.GetTexture(ClientUI::ArtDir() / "icons" / "FO_Icon_256x256.png"))
         SetWindowIcon(*icon);
 #endif
 
