@@ -476,7 +476,7 @@ namespace {
         for (const auto& [owner_id, vec] : events) {
             retval.append("  ").append(to_string(owner_id)).append(":");
             for (const auto& id : vec)
-                retval.append(" ").append(to_string(id));
+                retval.append(" ").append(to_string(UniverseObjectID{id}));
         }
         return retval;
     }

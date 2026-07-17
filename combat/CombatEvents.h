@@ -216,10 +216,13 @@ struct FO_COMMON_API IncapacitationsEvent : public CombatEvent {
 
         [[nodiscard]] std::string CombatLogDescription(EmpireID viewing_empire_id, const ScriptingContext& context) const override;
 
-        [[nodiscard]] constexpr operator UniverseObjectID() const noexcept { return id; }
+        [[nodiscard]] constexpr explicit operator UniverseObjectID() const noexcept { return id; }
 
         UniverseObjectID id = INVALID_OBJECT_ID;
         UniverseObjectType object_type = UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE;
+
+        template <typename Archive>
+        friend void serialize(Archive&, IncapacitationDetail&, unsigned int const);
     };
 
 private:

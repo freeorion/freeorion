@@ -86,6 +86,10 @@ namespace {
 #endif
     }
 
+    template <typename T> requires requires(T t) { int{Value(t)}; }
+    T ToInt(std::string_view sv, T default_result)
+    { return T{ToInt(sv, Value(default_result))}; }
+
     //! Return @p content surrounded by the given @p tags.
     //!
     //! @param content
@@ -111,7 +115,7 @@ namespace {
     boost::optional<std::string> UniverseObjectString(
         std::string_view data, std::string_view tag, const ObjectMap& objects)
     {
-        const int object_id = ToInt(data, INVALID_OBJECT_ID);
+        const auto object_id = ToInt(data, INVALID_OBJECT_ID);
         auto obj = objects.getRaw(object_id);
         if (!obj)
             return boost::none;
@@ -161,7 +165,7 @@ namespace {
     boost::optional<std::string> EmpireString(
         std::string_view data, const EmpireManager::const_container_type& empires)
     {
-        const int id = ToInt(data, ALL_EMPIRES);
+        const auto id = ToInt(data, ALL_EMPIRES);
         auto it = empires.find(id);
         if (it != empires.end())
             return WithTags(it->second->Name(), VarText::EMPIRE_ID_TAG, data);
@@ -242,7 +246,7 @@ namespace {
                 // Assume that we have no userstring which is also a number
                 if (UserStringExists(data))
                     return UserString(data);
-                const int planet_id = ToInt(data, INVALID_OBJECT_ID);
+                const auto planet_id = ToInt(data, INVALID_OBJECT_ID);
                 if (auto planet = context.ContextObjects().getRaw<Planet>(planet_id))
                     return UserString(to_string(planet->Type()));
                 return UserString("UNKNOWN_PLANET");
@@ -252,7 +256,7 @@ namespace {
                 // Assume that we have no userstring which is also a number
                 if (UserStringExists(data))
                     return UserString(data);
-                const int planet_id = ToInt(data, INVALID_OBJECT_ID);
+                const auto planet_id = ToInt(data, INVALID_OBJECT_ID);
                 if (auto planet = context.ContextObjects().getRaw<Planet>(planet_id))
                     return UserString(to_string(planet->EnvironmentForSpecies(context.species)));
                 return UserString("UNKNOWN_PLANET");

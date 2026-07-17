@@ -10919,7 +10919,7 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         std::string ss;
         ss.reserve(objs.size() * 20); // guesstimate
         for (const auto* obj : objs)
-            ss.append(obj->Name()).append(" (").append(std::to_string(obj->ID())).append(")  ");
+            ss.append(obj->Name()).append(" (").append(to_string(obj->ID())).append(")  ");
         return ss;
     };
 
