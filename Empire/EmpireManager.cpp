@@ -360,22 +360,20 @@ void EmpireManager::RefreshCapitalIDs() {
     m_capital_ids = m_const_empire_map | range_transform(to_cap_id) | range_to<decltype(m_capital_ids)>();
 }
 
-void EmpireManager::GetDiplomaticMessagesToSerialize(std::map<std::pair<EmpireID, EmpireID>, DiplomaticMessage>& messages,
-                                                     EmpireID encoding_empire) const
-{
-    messages.clear();
+std::map<std::pair<int, int>, DiplomaticMessage> EmpireManager::GetDiplomaticMessagesToSerialize(EmpireID encoding_empire) const {
+    static constexpr auto to_ints = [](std::pair<EmpireID, EmpireID> ids) noexcept { return std::pair{Value(ids.first), Value(ids.second)}; };
+    static constexpr auto to_ints_msg = [](const auto& ids_msg) noexcept { return std::pair{to_ints(ids_msg.first), ids_msg.second}; };
 
     // return all messages for general case
-    if (encoding_empire == ALL_EMPIRES) {
-        messages = m_diplomatic_messages;
-        return;
-    }
+    if (encoding_empire == ALL_EMPIRES)
+        return m_diplomatic_messages | range_transform(to_ints_msg) | range_to<std::map<std::pair<int, int>, DiplomaticMessage>>();
+
+    const auto involves_encoding_empire = [encoding_empire](const auto& ids_msg) noexcept -> bool
+    { return ids_msg.first.first == encoding_empire || ids_msg.first.second == encoding_empire; };
 
     // find all messages involving encoding empire
-    for (const auto& entry : m_diplomatic_messages) {
-        if (entry.first.first == encoding_empire || entry.first.second == encoding_empire)
-            messages.insert(entry);
-    }
+    return m_diplomatic_messages | range_filter(involves_encoding_empire) | range_transform(to_ints_msg)
+                                 | range_to<std::map<std::pair<int, int>, DiplomaticMessage>>();
 }
 
 namespace {
