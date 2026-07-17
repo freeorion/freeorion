@@ -36,6 +36,8 @@
 #include <unordered_set>
 #include <vector>
 
+using boost::serialization::make_nvp;
+
 
 BOOST_CLASS_EXPORT(Field)
 BOOST_CLASS_EXPORT(Universe)
@@ -259,40 +261,55 @@ namespace {
 
     // default binary fallback and xml archive specializations
     template <typename Archive>
+        requires (!std::is_same_v<Archive, boost::archive::xml_iarchive> &&
+                  !std::is_same_v<Archive, boost::archive::xml_oarchive>)
     void Serialize(Archive& ar, std::map<int, std::vector<ObjVisTurns>>& eovtm)
-    { ar & boost::serialization::make_nvp("empire_object_visibility_turns", eovtm); }
+    { ar & make_nvp("empire_object_visibility_turns", eovtm); }
 
-    //EmpireObjectVisibilityTurnsVecMap
+    template <typename ID_t>
+    void Serialize(boost::archive::xml_iarchive& ar, std::map<ID_t, std::vector<ObjVisTurns>>& eovtm)
+    {
+        static constexpr auto to_id_t = [](int id) noexcept { return ID_t{id}; };
 
-
-    void Serialize(boost::archive::xml_iarchive& ar, EmpireObjectVisibilityTurnsVecMap& eovtm) {
         std::map<int, std::string> scratch;
-        ar >> boost::serialization::make_nvp("empire_object_visibility_turns", scratch);
+        ar >> make_nvp("empire_object_visibility_turns", scratch);
         eovtm.clear();
         for (const auto& [eid, str] : scratch)
-            eovtm.emplace(EmpireID{eid}, ToObjVisTurnsVec(str));
+            eovtm.emplace(to_id_t(eid), ToObjVisTurnsVec(str));
     }
 
-    void Serialize(boost::archive::xml_oarchive& ar, EmpireObjectVisibilityTurnsVecMap& eovtm) {
+    constexpr auto to_int_value = [](auto id) noexcept -> int {
+        if constexpr (std::is_convertible_v<decltype(id), int>)
+            return id;
+        else
+            return Value(id);
+    };
+    constexpr auto to_uid = [](int id) noexcept { return UniverseObjectID{id}; };
+    constexpr auto to_eid = [](int id) noexcept { return EmpireID{id}; };
+
+
+    template <typename ID_t>
+    void Serialize(boost::archive::xml_oarchive& ar, std::map<ID_t, std::vector<ObjVisTurns>>& eovtm)
+    {
         std::map<int, std::string> scratch;
         for (const auto& [eid, vec] : eovtm)
-            scratch.emplace(Value(eid), ToString(vec));
-        ar << boost::serialization::make_nvp("empire_object_visibility_turns", scratch);
+            scratch.emplace(to_int_value(eid), ToString(vec));
+        ar << make_nvp("empire_object_visibility_turns", scratch);
     }
 
-    template <typename Archive>
-    void Serialize(Archive& ar, EmpireObjectVisibilityTurnsVecMap& eovtm, unsigned int const universe_version)
+    template <typename Archive, typename ID_t>
+    void Serialize(Archive& ar, std::map<ID_t, std::vector<ObjVisTurns>>& eovtm, unsigned int const universe_version)
     {
         if (Archive::is_loading::value && universe_version < 4) {
             using OldVisibilityTurnMap = std::map<Visibility, int>;
             using OldObjectVisibilityTurnMap = std::map<int, OldVisibilityTurnMap>;
             using OldEmpireObjectVisibilityTurnMap = std::map<int, OldObjectVisibilityTurnMap>;
             OldEmpireObjectVisibilityTurnMap scratch;
-            ar & boost::serialization::make_nvp("empire_object_visibility_turns", scratch);
+            ar & make_nvp("empire_object_visibility_turns", scratch);
 
             // copy to eovtm
             for (auto& [eid, old_ovtm] : scratch) {
-                auto& ovt_vec = eovtm[EmpireID{eid}];
+                auto& ovt_vec = eovtm[ID_t{eid}];
                 for (auto& [obj_id, old_vtm] : old_ovtm) {
                     auto& ovtm = ovt_vec.emplace_back(UniverseObjectID{obj_id});
                     for (auto& [vis, turn] : old_vtm)
@@ -306,75 +323,109 @@ namespace {
 }
 
 
-template <typename Archive>
-void Serialize(Archive& oa, const EmpireObjectVisibilityMap& eov)
+namespace {
+    template <typename Archive, typename EOVM> requires (Archive::is_loading::value)
+    void SerializeEmpireObjectVisMapOldFormat(Archive& ia, EOVM& eov, const char* xml_tag = "empire_object_visibility") {
+        using eid_t = std::decay_t<typename EOVM::key_type>;
+        static_assert(std::is_same_v<eid_t, int> || std::is_same_v<eid_t, EmpireID>);
+        static_assert(std::is_same_v<typename EOVM::mapped_type, Visibilities>);
+
+        using OldObjectVisibilityMap = std::map<int, Visibility>;
+        using OldEmpireObjectVisibilityMap = std::map<int, OldObjectVisibilityMap>;
+        OldEmpireObjectVisibilityMap scratch;
+
+        // load old format
+        ia >> make_nvp(xml_tag, scratch);
+
+        static constexpr auto to_out_eid = [](int eid) noexcept -> eid_t { return eid_t{eid}; };
+
+        // adapt to newer internal format
+        eov.clear();
+        for (auto& [eid, old_ovm] : scratch) {
+            auto& vis = eov[to_out_eid(eid)];
+            for (const auto& [obj_id, vs] : old_ovm)
+                vis.Set(UniverseObjectID{obj_id}, vs);
+        }
+    }
+
+    using EOVM = EmpireObjectVisibilityMap;
+    static_assert(std::is_same_v<EOVM::mapped_type, Visibilities>);
+    static_assert(std::is_same_v<EOVM::key_type, EmpireID>);
+
+    using IOVM = std::map<int, Visibilities>;
+}
+
+
+template <typename Archive, typename EOV>
+void SerializeEmpireObjectVisMap(Archive& a, EOV& eov, bool old_map_format = false, const char* xml_tag = "empire_object_visibility")
 {
-    static_assert(Archive::is_saving::value);
+    using eid_t = std::decay_t<typename EOV::key_type>;
+    static_assert(std::is_same_v<eid_t, int> || std::is_same_v<eid_t, EmpireID>);
+    static_assert(std::is_same_v<typename EOV::mapped_type, Visibilities>);
+
+    if constexpr (Archive::is_loading::value) {
+        if (old_map_format) {
+            SerializeEmpireObjectVisMapOldFormat(a, eov, xml_tag);
+            return;
+        }
+    }
+
+
+    // need to handle: (saving or loading) with (eov indexed by int or EmpireID)
 
     if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
         std::vector<std::pair<int, std::string>> scratch;
         scratch.reserve(eov.size());
         for (const auto& [eid, vis] : eov)
-            scratch.emplace_back(Value(eid), vis.ToString());
-        oa << boost::serialization::make_nvp("empire_object_visibility", scratch);
-
-    } else {
-        std::map<int, Visibilities> scratch;
-        for (const auto& [eid, vis] : eov)
-            scratch.emplace(Value(eid), vis);
-        oa << boost::serialization::make_nvp("empire_object_visibilities", scratch);
-    }
-}
-
-template void Serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const EmpireObjectVisibilityMap&);
-template void Serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const EmpireObjectVisibilityMap&);
-
-template <typename Archive>
-void Deserialize(Archive& ia, EmpireObjectVisibilityMap& eov, bool old_map_format)
-{
-    static_assert(Archive::is_loading::value);
-
-    if (old_map_format) {
-        using OldObjectVisibilityMap = std::map<int, Visibility>;
-        using OldEmpireObjectVisibilityMap = std::map<int, OldObjectVisibilityMap>;
-        OldEmpireObjectVisibilityMap scratch;
-        ia >> boost::serialization::make_nvp("empire_object_visibility", scratch);
-
-        // copy to eovm
-        for (auto& [eid, old_ovm] : scratch) {
-            auto& vis = eov[EmpireID{eid}];
-            for (const auto& [obj_id, vs] : old_ovm)
-                vis.Set(UniverseObjectID{obj_id}, vs);
-        }
+            scratch.emplace_back(to_int_value(eid), vis.ToString());
+        a << make_nvp(xml_tag, scratch);
 
     } else if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
+        static constexpr auto to_out_did = [](int eid) noexcept -> eid_t { return eid_t{eid}; };
+        eov.clear();
+
         std::vector<std::pair<int, std::string>> scratch;
-        ia >> boost::serialization::make_nvp("empire_object_visibility", scratch);
+        a >> make_nvp(xml_tag, scratch);
         eov.clear();
         for (const auto& [eid, str] : scratch)
-            eov.emplace(EmpireID{eid}, str);
+            eov.emplace(to_out_did(eid), str);
+
+    } else if constexpr (std::is_same_v<eid_t, int>) {
+        a  & make_nvp(xml_tag, eov);
 
     } else {
+        static_assert(std::is_same_v<eid_t, EmpireID>);
         std::map<int, Visibilities> scratch;
-        ia >> boost::serialization::make_nvp("empire_object_visibilities", scratch);
-        eov.clear();
-        for (const auto& [eid, vs] : scratch)
-            eov.emplace(EmpireID{eid}, vs);
+        if constexpr (Archive::is_saving::value) {
+            for (const auto& [eid, vis] : eov)
+                scratch.emplace(Value(eid), vis);
+        }
+        a  & make_nvp(xml_tag, scratch);
+        if constexpr (Archive::is_loading::value) {
+            eov.clear();
+            for (auto& [eid, vis] : scratch)
+                eov.emplace(EmpireID{eid}, std::move(vis));
+        }
     }
 }
 
-template void Deserialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, EmpireObjectVisibilityMap&, bool);
-template void Deserialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, EmpireObjectVisibilityMap&, bool);
-
+template void SerializeEmpireObjectVisMap<freeorion_bin_oarchive, const EOVM>(freeorion_bin_oarchive&, const EOVM&, bool, const char*);
+template void SerializeEmpireObjectVisMap<freeorion_xml_oarchive, const EOVM>(freeorion_xml_oarchive&, const EOVM&, bool, const char*);
+template void SerializeEmpireObjectVisMap<freeorion_bin_iarchive, EOVM>(freeorion_bin_iarchive&, EOVM&, bool, const char*);
+template void SerializeEmpireObjectVisMap<freeorion_xml_iarchive, EOVM>(freeorion_xml_iarchive&, EOVM&, bool, const char*);
+template void SerializeEmpireObjectVisMap<freeorion_bin_oarchive, const IOVM>(freeorion_bin_oarchive&, const IOVM&, bool, const char*);
+template void SerializeEmpireObjectVisMap<freeorion_xml_oarchive, const IOVM>(freeorion_xml_oarchive&, const IOVM&, bool, const char*);
+template void SerializeEmpireObjectVisMap<freeorion_bin_iarchive, IOVM>(freeorion_bin_iarchive&, IOVM&, bool, const char*);
+template void SerializeEmpireObjectVisMap<freeorion_xml_iarchive, IOVM>(freeorion_xml_iarchive&, IOVM&, bool, const char*);
 
 
 template <typename Archive>
 void serialize(Archive& ar, ObjVisTurns& ovtm, unsigned int const)
 {
-    ar  & boost::serialization::make_nvp("obj_id", UnderRef(ovtm.obj_id))
-        & boost::serialization::make_nvp("basic", ovtm.basic)
-        & boost::serialization::make_nvp("partial", ovtm.partial)
-        & boost::serialization::make_nvp("full", ovtm.full);
+    ar  & make_nvp("obj_id", ovtm.obj_id)
+        & make_nvp("basic", ovtm.basic)
+        & make_nvp("partial", ovtm.partial)
+        & make_nvp("full", ovtm.full);
 }
 
 template <typename Archive>
@@ -382,14 +433,14 @@ void serialize(Archive& ar, Visibilities& vis, unsigned int const)
 {
     boost::container::flat_map<int, Visibility> scratch;
     if constexpr (Archive::is_saving::value) {
-        for (auto& [id, vis] : vis.ids_vis)
-            scratch.emplace(Value(id), vis);
+        for (const auto& [id, v] : vis.ids_vis)
+            scratch.emplace(Value(id), v);
     }
-    ar  & boost::serialization::make_nvp("ids_vis", scratch);
+    ar  & make_nvp("ids_vis", scratch);
     if constexpr (Archive::is_loading::value) {
         vis.ids_vis.clear();
-        for (auto& [id, vis] : scratch)
-            vis.ids_vis.emplace(UniverseObjectID{id}, std::move(vis));
+        for (const auto& [id, v] : scratch)
+            vis.ids_vis.emplace(UniverseObjectID{id}, v);
     }
 }
 
@@ -400,18 +451,15 @@ void serialize(Archive& ar, ObjectMap& objmap, unsigned int const)
 
     if constexpr (Archive::is_saving::value) {
         // copy into int-indexed storage for serialization
-        static constexpr auto to_int_obj = [](const auto& id_obj) { return std::pair(Value(id_obj.first), id_obj.second); };
-        objs = objmap | range_transform(to_int_obj) | range_to<decltype(objs)>;
+        for (auto& [id, obj] : objmap.allWithIDs())
+            objs.emplace(Value(id), obj);
     }
-
-    ar & boost::serialization::make_nvp("m_objects", objs);
-
+    ar & make_nvp("m_objects", objs);
     if constexpr (Archive::is_loading::value) {
-        // move into objmap id-indexed storage
-        static constexpr auto to_id_obj = [](auto& int_obj) { return std::pair(UniverseObjectID{int_obj.first}, std::move(int_obj.second)); };
-        objmap = objs | range_transform(to_id_obj) | range_to<ObjectMap>;
-
-        // propagate the changes to the specialized maps.
+        objmap.clear();
+        for (auto& [id, obj] : objs)
+            objmap.m_objects.emplace(UniverseObjectID{id}, std::move(obj));
+        // propagate the objects into specialized maps.
         objmap.CopyObjectsToSpecializedMaps();
     }
 }
@@ -478,8 +526,8 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
         empire_latest_known_objects = u.GetEmpireKnownObjectsToSerialize(enc_empire_id);
         empire_object_visibility = u.GetEmpireObjectVisibilityMapToSerialize(enc_empire_id);
         empire_object_visibility_turns = u.GetEmpireObjectVisibilityTurnMapToSerialize(enc_empire_id);
-        empire_known_destroyed_object_ids = u.GetEmpireKnownDestroyedObjects(enc_empire_id);
-        empire_stale_knowledge_object_ids = u.GetEmpireStaleKnowledgeObjects(enc_empire_id);
+        empire_known_destroyed_object_ids = u.GetEmpireKnownDestroyedObjectsToSerialize(enc_empire_id);
+        empire_stale_knowledge_object_ids = u.GetEmpireStaleKnowledgeObjectsToSerialize(enc_empire_id);
     }
 
     const auto& designs_to_serialize = [&timer, &ship_designs_scratch, &u, enc_empire_id]() {
@@ -488,7 +536,7 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
             // a filtered subset to be encoded for a particular empire. this call may
             // fill ship_designs_scratch and return it, or just retern a universe internal
             // map of ShipDesign
-            const auto& retval = u.GetShipDesignsToSerialize(ship_designs_scratch, enc_empire_id);
+            const auto& retval = u.GetShipDesignsToSerialize(enc_empire_id);
             timer.EnterSection("");
             return retval;
         } else {
@@ -549,12 +597,12 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
 
     timer.EnterSection("visibility / known destroyed or stale");
 
-    if constexpr (Archive::is_saving::value) {
-        Serialize(ar, empire_object_visibility);
-    } else {
-        Deserialize(ar, empire_object_visibility, version < 5);
-        MoveMap(empire_object_visibility, u.m_empire_object_visibility);
-    }
+
+
+    if constexpr (Archive::is_saving::value)
+        SerializeEmpireObjectVisMap(ar, empire_object_visibility);
+    else
+        SerializeEmpireObjectVisMap(ar, u.m_empire_object_visibility, version < 5);
 
     Serialize(ar, empire_object_visibility_turns, version);
     if constexpr (Archive::is_loading::value)
@@ -625,8 +673,11 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
     ar  & make_nvp("empire_latest_known_objects", empire_latest_known_objects);
     DebugLogger() << "Universe::serialize : " << serializing_label << " empire known objects for "
                   << empire_latest_known_objects.size() << " empires";
-    if constexpr (Archive::is_loading::value)
-        u.m_empire_latest_known_objects.swap(empire_latest_known_objects);
+    if constexpr (Archive::is_loading::value) {
+        u.m_empire_latest_known_objects.clear();
+        for (auto& [eid, objs] : empire_latest_known_objects)
+            u.m_empire_latest_known_objects.emplace(EmpireID{eid}, std::move(objs));
+    }
 
 
     timer.EnterSection("id allocator");
@@ -639,9 +690,9 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
             int dummy_last_allocated_object_id = Value(INVALID_OBJECT_ID);
             int dummy_last_allocated_design_id = INVALID_DESIGN_ID;
             DebugLogger() << "Universe::serialize : " << serializing_label << " legacy last allocated ids version = " << version;
-            ar  & boost::serialization::make_nvp("m_last_allocated_object_id", dummy_last_allocated_object_id);
+            ar  & make_nvp("m_last_allocated_object_id", dummy_last_allocated_object_id);
             DebugLogger() << "Universe::serialize : " << serializing_label << " legacy last allocated ids2";
-            ar  & boost::serialization::make_nvp("m_last_allocated_design_id", dummy_last_allocated_design_id);
+            ar  & make_nvp("m_last_allocated_design_id", dummy_last_allocated_design_id);
 
             DebugLogger() << "Universe::serialize : " << serializing_label << " legacy id allocator";
             // For legacy loads pre-dating the use of the IDAllocator the server
@@ -656,10 +707,26 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
         (!GetOptionsDB().Get<bool>("network.server.publish-statistics")))
     {
         std::map<std::string, std::map<int, std::map<int, double>>> dummy_stat_records;
-        ar  & boost::serialization::make_nvp("m_stat_records", dummy_stat_records);
+        ar  & make_nvp("m_stat_records", dummy_stat_records);
     } else {
-        ar  & make_nvp("m_stat_records", u.m_stat_records);
-        DebugLogger() << "Universe::serialize : " << serializing_label << " " << u.m_stat_records.size() << " types of statistic";
+        std::map<std::string, std::map<int, std::map<int, double>>> stat_records;
+        if constexpr (Archive::is_saving::value) {
+            for (const auto& [key, valmap1] : u.m_stat_records) {
+                auto& int_map = stat_records[key];
+                for (const auto& [eid, valmap2] : valmap1)
+                    int_map.emplace(Value(eid), valmap2);
+            }
+        }
+        ar  & make_nvp("m_stat_records", stat_records);
+        DebugLogger() << "Universe::serialize : " << serializing_label << " " << stat_records.size() << " types of statistic";
+        if constexpr (Archive::is_loading::value) {
+            u.m_stat_records.clear();
+            for (auto& [key, valmap1] : stat_records) {
+                auto& eid_map = u.m_stat_records[key];
+                for (auto& [eid, valmap2] : valmap1)
+                    eid_map.emplace(EmpireID(eid), std::move(valmap2));
+            }
+        }
     }
     timer.EnterSection("");
 
@@ -756,7 +823,7 @@ namespace {
 
     template <typename Archive>
     void Serialize(Archive& ar, UniverseObject::MeterMap& meters, unsigned int const)
-    { ar & boost::serialization::make_nvp("m_meters", meters); }
+    { ar & make_nvp("m_meters", meters); }
 
     template <>
     void Serialize(boost::archive::xml_oarchive& ar, UniverseObject::MeterMap& meters, unsigned int const)
@@ -778,7 +845,7 @@ namespace {
         }
 
         std::string s{buffer.data()};
-        ar << boost::serialization::make_nvp("meters", s);
+        ar << make_nvp("meters", s);
     }
 
     template <>
@@ -789,7 +856,7 @@ namespace {
 
         if (version < 4) {
             // old format used the default serialization for maps
-            ar >> boost::serialization::make_nvp("m_meters", meters);
+            ar >> make_nvp("m_meters", meters);
             return;
         }
 
@@ -797,7 +864,7 @@ namespace {
 
         std::string buffer;
         buffer.reserve(buffer_size);
-        ar >> boost::serialization::make_nvp("meters", buffer);
+        ar >> make_nvp("meters", buffer);
 
         unsigned int count = 0U;
         const char* const buffer_end = buffer.c_str() + buffer.size();
@@ -835,7 +902,7 @@ namespace {
 
     template <typename Archive>
     void Serialize(Archive& ar, Ship::PartMeterMap& meters, unsigned int const version)
-    { ar & boost::serialization::make_nvp("m_part_meters", meters); }
+    { ar & make_nvp("m_part_meters", meters); }
 
     template <>
     void Serialize(boost::archive::xml_oarchive& ar, Ship::PartMeterMap& meters, unsigned int const)
@@ -894,7 +961,7 @@ namespace {
 
 
         std::string s{buffer.data()};
-        ar << boost::serialization::make_nvp("part_meters", s);
+        ar << make_nvp("part_meters", s);
     }
 
     template <>
@@ -906,7 +973,7 @@ namespace {
         if (version < 3) {
             std::vector<std::pair<std::pair<MeterType, std::string>, Meter>> scratch;
             scratch.reserve(20); // guesstimate
-            ar >> boost::serialization::make_nvp("m_part_meters", scratch);
+            ar >> make_nvp("m_part_meters", scratch);
             // reorder to match PartMeterMap sorting (first by name, then by MeterType)
             std::sort(scratch.begin(), scratch.end(),
                       [](const auto& lhs, const auto& rhs) {
@@ -925,7 +992,7 @@ namespace {
 
         std::string buffer;
         buffer.reserve(buffer_capacity);
-        ar >> boost::serialization::make_nvp("part_meters", buffer);
+        ar >> make_nvp("part_meters", buffer);
 
         // buffer should contain a text representation of a series of part meters, formatted like
         // 10 FT_BAY_KRILL 2 CAP 4000 4000 cap 4000 4000 FT_HANGAR_KRILL 4 CAP 0 0 SEC 6000 6000 cap 0 0 sec 6000 6000 SR_WEAPON_1_1 4 CAP 3000 3000 SEC 1000 1000 cap 3000 3000 sec 1000 1000
@@ -1097,12 +1164,12 @@ void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
     using namespace boost::serialization;
 
     if (Archive::is_loading::value && version < 5) {
-        ar  & make_nvp("m_id", UnderRef(o.m_id))
+        ar  & make_nvp("m_id", o.m_id)
             & make_nvp("m_name", o.m_name)
             & make_nvp("m_x", o.m_x)
             & make_nvp("m_y", o.m_y)
-            & make_nvp("m_owner_empire_id", UnderRef(o.m_owner_empire_id))
-            & make_nvp("m_system_id", UnderRef(o.m_system_id));
+            & make_nvp("m_owner_empire_id", o.m_owner_empire_id)
+            & make_nvp("m_system_id", o.m_system_id);
 
         if (version < 3) {
             std::map<std::string, std::pair<int, float>> specials_map;
@@ -1139,12 +1206,12 @@ void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
         Serialize(ar, o.m_meters, version);
 
     } else {
-        ar  & make_nvp("m_id", UnderRef(o.m_id))
+        ar  & make_nvp("m_id", o.m_id)
             & make_nvp("m_name", o.m_name)
             & make_nvp("m_x", o.m_x)
             & make_nvp("m_y", o.m_y)
-            & make_nvp("m_owner_empire_id", UnderRef(o.m_owner_empire_id))
-            & make_nvp("m_system_id", UnderRef(o.m_system_id))
+            & make_nvp("m_owner_empire_id", o.m_owner_empire_id)
+            & make_nvp("m_system_id", o.m_system_id)
             & make_nvp("m_specials", o.m_specials)
             & make_nvp("m_created_on_turn", o.m_created_on_turn);
         Serialize(ar, o.m_meters, version);
@@ -1183,7 +1250,7 @@ namespace {
 
     template <typename Archive>
     void Serialize(Archive& ar, const char* name, boost::container::flat_set<int>& fs)
-    { ar & boost::serialization::make_nvp(name, fs); }
+    { ar & make_nvp(name, fs); }
 
     template <typename Archive>
     void Serialize(Archive& ar, const char* name, UniverseObject::IDSet& fs)
@@ -1197,11 +1264,10 @@ namespace {
             scratch = boost::container::flat_set<int>(values_rng.begin(), values_rng.end());
         }
 
-        ar & boost::serialization::make_nvp(name, scratch);
+        ar & make_nvp(name, scratch);
 
         if constexpr (Archive::is_loading::value) {
-            static constexpr auto to_id = [](int id) noexcept { return UniverseObjectID(id); };
-            auto ids_rng = scratch | range_transform(to_id);
+            auto ids_rng = scratch | range_transform(to_uid);
             fs = UniverseObject::IDSet(ids_rng.begin(), ids_rng.end());
         }
     }
@@ -1209,20 +1275,20 @@ namespace {
     void Serialize(boost::archive::xml_oarchive& ar, const char* name, boost::container::flat_set<int>& fs)
     {
         const std::string buffer = ToString(fs);
-        ar << boost::serialization::make_nvp(name, buffer);
+        ar << make_nvp(name, buffer);
     }
 
     void Serialize(boost::archive::xml_oarchive& ar, const char* name, UniverseObject::IDSet& fs)
     {
         const std::string buffer = ToString(fs);
-        ar << boost::serialization::make_nvp(name, buffer);
+        ar << make_nvp(name, buffer);
     }
 
     template <>
     void Serialize(boost::archive::xml_iarchive& ar, const char* name, boost::container::flat_set<int32_t>& fs)
     {
         std::string buffer;
-        ar >> boost::serialization::make_nvp(name, buffer);
+        ar >> make_nvp(name, buffer);
 
         unsigned int count = 0U;
         const auto* const buffer_end = buffer.c_str() + buffer.size();
@@ -1260,7 +1326,7 @@ namespace {
     {
         static_assert(Archive::is_loading::value);
         std::set<int> temp;
-        ar >> boost::serialization::make_nvp(name, temp);
+        ar >> make_nvp(name, temp);
         static constexpr auto to_out_t = [](int i) noexcept { return OutT{i}; };
         auto as_out_t_rng = temp | range_transform(to_out_t);
         c.insert(boost::container::ordered_unique_range, as_out_t_rng.begin(), as_out_t_rng.end());
@@ -1278,8 +1344,14 @@ void serialize(Archive& ar, System& obj, unsigned int const version)
     using namespace boost::container;
 
     ar  & make_nvp("UniverseObject", base_object<UniverseObject>(obj))
-        & make_nvp("m_star", obj.m_star)
-        & make_nvp("m_orbits", obj.m_orbits);
+        & make_nvp("m_star", obj.m_star);
+
+    std::vector<int> orbits;
+    if constexpr (Archive::is_saving::value)
+        orbits = obj.m_orbits | range_transform(to_int_value) | range_to_vec;
+    ar  & make_nvp("m_orbits", orbits);
+    if constexpr (Archive::is_loading::value)
+        obj.m_orbits = orbits | range_transform(to_uid) | range_to_vec;
 
     using SV_IDSet_pair = std::pair<std::string_view, UniverseObject::IDSet&>;
     std::array<SV_IDSet_pair, 6> id_sets{{
@@ -1301,8 +1373,7 @@ void serialize(Archive& ar, System& obj, unsigned int const version)
     if (Archive::is_loading::value && version < 2) {
         std::map<int, bool> lanes_wormholes;
         ar  & make_nvp("m_starlanes_wormholes", lanes_wormholes);
-        static constexpr auto to_id = [](int int_id) noexcept { return UniverseObjectID{int_id}; };
-        auto ids_rng = lanes_wormholes | range_keys | range_transform(to_id);
+        auto ids_rng = lanes_wormholes | range_keys | range_transform(to_uid);
         static_assert(std::is_same_v<decltype(obj.m_starlanes), UniverseObject::IDSet>);
         obj.m_starlanes = UniverseObject::IDSet(ids_rng.begin(), ids_rng.end());
     } else {
@@ -1347,7 +1418,7 @@ namespace {
 
     template <typename Archive>
     void serialize(Archive& ar, PopCenter& pop, unsigned int const)
-    { ar & boost::serialization::make_nvp("m_species_name", pop.m_species_name); }
+    { ar & make_nvp("m_species_name", pop.m_species_name); }
 
     struct ResourceCenter {
         std::string m_focus;
@@ -1691,19 +1762,25 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
             & make_nvp("m_rotational_period", obj.m_rotational_period)
             & make_nvp("m_axial_tilt", obj.m_axial_tilt)
             & make_nvp("m_turn_last_annexed", obj.m_turn_last_annexed)
-            & make_nvp("m_ordered_annexed_by_empire_id", UnderRef(obj.m_ordered_annexed_by_empire_id))
+            & make_nvp("m_ordered_annexed_by_empire_id", obj.m_ordered_annexed_by_empire_id)
             & make_nvp("m_turn_last_colonized", obj.m_turn_last_colonized)
             & make_nvp("m_turn_last_conquered", obj.m_turn_last_conquered)
             & make_nvp("m_is_about_to_be_colonized", obj.m_is_about_to_be_colonized)
             & make_nvp("m_is_about_to_be_invaded", obj.m_is_about_to_be_invaded)
             & make_nvp("m_is_about_to_be_bombarded", obj.m_is_about_to_be_bombarded)
-            & make_nvp("m_ordered_given_to_empire_id", UnderRef(obj.m_ordered_given_to_empire_id))
+            & make_nvp("m_ordered_given_to_empire_id", obj.m_ordered_given_to_empire_id)
             & make_nvp("m_last_turn_attacked_by_ship", obj.m_last_turn_attacked_by_ship)
-            & make_nvp("m_owner_before_last_conquered", UnderRef(obj.m_owner_before_last_conquered))
-            & make_nvp("m_last_invaded_by_empire_id", UnderRef(obj.m_last_invaded_by_empire_id))
-            & make_nvp("m_last_colonized_by_empire_id", UnderRef(obj.m_last_colonized_by_empire_id))
-            & make_nvp("m_last_annexed_by_empire_id", UnderRef(obj.m_last_annexed_by_empire_id))
-            & make_nvp("m_buildings", obj.m_buildings);
+            & make_nvp("m_owner_before_last_conquered", obj.m_owner_before_last_conquered)
+            & make_nvp("m_last_invaded_by_empire_id", obj.m_last_invaded_by_empire_id)
+            & make_nvp("m_last_colonized_by_empire_id", obj.m_last_colonized_by_empire_id)
+            & make_nvp("m_last_annexed_by_empire_id", obj.m_last_annexed_by_empire_id);
+
+        std::vector<int> buildings;
+        if (Archive::is_saving::value)
+            buildings = obj.m_buildings | range_transform(to_int_value) | range_to_vec;
+        ar  & make_nvp("m_buildings", buildings);
+        if (Archive::is_loading::value)
+            obj.m_buildings = buildings | range_transform(to_uid) | range_to<decltype(obj.m_buildings)>();
     }
 }
 
@@ -1809,17 +1886,15 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
         if (version < 6) {
             std::list<int> travel_route;
             ar  & make_nvp("m_travel_route", travel_route);
-            static constexpr auto to_id = [](int int_id) noexcept { return UniverseObjectID{int_id}; };
-            obj.m_travel_route = travel_route | range_transform(to_id) | range_to_vec;
+            obj.m_travel_route = travel_route | range_transform(to_uid) | range_to_vec;
         } else {
             std::vector<int> travel_route;
             ar & make_nvp("m_travel_route", travel_route);
-            static constexpr auto to_id = [](int int_id) noexcept { return UniverseObjectID{int_id}; };
-            obj.m_travel_route = travel_route | range_transform(to_id) | range_to_vec;
+            obj.m_travel_route = travel_route | range_transform(to_uid) | range_to_vec;
         }
         ar  & make_nvp("m_last_turn_move_ordered", obj.m_last_turn_move_ordered)
             & make_nvp("m_arrived_this_turn", obj.m_arrived_this_turn)
-            & make_nvp("m_arrival_starlane", UnderRef(obj.m_arrival_starlane));
+            & make_nvp("m_arrival_starlane", obj.m_arrival_starlane);
 
     } else if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
         Serialize(ar, "ships", obj.m_ships);
@@ -1831,12 +1906,9 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
             >> make_nvp("info", info_str);
         FillIntContainer(obj.m_travel_route, route_str);
 
-        const auto [prev, next, given, moved, arrived, rest] = ExtractIntsAndRestFromString<5>(std::move(info_str));
-        obj.m_prev_system = UniverseObjectID{prev};
-        obj.m_next_system = UniverseObjectID{next};
-        obj.m_ordered_given_to_empire_id = EmpireID{given};
-        obj.m_last_turn_move_ordered = moved;
-        obj.m_arrival_starlane = UniverseObjectID{arrived};
+        std::tie(UnderRef(obj.m_prev_system), UnderRef(obj.m_next_system),
+                 UnderRef(obj.m_ordered_given_to_empire_id), obj.m_last_turn_move_ordered,
+                 UnderRef(obj.m_arrival_starlane), rest_str) = ExtractIntsAndRestFromString<5>(std::move(info_str));
 
         std::tie(obj.m_aggression, obj.m_arrived_this_turn) = ExtractAggressionAndBool(rest_str); // no need to move into a string_view
 
@@ -1855,9 +1927,18 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
         ar  & make_nvp("m_prev_system", obj.m_prev_system)
             & make_nvp("m_next_system", obj.m_next_system)
             & make_nvp("m_aggression", obj.m_aggression)
-            & make_nvp("m_ordered_given_to_empire_id", obj.m_ordered_given_to_empire_id)
-            & make_nvp("m_travel_route", obj.m_travel_route)
-            & make_nvp("m_last_turn_move_ordered", obj.m_last_turn_move_ordered)
+            & make_nvp("m_ordered_given_to_empire_id", obj.m_ordered_given_to_empire_id);
+
+        {
+            std::vector<int> route;
+            if constexpr (Archive::is_saving::value)
+                route = obj.m_travel_route | range_transform(to_int_value) | range_to_vec;
+            ar  & make_nvp("m_travel_route", route);
+            if constexpr (Archive::is_loading::value)
+                obj.m_travel_route = route | range_transform(to_uid) | range_to_vec;
+        }
+
+        ar  & make_nvp("m_last_turn_move_ordered", obj.m_last_turn_move_ordered)
             & make_nvp("m_arrived_this_turn", obj.m_arrived_this_turn)
             & make_nvp("m_arrival_starlane", obj.m_arrival_starlane);
     }
@@ -1971,19 +2052,11 @@ void serialize(Archive& ar, Ship& obj, unsigned int const version)
             ar  >> make_nvp("info", info_str);
             std::string rest_str;
 
-            int fleet_id = Value(INVALID_OBJECT_ID);
-            int colonize_id = Value(INVALID_OBJECT_ID);
-            int invade_id = Value(INVALID_OBJECT_ID);
-            int bombard_id = Value(INVALID_OBJECT_ID);
-            int prod_id = Value(INVALID_OBJECT_ID);
-            std::tie(obj.m_design_id, fleet_id, colonize_id, invade_id, bombard_id, prod_id,
-                     obj.m_arrived_on_turn, obj.m_last_turn_active_in_combat, obj.m_last_resupplied_on_turn,
+            std::tie(obj.m_design_id, UnderRef(obj.m_fleet_id), UnderRef(obj.m_ordered_colonize_planet_id),
+                     UnderRef(obj.m_ordered_invade_planet_id), UnderRef(obj.m_ordered_bombard_planet_id),
+                     UnderRef(obj.m_produced_by_empire_id), obj.m_arrived_on_turn,
+                     obj.m_last_turn_active_in_combat, obj.m_last_resupplied_on_turn,
                      rest_str) = ExtractIntsAndRestFromString<9>(std::move(info_str));
-            obj.m_fleet_id = UniverseObjectID{fleet_id};
-            obj.m_ordered_colonize_planet_id = UniverseObjectID{colonize_id};
-            obj.m_ordered_invade_planet_id = UniverseObjectID{invade_id};
-            obj.m_ordered_bombard_planet_id = UniverseObjectID{bombard_id};
-            obj.m_produced_by_empire_id = EmpireID{prod_id};
             
             std::tie(obj.m_ordered_scrapped, obj.m_species_name) = ExtractBoolAndRest(std::move(rest_str));
             Serialize(ar, obj.m_part_meters, version);

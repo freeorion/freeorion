@@ -36,6 +36,7 @@
 #include <sstream>
 #include <map>
 
+using boost::serialization::make_nvp;
 
 namespace {
     const std::string DUMMY_EMPTY_MESSAGE = "Lathanda";
@@ -98,7 +99,7 @@ Message ErrorMessage(const std::string& problem_stringtable_key, bool fatal, int
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
-        oa << boost::serialization::make_nvp("problem", problem_stringtable_key)
+        oa << make_nvp("problem", problem_stringtable_key)
            << BOOST_SERIALIZATION_NVP(fatal)
            << BOOST_SERIALIZATION_NVP(player_id);
     }
@@ -109,7 +110,7 @@ Message ErrorMessage(const std::string& problem_stringtable_key, const std::stri
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
-        oa << boost::serialization::make_nvp("problem", problem_stringtable_key)
+        oa << make_nvp("problem", problem_stringtable_key)
            << BOOST_SERIALIZATION_NVP(fatal)
            << BOOST_SERIALIZATION_NVP(player_id);
         oa << BOOST_SERIALIZATION_NVP(unlocalized_info);
@@ -180,7 +181,7 @@ Message GameStartMessage(bool single_player_game, EmpireID empire_id,
         if (use_binary_serialization) {
             freeorion_bin_oarchive oa(zos);
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
-               << boost::serialization::make_nvp("empire_id", UnderRef(empire_id))
+               << BOOST_SERIALIZATION_NVP(empire_id)
                << BOOST_SERIALIZATION_NVP(current_turn);
             GlobalSerializationEncodingForEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(empires)
@@ -196,7 +197,7 @@ Message GameStartMessage(bool single_player_game, EmpireID empire_id,
         } else {
             freeorion_xml_oarchive oa(zos);
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
-               << boost::serialization::make_nvp("empire_id", UnderRef(empire_id))
+               << BOOST_SERIALIZATION_NVP(empire_id)
                << BOOST_SERIALIZATION_NVP(current_turn);
             GlobalSerializationEncodingForEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(empires)
@@ -235,7 +236,7 @@ Message GameStartMessage(bool single_player_game, EmpireID empire_id,
         if (use_binary_serialization) {
             freeorion_bin_oarchive oa(zos);
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
-               << boost::serialization::make_nvp("empire_id", UnderRef(empire_id))
+               << BOOST_SERIALIZATION_NVP(empire_id)
                << BOOST_SERIALIZATION_NVP(current_turn);
             GlobalSerializationEncodingForEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(empires)
@@ -249,7 +250,7 @@ Message GameStartMessage(bool single_player_game, EmpireID empire_id,
             Serialize(oa, orders);
             bool ui_data_available = true;
             oa << BOOST_SERIALIZATION_NVP(ui_data_available);
-            oa << boost::serialization::make_nvp("ui_data", ui_data);
+            oa << BOOST_SERIALIZATION_NVP(ui_data);
             bool save_state_string_available = false;
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
             galaxy_setup_data.encoding_empire = empire_id;
@@ -257,7 +258,7 @@ Message GameStartMessage(bool single_player_game, EmpireID empire_id,
         } else {
             freeorion_xml_oarchive oa(zos);
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
-               << BOOST_SERIALIZATION_NVP(UnderRef(empire_id))
+               << BOOST_SERIALIZATION_NVP(empire_id)
                << BOOST_SERIALIZATION_NVP(current_turn);
             GlobalSerializationEncodingForEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(empires)
@@ -271,7 +272,7 @@ Message GameStartMessage(bool single_player_game, EmpireID empire_id,
             Serialize(oa, orders);
             bool ui_data_available = true;
             oa << BOOST_SERIALIZATION_NVP(ui_data_available);
-            oa << boost::serialization::make_nvp("ui_data", ui_data);
+            oa << BOOST_SERIALIZATION_NVP(ui_data);
             bool save_state_string_available = false;
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
             galaxy_setup_data.encoding_empire = empire_id;
@@ -303,7 +304,7 @@ Message GameStartMessage(bool single_player_game, EmpireID empire_id,
         if (use_binary_serialization) {
             freeorion_bin_oarchive oa(zos);
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
-               << boost::serialization::make_nvp("empire_id", UnderRef(empire_id))
+               << BOOST_SERIALIZATION_NVP(empire_id)
                << BOOST_SERIALIZATION_NVP(current_turn);
             GlobalSerializationEncodingForEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(empires)
@@ -320,13 +321,13 @@ Message GameStartMessage(bool single_player_game, EmpireID empire_id,
             bool save_state_string_available = (save_state_string != nullptr);
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
             if (save_state_string)
-                oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
+                oa << make_nvp("save_state_string", *save_state_string);
             galaxy_setup_data.encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         } else {
             freeorion_xml_oarchive oa(zos);
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
-               << BOOST_SERIALIZATION_NVP(UnderRef(empire_id))
+               << BOOST_SERIALIZATION_NVP(empire_id)
                << BOOST_SERIALIZATION_NVP(current_turn);
             GlobalSerializationEncodingForEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(empires)
@@ -343,7 +344,7 @@ Message GameStartMessage(bool single_player_game, EmpireID empire_id,
             bool save_state_string_available = (save_state_string != nullptr);
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
             if (save_state_string)
-                oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
+                oa << make_nvp("save_state_string", *save_state_string);
             galaxy_setup_data.encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         }
@@ -403,7 +404,7 @@ Message TurnPartialOrdersMessage(const std::pair<OrderSet, std::set<int>>& order
     {
         freeorion_xml_oarchive oa(os);
         Serialize(oa, orders_updates.first);
-        oa << boost::serialization::make_nvp("deleted", orders_updates.second);
+        oa << make_nvp("deleted", orders_updates.second);
     }
     return Message{Message::MessageType::TURN_PARTIAL_ORDERS, std::move(os).str()};
 }
@@ -523,8 +524,8 @@ Message DiplomaticStatusMessage(const DiplomaticStatusUpdateInfo& diplo_update) 
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
-        oa << boost::serialization::make_nvp("diplo_update.empire1_id", UnderRef(diplo_update.empire1_id))
-           << boost::serialization::make_nvp("diplo_update.empire2_id", UnderRef(diplo_update.empire2_id))
+        oa << make_nvp("diplo_update.empire1_id", diplo_update.empire1_id)
+           << make_nvp("diplo_update.empire2_id", diplo_update.empire2_id)
            << BOOST_SERIALIZATION_NVP(diplo_update.diplo_status);
     }
     return Message{Message::MessageType::DIPLOMATIC_STATUS, std::move(os).str()};
@@ -662,7 +663,7 @@ Message ChatHistoryMessage(const std::vector<std::reference_wrapper<const ChatHi
             std::size_t size = chat_history.size();
             oa << BOOST_SERIALIZATION_NVP(size);
             for (const auto& elem : chat_history)
-                oa << boost::serialization::make_nvp(BOOST_PP_STRINGIZE(elem), elem.get());
+                oa << make_nvp(BOOST_PP_STRINGIZE(elem), elem.get());
         }
         if (!zos.strict_sync())
             zos.reset();
@@ -765,7 +766,7 @@ void ExtractErrorMessageData(const Message& msg, int& player_id, std::string& pr
         std::istringstream is(msg.Text() /*+ "</boost_serialization>"*/); // additional closing tag needed to prevent crash in freeorion_xml_iarchive destructor for incomplete input
         freeorion_xml_iarchive ia(is);
 
-        ia >> boost::serialization::make_nvp("problem", problem_key);
+        ia >> make_nvp("problem", problem_key);
         ia >> BOOST_SERIALIZATION_NVP(fatal);
         ia >> BOOST_SERIALIZATION_NVP(player_id);
 
@@ -908,7 +909,7 @@ void ExtractGameStartMessageData(std::string text, bool& single_player_game, Emp
 
             freeorion_bin_iarchive ia(zis);
             ia >> BOOST_SERIALIZATION_NVP(single_player_game)
-               >> boost::serialization::make_nvp("empire_id", UnderRef(empire_id))
+               >> BOOST_SERIALIZATION_NVP(empire_id)
                >> BOOST_SERIALIZATION_NVP(current_turn);
             GlobalSerializationEncodingForEmpire() = empire_id;
 
@@ -964,7 +965,7 @@ void ExtractGameStartMessageData(std::string text, bool& single_player_game, Emp
 
             freeorion_xml_iarchive ia(zis);
             ia >> BOOST_SERIALIZATION_NVP(single_player_game)
-               >> boost::serialization::make_nvp("empire_id", UnderRef(empire_id))
+               >> BOOST_SERIALIZATION_NVP(empire_id)
                >> BOOST_SERIALIZATION_NVP(current_turn);
             GlobalSerializationEncodingForEmpire() = empire_id;
 
@@ -1287,8 +1288,8 @@ void ExtractDiplomaticStatusMessageData(const Message& msg, DiplomaticStatusUpda
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
-        ia >> boost::serialization::make_nvp("diplo_update.empire1_id", UnderRef(diplo_update.empire1_id))
-           >> boost::serialization::make_nvp("diplo_update.empire2_id", UnderRef(diplo_update.empire2_id))
+        ia >> make_nvp("diplo_update.empire1_id", diplo_update.empire1_id)
+           >> make_nvp("diplo_update.empire2_id", diplo_update.empire2_id)
            >> BOOST_SERIALIZATION_NVP(diplo_update.diplo_status);
 
     } catch (const std::exception& err) {

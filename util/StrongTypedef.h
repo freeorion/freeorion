@@ -53,8 +53,8 @@ template<> struct std::hash<typeName> {                                         
     { return std::hash<underlyingType>{}(x.Value()); }                                          \
 };                                                                                              \
                                                                                                 \
-std::ostream& operator<<(std::ostream& os, typeName t) = delete; // TODO: implement
-    
+std::ostream& operator<<(std::ostream& os, typeName t) = delete; /* TODO: implement */
+
 /*
 constexpr typeName& operator=(const typeName&) = default;                                   \
 constexpr typeName& operator=(typeName&&) = default;                                        \

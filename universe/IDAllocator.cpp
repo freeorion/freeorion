@@ -295,7 +295,7 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, Em
         & BOOST_SERIALIZATION_NVP(m_exhausted_threshold);
 
     if constexpr (Archive::is_loading::value) {
-        ar  & boost::serialization::make_nvp("m_empire_id", UnderRef(m_empire_id));
+        ar  & BOOST_SERIALIZATION_NVP(m_empire_id);
 
         // Always load whatever ID info was saved / sent, ignoring what is expected for \a empire_id and 
 
@@ -327,7 +327,7 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, Em
 
         // If the target empire is the server, provide the full map.
         if (Value(empire_id) == m_server_id) {
-            ar  & boost::serialization::make_nvp("m_empire_id", UnderRef(m_empire_id));
+            ar  & BOOST_SERIALIZATION_NVP(m_empire_id);
             {
                 std::unordered_map<int, int> eid_to_naoi;
                 for (const auto& [eid, naoi] : m_empire_id_to_next_assigned_object_id)
@@ -340,7 +340,7 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, Em
                 ar  & boost::serialization::make_nvp("m_offset_to_empire_id", offset_to_eid);
             }
         } else {
-            ar  & boost::serialization::make_nvp(BOOST_PP_STRINGIZE(m_empire_id), UnderRef(empire_id));
+            ar  & BOOST_SERIALIZATION_NVP(empire_id);
 
             // Filter the map for empires so they only have their own actual next id and no
             // information about other clients.

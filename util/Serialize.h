@@ -22,6 +22,19 @@ typedef boost::archive::binary_oarchive freeorion_bin_oarchive;
 typedef boost::archive::xml_iarchive freeorion_xml_iarchive;
 typedef boost::archive::xml_oarchive freeorion_xml_oarchive;
 
+template <typename T>
+concept has_under_ref = requires { UnderRef(std::declval<T>()); } &&
+                        std::is_reference_v<decltype(UnderRef(std::declval<T>()))>;
+
+namespace boost::serialization {
+    inline decltype(auto) make_nvp(const char* n, has_under_ref auto& v) noexcept
+    { return make_nvp(n, UnderRef(v)); }
+
+    inline decltype(auto) make_nvp(const char* n, const has_under_ref auto& v) noexcept
+    { return make_nvp(n, UnderRef(v)); }
+}
+
+
 //! This must be set to the encoding empire's id when serializing various
 //! gamestate information, so that only the relevant info is serialized for the
 //! intended recieipient. This is implemented this way so that we don't need to
@@ -48,9 +61,19 @@ void Serialize(Archive& oa, const std::map<int, std::shared_ptr<UniverseObject>>
 template <typename Archive>
 void Serialize(Archive& oa, const OrderSet& order_set);
 
-//! Serialize @p eov to output archive @p oa.
-template <typename Archive>
-FO_COMMON_API void Serialize(Archive& ia, const std::map<int, Visibilities>& eov);
+////! (De)Serialize @p eov to/from archive @p a.
+template <typename Archive, typename EOV>
+FO_COMMON_API void SerializeEmpireObjectVisMap(Archive& a, EOV& eov, bool old_map_format = false,
+                                               const char* xml_tag = "empire_object_visibility");
+
+//extern template void SerializeEmpireObjectVisMap<freeorion_bin_oarchive, const EOVM>(freeorion_bin_oarchive&, const EOVM&, bool, const char*);
+//extern template void SerializeEmpireObjectVisMap<freeorion_xml_oarchive, const EOVM>(freeorion_xml_oarchive&, const EOVM&, bool, const char*);
+//extern template void SerializeEmpireObjectVisMap<freeorion_bin_iarchive, EOVM>(freeorion_bin_iarchive&, EOVM&, bool, const char*);
+//extern template void SerializeEmpireObjectVisMap<freeorion_xml_iarchive, EOVM>(freeorion_xml_iarchive&, EOVM&, bool, const char*);
+//extern template void SerializeEmpireObjectVisMap<freeorion_bin_oarchive, const IOVM>(freeorion_bin_oarchive&, const IOVM&, bool, const char*);
+//extern template void SerializeEmpireObjectVisMap<freeorion_xml_oarchive, const IOVM>(freeorion_xml_oarchive&, const IOVM&, bool, const char*);
+//extern template void SerializeEmpireObjectVisMap<freeorion_bin_iarchive, IOVM>(freeorion_bin_iarchive&, IOVM&, bool, const char*);
+//extern template void SerializeEmpireObjectVisMap<freeorion_xml_iarchive, IOVM>(freeorion_xml_iarchive&, IOVM&, bool, const char*);
 
 
 //! Deserialize @p universe from input archive @p ia.
@@ -64,11 +87,6 @@ void Deserialize(Archive& ia, std::map<int, std::shared_ptr<UniverseObject>>& ob
 //! Deserialize @p order_set from input archive @p ia.
 template <typename Archive>
 void Deserialize(Archive& ia, OrderSet& order_set);
-
-//! Deserialize @p eov from input archive @p ia.
-template <typename Archive>
-FO_COMMON_API void Deserialize(Archive& ia, std::map<int, Visibilities>& eov, bool old_map_format, const char* xml_tag = nullptr);
-
 
 struct ChatHistoryEntity;
 
