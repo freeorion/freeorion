@@ -226,8 +226,8 @@ void Empire::serialize(Archive& ar, const unsigned int version)
 
 
     const auto encoding_empire = GlobalSerializationEncodingForEmpire();
-    TraceLogger() << "serializing empire " << m_id << ": " << m_name
-                  << " for encoding empire: " << encoding_empire;
+    TraceLogger() << "serializing empire " << to_string(m_id) << ": " << m_name
+                  << " for encoding empire: " << to_string(encoding_empire);
 
     if (Archive::is_loading::value && version < 11) {
         std::map<std::string, int> techs;
@@ -488,8 +488,10 @@ template void Empire::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&,
 
 
 namespace {
-    constexpr auto DiploKey(int id1, int ind2) noexcept
-    { return std::pair(std::max(id1, ind2), std::min(id1, ind2)); }
+    constexpr auto DiploKey(EmpireID id1, EmpireID id2) noexcept
+    { return std::pair(std::max(id1, id2), std::min(id1, id2)); }
+    constexpr auto DiploKey(int id1, int id2) noexcept
+    { return DiploKey(EmpireID{id1}, EmpireID{id2}); }
 }
 
 template <typename Archive>
@@ -497,21 +499,21 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
 {
     using boost::serialization::make_nvp;
 
-    TraceLogger() << "Serializing EmpireManager encoding empire: " << GlobalSerializationEncodingForEmpire();
+    TraceLogger() << "Serializing EmpireManager encoding empire: " << to_string(GlobalSerializationEncodingForEmpire());
 
     if constexpr (Archive::is_loading::value)
         em.Clear();    // clean up any existing dynamically allocated contents before replacing containers with deserialized data
 
     std::map<std::pair<int, int>, DiplomaticMessage> messages;
     if constexpr (Archive::is_saving::value)
-        em.GetDiplomaticMessagesToSerialize(messages, GlobalSerializationEncodingForEmpire());
+        messages = em.GetDiplomaticMessagesToSerialize(GlobalSerializationEncodingForEmpire());
 
     //TraceLogger() << "EmpireManager version : " << version;
     if (Archive::is_loading::value && version < 1) {
         std::map<int, Empire*> empire_raw_ptr_map;
         ar  & make_nvp("m_empire_map", empire_raw_ptr_map);
         for (const auto& [empire_id, empire_ptr] : empire_raw_ptr_map)
-            em.m_empire_map[empire_id] = std::shared_ptr<Empire>(empire_ptr);
+            em.m_empire_map[EmpireID{empire_id}] = std::shared_ptr<Empire>(empire_ptr);
 
     } else if (Archive::is_loading::value && version < 2) {
         ar  & make_nvp("m_empire_map", em.m_empire_map);
@@ -548,15 +550,17 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
 
         em.RefreshCapitalIDs();
 
-        em.m_diplomatic_messages = std::move(messages);
+        static constexpr auto to_eids = [](std::pair<int, int> ids) noexcept { return std::pair{EmpireID{ids.first}, EmpireID{ids.second}}; };
+        static constexpr auto to_eids_msg = [](const auto& ids_msg) noexcept { return std::pair{to_eids(ids_msg.first), ids_msg.second}; };
+        em.m_diplomatic_messages = messages | range_transform(to_eids_msg) | range_to<decltype(em.m_diplomatic_messages)>();
 
         // erase invalid empire diplomatic statuses
-        std::vector<std::pair<int, int>> to_erase;
+        std::vector<std::pair<EmpireID, EmpireID>> to_erase;
         to_erase.reserve(em.m_empire_diplomatic_statuses.size());
-        for (const auto &[e1, e2] : em.m_empire_diplomatic_statuses | range_keys) {
+        for (const auto& [e1, e2] : em.m_empire_diplomatic_statuses | range_keys) {
             if (!em.m_empire_map.contains(e1) || !em.m_empire_map.contains(e2)) {
                 to_erase.emplace_back(e1, e2);
-                ErrorLogger() << "Erased invalid diplomatic status between empires " << e1 << " and " << e2;
+                ErrorLogger() << "Erased invalid diplomatic status between empires " << to_string(e1) << " and " << to_string(e2);
             }
         }
         for (const auto& p : to_erase)
@@ -571,7 +575,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
                     dk, DiplomaticStatus::DIPLO_WAR).second;
                 if (inserted_missing_status)
                     ErrorLogger() << "Added missing diplomatic status (default WAR) between empires "
-                                  << e1_id << " and " << e2_id;
+                                  << to_string(e1_id) << " and " << to_string(e2_id);
             }
         }
     }
@@ -582,7 +586,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
         const auto template_mems = e->SitRepsSizeInMemory();
         const auto sum = std::transform_reduce(template_mems.begin(), template_mems.end(), std::size_t{0}, std::plus<>{},
                                                [](const auto& p) noexcept { return p.second; });
-        DebugLogger() << "  empire " << eid << "  " << sum/1024 << " kB:";
+        DebugLogger() << "  empire " << to_string(eid) << "  " << sum/1024 << " kB:";
 
         for (const auto& [templ, mems] : template_mems) {
             if (mems > 20000)
