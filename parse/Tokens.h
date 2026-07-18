@@ -18,13 +18,10 @@
     (All)                                       \
     (AllyOf)                                    \
     (And)                                       \
-    (annexationcondition)                       \
-    (annexationcost)                            \
     (AnyEmpire)                                 \
     (Armed)                                     \
     (Armour)                                    \
     (ArrivedOnTurn)                             \
-    (Article)                                   \
     (Asteroids)                                 \
     (Barren)                                    \
     (Basic)                                     \
@@ -49,14 +46,12 @@
     (Capital)                                   \
     (Capture)                                   \
     (carrier)                                   \
-    (captureresult)                             \
     (category)                                  \
     (ceil)                                      \
     (class)                                     \
     (ClockwiseNextPlanetType)                   \
     (closeto)                                   \
     (Colony)                                    \
-    (colour)                                    \
     (CombatBout)                                \
     (combatTargets)                             \
     (condition)                                 \
@@ -88,7 +83,6 @@
     (DamageStructurePerBattleMax)               \
     (data)                                      \
     (default)                                   \
-    (defaultfocus)                              \
     (DefaultFocus)                              \
     (Defense)                                   \
     (Described)                                 \
@@ -108,7 +102,6 @@
     (DestroyFightersPerBattleMax)               \
     (Detection)                                 \
     (DirectDistanceBetween)                     \
-    (dislikes)                                  \
     (distance)                                  \
     (DistanceFromOriginalType)                  \
     (effects)                                   \
@@ -131,7 +124,6 @@
     (enqueuelocation)                           \
     (environment)                               \
     (Environment)                               \
-    (environments)                              \
     (ETA)                                       \
     (ExploredByEmpire)                          \
     (exclusions)                                \
@@ -148,7 +140,6 @@
     (Fleet)                                     \
     (FleetID)                                   \
     (floor)                                     \
-    (foci)                                      \
     (focus)                                     \
     (Focus)                                     \
     (from)                                      \
@@ -165,7 +156,6 @@
     (GalaxySize)                                \
     (GalaxySpecialFrequency)                    \
     (GalaxyStarlaneFrequency)                   \
-    (gameplay_description)                      \
     (GameRule)                                  \
     (GasGiant)                                  \
     (General)
@@ -230,7 +220,6 @@
     (LastTurnResupplied)                        \
     (LaunchedFrom)                              \
     (LeastHappySpecies)                         \
-    (likes)                                     \
     (LocalCandidate)                            \
     (location)                                  \
     (Location)                                  \
@@ -391,8 +380,6 @@
     (RemoveSpecial)                             \
     (RemoveStarlanes)                           \
     (Research)                                  \
-    (researchcost)                              \
-    (researchturns)                             \
     (resource)                                  \
     (ResourceSupplyConnected)                   \
     (ResupplyableBy)                            \
@@ -508,7 +495,6 @@
     (SpecialCapacity)                           \
     (species)                                   \
     (Species)                                   \
-    (SpeciesCensusOrdering)                     \
     (SpeciesColoniesOwned)                      \
     (SpeciesContentOpinion)                     \
     (SpeciesDislikes)                           \
