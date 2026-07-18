@@ -1,0 +1,230 @@
+INFINITE_FUEL
+'''EffectsGroup
+            scope = Source
+            accountinglabel = "INFINITE_FUEL_LABEL"
+            effects = SetFuel value = Value + 1
+'''
+
+SCAVANGE_FUEL_UNOWNED
+'''EffectsGroup
+            scope = Source
+            activation = And [
+                Stationary
+                Unowned
+                Random probability = 0.6
+            ]
+            effects = SetFuel value = Value + 1
+'''
+
+REGULAR_HULL_DETECTION
+'''EffectsGroup
+        scope = Source
+        effects = SetDetection value = Value + 25
+'''
+
+GOOD_HULL_DETECTION
+'''EffectsGroup
+        scope = Source
+        effects = SetDetection value = Value + 50
+'''
+
+WEAK_VISION
+'''EffectsGroup
+        scope = Source
+        accountinglabel = "WEAK_VISION_LABEL"
+        effects = SetDetection value = Value + 10
+'''
+
+MODERATE_VISION
+'''EffectsGroup
+        scope = Source
+        accountinglabel = "MODERATE_VISION_LABEL"
+        effects = SetDetection value = Value + 30
+'''
+
+GOOD_VISION
+'''EffectsGroup
+        scope = Source
+        accountinglabel = "GOOD_VISION_LABEL"
+        effects = SetDetection value = Value + 50
+'''
+
+VERY_GOOD_VISION
+'''EffectsGroup
+        scope = Source
+        accountinglabel = "VERY_GOOD_VISION_LABEL"
+        effects = SetDetection value = Value + 100
+'''
+
+EXCELLENT_VISION
+'''EffectsGroup
+        scope = Source
+        accountinglabel = "EXCELLENT_VISION_LABEL"
+        effects = SetDetection value = Value + 150
+'''
+
+//  Macro to set vision bonus to separate values with same label
+// arg1 label: WEAK, POOR, MODERATE, GOOD, EXCELLENT
+// arg2 detection strength when unowned
+// arg3 vision range when owned
+UNOWNED_OWNED_VISION_BONUS
+'''EffectsGroup
+        scope = Source
+        activation = Unowned
+        stackinggroup = "@1@_VISION_BONUS"
+        accountinglabel = "@1@_VISION_LABEL"
+        effects = SetDetection value = Value + @2@
+EffectsGroup
+        scope = Source
+        activation = Not Unowned
+        stackinggroup = "@1@_VISION_BONUS"
+        accountinglabel = "@1@_VISION_LABEL"
+        effects = SetDetection value = Value + @3@
+'''
+
+UNOWNED_GOOD_VISION
+'''EffectsGroup
+        scope = Source
+        activation = Unowned
+        accountinglabel = "GOOD_VISION_LABEL"
+        effects = SetDetection value = Value + 50
+'''
+
+UNOWNED_MOVE
+'''EffectsGroup
+            scope = And [
+                Object id = Source.FleetID
+                Fleet
+            ]
+            activation = And [
+                Turn low = 10
+                Stationary
+                Unowned
+                Random probability = 0.9
+                Not And [
+                    DesignHasHull name = "SH_ASTEROID"
+                    Monster
+                ]
+            ]
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Not Object id = Source.SystemID
+                WithinStarlaneJumps jumps = 1 condition = Source
+                Not Contains Building name = "BLD_EXPERIMENTOR_OUTPOST"
+            ]
+'''
+
+// macro to tell player when a ship regenerates its fuel
+// arg1: base regen rate
+REFUEL_MESSAGE
+'''
+   EffectsGroup
+    scope = Source
+    activation = And [
+        Stationary
+        (Source.Fuel < 1)
+        (Source.MaxFuel >= 1)
+        (Source.Fuel
+         + @1@ * (Statistic If condition = And [ Source Turn low = Source.ArrivedOnTurn + 1])
+         + 0.4 * (Statistic If condition = And [
+            Source DesignHasPart name = "FU_RAMSCOOP"
+            Source Turn low = Source.ArrivedOnTurn + 1
+            ] )
+         + 0.1 * (Statistic If condition = And [
+            Source
+            Species name = "SP_SLY"
+            ContainedBy condition = And [
+                Object id = Source.SystemID
+                Contains condition = And [
+                    Planet type = GasGiant
+                    Not OwnedBy affiliation = EnemyOf empire = Source.Owner
+            ] ] ] )
+         >= 1
+        )
+    ]
+    effects = [
+        GenerateSitRepMessage
+         message = "EFFECT_SHIP_REFUELED"
+         label = "EFFECT_SHIP_REFUELED_LABEL"
+         icon = "icons/meter/fuel.png"
+         parameters = [
+            tag = "system" data = Source.SystemID
+            tag = "ship" data = Source.ID
+         ]
+         empire = Source.Owner
+    ]
+'''
+
+AVERAGE_BASE_FUEL_REGEN
+'''EffectsGroup
+    description = "AVERAGE_BASE_FUEL_REGEN_DESC"
+    scope = Source
+    activation = And [
+        Turn low = LocalCandidate.ArrivedOnTurn + 1
+        Stationary
+        (Source.Fuel < Source.MaxFuel)
+    ]
+    stackinggroup = "BASE_FUEL_REGEN"
+    accountinglabel = "BASE_FUEL_REGEN_LABEL"
+    priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+    effects = SetFuel value = min(Target.MaxFuel, Value + 0.1)
+
+   [[REFUEL_MESSAGE(0.1)]]
+'''
+
+GREAT_FUEL_EFFICIENCY
+'''[[HULL_FUEL_EFFICIENCY_EFFECTSGROUP(GREAT, 4)]]
+'''
+
+GOOD_FUEL_EFFICIENCY
+'''[[HULL_FUEL_EFFICIENCY_EFFECTSGROUP(GOOD, 2)]]
+'''
+
+AVERAGE_FUEL_EFFICIENCY
+'''[[HULL_FUEL_EFFICIENCY_EFFECTSGROUP(AVERAGE, 1)]]
+'''
+
+BAD_FUEL_EFFICIENCY
+'''[[HULL_FUEL_EFFICIENCY_EFFECTSGROUP(BAD, 0.6)]]
+'''
+
+HULL_FUEL_EFFICIENCY_EFFECTSGROUP
+'''     EffectsGroup
+            description = "HULL_FUEL_EFFICIENCY_DESC"
+            scope = And [
+                Source
+                Ship
+            ]
+            accountinglabel = "@1@_FUEL_EFFICIENCY_LABEL"
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
+            effects = SetMaxFuel value = Value * @2@  * Statistic If condition = And [ Source HasTag name = "@1@_FUEL_EFFICIENCY" ]
+
+     // If a ship has less than one maximum fuel it will never be able to travel out of supply so refueling does not make sense.
+     // In order to communicate that and to prevent wrong refuel sitreps, we set the maximum fuel for that case to zero
+     // I need the final MaxFuel value to decide if we should zero it.
+     // Scope and activation conditions are evaluated before the effects so using an If condition = Value() in effects expression instead
+     EffectsGroup
+            description = "MAX_FUEL_LESS_THAN_ONE_DESC"
+            scope = And [
+                Source
+                Ship
+            ]
+            accountinglabel = "MAX_FUEL_LESS_THAN_ONE_LABEL"
+            priority = [[METER_OVERRIDE_PRIORITY]]
+            effects = If condition = (Value(Source.MaxFuel) < 1) effects = SetMaxFuel value = 0
+'''
+
+// This adds the hull's base fuel to the max fuel meter after applying the fuel efficiency multiplier.
+// Note the use of the default accountinglabel.
+ADD_HULL_FUEL_TO_MAX_FUEL_METER
+'''EffectsGroup
+            scope = Source
+            accountinglabel = "TT_SHIP_HULL"
+            priority = [[TARGET_LAST_BEFORE_OVERRIDE_PRIORITY]]
+            effects = SetMaxFuel value = ( Value + HullFuel name = Source.Hull )
+'''
+
+
+#include "./hull_structures.macros"
+#include "../macros/priorities.macros"

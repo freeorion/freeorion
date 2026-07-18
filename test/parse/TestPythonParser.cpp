@@ -12,6 +12,7 @@
 #include "universe/UnlockableItem.h"
 #include "universe/ValueRefs.h"
 #include "universe/NamedValueRefManager.h"
+#include "universe/ShipHull.h"
 #include "universe/System.h"
 #include "util/i18n.h"
 #include "util/CheckSums.h"
@@ -843,6 +844,20 @@ BOOST_AUTO_TEST_CASE(parse_named_values) {
     BOOST_REQUIRE(value_ref_ptr_int_op != nullptr);
     BOOST_CHECK(ValueRef::OpType::MINUS == value_ref_ptr_int_op->GetOpType());
 }
+
+BOOST_AUTO_TEST_CASE(parse_ship_hulls) {
+    PythonParser parser(m_python);
+
+    auto ship_hulls_p = Pending::StartAsyncParsing(parse::ship_hulls, m_scripting_dir / "ship_hulls");
+    auto ship_hulls_opt = Pending::WaitForPendingUnlocked(std::move(ship_hulls_p));
+
+    BOOST_REQUIRE(ship_hulls_opt);
+
+    const auto ship_hulls = *std::move(ship_hulls_opt);
+    BOOST_CHECK_EQUAL(1, ship_hulls.size());
+}
+
+
 
 BOOST_AUTO_TEST_SUITE_END()
 

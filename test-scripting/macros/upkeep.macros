@@ -1,0 +1,72 @@
+COLONY_UPKEEP_MULTIPLICATOR
+'''(1 + 0.06 * SpeciesColoniesOwned empire = Source.Owner)'''
+
+FLEET_UPKEEP_MULTIPLICATOR
+'''(1 +
+
+    // reduce by half if policy adopted
+    (1 - 0.5*Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_ENGINEERING"]) * (
+    
+    // increase cost dependent on number of ships or number of ship parts
+    (1 - (GameRule name = "RULE_SHIP_PART_BASED_UPKEEP")) * (
+        (0.01 * ShipDesignsOwned empire = Source.Owner) +
+        (0.01 * ShipDesignsInProduction empire = Source.Owner)) +
+    (GameRule name = "RULE_SHIP_PART_BASED_UPKEEP") * (
+        (0.002 * ShipPartsOwned empire = Source.Owner class = ShortRange) +
+        (0.002 * ShipPartsOwned empire = Source.Owner class = FighterHangar) +
+        (0.002 * ShipPartsOwned empire = Source.Owner class = Armour) +
+        (0.002 * ShipPartsOwned empire = Source.Owner class = Troops) +
+        (0.002 * ShipDesignsOwned empire = Source.Owner) +
+        (0.01 * ShipDesignsInProduction empire = Source.Owner))))'''
+
+
+// used within a production cost calculation, in which the location at which the production happens
+// is the Target object and another object owned by the producing empire is the source object
+
+SHIP_HULL_COST_MULTIPLIER
+'''(GameRule name = "RULE_SHIP_HULL_COST_FACTOR") * [[DESIGN_SIMPLICITY_POLICY_MULTIPLIER]]'''
+
+SHIP_PART_COST_MULTIPLIER
+'''(GameRule name = "RULE_SHIP_PART_COST_FACTOR") * [[DESIGN_SIMPLICITY_POLICY_MULTIPLIER]]'''
+
+COLONIZATION_POLICY_MULTIPLIER
+'''(1
+    - (Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_COLONIZATION"])/3
+    + (Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_CENTRALIZATION"])/3
+)
+'''
+
+MARINE_RECRUITMENT_POLICY_MULTIPLIER
+'''(1 - 0.5*(Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_MARINE_RECRUITMENT"]))
+'''
+
+///////////////////////////
+// PLC_DESIGN_SIMPLICITY //
+DESIGN_SIMPLICITY_POLICY_MULTIPLIER
+'''(1.0 - (
+   Statistic If condition = And [
+         Source
+         EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_DESIGN_SIMPLICITY"
+      ] * (1.0 - [[DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_FOR_ARG1_VREF([[DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF]])]])
+  )
+)
+'''
+
+// gets registered in named_values.py as necessary vrefs are not implemented for the legacy focs.txt parser
+DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF
+'''
+(NumPartClassesInShipDesign design = UsedInDesignID
+    + PartOfClassInShipDesign class = Colony design = UsedInDesignID)
+'''
+
+// The formula defining the cost factor depending on the complexity
+// note this gets calculated every time complexity is checked
+DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_FOR_ARG1_VREF
+'''
+(@1@ > 4 ? 1.0 :
+ ( @1@ > 3 ? 0.95 :
+   ( @1@ > 2 ? 0.9 : 0.8 )
+ )
+)
+'''
+///////////////////////////
