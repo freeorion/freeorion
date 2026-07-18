@@ -143,7 +143,6 @@ namespace {
      */
     void UpdateMeterEstimates(bool pretend_to_own_unowned_planets) {
         std::vector<Planet*> unowned_planets;
-        int player_id = -1;
 
         ScriptingContext& context = IApp::GetApp()->GetContext();
         Universe& universe = context.ContextUniverse();
@@ -158,7 +157,7 @@ namespace {
             // have a condition that causes them to only act on planets the
             // player owns (so as to not improve enemy planets if a player
             // reseraches a tech that should only benefit him/herself).
-            player_id = AIClientApp::GetApp()->PlayerID();
+            const auto empire_id = AIClientApp::GetApp()->EmpireID();
 
             // get all planets the player knows about that aren't yet colonized
             // (aren't owned by anyone).  Add this the current player's
@@ -167,10 +166,10 @@ namespace {
             unowned_planets.reserve(universe.Objects().size<Planet>());
             universe.InhibitUniverseObjectSignals(true);
             for (auto planet : universe.Objects().allRaw<Planet>()
-                 | range_filter([](const auto* p) { return p->Unowned(); }))
+                 | range_filter([](const auto* p) { return p && p->Unowned(); }))
             {
                 unowned_planets.push_back(planet);
-                planet->SetOwner(player_id);
+                planet->SetOwner(empire_id);
             }
         }
 
