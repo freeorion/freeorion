@@ -9,7 +9,7 @@
 
 #include <GG/ClrConstants.h>
 
-ParticipantSummary::ParticipantSummary(int object_id_, EmpireID empire_id_, const CombatParticipantState& state) :
+ParticipantSummary::ParticipantSummary(UniverseObjectID object_id_, EmpireID empire_id_, const CombatParticipantState& state) :
     object_id(object_id_),
     empire_id(empire_id_),
     current_health(state.current_health),

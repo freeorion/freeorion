@@ -357,7 +357,7 @@ namespace {
 
 
 template <typename Archive, typename EOV>
-void SerializeEmpireObjectVisMap(Archive& a, EOV& eov, bool old_map_format = false, const char* xml_tag = "empire_object_visibility")
+void SerializeEmpireObjectVisMap(Archive& a, EOV& eov, bool old_map_format, const char* xml_tag)
 {
     using eid_t = std::decay_t<typename EOV::key_type>;
     static_assert(std::is_same_v<eid_t, int> || std::is_same_v<eid_t, EmpireID>);

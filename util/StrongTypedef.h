@@ -42,14 +42,14 @@ public:                                                                         
 constexpr auto Value(typeName t) noexcept { return t.Value(); }                                 \
 constexpr auto& UnderRef(typeName& t) noexcept { return t.UnderRef(); }                         \
 constexpr const auto& UnderRef(const typeName& t) noexcept { return t.UnderRef(); }             \
-auto to_string(typeName t) { return std::to_string(t.Value()); }                                \
+inline auto to_string(typeName t) { return std::to_string(t.Value()); }                         \
 constexpr auto operator+(typeName x, underlyingType i) noexcept { return x += i; }              \
 constexpr auto operator++(typeName& x, int) noexcept { auto rv = x; ++x; return rv; }           \
 constexpr auto operator-(typeName x, underlyingType i) noexcept { return x -= i; }              \
 constexpr auto operator--(typeName& x, int) noexcept { auto rv = x; --x; return rv; }           \
                                                                                                 \
 template<> struct std::hash<typeName> {                                                         \
-    size_t operator()(typeName x) const noexcept                                                \
+    static size_t operator()(typeName x) noexcept                                               \
     { return std::hash<underlyingType>{}(x.Value()); }                                          \
 };                                                                                              \
                                                                                                 \

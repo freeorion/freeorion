@@ -11,6 +11,8 @@
 #include "ServerFSM.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
+#include "../universe/ConstantsFwd.h"
+#include "../universe/EnumsFwd.h"
 #include "../universe/ScriptingContext.h"
 #include "../universe/Species.h"
 #include "../universe/Universe.h"
@@ -41,7 +43,7 @@ public:
     /** Returns a ClientApp pointer to the singleton instance of the app. */
     [[nodiscard]] Universe& GetUniverse() noexcept override { return m_universe; }
     [[nodiscard]] EmpireManager& Empires() noexcept override { return m_empires; }
-    [[nodiscard]] Empire* GetEmpire(int id) override { return m_empires.GetEmpire(id).get(); }
+    [[nodiscard]] Empire* GetEmpire(EmpireID id) override { return m_empires.GetEmpire(id).get(); }
     [[nodiscard]] SupplyManager& GetSupplyManager() noexcept override { return m_supply_manager; }
     [[nodiscard]] SpeciesManager& GetSpeciesManager() noexcept override { return m_species_manager; }
 
@@ -50,7 +52,7 @@ public:
 
     [[nodiscard]] std::string GetVisibleObjectName(const UniverseObject& object) override { return object.Name(); }
 
-    [[nodiscard]] int EmpireID() const noexcept override { return ALL_EMPIRES; }
+    [[nodiscard]] EmpireID GetEmpireID() const noexcept override { return ALL_EMPIRES; }
     [[nodiscard]] int CurrentTurn() const noexcept override { return m_current_turn; }
 
     [[nodiscard]] int SelectedSystemID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }

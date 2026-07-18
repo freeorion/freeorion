@@ -242,7 +242,7 @@ std::map<int, bool> BuildingsPanel::s_expanded_map;
 /////////////////////////////////////
 //       BuildingIndicator         //
 /////////////////////////////////////
-BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
+BuildingIndicator::BuildingIndicator(GG::X w, UniverseObjectID building_id) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_scanlines(GG::Wnd::Create<ScanlineControl>()),
     m_building_id(building_id)

@@ -399,8 +399,8 @@ std::shared_ptr<FleetWnd> FleetUIManager::WndForFleetID(int fleet_id) const {
     return retval;
 }
 
-std::shared_ptr<FleetWnd> FleetUIManager::WndForFleetIDs(const std::vector<int>& fleet_ids_) const {
-    std::unordered_set<int> fleet_ids{fleet_ids_.begin(), fleet_ids_.end()};
+std::shared_ptr<FleetWnd> FleetUIManager::WndForFleetIDs(const std::vector<UniverseObjectID>& fleet_ids_) const {
+    std::unordered_set<UniverseObjectID> fleet_ids{fleet_ids_.begin(), fleet_ids_.end()};
     std::shared_ptr<FleetWnd> retval;
     GG::ProcessThenRemoveExpiredPtrs(
         m_fleet_wnds,
@@ -411,7 +411,7 @@ std::shared_ptr<FleetWnd> FleetUIManager::WndForFleetIDs(const std::vector<int>&
     return retval;
 }
 
-int FleetUIManager::SelectedShipID() const {
+UniverseObjectID FleetUIManager::SelectedShipID() const {
     const auto active_wnd = GG::LockAndResetIfExpired(m_active_fleet_wnd);
     if (!active_wnd)
         return INVALID_OBJECT_ID;
@@ -420,14 +420,14 @@ int FleetUIManager::SelectedShipID() const {
     return selected_ship_ids.size() == 1 ? *selected_ship_ids.begin() : INVALID_OBJECT_ID;
 }
 
-std::set<int> FleetUIManager::SelectedShipIDs() const {
+std::set<UniverseObjectID> FleetUIManager::SelectedShipIDs() const {
     const auto active_wnd = GG::LockAndResetIfExpired(m_active_fleet_wnd);
     return active_wnd ? active_wnd->SelectedShipIDs() : std::set<int>{};
 }
 
 std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(
-    const std::vector<int>& fleet_ids, double allowed_bounding_box_leeway,
-    int selected_fleet_id, GG::Flags<GG::WndFlag> flags)
+    const std::vector<UniverseObjectID>& fleet_ids, double allowed_bounding_box_leeway,
+    UniverseObjectID selected_fleet_id, GG::Flags<GG::WndFlag> flags)
 {
     std::string config_name;
     if (!GetOptionsDB().Get<bool>("ui.fleet.multiple.enabled")) {
@@ -3337,12 +3337,6 @@ void FleetWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
     if (Size() != old_size)
         DoLayout();
 }
-
-int FleetWnd::SystemID() const
-{ return m_system_id; }
-
-int FleetWnd::EmpireID() const
-{ return m_empire_id; }
 
 bool FleetWnd::ContainsFleet(int fleet_id) const {
     const auto& objects = GetApp().GetContext().ContextObjects();

@@ -44,7 +44,7 @@ public:
      *
      * @return An empire identifier.
      */
-    [[nodiscard]] ::EmpireID EmpireID() const noexcept override { return m_empire_id; }
+    [[nodiscard]] ::EmpireID GetEmpireID() const noexcept override { return m_empire_id; }
 
     /** @brief Return the current game turn
      *

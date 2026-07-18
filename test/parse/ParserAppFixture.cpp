@@ -39,7 +39,7 @@ ParserAppFixture::ParserAppFixture(bool test_scripting) :
     m_python.SetModulesDirs({m_scripting_dir});
 }
 
-int ParserAppFixture::EmpireID() const noexcept
+EmpireID ParserAppFixture::GetEmpireID() const noexcept
 { return ALL_EMPIRES; }
 
 int ParserAppFixture::CurrentTurn() const noexcept

@@ -17,13 +17,13 @@ class UniverseObject;
 
 // Data on what happened on single object in the combat
 struct ParticipantSummary {
-    int     object_id = INVALID_OBJECT_ID;
-    int     empire_id = ALL_EMPIRES;
-    float   current_health = 0.0f;
-    float   max_health = 0.0f;
+    UniverseObjectID object_id = INVALID_OBJECT_ID;
+    EmpireID         empire_id = ALL_EMPIRES;
+    float            current_health = 0.0f;
+    float            max_health = 0.0f;
 
     ParticipantSummary() = default;
-    ParticipantSummary(int object_id_, EmpireID empire_id_, const CombatParticipantState& state);
+    ParticipantSummary(UniverseObjectID object_id_, EmpireID empire_id_, const CombatParticipantState& state);
 };
 
 // A summary of what happened to a side in the combat (an empire or neutral)

@@ -27,20 +27,21 @@ public:
     iterator        begin() const;
     iterator        end() const;
     FleetWnd*       ActiveFleetWnd() const;
-    std::shared_ptr<FleetWnd> WndForFleetID(int fleet_id) const;
-    std::shared_ptr<FleetWnd> WndForFleetIDs(const std::vector<int>& fleet_ids_) const;
-    int             SelectedShipID() const;     // if a single ship is selected in the active fleetwnd, returns that ship's ID.  Otherwise, returns INVALID_OBJECT_ID
-    std::set<int>   SelectedShipIDs() const;    // returns the ids of all selected ships in the active fleetwnd
 
-    std::shared_ptr<FleetWnd> NewFleetWnd(const std::vector<int>& fleet_ids,
+    std::shared_ptr<FleetWnd>  WndForFleetID(int fleet_id) const;
+    std::shared_ptr<FleetWnd>  WndForFleetIDs(const std::vector<UniverseObjectID>& fleet_ids_) const;
+    UniverseObjectID           SelectedShipID() const;     // if a single ship is selected in the active fleetwnd, returns that ship's ID.  Otherwise, returns INVALID_OBJECT_ID
+    std::set<UniverseObjectID> SelectedShipIDs() const;    // returns the ids of all selected ships in the active fleetwnd
+
+    std::shared_ptr<FleetWnd> NewFleetWnd(const std::vector<UniverseObjectID>& fleet_ids,
                                           double allowed_bounding_box_leeway = 0,
-                                          int selected_fleet_id = INVALID_OBJECT_ID,
+                                          UniverseObjectID selected_fleet_id = INVALID_OBJECT_ID,
                                           GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE);
 
     void            CullEmptyWnds();
     void            SetActiveFleetWnd(std::shared_ptr<FleetWnd> fleet_wnd);
     bool            CloseAll();
-    void            RefreshAll(int this_client_empire_id, const ScriptingContext& context);
+    void            RefreshAll(EmpireID this_client_empire_id, const ScriptingContext& context);
 
     /** Enables, or disables if \a enable is false, issuing orders via FleetWnds. */
     void            EnableOrderIssuing(bool enable = true);
@@ -55,10 +56,10 @@ public:
     mutable boost::signals2::signal<void ()> ActiveFleetWndSelectedShipsChangedSignal;
 
     /** emitted when a fleet is right-clicked */
-    mutable boost::signals2::signal<void (int)> FleetRightClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> FleetRightClickedSignal;
 
     /** emitted when a ship is right-clicked */
-    mutable boost::signals2::signal<void (int)> ShipRightClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> ShipRightClickedSignal;
 
     static FleetUIManager& GetFleetUIManager();
 
@@ -84,25 +85,27 @@ private:
     (a FleetDetailPanel). */
 class FleetWnd final : public MapWndPopup {
 public:
-    FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
+    FleetWnd(const std::vector<UniverseObjectID>& fleet_ids, bool order_issuing_enabled,
              double allowed_bounding_box_leeway = 0,
-             int selected_fleet_id = INVALID_OBJECT_ID,
+             UniverseObjectID selected_fleet_id = INVALID_OBJECT_ID,
              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE,
              std::string_view config_name = "");
 
     ~FleetWnd();
     void CompleteConstruction() override;
 
-    int                     SystemID() const;                   ///< returns ID of system whose fleets are shown in this FleetWnd, which may be INVALID_OBJECT_ID if this FleetWnd isn't set to show fleets of a system
-    int                     EmpireID() const;                   ///< returns ID of empire whose fleets are shown in this FleetWnd, which may be ALL_EMPIRES if this FleetWnd isn't set to show fleets of a particular empire
-    bool                    ContainsFleet(int fleet_id) const;  ///< returns true if fleet with ID \a fleet_id is shown in this FleetWnd
+    auto SystemID() const noexcept { return m_system_id; }    ///< returns ID of system whose fleets are shown in this FleetWnd, which may be INVALID_OBJECT_ID if this FleetWnd isn't set to show fleets of a system
+    auto GetEmpireID() const noexcept { return m_empire_id; } ///< returns ID of empire whose fleets are shown in this FleetWnd, which may be ALL_EMPIRES if this FleetWnd isn't set to show fleets of a particular empire
+
+    bool ContainsFleet(UniverseObjectID fleet_id) const;  ///< returns true if fleet with ID \a fleet_id is shown in this FleetWnd
     /** Return true if this FleetWnd contains all \p fleet_ids. */
     template <typename Set>
-    bool                    ContainsFleets(Set fleet_ids) const;
-    const std::set<int>&    FleetIDs() const;                   ///< returns IDs of all fleets shown in this FleetWnd
-    std::set<int>           SelectedFleetIDs() const;           ///< returns IDs of selected fleets in this FleetWnd
-    std::set<int>           SelectedShipIDs() const;            ///< returns IDs of selected ships in this FleetWnd
-    FleetAggression         GetNewFleetAggression() const;      ///< returns this FleetWnd's setting for new fleet aggression (auto, aggressive, obstructive, or passive)
+    bool ContainsFleets(Set fleet_ids) const;
+
+    const std::set<UniverseObjectID>& FleetIDs() const;                   ///< returns IDs of all fleets shown in this FleetWnd
+    std::set<UniverseObjectID>        SelectedFleetIDs() const;           ///< returns IDs of selected fleets in this FleetWnd
+    std::set<UniverseObjectID>        SelectedShipIDs() const;            ///< returns IDs of selected ships in this FleetWnd
+    FleetAggression                   GetNewFleetAggression() const;      ///< returns this FleetWnd's setting for new fleet aggression (auto, aggressive, obstructive, or passive)
 
     GG::Rect CalculatePosition() const override;
 
@@ -112,9 +115,9 @@ public:
 
     /** Deselect all fleets. */
     void DeselectAllFleets();
-    void SelectFleet(int fleet_id, const ObjectMap& objects); ///< deselects any selected fleets, and selects the indicated fleet, bringing it into the fleet detail window
-    void SelectFleets(const std::set<int>& fleet_ids);        ///< deselects any selected fleets, and selects the fleets with the indicated ids
-    void SelectShips(const std::set<int>& ship_ids);          ///< deselected any selected ships, and selects the ships with the indicated ids if they are in the selected fleet.
+    void SelectFleet(UniverseObjectID fleet_id, const ObjectMap& objects); ///< deselects any selected fleets, and selects the indicated fleet, bringing it into the fleet detail window
+    void SelectFleets(const std::set<UniverseObjectID>& fleet_ids);        ///< deselects any selected fleets, and selects the fleets with the indicated ids
+    void SelectShips(const std::set<UniverseObjectID>& ship_ids);          ///< deselected any selected ships, and selects the ships with the indicated ids if they are in the selected fleet.
 
     /** Enables, or disables if \a enable is false, issuing orders via this FleetWnd. */
     void EnableOrderIssuing(bool enable = true);
@@ -122,8 +125,8 @@ public:
     mutable boost::signals2::signal<void ()>    SelectedFleetsChangedSignal;
     mutable boost::signals2::signal<void ()>    SelectedShipsChangedSignal;
     mutable boost::signals2::signal<void (std::shared_ptr<FleetWnd>)> ClickedSignal;
-    mutable boost::signals2::signal<void (int)> FleetRightClickedSignal;
-    mutable boost::signals2::signal<void (int)> ShipRightClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> FleetRightClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> ShipRightClickedSignal;
 
 protected:
     void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -131,10 +134,10 @@ protected:
 
 private:
     void RequireRefresh();
-    void Refresh(int this_client_empire_id, const ScriptingContext& context); ///< regenerates contents
+    void Refresh(::EmpireID this_client_empire_id, const ScriptingContext& context); ///< regenerates contents
     void RefreshStateChangedSignals();
 
-    void AddFleet(int fleet_id);     ///< adds a new fleet row to this FleetWnd's ListBox of FleetRows and updates internal fleets bookkeeping
+    void AddFleet(UniverseObjectID fleet_id);     ///< adds a new fleet row to this FleetWnd's ListBox of FleetRows and updates internal fleets bookkeeping
 
     void FleetSelectionChanged(const GG::ListBox::SelectionSet& rows);
     void FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
@@ -143,7 +146,7 @@ private:
 
     int         FleetInRow(GG::ListBox::iterator it) const;
     std::string TitleText() const;
-    void        CreateNewFleetFromDrops(const std::vector<int>& ship_ids, ScriptingContext& context, EmpireID empire_id);
+    void        CreateNewFleetFromDrops(const std::vector<UniverseObjectID>& ship_ids, ScriptingContext& context, ::EmpireID empire_id);
 
     void ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
     void UniverseObjectDeleted(const std::shared_ptr<const UniverseObject>& obj);
@@ -155,9 +158,9 @@ private:
     boost::signals2::scoped_connection              m_system_connection;
     std::vector<boost::signals2::scoped_connection> m_fleet_connections;
 
-    std::set<int>   m_fleet_ids;                    ///< IDs of fleets shown in this wnd (always.  set when creating wnd, either by being passed in directly, or found by checking indicated system for indicated empire's fleets.  If set directly, never updates.  If set by checking system, updates when the system has a fleet added or removed.
-    int             m_empire_id = ALL_EMPIRES;      ///< ID of empire whose fleets are shown in this wnd.  May be ALL_EMPIRES if this FleetWnd wasn't set to shown a particular empire's fleets.
-    int             m_system_id =INVALID_OBJECT_ID; ///< ID of system whose fleets are shown in this wnd.  May be INVALID_OBJECT_ID if this FleetWnd wasn't set to show a system's fleets.
+    std::set<UniverseObjectID> m_fleet_ids;                    ///< IDs of fleets shown in this wnd (always.  set when creating wnd, either by being passed in directly, or found by checking indicated system for indicated empire's fleets.  If set directly, never updates.  If set by checking system, updates when the system has a fleet added or removed.
+    ::EmpireID                 m_empire_id = ALL_EMPIRES;      ///< ID of empire whose fleets are shown in this wnd.  May be ALL_EMPIRES if this FleetWnd wasn't set to shown a particular empire's fleets.
+    UniverseObjectID           m_system_id =INVALID_OBJECT_ID; ///< ID of system whose fleets are shown in this wnd.  May be INVALID_OBJECT_ID if this FleetWnd wasn't set to show a system's fleets.
 
     /** The size of box up to which moving fleets are still within the same fleet window.*/
     GG::Rect        m_bounding_box;

@@ -190,6 +190,7 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Configuring Version.cpp</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Configuring Version.cpp</Message>
     </CustomBuild>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\combat\CombatDamage.h" />

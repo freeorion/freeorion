@@ -242,7 +242,7 @@ private:
         MovementLineData() = default;
         MovementLineData(const std::vector<MovePathNode>& path_,
                          const std::map<std::pair<int, int>, LaneEndpoints>& lane_end_points_map,
-                         GG::Clr colour_ = GG::CLR_WHITE, int empireID = ALL_EMPIRES);
+                         GG::Clr colour_ = GG::CLR_WHITE, EmpireID empireID = ALL_EMPIRES);
 
         std::vector<MovePathNode> path;                  // raw path data from which line rendering is determined
         std::vector<Vertex>       vertices;              // cached apparent universe positions of starts and ends of line segments drawn to represent move path
@@ -574,8 +574,8 @@ private:
     GG::Timer                       m_timeout_clock{1000};      //!< clock to update remaining time
     std::vector<std::weak_ptr<MapWndPopup>> m_popups;           //!< currently active popup windows
     bool                            m_menu_showing = false;     //!< set during ShowMenu() to prevent reentrency
-    int                             m_current_owned_system = INVALID_OBJECT_ID;
-    int                             m_current_fleet_id = INVALID_OBJECT_ID;
+    UniverseObjectID                m_current_owned_system = INVALID_OBJECT_ID;
+    UniverseObjectID                m_current_fleet_id = INVALID_OBJECT_ID;
     bool                            m_in_production_view_mode = false;
 
     bool                            m_sidepanel_open_before_showing_other = false;  //!< was the sidepanel open before switching to production, research or design screens?  If so, it should be restored when leaving them.
@@ -598,7 +598,7 @@ private:
     std::vector<boost::signals2::scoped_connection> m_sys_icon_connections;
     std::vector<boost::signals2::scoped_connection> m_field_icon_connections;
 
-    std::set<int>                   m_fleets_exploring;
+    std::set<UniverseObjectID>      m_fleets_exploring;
 
     /// indicates that refresh fleet button work should be done before rendering.
     bool                            m_deferred_recreate_fleet_buttons = false;
