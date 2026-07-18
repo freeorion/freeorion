@@ -1,4 +1,4 @@
-from logging import debug, warning
+from logging import debug
 
 from common.configure_logging import redirect_logging_to_freeorion_logger
 
@@ -10,6 +10,46 @@ from operator import itemgetter
 
 from empires import home_system_layout
 from util import unique_product
+
+
+def try_remaining_teams(
+    prev_result: dict[int, int],
+    unused_home_systems: set[int],
+    teams: list[tuple[int, int]],
+    current_min_dist: int,
+    home_systems_distances: dict[tuple[int, int], int],
+    global_best_dist: int = -1,
+) -> tuple[dict[int, int], int]:
+    if len(teams) == 0:
+        return prev_result, current_min_dist
+
+    best_result = {}
+    current_team = teams[0][0]
+    next_teams = teams[1:]
+
+    for hs in unused_home_systems:
+        new_min_dist = current_min_dist
+        for other_team, other_hs in prev_result.items():
+            d = home_systems_distances.get((hs, other_hs)) or home_systems_distances.get((other_hs, hs))
+            if d < new_min_dist or new_min_dist == -1:
+                new_min_dist = d
+
+        if global_best_dist != -1 and new_min_dist <= global_best_dist:
+            continue
+
+        next_result = dict(prev_result)
+        next_result[current_team] = hs
+        next_unused = unused_home_systems - {hs}
+
+        res, dist = try_remaining_teams(
+            next_result, next_unused, next_teams, new_min_dist, home_systems_distances, global_best_dist
+        )
+
+        if dist > global_best_dist or global_best_dist == -1:
+            global_best_dist = dist
+            best_result = res
+
+    return best_result, global_best_dist
 
 
 def home_system_team_core(home_systems: list[int], teams: list[tuple[int, int]]) -> dict[int, int]:
@@ -35,15 +75,21 @@ def home_system_team_core(home_systems: list[int], teams: list[tuple[int, int]])
         first_team = teams[0][0]
         first_of_most_distant_systems = home_systems_sorted[0][0][0]
         result[first_team] = first_of_most_distant_systems
-    else:
+    elif len(teams) == 2:
         first_team = teams[0][0]
         first_of_most_distant_systems = home_systems_sorted[0][0][0]
         second_team = teams[1][0]
         second_of_most_distant_systems = home_systems_sorted[0][0][1]
         result[first_team] = first_of_most_distant_systems
         result[second_team] = second_of_most_distant_systems
-        if len(teams) > 2:
-            warning("Teamed placement poorly implemented for %d teams", len(teams))
+    else:
+        result, dist = try_remaining_teams(
+            prev_result={},
+            unused_home_systems=set(home_systems),
+            teams=teams,
+            current_min_dist=-1,
+            home_systems_distances=home_systems_distances,
+        )
     return result
 
 
