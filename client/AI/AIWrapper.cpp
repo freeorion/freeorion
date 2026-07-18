@@ -104,7 +104,7 @@ namespace {
      *
      * @return An empire identifier.
      */
-    auto PlayerEmpireID(int player_id) -> int
+    auto PlayerEmpireID(int player_id) -> EmpireID
     {
         const auto& players = AIClientApp::GetApp()->Players();
         auto it = players.find(player_id);
@@ -117,15 +117,12 @@ namespace {
      *
      * @return A vector containing the identifiers of all empires.
      */
-    auto AllEmpireIDs() -> std::vector<int>
+    auto AllEmpireIDs() -> std::vector<EmpireID>
     {
         const auto& players = AIClientApp::GetApp()->Players();
-        auto rng = players | range_transform([](const auto& id_pi) { return id_pi.second.empire_id; })
-            | range_filter([](EmpireID empire_id) { return empire_id != ALL_EMPIRES; });
-        std::vector<int> retval;
-        retval.reserve(players.size());
-        range_copy(rng, std::back_inserter(retval));
-        return retval;
+        return players | range_transform([](const auto& id_pi) { return id_pi.second.empire_id; })
+            | range_filter([](EmpireID empire_id) { return empire_id != ALL_EMPIRES; })
+            | range_to_vec;
     }
 
     void InitMeterEstimatesAndDiscrepancies() {
@@ -143,6 +140,7 @@ namespace {
      */
     void UpdateMeterEstimates(bool pretend_to_own_unowned_planets) {
         std::vector<Planet*> unowned_planets;
+        EmpireID player_id = -1;
 
         ScriptingContext& context = IApp::GetApp()->GetContext();
         Universe& universe = context.ContextUniverse();

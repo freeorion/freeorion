@@ -16,7 +16,7 @@ public:
     ~BuildingsPanel() = default;
     void CompleteConstruction() override;
 
-    [[nodiscard]] int PlanetID() const noexcept { return m_planet_id; }
+    [[nodiscard]] auto PlanetID() const noexcept { return m_planet_id; }
 
     void PreRender() override;
 
@@ -43,7 +43,7 @@ private:
     /** toggles panel expanded or collapsed */
     void ExpandCollapseButtonPressed();
 
-    int m_planet_id = INVALID_OBJECT_ID; // object id for the Planet whose buildings this panel displays
+    UniverseObjectID m_planet_id = INVALID_OBJECT_ID; // object id for the Planet whose buildings this panel displays
     int m_columns = 1; // number of columns in which to display building indicators
     std::vector<std::shared_ptr<BuildingIndicator>> m_building_indicators;
     boost::signals2::scoped_connection m_queue_connection;
@@ -56,11 +56,9 @@ private:
 /** Represents and allows some user interaction with a building */
 class BuildingIndicator final : public GG::Wnd {
 public:
-    /** Constructor for use when building is completed, shown without progress 
-      * bar. */
-    BuildingIndicator(GG::X w, int building_id);
-    /** Constructor for use when building is partially complete, to show
-      * progress bar. */
+    /** Constructor for use when building is completed, shown without progress bar. */
+    BuildingIndicator(GG::X w, UniverseObjectID building_id);
+    /** Constructor for use when building is partially complete, to show progress bar. */
     BuildingIndicator(GG::X w, const std::string& building_type,
                       double turns_completed, double total_turns, double total_cost, double turn_spending);
 
@@ -86,7 +84,7 @@ private:
     std::shared_ptr<GG::StaticGraphic>      m_scrap_indicator; ///< shown to indicate building was ordered scrapped
     std::shared_ptr<MultiTurnProgressBar>   m_progress_bar;
     boost::signals2::scoped_connection      m_signal_connection;
-    int                                     m_building_id = INVALID_OBJECT_ID;
+    UniverseObjectID                        m_building_id = INVALID_OBJECT_ID;
     bool                                    m_order_issuing_enabled = true;
 };
 

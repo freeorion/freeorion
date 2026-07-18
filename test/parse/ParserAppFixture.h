@@ -24,7 +24,7 @@ public:
     const ParserAppFixture& operator=(const ParserAppFixture&) = delete;
     ParserAppFixture& operator=(ParserAppFixture&&) = delete;
 
-    int EmpireID() const noexcept override;
+    EmpireID GetEmpireID() const noexcept override;
     int CurrentTurn() const noexcept override;
     Universe& GetUniverse() noexcept override;
     const GalaxySetupData& GetGalaxySetupData() const noexcept override;

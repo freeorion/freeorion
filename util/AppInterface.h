@@ -63,7 +63,7 @@ public:
 
     /** On server or clients with no player: ALL_EMPIRES
       * On clients with a player: that player's ID */
-    [[nodiscard]] virtual EmpireID EmpireID() const noexcept = 0;
+    [[nodiscard]] virtual EmpireID GetEmpireID() const noexcept = 0;
 
     //! Returns the current game turn
     //!
@@ -133,7 +133,7 @@ protected:
 /** Returns app's empire ID. This may be an actual empire ID or may be
   * ALL_EMPIRES. */
 [[nodiscard]] inline EmpireID AppEmpireID() noexcept
-{ return IApp::GetApp()->EmpireID(); }
+{ return IApp::GetApp()->GetEmpireID(); }
 
 /** Returns current game turn.  This is >= 1 during a game, BEFORE_FIRST_TURN
   * during galaxy setup, or is INVALID_GAME_TURN at other times */

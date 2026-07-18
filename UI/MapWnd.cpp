@@ -284,7 +284,7 @@ namespace {
      * ends of the lane, but is proportional to the distance of the actual
      * position along the lane. */
     boost::optional<std::pair<double, double>> ScreenPosOnStarlane(
-        double X, double Y, int lane_start_sys_id, int lane_end_sys_id,
+        double X, double Y, UniverseObjectID lane_start_sys_id, UniverseObjectID lane_end_sys_id,
         LaneEndpoints screen_lane_endpoints, const ScriptingContext& context)
     {
         // get endpoints of lane in universe.  may be different because on-
@@ -292,8 +292,8 @@ namespace {
         auto prev = context.ContextObjects().get(lane_start_sys_id);
         auto next = context.ContextObjects().get(lane_end_sys_id);
         if (!next || !prev) {
-            ErrorLogger() << "ScreenPosOnStarlane couldn't find next system " << lane_start_sys_id
-                          << " or prev system " << lane_end_sys_id;
+            ErrorLogger() << "ScreenPosOnStarlane couldn't find next system " << to_string(lane_start_sys_id)
+                          << " or prev system " << to_string(lane_end_sys_id);
             return boost::none;
         }
 
@@ -890,7 +890,7 @@ void MapWndPopup::Close()
 ////////////////////////////////////////////////
 MapWnd::MovementLineData::MovementLineData(const std::vector<MovePathNode>& path_,
                                            const std::map<std::pair<int, int>, LaneEndpoints>& lane_end_points_map,
-                                           GG::Clr colour_, int empireID) :
+                                           GG::Clr colour_, EmpireID empireID) :
     path(path_),
     colour(colour_)
 {
@@ -909,13 +909,13 @@ MapWnd::MovementLineData::MovementLineData(const std::vector<MovePathNode>& path
     const   MovePathNode& first_node =  path.front();
     double  prev_node_x =               first_node.x;
     double  prev_node_y =               first_node.y;
-    int     prev_sys_id =               first_node.object_id;
-    int     next_sys_id =               INVALID_OBJECT_ID;
+    auto    prev_sys_id =               first_node.object_id;
+    auto    next_sys_id =               INVALID_OBJECT_ID;
     auto    prev_eta =                  first_node.eta;
 
     const auto& context = GetApp().GetContext();
     const auto empire = context.GetEmpire(empireID);
-    std::set<int> unobstructed;
+    std::set<UniverseObjectID> unobstructed;
     bool s_flag = false;
     bool calc_s_flag = false;
     if (empire) {

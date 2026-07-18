@@ -49,7 +49,7 @@ struct OutgoingMessage {
     {}
 
     const Message m_message;
-    const int m_empire_id;
+    const EmpireID m_empire_id;
     const int m_turn;
 };
 

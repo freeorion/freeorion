@@ -1009,7 +1009,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         else if (m_property == Property::SelectedPlanetID)
             return Value(IApp::GetApp()->SelectedPlanetID());
         else if (m_property == Property::ThisClientEmpireID)
-            return Value(IApp::GetApp()->EmpireID());
+            return Value(IApp::GetApp()->GetEmpireID());
 
         // add more non-object reference int functions here
 

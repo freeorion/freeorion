@@ -10,6 +10,7 @@
 
 #include "SaveFileDialog.h"
 #include "../universe/EnumsFwd.h"
+#include "../universe/ConstantsFwd.h"
 #include "../util/Random.h"
 
 #include <map>
@@ -94,7 +95,7 @@ public:
     bool ZoomToFieldType(std::string field_type_name);       //!< Opens the ??? screen and presents a description of the given field type
 
     bool ZoomToShipDesign(int design_id);                    //!< Opens the design screen and presents a description of the given ship design
-    bool ZoomToEmpire(EmpireID empire_id);                        //!< Opens the ??? screen and presents a description of the given empire
+    bool ZoomToEmpire(EmpireID empire_id);                   //!< Opens the ??? screen and presents a description of the given empire
     bool ZoomToMeterTypeArticle(std::string meter_string);   //!< Opens the encyclopedia and presents the entry for MeterType @a meter_string
     bool ZoomToMeterTypeArticle(MeterType meter_type);       //!< Opens the encyclopedia and presents the entry for MeterType @a meter_type
     bool ZoomToEncyclopediaEntry(std::string str);           //!< Opens the encyclodedia window and presents the entry for the given term

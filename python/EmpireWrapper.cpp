@@ -67,9 +67,9 @@ namespace {
         // how many jumps away from supply each unsupplied system is...
         while (!propagating_list.empty()) {
             // get next system and distance from the list
-            const int from_sys_id = propagating_list.front();
+            const auto from_sys_id = propagating_list.front();
             propagating_list.pop_front();
-            const int from_sys_dist = retval[from_sys_id];
+            const auto from_sys_dist = retval[from_sys_id];
 
             // get lanes originating in this system
             const Empire::LaneEndpoints system_lane{from_sys_id, from_sys_id};
