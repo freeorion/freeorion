@@ -47,12 +47,31 @@ bool PythonBase::Initialize() {
         py::object py_main = py::import("__main__");
         py::dict py_namespace = py::extract<py::dict>(py_main.attr("__dict__"));
         m_namespace = py_namespace;
+
+        // add the directory containing common Python modules used by all Python scripts to Python sys.path
+        AddToSysPath(GetPythonCommonDir());
     } catch (const py::error_already_set&) {
         HandleErrorAlreadySet();
         ErrorLogger() << "Unable to initialize FreeOrion Python namespace and set path";
         return false;
     } catch (...) {
         ErrorLogger() << "Unable to initialize FreeOrion Python namespace and set path";
+        return false;
+    }
+
+    try {
+        // Allow C++ modules implemented by derived classes to be imported
+        // within Python code
+        if (!InitModules()) {
+            ErrorLogger() << "Unable to initialize FreeOrion Python modules";
+            return false;
+        }
+    } catch (const py::error_already_set&) {
+        HandleErrorAlreadySet();
+        ErrorLogger() << "Unable to initialize FreeOrion Python modules (exception caught)";
+        return false;
+    } catch (...) {
+        ErrorLogger() << "Unable to initialize FreeOrion Python modules (exception caught)";
         return false;
     }
 
@@ -84,6 +103,18 @@ void PythonBase::Finalize() {
         PythonCommon::Finalize();
         DebugLogger() << "Cleaned up FreeOrion Python interface";
     }
+}
+
+void PythonBase::AddToSysPath(const fs::path& dir) {
+    if (!fs::exists(dir)) {
+        ErrorLogger() << "Tried adding non-existing dir to sys.path: " << PathToString(dir);
+        return;
+    }
+    py::str script = "import sys\n"
+        "sys.path.append(r'";
+    script += dir.native();
+    script += "')";
+    exec(script, *m_namespace, *m_namespace);
 }
 
 void PythonBase::SetErrorModule(py::object& module)
