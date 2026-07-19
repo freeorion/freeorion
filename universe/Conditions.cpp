@@ -2998,23 +2998,40 @@ std::unique_ptr<Condition> CreatedOnTurn::Clone() const {
 ///////////////////////////////////////////////////////////
 namespace StaticTests {
 #if defined(__cpp_lib_constexpr_vector) && (!defined(_MSC_VER) || ((_MSC_VER >= 1942 && _MSC_VER != 1944) || _MSC_VER >= 1950)) && (!defined(__clang_major__) || (__clang_major__ >= 15)) && (!defined(__GNUC__) || (__GNUC__ > 12))
+    using UID = UniverseObjectID;
+
     struct ContainerTestObj : public UniverseObjectCXBase {
-        std::vector<UniverseObjectID> contained_ids;
-        constexpr explicit ContainerTestObj(std::vector<UniverseObjectID> contained_ids_ = {}, UniverseObjectID this_id = 2) :
+        std::vector<UID> contained_ids;
+
+        constexpr explicit ContainerTestObj(std::vector<UID> contained_ids_ = {}, UID this_id = UID{2}) :
             UniverseObjectCXBase(UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE),
-            contained_ids(contained_ids_)
+            contained_ids(std::move(contained_ids_))
         { this->SetID(this_id); }
+
+        constexpr explicit ContainerTestObj(UID contained_id, UID this_id = UID{2}) :
+            ContainerTestObj{std::vector{contained_id}, this_id}
+        {}
+
+        constexpr explicit ContainerTestObj(auto contained_ids_, int this_id = 2) :
+            ContainerTestObj{[contained_ids_](){
+                                std::vector<UID> ids;
+                                for (int i : contained_ids_)
+                                    ids.emplace_back(i);
+                                return ids;
+                             }(),
+                             UID{this_id}}
+        {}
 
         constexpr std::span<const UniverseObjectID> ContainedObjectIDs() const override { return contained_ids; }
     };
 
-    static_assert(ContainerTestObj{}.ID() == 2);
-    static_assert(ContainerTestObj{std::vector{1, 2, 3}, 5}.Contains(3));
-    static_assert(!ContainerTestObj{std::vector{1, 2, 3}, 6}.Contains(4));
+    static_assert(ContainerTestObj{}.ID() == UID{2});
+    static_assert(ContainerTestObj{std::vector{1, 2, 3}, 5}.Contains(UID{3}));
+    static_assert(!ContainerTestObj{std::vector{1, 2, 3}, 6}.Contains(UID{4}));
 
     static_assert([]() {
         const ContainerTestObj obj_that_contains_2(std::vector{2}, 999);
-        return ContainsSimpleMatch(std::vector{2})(std::addressof(obj_that_contains_2));
+        return ContainsSimpleMatch(UID{2})(std::addressof(obj_that_contains_2));
     }());
 
     static_assert([]() {
@@ -3034,10 +3051,10 @@ namespace StaticTests {
     static_assert([]() {
         const ContainerTestObj empty_obj{std::vector<int>{}, 5555};
 
-        bool test1_ = ContainsSimpleMatch(std::vector<int>{})(&empty_obj);
-        bool test1e = ContainsSimpleMatch(std::vector{1})(&empty_obj);
-        bool test2e = ContainsSimpleMatch(std::vector{2})(&empty_obj);
-        bool test8e = ContainsSimpleMatch(std::vector{0, 1, 5, 6, 7, 8, 7, 8})(&empty_obj);
+        bool test1_ = ContainsSimpleMatch(std::vector<UID>{})(&empty_obj);
+        bool test1e = ContainsSimpleMatch(UID{1})(&empty_obj);
+        bool test2e = ContainsSimpleMatch(UID{2})(&empty_obj);
+        bool test8e = ContainsSimpleMatch(std::vector{UID{0}, UID{1}, UID{5}, UID{6}, UID{7}, UID{8}, UID{7}, UID{8}})(&empty_obj);
 
         return !test1_ && !test1e && !test2e && !test8e;
     }());
@@ -3056,10 +3073,10 @@ namespace StaticTests {
     static_assert([]() {
         const ContainerTestObj container_obj(std::vector{0, 1, 5, 6, 7, 8}, 4444);
 
-        bool test1 = ContainsSimpleMatch(std::vector{1})(&container_obj);
-        bool test2 = ContainsSimpleMatch(std::vector{2})(&container_obj);
-        bool test5 = ContainsSimpleMatch(std::vector{2, 3, 4, 9, 10})(&container_obj);
-        bool test4 = ContainsSimpleMatch(std::vector{0, 1, 7, 8})(&container_obj);
+        bool test1 = ContainsSimpleMatch(UID{1})(&container_obj);
+        bool test2 = ContainsSimpleMatch(UID{2})(&container_obj);
+        bool test5 = ContainsSimpleMatch(std::vector{UID{2}, UID{3}, UID{4}, UID{9}, UID{10}})(&container_obj);
+        bool test4 = ContainsSimpleMatch(std::vector{UID{0}, UID{1}, UID{7}, UID{8}})(&container_obj);
 
         return test1 && !test2 && !test5 && test4;
     }());
@@ -3069,7 +3086,7 @@ namespace StaticTests {
         const ContainerTestObj container_of_99(std::vector{99}, 7);
 
         bool test_contains_obj_99 = ContainsSimpleMatch(ObjectSet{&obj_with_id_99})(&container_of_99);
-        bool test_contains_id_99 = ContainsSimpleMatch(std::vector{99})(&container_of_99);
+        bool test_contains_id_99 = ContainsSimpleMatch(UID{99})(&container_of_99);
 
         return test_contains_obj_99 && test_contains_id_99;
     }());
@@ -3084,7 +3101,7 @@ namespace StaticTests {
         const UniverseObjectCXBase* const obj2 = std::addressof(obj_that_contiains_3456);
 
         return ContainsSimpleMatch(std::vector{obj2})(obj1) &&
-               ContainsSimpleMatch(std::vector{4})(obj2) &&
+               ContainsSimpleMatch(UID{4})(obj2) &&
                !ContainsSimpleMatch(std::vector{obj2})(obj0);
      }());
 
@@ -3097,7 +3114,7 @@ namespace StaticTests {
         const UniverseObjectCXBase* const obj1 = std::addressof(obj_that_contains_2);
         const UniverseObjectCXBase* const obj2 = std::addressof(obj_that_contiains_3456);
 
-        const ContainsSimpleMatch csm2{std::vector{2}};
+        const ContainsSimpleMatch csm2{UID{2}};
 
         ObjectSet candidates{obj0, obj1, obj2};
         EvalImpl(candidates, csm2);

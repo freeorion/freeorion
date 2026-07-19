@@ -34,12 +34,15 @@ namespace {
         }
     };
 
+    constexpr auto to_int_value_pair = [](const std::pair<UniverseObjectID, UniverseObjectID> in) noexcept -> std::pair<int, int>
+    { return {Value(in.first), Value(in.second)}; };
+
     auto obstructedStarlanes(const Empire& empire) -> std::vector<std::pair<int, int>>
     {
         const auto& laneset = IApp::GetApp()->GetSupplyManager().SupplyObstructedStarlaneTraversals(empire.EmpireID());
         static_assert(!std::is_same_v<std::decay_t<decltype(laneset)>, std::vector<std::pair<int, int>>>); // if are the same, don't need to explicitly construct the return value...
         try {
-            return {laneset.begin(), laneset.end()};
+            return laneset | range_transform(to_int_value_pair) | range_to_vec;
         } catch (...) {
             return {};
         }
@@ -51,10 +54,10 @@ namespace {
 
         std::map<int, int> retval;
         const auto empire_starlanes = empire.KnownStarlanes(context.ContextUniverse());
-        std::deque<int> propagating_list;
+        std::deque<UniverseObjectID> propagating_list;
 
-        for (int system_id : context.supply.FleetSupplyableSystemIDs(empire.EmpireID(), true, context)) {
-            retval[system_id] = 0;
+        for (auto system_id : context.supply.FleetSupplyableSystemIDs(empire.EmpireID(), true, context)) {
+            retval[Value(system_id)] = 0;
             propagating_list.push_back(system_id);
         }
 
@@ -69,19 +72,19 @@ namespace {
             // get next system and distance from the list
             const auto from_sys_id = propagating_list.front();
             propagating_list.pop_front();
-            const auto from_sys_dist = retval[from_sys_id];
+            const auto from_sys_dist = retval[Value(from_sys_id)];
 
             // get lanes originating in this system
             const Empire::LaneEndpoints system_lane{from_sys_id, from_sys_id};
             const auto system_lanes_rng = range_equal(empire_starlanes, system_lane, lane_starts_less);
 
             // propagate to any not-already-counted adjacent system
-            for (const int lane_end_system_id : system_lanes_rng | range_transform(to_lane_end)) {
-                if (retval.contains(lane_end_system_id))
+            for (const auto lane_end_system_id : system_lanes_rng | range_transform(to_lane_end)) {
+                if (retval.contains(Value(lane_end_system_id)))
                     continue; // system already processed
                 // system not yet processed; add it to list to propagate from, and set its range to one more than this system
                 propagating_list.push_back(lane_end_system_id);
-                retval.emplace(lane_end_system_id, from_sys_dist - 1); // negative values used to indicate jumps to nearest supply for historical compatibility reasons
+                retval.emplace(Value(lane_end_system_id), from_sys_dist - 1); // negative values used to indicate jumps to nearest supply for historical compatibility reasons
             }
         }
 
@@ -105,7 +108,7 @@ namespace {
             std::set<int> planet_ids;
             for (const auto* planet : objects.findRaw<Planet>(object_ids)) {
                 if (planet)
-                    planet_ids.insert(planet->ID());
+                    planet_ids.insert(Value(planet->ID()));
             }
             if (!planet_ids.empty())
                 planets_with_available_pp.emplace(std::move(planet_ids), PP);
@@ -122,7 +125,7 @@ namespace {
             std::set<int> planets;
             for (const auto* planet : objects.findRaw<Planet>(objects_pp.first)) {
                 if (planet)
-                    planets.insert(planet->ID());
+                    planets.insert(Value(planet->ID()));
             }
             if (!planets.empty())
                 planets_with_allocated_pp[planets] = objects_pp.second;
@@ -139,7 +142,7 @@ namespace {
             std::set<int> planet_ids;
             for (const auto* planet : objects.findRaw<Planet>(object_ids)) {
                 if (planet)
-                    planet_ids.insert(planet->ID());
+                    planet_ids.insert(Value(planet->ID()));
             }
             if (!planet_ids.empty())
                 planets_with_wasted_pp.insert(std::move(planet_ids));
@@ -157,43 +160,36 @@ namespace {
     }
 
     auto ViewVecToStringVec(const std::vector<std::string_view>& in) -> std::vector<std::string>
-    {
-        std::vector<std::string> out;
-        out.reserve(in.size());
-        std::transform(in.begin(), in.end(), std::back_inserter(out),
-                       [](auto view) { return std::string{view}; });
-        return out;
-    }
+    { return in | range_transform([](auto& sv) { return std::string{sv}; }) | range_to_vec; }
+
+    constexpr auto to_str_int = [](auto view_int) { return std::pair{std::string{view_int.first}, view_int.second}; };
 
     template <typename C>
     auto ViewMapToStringMap(const std::map<std::string_view, int, C>& in) -> std::map<std::string, int>
-    {
-        std::map<std::string, int> out;
-        std::transform(in.begin(), in.end(), std::inserter(out, out.end()),
-                       [](auto view_int) { return std::pair{std::string{view_int.first}, view_int.second}; });
-        return out;
-    }
+    { return in | range_transform(to_str_int) | range_to<std::map<std::string, int>>(); }
+
     auto ViewVecToStringMap(const std::vector<std::pair<std::string_view, int>>& in) -> std::map<std::string, int>
-    {
-        std::map<std::string, int> out;
-        std::transform(in.begin(), in.end(), std::inserter(out, out.end()),
-                       [](auto view_int) { return std::pair{std::string{view_int.first}, view_int.second}; });
-        return out;
-    }
+    { return in | range_transform(to_str_int) | range_to<std::map<std::string, int>>(); }
+
+    constexpr auto to_int_value = [](auto in) noexcept -> int { return Value(in); };
+
+    constexpr auto to_int_set_float = [](auto&& in) -> std::pair<std::set<int>, float>
+    { return {in.first | range_transform(to_int_value) | range_to<std::set<int>>(), in.second}; };
 
     auto MapFlatSetFloatToMapSetFloat(const auto& in) -> std::map<std::set<int>, float>
-    {
-        std::map<std::set<int>, float> out;
-        std::transform(in.begin(), in.end(), std::inserter(out, out.end()),
-                       [](auto set_float)
-                       { return std::pair{std::set<int>{set_float.first.begin(), set_float.first.end()},
-                                          set_float.second}; });
-        return out;
-    }
+    { return in | range_transform(to_int_set_float) | range_to<std::map<std::set<int>, float>>(); }
 
     template <typename T, typename AoC>
     std::vector<T> ToVec(const boost::container::flat_set<T, AoC>& in)
     { return std::vector<T>(in.begin(), in.end()); }
+
+    auto ToIntSet(const std::set<UniverseObjectID>& in) noexcept
+    { return in | range_transform(to_int_value) | range_to<std::set<int>>(); }
+
+    constexpr auto to_int_set = [](auto in) noexcept -> std::set<int> { return ToIntSet(in); };
+
+    auto ToIntSetSet(const std::set<std::set<UniverseObjectID>>& in) noexcept
+    { return in | range_transform(to_int_set) | range_to<std::set<std::set<int>>>(); }
 }
 
 namespace FreeOrionPython {
@@ -373,14 +369,14 @@ namespace FreeOrionPython {
 
             .def("preservedLaneTravel",             &Empire::PreservedLaneTravel)
             .add_property("fleetSupplyableSystemIDs",   make_function(
-                                                            +[](const Empire& empire) -> const std::set<int>& { return IApp::GetApp()->GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID()); },
-                                                            py::return_value_policy<py::copy_const_reference>()
+                                                            +[](const Empire& empire) -> std::set<int> { return ToIntSet(IApp::GetApp()->GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID())); },
+                                                            py::return_value_policy<py::return_by_value>()
                                                         ))
             .add_property("supplyUnobstructedSystems",  make_function(&Empire::SupplyUnobstructedSystems,   py::return_internal_reference<>()))
             .add_property("systemSupplyRanges",         make_function(&Empire::SystemSupplyRanges,          py::return_internal_reference<>()))
             .add_property("resourceSupplyGroups",       make_function(
-                                                             +[](const Empire& empire) -> const std::set<std::set<int>>& { return IApp::GetApp()->GetSupplyManager().ResourceSupplyGroups(empire.EmpireID()); },
-                                                             py::return_value_policy<py::copy_const_reference>()
+                                                             +[](const Empire& empire) -> std::set<std::set<int>> { return ToIntSetSet(IApp::GetApp()->GetSupplyManager().ResourceSupplyGroups(empire.EmpireID())); },
+                                                             py::return_value_policy<py::return_by_value>()
                                                         ))
 
             .def("obstructedStarlanes",             obstructedStarlanes,
@@ -506,7 +502,7 @@ namespace FreeOrionPython {
             .add_property("description",            make_function(&Policy::Description,         py::return_value_policy<py::copy_const_reference>()))
             .add_property("shortDescription",       make_function(&Policy::ShortDescription,    py::return_value_policy<py::copy_const_reference>()))
             .add_property("category",               make_function(&Policy::Category,            py::return_value_policy<py::copy_const_reference>()))
-            .def("adoptionCost",                    +[](const Policy& p)                       { return p.AdoptionCost(IApp::GetApp()->EmpireID(), IApp::GetApp()->GetContext()); })
+            .def("adoptionCost",                    +[](const Policy& p)                       { return p.AdoptionCost(IApp::GetApp()->GetEmpireID(), IApp::GetApp()->GetContext()); })
             .def("adoptionCost",                    +[](const Policy& p, const Empire& empire) { return p.AdoptionCost(empire.EmpireID(), IApp::GetApp()->GetContext()); })
             .def("adoptionCost",                    +[](const Policy& p, EmpireID empire_id)        { return p.AdoptionCost(empire_id, IApp::GetApp()->GetContext()); })
         ;
@@ -536,20 +532,20 @@ namespace FreeOrionPython {
         // DiplomaticMessage //
         ///////////////////////
         py::class_<DiplomaticMessage>("diplomaticMessage")
-            .def(py::init<int, int, DiplomaticMessage::Type>())
+            .def("__init__", py::make_constructor(+[](int sender, int recipient, DiplomaticMessage::Type dmt) { return new DiplomaticMessage{EmpireID{sender}, EmpireID{recipient}, dmt}; }))
             .add_property("type",      &DiplomaticMessage::GetType)
-            .add_property("recipient", &DiplomaticMessage::RecipientEmpireID)
-            .add_property("sender",    &DiplomaticMessage::SenderEmpireID)
+            .add_property("recipient", +[](const DiplomaticMessage& dm) noexcept -> int { return Value(dm.RecipientEmpireID()); })
+            .add_property("sender",    +[](const DiplomaticMessage& dm) noexcept -> int { return Value(dm.SenderEmpireID()); })
         ;
 
         ////////////////////////////
         // DiplomaticStatusUpdate //
         ////////////////////////////
         py::class_<DiplomaticStatusUpdateInfo>("diplomaticStatusUpdate")
-            .def(py::init<int, int, DiplomaticStatus>())
-            .add_property("status",  &DiplomaticStatusUpdateInfo::diplo_status)
-            .add_property("empire1", &DiplomaticStatusUpdateInfo::empire1_id)
-            .add_property("empire2", &DiplomaticStatusUpdateInfo::empire2_id)
+            .def("__init__", py::make_constructor(+[](int empire1, int empire2, DiplomaticStatus status) { return new DiplomaticStatusUpdateInfo{EmpireID{empire1}, EmpireID{empire2}, status}; }))
+            .add_property("status", &DiplomaticStatusUpdateInfo::diplo_status)
+            .add_property("empire1", +[](const DiplomaticStatusUpdateInfo& dsui) noexcept { return Value(dsui.empire1_id); })
+            .add_property("empire2", +[](const DiplomaticStatusUpdateInfo& dsui) noexcept { return Value(dsui.empire2_id); })
         ;
     }
 }
