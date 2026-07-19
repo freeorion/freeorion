@@ -279,7 +279,7 @@ namespace Delauney {
 }
 
 namespace {
-    int IntSetMapSizeCount(const std::map<int, std::set<int>>& in) {
+    int IntSetMapSizeCount(const std::map<UniverseObjectID, std::set<UniverseObjectID>>& in) {
         int retval{0};
         for (const auto& entry : in)
             retval += entry.second.size();
@@ -288,8 +288,8 @@ namespace {
 
     /** Used by GenerateStarlanes.  Determines if two systems are connected by
       * maxLaneJumps or less edges on graph. */
-    bool ConnectedWithin(int system1, int system2, int maxLaneJumps,
-                         const std::map<int, std::set<int>>& system_lanes)
+    bool ConnectedWithin(UniverseObjectID system1, UniverseObjectID system2, int maxLaneJumps,
+                         const std::map<UniverseObjectID, std::set<UniverseObjectID>>& system_lanes)
     {
         // check for simple cases for quick termination
         if (system1 == system2) return true; // system is always connected to itself
@@ -305,19 +305,19 @@ namespace {
         // when a new system is found to be accessible, it is added to the back of the
         // list.  the list is iterated through from front to back to find systems
         // to examine
-        std::vector<int> accessibleSystemsList;
+        std::vector<UniverseObjectID> accessibleSystemsList;
         accessibleSystemsList.reserve(system_lanes.size());
 
         // Map from system_id to the number of starlane jumps away from system1
         // that sytsem is. This indicates the depth of the search, which allows
         // the serch to terminate after searching to the depth of maxLaneJumps
         // without finding system2
-        boost::container::flat_map<int, int> accessibleSystemsMap;
+        boost::container::flat_map<UniverseObjectID, int> accessibleSystemsMap;
         accessibleSystemsMap.reserve(system_lanes.size());
         for (const auto sys : system_lanes | range_keys)
             accessibleSystemsMap.emplace_hint(accessibleSystemsMap.end(), sys, -1);
 
-        static constexpr int mapped_type_max = std::numeric_limits<decltype(accessibleSystemsMap)::mapped_type>::max();
+        static constexpr auto mapped_type_max = std::numeric_limits<decltype(accessibleSystemsMap)::mapped_type>::max();
         maxLaneJumps = std::min(maxLaneJumps, mapped_type_max);
 
         // add starting system to list and set of accessible systems
@@ -352,13 +352,13 @@ namespace {
     /** Removes lanes from passed graph that are angularly too close to
       * each other. */
     void CullAngularlyTooCloseLanes(double max_lane_uvect_dot_product,
-                                    std::map<int, std::set<int>>& system_lanes,
-                                    const std::map<int, std::shared_ptr<const System>>& systems)
+                                    std::map<UniverseObjectID, std::set<UniverseObjectID>>& system_lanes,
+                                    const std::map<UniverseObjectID, std::shared_ptr<const System>>& systems)
     {
         // 2 component vector and vect + magnitude typedefs
         using VectAndMagTypeQQ = std::pair<std::pair<double, double>, double>;
 
-        std::set<std::pair<int, int>> lanesToRemoveSet;  // start and end stars of lanes to be removed in final step...
+        std::set<std::pair<UniverseObjectID, UniverseObjectID>> lanesToRemoveSet;  // start and end stars of lanes to be removed in final step...
 
         // make sure data is consistent
         if (system_lanes.size() != systems.size()) {
@@ -383,7 +383,7 @@ namespace {
             auto cur_sys_id = entry.first;
 
             /** componenets of vectors of lanes of current system, indexed by destination system number */
-            std::map<int, VectAndMagTypeQQ> laneVectsMap;
+            std::map<UniverseObjectID, VectAndMagTypeQQ> laneVectsMap;
 
             // get unit vectors for all lanes of this system
             auto laneSetIter1 = system_lanes[cur_sys_id].begin();
@@ -432,11 +432,7 @@ namespace {
                 while (laneSetIter2 != laneSetIter1) {
                     auto dest2 = *laneSetIter2;
 
-                    std::pair<int, int> lane2;
-                    if (cur_sys_id < dest2)
-                        lane2 = {cur_sys_id, dest2};
-                    else
-                        lane2 = {dest2, cur_sys_id};
+                    const auto lane2 = (cur_sys_id < dest2) ? std::pair{cur_sys_id, dest2} : std::pair{dest2, cur_sys_id};
 
                     // check if this lane has already been added to the
                     // set of lanes to remove
@@ -495,8 +491,8 @@ namespace {
 
     /** Removes lanes from passed graph that are too long. */
     void CullTooLongLanes(double max_lane_length,
-                          std::map<int, std::set<int>>& system_lanes,
-                          const std::map<int, std::shared_ptr<const System>>& systems)
+                          std::map<UniverseObjectID, std::set<UniverseObjectID>>& system_lanes,
+                          const std::map<UniverseObjectID, std::shared_ptr<const System>>& systems)
     {
         DebugLogger() << "CullTooLongLanes max lane length: " << max_lane_length
                       << "  potential lanes: " << IntSetMapSizeCount(system_lanes)
@@ -505,7 +501,7 @@ namespace {
         ScopedTimer timer("CullTooLongLanes", std::chrono::milliseconds{1});
 
         // map, indexed by lane length, of start and end stars of lanes to be removed
-        std::multimap<double, std::pair<int, int>, std::greater<double>> lanes_to_remove;
+        std::multimap<double, std::pair<UniverseObjectID, UniverseObjectID>, std::greater<double>> lanes_to_remove;
 
         // make sure data is consistent
         if (system_lanes.size() != systems.size())
@@ -530,11 +526,7 @@ namespace {
                 total_lanes_count++;
 
                 // convert start and end into ordered pair to represent lane
-                std::pair<int, int> lane;
-                if (cur_sys_id < dest_sys_id)
-                    lane = {cur_sys_id, dest_sys_id};
-                else
-                    lane = {dest_sys_id, cur_sys_id};
+                const auto lane = (cur_sys_id < dest_sys_id) ? std::pair{cur_sys_id, dest_sys_id} : std::pair{dest_sys_id, cur_sys_id};
 
                 // get vector to this lane destination
                 const auto& dest_system = systems.at(dest_sys_id);
@@ -548,7 +540,7 @@ namespace {
                     TraceLogger() << "CullTooLongLanes wants to remove lane of length "
                                   << std::sqrt(lane_length2)
                                   << " between systems with ids: "
-                                  << cur_sys_id << " and " << dest_sys_id;
+                                  << to_string(cur_sys_id) << " and " << to_string(dest_sys_id);
                     lanes_to_remove.emplace(lane_length2, lane);
                 }
             }
@@ -583,13 +575,13 @@ namespace {
                 system_lanes[lane.first].insert(lane.second);
                 system_lanes[lane.second].insert(lane.first);
                 TraceLogger() << "CullTooLongLanes can't remove lane between systems with ids: "
-                              << lane.first << " and " << lane.second
+                              << to_string(lane.first) << " and " << to_string(lane.second)
                               << " because they would then be disconnected (more than "
                               << systems.size() << " jumps apart)";
             } else {
                 removable_lanes++;
                 TraceLogger() << "CullTooLongLanes removing lane between systems with ids: "
-                              << lane.first << " and " << lane.second;
+                              << to_string(lane.first) << " and " << to_string(lane.second);
             }
         }
 
@@ -606,21 +598,18 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length,
     DebugLogger() << "GenerateStarlanes  max jumps b/w sys: " << max_jumps_between_systems
                   << "  max lane length: " << max_starlane_length;
 
-    std::vector<int> triangle_vertices;  // indices of stars that form vertices of a triangle
-
     // array of set to store final, included starlanes for each star
-    std::map<int, std::set<int>> system_lanes;
+    std::map<UniverseObjectID, std::set<UniverseObjectID>> system_lanes;
 
     // array of set to store possible starlanes for each star,
     // as extracted form triangulation
-    std::map<int, std::set<int>> potential_system_lanes;
+    std::map<UniverseObjectID, std::set<UniverseObjectID>> potential_system_lanes;
 
     // get systems
     auto sys_rng = std::as_const(universe.Objects()).all<System>();
-    std::vector<std::shared_ptr<const System>> sys_vec{sys_rng.begin(), sys_rng.end()};
-    std::map<int, std::shared_ptr<const System>> sys_map;
-    std::transform(sys_rng.begin(), sys_rng.end(), std::inserter(sys_map, sys_map.end()),
-                   [](const std::shared_ptr<const System>& p) { return std::pair{p->ID(), p}; });
+    const auto sys_vec = sys_rng | range_to_vec;
+    static constexpr auto to_id_sys = [](const std::shared_ptr<const System>& p) { return std::pair{p->ID(), p}; };
+    const auto sys_map = sys_rng | range_transform(to_id_sys) | range_to<std::map<UniverseObjectID, std::shared_ptr<const System>>>();
 
     // generate lanes
     if (GetGameRules().Get<bool>("RULE_STARLANES_EVERYWHERE")) {
@@ -662,13 +651,13 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length,
             }
 
             // get system ids for ends of lanes from the sys_vec indices
-            int sys1_id = INVALID_OBJECT_ID;
+            auto sys1_id = INVALID_OBJECT_ID;
             if (static_cast<std::size_t>(s1) < sys_vec.size())
                 sys1_id = sys_vec.at(s1)->ID();
-            int sys2_id = INVALID_OBJECT_ID;
+            auto sys2_id = INVALID_OBJECT_ID;
             if (static_cast<std::size_t>(s2) < sys_vec.size())
                 sys2_id = sys_vec.at(s2)->ID();
-            int sys3_id = INVALID_OBJECT_ID;
+            auto sys3_id = INVALID_OBJECT_ID;
             if (static_cast<std::size_t>(s3) < sys_vec.size())
                 sys3_id = sys_vec.at(s3)->ID();
 
@@ -757,7 +746,7 @@ void SetNativePopulationValues(ObjectMap& object_map) {
     }
 }
 
-bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name,
+bool SetEmpireHomeworld(Empire* empire, UniverseObjectID planet_id, std::string species_name,
                         ScriptingContext& context)
 {
     // get home planet and system, check if they exist
@@ -768,14 +757,14 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name,
     if (!home_system)
         return false;
 
-    DebugLogger() << "SetEmpireHomeworld: setting system " << home_system->ID()
-                  << " (planet " <<  home_planet->ID() << ") to be home system for empire " << empire->EmpireID();
+    DebugLogger() << "SetEmpireHomeworld: setting system " << to_string(home_system->ID())
+                  << " (planet " << to_string(home_planet->ID()) << ") to be home system for empire " << to_string(empire->EmpireID());
 
     // get species, check if it exists
     auto species = context.species.GetSpecies(species_name);
     if (!species) {
         ErrorLogger() << "SetEmpireHomeworld: couldn't get species \""
-                      << species_name << "\" to set with homeworld id " << home_planet->ID();
+                      << species_name << "\" to set with homeworld id " << to_string(home_planet->ID());
         return false;
     }
 
@@ -807,7 +796,7 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name,
     return true;
 }
 
-void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data, EmpireManager& empires) {
+void InitEmpires(const std::map<EmpireID, PlayerSetupData>& player_setup_data, EmpireManager& empires) {
     DebugLogger() << "Initializing " << player_setup_data.size() << " empires";
 
     // copy empire colour table, so that individual colours can be removed after they're used
@@ -847,7 +836,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data, Empire
         }
 
         // set generic default empire name
-        std::string empire_name = UserString("EMPIRE") + std::to_string(empire_id);
+        std::string empire_name = UserString("EMPIRE") + to_string(empire_id);
 
         DebugLogger() << "Universe::InitEmpires creating new empire" << " with ID: " << to_string(empire_id)
                       << " for player: " << player_name << " in team: " << psd.starting_team;
