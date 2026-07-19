@@ -1157,7 +1157,7 @@ private:
   * Container objects are Systems, Planets (which contain Buildings),
   * and Fleets (which contain Ships). */
 struct ContainsSimpleMatch {
-    CONSTEXPR_VEC ContainsSimpleMatch(std::vector<UniverseObjectID> subcondition_matches_ids) :
+    CONSTEXPR_VEC explicit ContainsSimpleMatch(std::vector<UniverseObjectID> subcondition_matches_ids) :
         m_subcondition_matches_ids([&subcondition_matches_ids]() {
             // We need a sorted container for efficiently intersecting
             // subcondition_matches with the set of objects contained in some
@@ -1168,7 +1168,11 @@ struct ContainsSimpleMatch {
         }())
     {}
 
-    CONSTEXPR_VEC ContainsSimpleMatch(const ObjectSet& subcondition_matches) :
+    CONSTEXPR_VEC explicit ContainsSimpleMatch(UniverseObjectID subcondition_matches_id) :
+        ContainsSimpleMatch{std::vector{{subcondition_matches_id}}}
+    {}
+
+    CONSTEXPR_VEC explicit ContainsSimpleMatch(const ObjectSet& subcondition_matches) :
         ContainsSimpleMatch([&subcondition_matches]() {
             // We only need ids, not objects.
             std::vector<UniverseObjectID> m;

@@ -55,10 +55,10 @@ public:
     [[nodiscard]] EmpireID GetEmpireID() const noexcept override { return ALL_EMPIRES; }
     [[nodiscard]] int CurrentTurn() const noexcept override { return m_current_turn; }
 
-    [[nodiscard]] int SelectedSystemID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
-    [[nodiscard]] int SelectedPlanetID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
-    [[nodiscard]] int SelectedFleetID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
-    [[nodiscard]] int SelectedShipID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
+    [[nodiscard]] UniverseObjectID SelectedSystemID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
+    [[nodiscard]] UniverseObjectID SelectedPlanetID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
+    [[nodiscard]] UniverseObjectID SelectedFleetID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
+    [[nodiscard]] UniverseObjectID SelectedShipID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
 
     [[nodiscard]] const GalaxySetupData& GetGalaxySetupData() const noexcept override { return m_galaxy_setup_data; }
 

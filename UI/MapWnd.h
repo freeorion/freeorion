@@ -108,10 +108,10 @@ public:
     std::pair<double, double>   UniversePositionFromScreenCoords(GG::Pt screen_coords) const;
 
     /** Returns the id of the currently-selected object or INVALID_OBJECT_ID if no planet is selected */
-    int SelectedSystemID() const;
-    int SelectedPlanetID() const;
-    int SelectedFleetID() const;
-    int SelectedShipID() const;
+    UniverseObjectID SelectedSystemID() const;
+    UniverseObjectID SelectedPlanetID() const;
+    UniverseObjectID SelectedFleetID() const;
+    UniverseObjectID SelectedShipID() const;
 
     void PreRender() override;
     void Render() override;
@@ -139,16 +139,16 @@ public:
     void ShowSystemNames();                                      //!< enables the system name text
     void HideSystemNames();                                      //!< disables the system name text
 
-    mutable boost::signals2::signal<void (int)>    SystemLeftClickedSignal;
-    mutable boost::signals2::signal<void (int)>    SystemRightClickedSignal;
-    mutable boost::signals2::signal<void (int)>    SystemBrowsedSignal;
-    mutable boost::signals2::signal<void (double)> ZoomedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> SystemLeftClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> SystemRightClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> SystemBrowsedSignal;
+    mutable boost::signals2::signal<void (double)>           ZoomedSignal;
 
     void CenterOnMapCoord(double x, double y);                   //!< centers the map on map position (x, y)
-    void CenterOnObject(int id, const ObjectMap& objects);       //!< centers the map on object with id \a id
+    void CenterOnObject(UniverseObjectID id, const ObjectMap& objects);       //!< centers the map on object with id \a id
     void CenterOnObject(const UniverseObjectCXBase& obj) { CenterOnMapCoord(obj.X(), obj.Y()); }
 
-    void ShowPlanet(int planet_id);                       //!< brings up encyclopedia panel and displays info about the planet
+    void ShowPlanet(UniverseObjectID planet_id);                       //!< brings up encyclopedia panel and displays info about the planet
     void ShowCombatLog(int log_id);                       //!< brings up encyclopedia panel and displays info about the combat
     void ShowTech(std::string tech_name);                 //!< brings up the research screen and centers the tech tree on \a tech_name
     void ShowPolicy(std::string policy_name);             //!< brings up ??? and displays info about the policy with name \a policy_name
@@ -171,31 +171,31 @@ public:
     void ShowMeterTypeArticle(MeterType meter_type);     //!< brings up encyclopedia panel and displays info about the MeterType @a meter_type
     void ShowEncyclopediaEntry(std::string str);         //!< brings up encyclopedia panel and displays info about the specified string \a str
 
-    void SelectSystem(int systemID, ScriptingContext& context);         //!< selects systems on map, sidepanel, and production screen.  catches signals from these when the user changes the selected system
+    void SelectSystem(UniverseObjectID systemID, ScriptingContext& context);         //!< selects systems on map, sidepanel, and production screen.  catches signals from these when the user changes the selected system
     void SelectSystem(const System* system, ScriptingContext& context); //!< selects systems on map, sidepanel, and production screen.  catches signals from these when the user changes the selected system
     void ReselectLastSystem(ScriptingContext& context);         //!< re-selects the most recently selected system, if a valid one exists
-    void SelectPlanet(int planetID, const ScriptingContext& context); //!< programatically selects planets on sidepanels.  catches signals from production wnd or sidepanel for when the user changes the selected planet
+    void SelectPlanet(UniverseObjectID planetID, const ScriptingContext& context); //!< programatically selects planets on sidepanels.  catches signals from production wnd or sidepanel for when the user changes the selected planet
 
     /** Programatically selects fleets. */
-    void SelectFleet(int fleetID, const ScriptingContext& context, int client_empire_id);   //!< programatically selects fleets by ID
+    void SelectFleet(UniverseObjectID fleetID, const ScriptingContext& context, EmpireID client_empire_id);   //!< programatically selects fleets by ID
     //void ReselectLastFleet();                   //!< re-selects the most recent selected fleet, if a valid one exists
 
-    void RemoveFleet(int fleet_id);             //!< removes specified fleet.
-    void SetFleetMovementLine(int fleet_id);    //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.
+    void RemoveFleet(UniverseObjectID fleet_id);             //!< removes specified fleet.
+    void SetFleetMovementLine(UniverseObjectID fleet_id);    //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.
 
     /* creates specially-coloured projected fleet movement line for specified
      * fleet following the specified route.  Move line originates from the
      * fleet's button location. */
-    void SetProjectedFleetMovementLine(int fleet_id, const std::vector<int>& travel_route);
+    void SetProjectedFleetMovementLine(UniverseObjectID fleet_id, const std::vector<UniverseObjectID>& travel_route);
     /* creates specially-coloured projected fleet movement lines for specified
      * fleets following the specified route.  Move lines originates from the
      * fleets' button locations. */
-    void SetProjectedFleetMovementLines(const std::vector<int>& fleet_ids, const std::vector<int>& travel_route);
+    void SetProjectedFleetMovementLines(const std::vector<UniverseObjectID>& fleet_ids, const std::vector<UniverseObjectID>& travel_route);
 
     void ClearProjectedFleetMovementLines();     //!< removes all projected fleet movement lines
 
     /** Forget object with \p id.  Used for sensor ghosts. */
-    void ForgetObject(int id);
+    void ForgetObject(UniverseObjectID id);
 
     void ResetEmpireShown();                     //!< auto-resets the shown empire in any contained Wnds, to the current client's empire (if any)
 
@@ -204,9 +204,9 @@ public:
     void Sanitize();                             //!< sanitizes the MapWnd after a game
     void ResetTimeoutClock(int timeout_seconds); //!< start count down \a timeout_seconds seconds
 
-    void SetFleetExploring(const int fleet_id, ScriptingContext& context, EmpireID empire_id);
-    void StopFleetExploring(const int fleet_id, ScriptingContext& context, EmpireID empire_id);
-    bool IsFleetExploring(const int fleet_id) const;
+    void SetFleetExploring(UniverseObjectID fleet_id, ScriptingContext& context, EmpireID empire_id);
+    void StopFleetExploring(UniverseObjectID fleet_id, ScriptingContext& context, EmpireID empire_id);
+    bool IsFleetExploring(UniverseObjectID fleet_id) const;
     void DispatchFleetsExploring(ScriptingContext& context, EmpireID empire_id); //!< called at each turn begin and when a fleet start/stop exploring to redispatch everyone.
 
 
@@ -241,7 +241,7 @@ private:
         };
         MovementLineData() = default;
         MovementLineData(const std::vector<MovePathNode>& path_,
-                         const std::map<std::pair<int, int>, LaneEndpoints>& lane_end_points_map,
+                         const std::map<std::pair<UniverseObjectID, UniverseObjectID>, LaneEndpoints>& lane_end_points_map,
                          GG::Clr colour_ = GG::CLR_WHITE, EmpireID empireID = ALL_EMPIRES);
 
         std::vector<MovePathNode> path;                  // raw path data from which line rendering is determined
@@ -287,7 +287,7 @@ private:
 
     /** Return fleets ids of all fleet buttons containing or overlapping the
         fleet button for \p fleet_id. */
-    std::vector<int> FleetIDsOfFleetButtonsOverlapping(int fleet_id,
+    std::vector<int> FleetIDsOfFleetButtonsOverlapping(UniverseObjectID fleet_id,
                                                        const ScriptingContext& context,
                                                        EmpireID empire_id) const;
     /** Return fleets ids of all fleet buttons containing or overlapping \p fleet_btn. */
@@ -348,28 +348,28 @@ private:
 
     void CorrectMapPosition(GG::Pt& move_to_pt);     //!< constrains \a move_to_pt so that if the map is repositioned to that location, it will not be problematically positioned, so that galaxy contents remain visible
 
-    void FieldRightClicked(int field_id);
+    void FieldRightClicked(UniverseObjectID field_id);
 
-    void SystemDoubleClicked(int system_id);
-    void SystemLeftClicked(int system_id);
-    void SystemRightClicked(int system_id, GG::Flags< GG::ModKey > mod_keys);
-    void MouseEnteringSystem(int system_id, GG::Flags< GG::ModKey > mod_keys);
+    void SystemDoubleClicked(UniverseObjectID system_id);
+    void SystemLeftClicked(UniverseObjectID system_id);
+    void SystemRightClicked(UniverseObjectID system_id, GG::Flags<GG::ModKey> mod_keys);
+    void MouseEnteringSystem(UniverseObjectID system_id, GG::Flags<GG::ModKey> mod_keys);
     void MouseLeavingSystem(int system_id);
 
-    void PlanetDoubleClicked(int planet_id);
-    void PlanetRightClicked(int planet_id);
-    void BuildingRightClicked(int building_id);
+    void PlanetDoubleClicked(UniverseObjectID planet_id);
+    void PlanetRightClicked(UniverseObjectID planet_id);
+    void BuildingRightClicked(UniverseObjectID building_id);
 
     void ReplotProjectedFleetMovement(bool append); //!< Find any projected movement plots and replots them with the current append state
-    void PlotFleetMovement(int system_id, bool execute_move, bool append);   //!< issues fleet move orders to appropriate fleets in active FleetWnd
+    void PlotFleetMovement(UniverseObjectID system_id, bool execute_move, bool append);   //!< issues fleet move orders to appropriate fleets in active FleetWnd
 
     void FleetButtonLeftClicked(const FleetButton* fleet_btn);
     void FleetButtonRightClicked(const FleetButton* fleet_btn);
-    void FleetRightClicked(int fleet_id);
-    void FleetsRightClicked(const std::vector<int>& fleet_ids);
+    void FleetRightClicked(UniverseObjectID fleet_id);
+    void FleetsRightClicked(const std::vector<UniverseObjectID>& fleet_ids);
 
-    void ShipRightClicked(int fleet_id);
-    void ShipsRightClicked(const std::vector<int>& fleet_ids);
+    void ShipRightClicked(UniverseObjectID fleet_id);
+    void ShipsRightClicked(const std::vector<UniverseObjectID>& fleet_ids);
 
     void UniverseObjectDeleted(const std::shared_ptr<const UniverseObject>& obj);
 
@@ -454,12 +454,12 @@ private:
     void SelectedFleetsChanged();
     void SelectedShipsChanged();
 
-    std::set<int>                               m_selected_fleet_ids;
-    std::set<int>                               m_selected_ship_ids;
+    std::set<UniverseObjectID>                  m_selected_fleet_ids;
+    std::set<UniverseObjectID>                  m_selected_ship_ids;
 
     double                                      m_zoom_steps_in = 1.0;      //!< number of zoom steps in.  each 1.0 step increases display scaling by the same zoom step factor
     std::shared_ptr<SidePanel>                  m_side_panel;               //!< planet view panel on the side of the main map
-    std::unordered_map<int, std::shared_ptr<SystemIcon>> m_system_icons;    //!< system icons in the main map, indexed by system id
+    std::unordered_map<UniverseObjectID, std::shared_ptr<SystemIcon>> m_system_icons;    //!< system icons in the main map, indexed by system id
     std::vector<std::shared_ptr<FieldIcon>>     m_field_icons;              //!< field icons in the main map, sorted by field size
     std::shared_ptr<SitRepPanel>                m_sitrep_panel;             //!< sitrep panel
     std::shared_ptr<ResearchWnd>                m_research_wnd;             //!< research screen
@@ -473,49 +473,44 @@ private:
 
     std::vector<std::weak_ptr<GG::Wnd>>         m_wnd_stack;                //!< stack of open windows, to allow closing them with escape in a LIFO order
 
-    std::map<std::pair<int, int>, LaneEndpoints>m_starlane_endpoints;       //!< map from starlane start and end system IDs (stored in pair in increasing order) to the universe coordiates at which to draw the starlane ends
+    std::map<std::pair<UniverseObjectID, UniverseObjectID>, LaneEndpoints> m_starlane_endpoints; //!< map from starlane start and end system IDs (stored in pair in increasing order) to the universe coordiates at which to draw the starlane ends
 
-    /** Icons representing fleets at a system that are not departing, indexed
-        by system. */
-    std::unordered_map<int, std::unordered_set<std::shared_ptr<FleetButton>>>
+    /** Icons representing fleets at a system that are not departing, indexed by system. */
+    std::unordered_map<UniverseObjectID, std::unordered_set<std::shared_ptr<FleetButton>>>
         m_stationary_fleet_buttons;
 
-    /** Icons representing fleets at a system that are departing, indexed by
-        system. */
-    std::unordered_map<int, std::unordered_set<std::shared_ptr<FleetButton>>>
+    /** Icons representing fleets at a system that are departing, indexed by system. */
+    std::unordered_map<UniverseObjectID, std::unordered_set<std::shared_ptr<FleetButton>>>
         m_departing_fleet_buttons;
 
-    /** Sets of fleet ids of fleets moving on a starlane, keyed by starlane end
-        system ids. */
-    std::unordered_map<std::pair<int, int>,
-                       std::vector<int>,
-                       boost::hash<std::pair<int, int>>>
+    /** Sets of fleet ids of fleets moving on a starlane, keyed by starlane end system ids. */
+    std::unordered_map<std::pair<UniverseObjectID, UniverseObjectID>,
+                       std::vector<UniverseObjectID>,
+                       boost::hash<std::pair<UniverseObjectID, UniverseObjectID>>>
         m_moving_fleets;
 
-    /** Icons representing fleets moving on a starlane, keyed by starlane end
-        system ids. */
-    std::unordered_map<std::pair<int, int>,
+    /** Icons representing fleets moving on a starlane, keyed by starlane end system ids. */
+    std::unordered_map<std::pair<UniverseObjectID, UniverseObjectID>,
                        std::unordered_set<std::shared_ptr<FleetButton>>,
-                       boost::hash<std::pair<int, int>>>
+                       boost::hash<std::pair<UniverseObjectID, UniverseObjectID>>>
         m_moving_fleet_buttons;
 
-    /** Icons representing fleets moving and not on a starlane, indexed by
-        (x,y) location. */
+    /** Icons representing fleets moving and not on a starlane, indexed by (x,y) location. */
     std::unordered_map<std::pair<double, double>,
                        std::unordered_set<std::shared_ptr<FleetButton>>,
                        boost::hash<std::pair<double, double>>>
         m_offroad_fleet_buttons;
 
-    std::unordered_map<int, std::shared_ptr<FleetButton>>
+    std::unordered_map<UniverseObjectID, std::shared_ptr<FleetButton>>
         m_fleet_buttons;                        //!< fleet icons, index by fleet
 
-    std::unordered_map<int, boost::signals2::scoped_connection>
+    std::unordered_map<UniverseObjectID, boost::signals2::scoped_connection>
         m_fleet_state_change_signals;
-    std::unordered_map<int, std::vector<boost::signals2::scoped_connection>>
+    std::unordered_map<UniverseObjectID, std::vector<boost::signals2::scoped_connection>>
         m_system_fleet_insert_remove_signals;
 
-    std::map<int, MovementLineData> m_fleet_lines;                  //!< lines used for moving fleets in the main map
-    std::map<int, MovementLineData> m_projected_fleet_lines;        //!< lines that show the projected path of the active fleet in the FleetWnd
+    std::map<UniverseObjectID, MovementLineData> m_fleet_lines;                  //!< lines used for moving fleets in the main map
+    std::map<UniverseObjectID, MovementLineData> m_projected_fleet_lines;        //!< lines that show the projected path of the active fleet in the FleetWnd
 
     std::map<std::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer> m_star_core_quad_vertices;
     std::map<std::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer> m_star_halo_quad_vertices;
@@ -627,7 +622,7 @@ public:
 
     void CloseClicked() override;
 
-    void    Close();
+    void Close();
 };
 
 

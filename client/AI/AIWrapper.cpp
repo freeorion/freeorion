@@ -155,7 +155,7 @@ namespace {
             // have a condition that causes them to only act on planets the
             // player owns (so as to not improve enemy planets if a player
             // reseraches a tech that should only benefit him/herself).
-            const auto empire_id = AIClientApp::GetApp()->EmpireID();
+            const auto empire_id = AIClientApp::GetApp()->GetEmpireID();
 
             // get all planets the player knows about that aren't yet colonized
             // (aren't owned by anyone).  Add this the current player's
