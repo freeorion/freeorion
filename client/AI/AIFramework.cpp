@@ -107,6 +107,9 @@ auto PythonAI::InitImports() -> bool
     return PyImport_AppendInittab("freeOrionAIInterface", std::addressof(PyInit_freeOrionAIInterface)) != -1;
 }
 
+auto PythonAI::InitModules() -> bool
+{ return true; }
+
 void PythonAI::Start()
 {
     DebugLogger() << "Initializing AI Python modules";
