@@ -71,7 +71,7 @@ option(BUILD_PARSERS "Build parsers" ON)
 option(ENABLE_CPPCHECK "Enable cppcheck check"  OFF)
 
 set(BUILD_CLIENT_GODOT "OFF" CACHE STRING "Build Godot client (experimental)")
-set_property(CACHE BUILD_CLIENT_GODOT PROPERTY STRINGS "OFF" "3")
+set_property(CACHE BUILD_CLIENT_GODOT PROPERTY STRINGS "OFF" "3" "4")
 
 set(GODOT_CPP_ROOT "" CACHE PATH "Path to Godot CPP libraries (empty to build internally)")
 
@@ -727,9 +727,18 @@ if(BUILD_CLIENT_GG)
     target_dependent_data_symlink_to_build(freeorion ${PROJECT_SOURCE_DIR}/default)
 endif()
 
-if(BUILD_CLIENT_GODOT EQUAL "3")
+if(NOT BUILD_CLIENT_GODOT EQUAL "OFF")
     add_library(freeoriongodot SHARED "")
 
+    target_link_libraries(freeoriongodot
+        freeorioncommon
+        freeorionparse
+        ${ICONV_LIBRARY}
+    )
+endif()
+
+if(BUILD_CLIENT_GODOT EQUAL "3")
+    set(GODOT_PROJECT_DIR "godot")
     if(CMAKE_BUILD_TYPE MATCHES Debug)
         set(GODOT_CPP_BUILD_TYPE Debug)
     else()
@@ -797,27 +806,17 @@ if(BUILD_CLIENT_GODOT EQUAL "3")
         set(SYSTEM_NAME ${SYSTEM_NAME}.${ANDROID_ABI})
     endif()
 
-    if(CMAKE_VERSION VERSION_GREATER "3.13")
-        target_link_directories(freeoriongodot
-            PRIVATE
-                ${GODOT_CPP_ROOT_BUILT}/bin/
-        )
-        target_link_libraries(freeoriongodot
-            godot-cpp.${SYSTEM_NAME}.${BUILD_TYPE}$<$<NOT:$<PLATFORM_ID:Android>>:.${BITS}>
-        )
-    else()
-        target_link_libraries(freeoriongodot
-            ${GODOT_CPP_ROOT_BUILT}/bin/libgodot-cpp.${SYSTEM_NAME}.${BUILD_TYPE}$<$<NOT:$<PLATFORM_ID:Android>>:.${BITS}>.a
-        )
-    endif()
-
+    target_link_directories(freeoriongodot
+        PRIVATE
+            ${GODOT_CPP_ROOT_BUILT}/bin/
+    )
     target_link_libraries(freeoriongodot
-        freeorioncommon
-        freeorionparse
-        ${ICONV_LIBRARY}
+        godot-cpp.${SYSTEM_NAME}.${BUILD_TYPE}$<$<NOT:$<PLATFORM_ID:Android>>:.${BITS}>
     )
 
     target_dependencies_copy_to_build(freeoriongodot)
+elseif(BUILD_CLIENT_GODOT EQUAL "4")
+    set(GODOT_PROJECT_DIR "godot4")
 endif()
 
 if(WIN32 AND BUILD_CLIENT_GG)
@@ -892,51 +891,53 @@ if(APPLE AND BUILD_CLIENT_GG)
     endif()
 endif()
 
-if(BUILD_CLIENT_GODOT EQUAL "3")
+if(NOT BUILD_CLIENT_GODOT EQUAL "OFF")
     add_custom_command(TARGET freeoriongodot POST_BUILD
         COMMAND
-           ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}
+           ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/${GODOT_PROJECT_DIR}/assets
         COMMAND
-           ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeoriongodot>" "${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}/$<TARGET_FILE_NAME:freeoriongodot>"
+           ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/${GODOT_PROJECT_DIR}/bin/${SYSTEM_NAME}.${BITS}
+        COMMAND
+           ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeoriongodot>" "${CMAKE_SOURCE_DIR}/${GODOT_PROJECT_DIR}/bin/${SYSTEM_NAME}.${BITS}/$<TARGET_FILE_NAME:freeoriongodot>"
         COMMAND
             ${CMAKE_COMMAND}
             -DMODE=DATA_LINK
-            "-DDESTINATION=${CMAKE_SOURCE_DIR}/godot/assets/"
+            "-DDESTINATION=${CMAKE_SOURCE_DIR}/${GODOT_PROJECT_DIR}/assets/"
             "-DSOURCE_PATH=${PROJECT_SOURCE_DIR}/default/data/art"
             -P "${PROJECT_SOURCE_DIR}/cmake/TargetDependencies.cmake"
         COMMAND
             ${CMAKE_COMMAND}
             -DMODE=DATA_LINK
-            "-DDESTINATION=${CMAKE_SOURCE_DIR}/godot/assets/"
+            "-DDESTINATION=${CMAKE_SOURCE_DIR}/${GODOT_PROJECT_DIR}/assets/"
             "-DSOURCE_PATH=${PROJECT_SOURCE_DIR}/default/data/fonts"
             -P "${PROJECT_SOURCE_DIR}/cmake/TargetDependencies.cmake"
         COMMAND
             ${CMAKE_COMMAND}
             -DMODE=DATA_LINK
-            "-DDESTINATION=${CMAKE_SOURCE_DIR}/godot/assets/"
+            "-DDESTINATION=${CMAKE_SOURCE_DIR}/${GODOT_PROJECT_DIR}/assets/"
             "-DSOURCE_PATH=${PROJECT_SOURCE_DIR}/default/data/sound"
             -P "${PROJECT_SOURCE_DIR}/cmake/TargetDependencies.cmake"
     )
     if(ANDROID)
         add_custom_command(TARGET freeoriongodot POST_BUILD
             COMMAND
-                ${CMAKE_COMMAND} -E copy_if_different "${ICONV_LIBRARY}" "${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}/libiconv.so"
+                ${CMAKE_COMMAND} -E copy_if_different "${ICONV_LIBRARY}" "${CMAKE_SOURCE_DIR}/${GODOT_PROJECT_DIR}/bin/${SYSTEM_NAME}.${BITS}/libiconv.so"
             COMMAND
-                ${CMAKE_STRIP} -g -S -d --strip-debug "${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}/libiconv.so"
+                ${CMAKE_STRIP} -g -S -d --strip-debug "${CMAKE_SOURCE_DIR}/${GODOT_PROJECT_DIR}/bin/${SYSTEM_NAME}.${BITS}/libiconv.so"
             COMMAND
-                ${CMAKE_STRIP} -g -S -d --strip-debug "${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}/$<TARGET_FILE_NAME:freeoriongodot>"
+                ${CMAKE_STRIP} -g -S -d --strip-debug "${CMAKE_SOURCE_DIR}/${GODOT_PROJECT_DIR}/bin/${SYSTEM_NAME}.${BITS}/$<TARGET_FILE_NAME:freeoriongodot>"
             COMMAND
-                ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/godot/default/
+                ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/${GODOT_PROJECT_DIR}/default/
             COMMAND
                 ${CMAKE_COMMAND}
                 -DMODE=DATA_LINK
-                "-DDESTINATION=${CMAKE_SOURCE_DIR}/godot/default/"
+                "-DDESTINATION=${CMAKE_SOURCE_DIR}/${GODOT_PROJECT_DIR}/default/"
                 "-DSOURCE_PATH=${PROJECT_SOURCE_DIR}/default/scripting"
                 -P "${PROJECT_SOURCE_DIR}/cmake/TargetDependencies.cmake"
             COMMAND
                 ${CMAKE_COMMAND}
                 -DMODE=DATA_LINK
-                "-DDESTINATION=${CMAKE_SOURCE_DIR}/godot/default/"
+                "-DDESTINATION=${CMAKE_SOURCE_DIR}/${GODOT_PROJECT_DIR}/default/"
                 "-DSOURCE_PATH=${PROJECT_SOURCE_DIR}/default/stringtables"
                 -P "${PROJECT_SOURCE_DIR}/cmake/TargetDependencies.cmake"
         )
@@ -947,7 +948,7 @@ endif()
 ## Recurse into sources.
 ##
 
-if(BUILD_AI OR BUILD_CLIENT_GG OR BUILD_CLIENT_GODOT EQUAL "3")
+if(BUILD_AI OR BUILD_CLIENT_GG OR NOT BUILD_CLIENT_GODOT EQUAL "OFF")
     add_subdirectory(client)
 endif()
 add_subdirectory(combat)
