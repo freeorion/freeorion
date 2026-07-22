@@ -771,7 +771,7 @@ std::string ClientUI::FormatTimestamp(boost::posix_time::ptime timestamp) {
     return "";
 }
 
-bool ClientUI::ZoomToObject(const std::string& name, ScriptingContext& context, int client_empire_id) {
+bool ClientUI::ZoomToObject(const std::string& name, ScriptingContext& context, EmpireID client_empire_id) {
     // try first by finding the object by name TODO: use getRaw or find or somesuch
     for (auto obj : context.ContextObjects().allRaw<UniverseObject>())
         if (boost::iequals(obj->Name(), name))
@@ -780,10 +780,10 @@ bool ClientUI::ZoomToObject(const std::string& name, ScriptingContext& context, 
     // try again by converting string to an ID
     try {
 #if defined(__cpp_lib_to_chars)
-        int id = INVALID_OBJECT_ID;
-        std::from_chars(name.data(), name.data() + name.size(), id);
+        UniverseObjectID id = INVALID_OBJECT_ID;
+        std::from_chars(name.data(), name.data() + name.size(), UnderRef(id));
 #else
-        int id = boost::lexical_cast<int>(name);
+        const UniverseObjectID id{boost::lexical_cast<int>(name)};
 #endif
         return ZoomToObject(id, context, client_empire_id);
     } catch (...) {
@@ -792,7 +792,7 @@ bool ClientUI::ZoomToObject(const std::string& name, ScriptingContext& context, 
     return false;
 }
 
-bool ClientUI::ZoomToObject(int id, ScriptingContext& context, int client_empire_id) {
+bool ClientUI::ZoomToObject(UniverseObjectID id, ScriptingContext& context, EmpireID client_empire_id) {
     return ZoomToSystem(id, context) ||
            ZoomToPlanet(id, context) ||
            ZoomToBuilding(id, context) ||
@@ -801,7 +801,7 @@ bool ClientUI::ZoomToObject(int id, ScriptingContext& context, int client_empire
            ZoomToField(id, context.ContextObjects());
 }
 
-bool ClientUI::ZoomToPlanet(int id, ScriptingContext& context) {
+bool ClientUI::ZoomToPlanet(UniverseObjectID id, ScriptingContext& context) {
     if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER)) {
         if (auto planet = std::as_const(context).ContextObjects().getRaw<Planet>(id)) {
             mapwnd->CenterOnMapCoord(planet->X(), planet->Y());
@@ -813,7 +813,7 @@ bool ClientUI::ZoomToPlanet(int id, ScriptingContext& context) {
     return false;
 }
 
-bool ClientUI::ZoomToPlanetPedia(int id, const ObjectMap& objects) {
+bool ClientUI::ZoomToPlanetPedia(UniverseObjectID id, const ObjectMap& objects) {
     if (objects.get<Planet>(id)) {
         if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER)) {
             mapwnd->ShowPlanet(id);
@@ -823,7 +823,7 @@ bool ClientUI::ZoomToPlanetPedia(int id, const ObjectMap& objects) {
     return false;
 }
 
-bool ClientUI::ZoomToSystem(int id, ScriptingContext& context) {
+bool ClientUI::ZoomToSystem(UniverseObjectID id, ScriptingContext& context) {
     const auto* system = std::as_const(context).ContextObjects().getRaw<System>(id);
     return system && ZoomToSystem(*system, context);
 }
@@ -838,7 +838,7 @@ bool ClientUI::ZoomToSystem(const System& system, ScriptingContext& context) {
     return false;
 }
 
-bool ClientUI::ZoomToFleet(int id, const ScriptingContext& context, int client_empire_id) {
+bool ClientUI::ZoomToFleet(UniverseObjectID id, const ScriptingContext& context, EmpireID client_empire_id) {
     auto fleet = context.ContextObjects().get<Fleet>(id);
     if (!fleet) return false;
 
@@ -851,13 +851,13 @@ bool ClientUI::ZoomToFleet(int id, const ScriptingContext& context, int client_e
     return true;
 }
 
-bool ClientUI::ZoomToShip(int id, const ScriptingContext& context, int client_empire_id) {
+bool ClientUI::ZoomToShip(UniverseObjectID id, const ScriptingContext& context, EmpireID client_empire_id) {
     if (auto ship = context.ContextObjects().get<Ship>(id))
         return ZoomToFleet(ship->FleetID(), context, client_empire_id);
     return false;
 }
 
-bool ClientUI::ZoomToBuilding(int id, ScriptingContext& context) {
+bool ClientUI::ZoomToBuilding(UniverseObjectID id, ScriptingContext& context) {
     if (auto building = std::as_const(context).ContextObjects().get<Building>(id)) {
         ZoomToBuildingType(building->BuildingTypeName());
         return ZoomToPlanet(building->PlanetID(), context);
@@ -865,7 +865,7 @@ bool ClientUI::ZoomToBuilding(int id, ScriptingContext& context) {
     return false;
 }
 
-bool ClientUI::ZoomToField(int id, const ObjectMap& objects) {
+bool ClientUI::ZoomToField(UniverseObjectID id, const ObjectMap& objects) {
     if (auto field = objects.get<Field>(id))
         if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER))
             mapwnd->CenterOnObject(*field);
@@ -1025,7 +1025,7 @@ bool ClientUI::ZoomToEncyclopediaEntry(std::string str) {
     return true;
 }
 
-void ClientUI::DumpObject(int object_id) {
+void ClientUI::DumpObject(UniverseObjectID object_id) {
     if (auto msgwnd = GetMessageWnd())
         if (auto obj = m_app.GetContext().ContextObjects().get(object_id))
             msgwnd->HandleLogMessage(obj->Dump());
