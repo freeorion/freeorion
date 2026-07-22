@@ -166,30 +166,30 @@ namespace {
 
     template <typename C>
     auto ViewMapToStringMap(const std::map<std::string_view, int, C>& in) -> std::map<std::string, int>
-    { return in | range_transform(to_str_int) | range_to<std::map<std::string, int>>(); }
+    { return in | range_transform(to_str_int) | range_to_map; }
 
     auto ViewVecToStringMap(const std::vector<std::pair<std::string_view, int>>& in) -> std::map<std::string, int>
-    { return in | range_transform(to_str_int) | range_to<std::map<std::string, int>>(); }
+    { return in | range_transform(to_str_int) | range_to_map; }
 
     constexpr auto to_int_value = [](auto in) noexcept -> int { return Value(in); };
 
     constexpr auto to_int_set_float = [](auto&& in) -> std::pair<std::set<int>, float>
-    { return {in.first | range_transform(to_int_value) | range_to<std::set<int>>(), in.second}; };
+    { return {in.first | range_transform(to_int_value) | range_to_set, in.second}; };
 
     auto MapFlatSetFloatToMapSetFloat(const auto& in) -> std::map<std::set<int>, float>
-    { return in | range_transform(to_int_set_float) | range_to<std::map<std::set<int>, float>>(); }
+    { return in | range_transform(to_int_set_float) | range_to_map; }
 
     template <typename T, typename AoC>
     std::vector<T> ToVec(const boost::container::flat_set<T, AoC>& in)
     { return std::vector<T>(in.begin(), in.end()); }
 
     auto ToIntSet(const std::set<UniverseObjectID>& in) noexcept
-    { return in | range_transform(to_int_value) | range_to<std::set<int>>(); }
+    { return in | range_transform(to_int_value) | range_to_set; }
 
     constexpr auto to_int_set = [](auto in) noexcept -> std::set<int> { return ToIntSet(in); };
 
     auto ToIntSetSet(const std::set<std::set<UniverseObjectID>>& in) noexcept
-    { return in | range_transform(to_int_set) | range_to<std::set<std::set<int>>>(); }
+    { return in | range_transform(to_int_set) | range_to_set; }
 }
 
 namespace FreeOrionPython {

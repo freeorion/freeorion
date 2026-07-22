@@ -65,7 +65,7 @@ namespace {
 
                 preview.main_player_name = human_player.name;
 
-                auto empire_it = empire_save_game_data.find(human_player.empire_id);
+                auto empire_it = empire_save_game_data.find(Value(human_player.empire_id));
                 if (empire_it != empire_save_game_data.end()) {
                     preview.main_player_empire_name = empire_it->second.empire_name;
                     preview.main_player_empire_colour = empire_it->second.color;

@@ -271,7 +271,7 @@ FO_COMMON_API Message TurnProgressMessage(Message::TurnProgressPhase phase_id);
 
 /** creates a PLAYER_STATUS message. */
 FO_COMMON_API Message PlayerStatusMessage(Message::PlayerStatus player_status,
-                                          int about_empire_id);
+                                          EmpireID about_empire_id);
 
 /** creates a TURN_UPDATE message. */
 FO_COMMON_API Message TurnUpdateMessage(EmpireID empire_id, int current_turn,
@@ -410,7 +410,7 @@ FO_COMMON_API void ExtractServerPlayerChatMessageData(const Message& msg,
                                                       int& sender, boost::posix_time::ptime& timestamp,
                                                       std::string& data, bool& pm);
 
-FO_COMMON_API void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, int& empire_id,
+FO_COMMON_API void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, EmpireID& empire_id,
                                                int& current_turn, EmpireManager& empires, Universe& universe,
                                                SpeciesManager& species, CombatLogManager& combat_logs,
                                                SupplyManager& supply,
@@ -419,7 +419,7 @@ FO_COMMON_API void ExtractGameStartMessageData(const Message& msg, bool& single_
                                                SaveGameUIData& ui_data, bool& save_state_string_available,
                                                std::string& save_state_string, GalaxySetupData& galaxy_setup_data);
 
-FO_COMMON_API void ExtractGameStartMessageData(std::string text, bool& single_player_game, int& empire_id,
+FO_COMMON_API void ExtractGameStartMessageData(std::string text, bool& single_player_game, EmpireID& empire_id,
                                                int& current_turn, EmpireManager& empires, Universe& universe,
                                                SpeciesManager& species, CombatLogManager& combat_logs,
                                                SupplyManager& supply,

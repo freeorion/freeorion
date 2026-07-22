@@ -59,10 +59,10 @@ namespace {
     DeclareThreadSafeLogger(effects);
     DeclareThreadSafeLogger(combat);
 
-    //If there's only one other empire, return their ID:
-    int EnemyId(EmpireID empire_id, const std::set<int> &empire_ids) {
+    // If there's only one other empire, return their ID:
+    EmpireID EnemyId(EmpireID empire_id, const std::set<EmpireID> &empire_ids) {
         if (empire_ids.size() == 2) {
-            for (int enemy_id : empire_ids) {
+            for (auto enemy_id : empire_ids) {
                 if (enemy_id != empire_id)
                     return enemy_id;
             }
@@ -321,7 +321,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
         DebugLogger() << "Adding Process for setup data: name: " << ai_psd.player_name
                       << " player id: " << ai_psd.player_id
                       << " empire name:" << ai_psd.empire_name
-                      << " save empire id: " << ai_psd.save_game_empire_id;
+                      << " save empire id: " << to_string(ai_psd.save_game_empire_id);
 
         m_ai_client_processes.emplace(ai_psd, Process(m_io_context, AI_CLIENT_EXE, args));
     }
@@ -677,10 +677,10 @@ namespace {
     }
 
     void UpdateResourcePools(ScriptingContext& context,
-                             const std::map<int, std::vector<std::tuple<std::string_view, double, int>>>& tech_costs_times,
-                             const std::map<int, std::vector<std::pair<int, double>>>& annex_costs,
-                             const std::map<int, std::vector<std::pair<std::string_view, double>>>& policy_costs,
-                             const std::map<int, std::vector<std::tuple<std::string_view, int, float, int>>>& prod_costs)
+                             const std::map<EmpireID, std::vector<std::tuple<std::string_view, double, int>>>& tech_costs_times,
+                             const std::map<EmpireID, std::vector<std::pair<UniverseObjectID, double>>>& annex_costs,
+                             const std::map<EmpireID, std::vector<std::pair<std::string_view, double>>>& policy_costs,
+                             const std::map<EmpireID, std::vector<std::tuple<std::string_view, int, float, int>>>& prod_costs)
     {
         const unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
         boost::asio::thread_pool thread_pool(num_threads);
@@ -739,10 +739,10 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     GetGameRules().SetFromStrings(m_galaxy_setup_data.GetGameRules());
 
     // validate some connection info / determine which players need empires created
-    std::map<int, PlayerSetupData> active_empire_id_setup_data;
+    std::map<EmpireID, PlayerSetupData> active_empire_id_setup_data;
     int next_empire_id = 1;
     for (const auto& psd : player_setup_data_in | range_filter(Networking::is_ai_or_human) | range_filter(non_empty_name))
-        active_empire_id_setup_data.emplace(next_empire_id++, psd);
+        active_empire_id_setup_data.emplace(EmpireID{next_empire_id++}, psd);
 
     if (active_empire_id_setup_data.empty()) {
         ErrorLogger() << "ServerApp::NewGameInitConcurrentWithJoiners found no active players!";
@@ -1179,7 +1179,7 @@ namespace {
             player_id_to_save_game_data_index.push_back({setup_data_player_id, index});
         } else {
             ErrorLogger() << "ServerApp::LoadMPGameInit couldn't find save game data for "
-                          << "human player with assigned empire id: " << psd.save_game_empire_id;
+                          << "human player with assigned empire id: " << to_string(psd.save_game_empire_id);
         }
     }
 
@@ -1230,7 +1230,7 @@ namespace {
 
         DebugLogger() << "ServerApp::LoadMPGameInit matched player named " << psd.player_name
                       << " to setup data player id " << player_id
-                      << " with setup data empire id " << psd.save_game_empire_id;
+                      << " with setup data empire id " << to_string(psd.save_game_empire_id);
 
         // determine and store save game data index for this player
         int index = VectorIndexForPlayerSaveGameDataForEmpireID(player_save_game_data, psd.save_game_empire_id);
@@ -1238,7 +1238,7 @@ namespace {
             player_id_to_save_game_data_index.push_back({player_id, index});
         } else {
             ErrorLogger() << "ServerApp::LoadMPGameInit couldn't find save game data for "
-                          << "human player with assigned empire id: " << psd.save_game_empire_id;
+                          << "human player with assigned empire id: " << to_string(psd.save_game_empire_id);
         }
     }
 }
@@ -1383,7 +1383,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             if (!empire->Eliminated())
                 AddEmpireData(std::move(psgd));
         } else {
-            ErrorLogger() << "ServerApp::LoadGameInit couldn't find empire with id " << psgd.empire_id
+            ErrorLogger() << "ServerApp::LoadGameInit couldn't find empire with id " << to_string(psgd.empire_id)
                           << " to add to turn processing";
         }
     }
@@ -1500,7 +1500,7 @@ int ServerApp::InitGlobalRNGSeedFromGalaxySetupData() {
     return seed;
 }
 
-void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
+void ServerApp::GenerateUniverse(std::map<EmpireID, PlayerSetupData>& player_setup_data) {
     // Set game UID. Needs to be done first so we can use ClockSeed to
     // prevent reproducible UIDs.
     ClockSeed();
@@ -1638,7 +1638,7 @@ std::map<int, PlayerInfo> ServerApp::GetPlayerInfoMap() const {
     return player_info_map;
 }
 
-int ServerApp::PlayerEmpireID(int player_id) const {
+EmpireID ServerApp::PlayerEmpireID(int player_id) const {
     auto it = range_find_if(m_player_empire_ids,
                             [player_id](const auto& pid_eid) { return pid_eid.first == player_id; });
     return (it != m_player_empire_ids.end()) ? it->second : ALL_EMPIRES;
@@ -1819,7 +1819,7 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
     // empire elimination
     empire->Eliminate(m_empires, m_current_turn);
 
-    const auto recurse_des = [this](int id) {
+    const auto recurse_des = [this](UniverseObjectID id) {
 #if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
         m_universe.RecursiveDestroy(id, m_empires.EmpireIDs());
 #else
@@ -1876,7 +1876,7 @@ namespace {
         DebugLogger() << "AI processes (" << ai_processes.size() << "):";
         for (const auto& proc_info : ai_processes | range_keys)
             DebugLogger() << " ... id: " << proc_info.player_id << " name: " << proc_info.player_name
-                          << " empire id: " << proc_info.empire_id << " empire name: " << proc_info.empire_name;
+                          << " empire id: " << to_string(proc_info.empire_id) << " empire name: " << proc_info.empire_name;
 
         // kill unneeded AI process based on ID
         const auto is_player_id = [player_id](const auto& key_proc) noexcept
@@ -1890,7 +1890,7 @@ namespace {
     }
 }
 
-int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, EmpireID target_empire_id) {
+EmpireID ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, EmpireID target_empire_id) {
     std::shared_ptr<Empire> empire;
     EmpireID empire_id = ALL_EMPIRES;
     auto delegation = GetPlayerDelegation(player_connection->PlayerName());
@@ -2126,20 +2126,20 @@ bool ServerApp::AllOrdersReceived() {
     for (const auto& psgd : m_player_data) {
         const auto empire = m_empires.GetEmpire(psgd.empire_id);
         if (!empire) {
-            ErrorLogger() << " ... invalid empire id in turn sequence: " << psgd.empire_id;
+            ErrorLogger() << " ... invalid empire id in turn sequence: " << to_string(psgd.empire_id);
             continue;
         } else if (empire->Eliminated()) {
-            ErrorLogger() << " ... eliminated empire in turn sequence: " << psgd.empire_id;
+            ErrorLogger() << " ... eliminated empire in turn sequence: " << to_string(psgd.empire_id);
             continue;
         } else if (!empire->Ready()) {
-            DebugLogger() << " ... not ready empire id: " << psgd.empire_id;
+            DebugLogger() << " ... not ready empire id: " << to_string(psgd.empire_id);
         } else {
-            DebugLogger() << " ... have orders from empire id: " << psgd.empire_id;
+            DebugLogger() << " ... have orders from empire id: " << to_string(psgd.empire_id);
             continue;
         }
 
         if (!Networking::is_ai(GetEmpireClientType(psgd.empire_id)) && m_turn_expired)
-            DebugLogger() << " ...... turn expired for empire id: " << psgd.empire_id;
+            DebugLogger() << " ...... turn expired for empire id: " << to_string(psgd.empire_id);
         else
             all_orders_received = false;
     }
@@ -2153,10 +2153,8 @@ namespace {
     bool EmpireEliminated(EmpireID empire_id, const ObjectMap& objects) {
         // are there any populated planets? if so, not eliminated
         // are there any ships? if so, not eliminated
-        return !objects.check_if_any<Planet>([empire_id](const auto* p)
-                                             { return p->OwnedBy(empire_id) && p->Populated(); }) &&
-               !objects.check_if_any<Ship>([empire_id](const auto* s)
-                                           { return s->OwnedBy(empire_id); });
+        return !objects.check_if_any<Planet>([empire_id](const auto* p) { return p->OwnedBy(empire_id) && p->Populated(); }) &&
+               !objects.check_if_any<Ship>([empire_id](const auto* s) { return s->OwnedBy(empire_id); });
     }
 
     void Uniquify(auto& vec) {
@@ -2174,13 +2172,15 @@ namespace {
         std::string retval;
         retval.reserve(stuff.size() * 24); // guesstimate
 
+        using std::to_string;
+
         for (const auto thing : stuff)
-            if constexpr (std::is_same_v<std::decay_t<decltype(thing)>, int>) {
-                retval.append(std::to_string(thing)).append(" ");
+            if constexpr (requires { to_string(thing); }) {
+                retval.append(to_string(thing)).append(" ");
             } else {
                 retval.append(thing->Name())
-                    .append(" (id: ").append(std::to_string(thing->ID()))
-                    .append(" owner: ").append(std::to_string(thing->Owner())).append(") ");
+                    .append(" (id: ").append(to_string(thing->ID()))
+                    .append(" owner: ").append(to_string(thing->Owner())).append(") ");
             }
         return retval;
     };
@@ -2192,8 +2192,8 @@ namespace {
     // .second.first: IDs of empires with aggressive-fleet combat-capable ships at that system
     // .second.second: IDs of empires with obstructive-fleet combat-capable ships at that system
     // empire IDs may include ALL_EMPIRES for non-empire-owned ships
-    std::pair<std::vector<int>, std::tuple<std::vector<int>, std::vector<int>, std::vector<int>>> GetEmpiresWithFleetsAtSystem(
-        int system_id, const ScriptingContext& context)
+    std::pair<std::vector<EmpireID>, std::tuple<std::vector<EmpireID>, std::vector<EmpireID>, std::vector<EmpireID>>>
+        GetEmpiresWithFleetsAtSystem(UniverseObjectID system_id, const ScriptingContext& context)
     {
         const ObjectMap& objects = context.ContextObjects();
         const auto* system = objects.getRaw<System>(system_id);
@@ -2201,17 +2201,14 @@ namespace {
             return {};
         const auto fleets = objects.findRaw<Fleet>(system->FleetIDs());
 
-        const auto fleets_owner_ids = [&fleets]() -> std::vector<int> {
-            std::vector<int> retval;
-            retval.reserve(fleets.size());
-            range_copy(fleets | range_filter(not_null) | range_transform(to_owner),
-                       std::back_inserter(retval));
+        const auto fleets_owner_ids = [&fleets]() -> std::vector<EmpireID> {
+            auto retval = fleets | range_filter(not_null) | range_transform(to_owner) | range_to_vec;
             Uniquify(retval);
             return retval;
         };
 
         const auto aggressive_bombarding_obstructive_combat_fleet_owner_ids =
-            [&fleets, &context, system_id, system]() -> std::tuple<std::vector<int>, std::vector<int>, std::vector<int>>
+            [&fleets, &context, system_id, system]() -> std::tuple<std::vector<EmpireID>, std::vector<EmpireID>, std::vector<EmpireID>>
         {
             if (fleets.empty())
                 return {};
@@ -2231,34 +2228,25 @@ namespace {
             static constexpr auto is_obstructive = [](const Fleet* fleet) noexcept -> bool
             { return fleet && fleet->Aggression() == FleetAggression::FLEET_OBSTRUCTIVE; };
 
-            DebugLogger(combat) << "CombatConditionsInSystem() for system (" << system_id << ") " << system->Name();
+            DebugLogger(combat) << "CombatConditionsInSystem() for system (" << to_string(system_id) << ") " << system->Name();
             DebugLogger(combat) << "   fleets here: " << [&context,&fleets]() {
                 std::string retval;
                 for (auto& f : fleets) {
-                    retval.append(f->Name()).append(" ( id: ").append(std::to_string(f->ID()))
-                          .append("  owner: ").append(std::to_string(f->Owner()))
+                    retval.append(f->Name()).append(" ( id: ").append(to_string(f->ID()))
+                          .append("  owner: ").append(to_string(f->Owner()))
                           .append("  aggression: ").append(to_string(f->Aggression()))
                           .append(" )   ");
                 }
                 return retval;
             }();
 
-            std::vector<int> retval_aggressive;
-            retval_aggressive.reserve(fleets.size());
-            range_copy(combat_provoking_fleets_rng | range_filter(is_aggressive) | range_transform(to_owner),
-                       std::back_inserter(retval_aggressive));
+            auto retval_aggressive = combat_provoking_fleets_rng | range_filter(is_aggressive) | range_transform(to_owner) | range_to_vec;
             Uniquify(retval_aggressive);
 
-            std::vector<int> retval_bombarding;
-            retval_bombarding.reserve(fleets.size());
-            range_copy(fleets | range_filter(not_null) | range_filter(is_bombarding) | range_transform(to_owner),
-                       std::back_inserter(retval_bombarding));
+            auto retval_bombarding = fleets | range_filter(not_null) | range_filter(is_bombarding) | range_transform(to_owner) | range_to_vec;
             Uniquify(retval_bombarding);
 
-            std::vector<int> retval_obstructive;
-            retval_obstructive.reserve(fleets.size());
-            range_copy(combat_provoking_fleets_rng | range_filter(is_obstructive) | range_transform(to_owner),
-                       std::back_inserter(retval_obstructive));
+            auto retval_obstructive = combat_provoking_fleets_rng | range_filter(is_obstructive) | range_transform(to_owner) | range_to_vec;
             Uniquify(retval_obstructive);
 
             return {retval_aggressive, retval_bombarding, retval_obstructive};
@@ -2267,8 +2255,8 @@ namespace {
         return {fleets_owner_ids(), aggressive_bombarding_obstructive_combat_fleet_owner_ids()};
     }
 
-    std::map<int, std::set<int>> GetBombardingTargetsAtSystem(
-        int system_id, const ScriptingContext& context)
+    std::map<EmpireID, std::set<UniverseObjectID>> GetBombardingTargetsAtSystem(
+        UniverseObjectID system_id, const ScriptingContext& context)
     {
         const ObjectMap& objects = context.ContextObjects();
         const auto* system = objects.getRaw<System>(system_id);
@@ -2279,7 +2267,7 @@ namespace {
             return {};
         const auto fleets = objects.findRaw<Fleet>(system->FleetIDs());
 
-        std::map<int, std::set<int>> empire_targets;
+        std::map<EmpireID, std::set<UniverseObjectID>> empire_targets;
         // we need to check all ships (in fleets ordered to bombard)
         // fleet->HasShipsOrderedBombard also checks all ships in the fleet, so we dont use it to filter
         for (const auto& fleet : fleets) {
@@ -2287,9 +2275,9 @@ namespace {
             for (const auto& ship : ships) {
                 if (INVALID_OBJECT_ID != ship->OrderedBombardPlanet() && ship->CanBombard(context.ContextUniverse())) {
                    if (std::find(planet_ids.begin(), planet_ids.end(), ship->OrderedBombardPlanet()) == planet_ids.end()) {
-                        ErrorLogger() << "Ship " << ship->ID() << " ordered to bombard planet "
-                                      << ship->OrderedBombardPlanet()
-                                      << " which is not in system " << system_id;
+                        ErrorLogger() << "Ship " << to_string(ship->ID()) << " ordered to bombard planet "
+                                      << to_string(ship->OrderedBombardPlanet())
+                                      << " which is not in system " << to_string(system_id);
                         continue;
                     }
                     if (!empire_targets.contains(fleet->Owner())) {
@@ -2303,7 +2291,7 @@ namespace {
         return empire_targets;
     }
 
-    std::vector<int> GetEmpiresWithPlanetsAtSystem(int system_id, const ObjectMap& objects) {
+    std::vector<EmpireID> GetEmpiresWithPlanetsAtSystem(UniverseObjectID system_id, const ObjectMap& objects) {
         const auto* system = objects.getRaw<System>(system_id);
         if (!system)
             return {};
@@ -2312,7 +2300,7 @@ namespace {
         static constexpr auto is_unowned_and_populated = [](const Planet* p) noexcept
         { return p && p->Unowned() && p->GetMeter(MeterType::METER_POPULATION)->Initial() > 0.0f; };
 
-        const auto id_to_planet = [&objects](int id) { return objects.getRaw<Planet>(id); };
+        const auto id_to_planet = [&objects](auto id) { return objects.getRaw<Planet>(id); };
 
         const auto& planet_ids = system->PlanetIDs();
         std::vector<EmpireID> empire_ids;
@@ -2341,8 +2329,8 @@ namespace {
 
     template <typename FleetOrPlanet>
     [[nodiscard]] std::vector<const FleetOrPlanet*> GetObjsVisibleToEmpireOrNeutralsAtSystem(
-        EmpireID empire_id, int system_id, const auto& override_vis_ids, const ScriptingContext& context)
-        requires(std::is_same_v<int, std::decay_t<decltype(override_vis_ids.front())>> &&
+        EmpireID empire_id, UniverseObjectID system_id, const auto& override_vis_ids, const ScriptingContext& context)
+        requires(std::is_same_v<UniverseObjectID, std::decay_t<decltype(override_vis_ids.front())>> &&
                  (std::is_same_v<FleetOrPlanet, Fleet> || std::is_same_v<FleetOrPlanet, Planet>))
     {
         if (empire_id != ALL_EMPIRES && !context.GetEmpire(empire_id))
@@ -2363,7 +2351,7 @@ namespace {
                 false;
             const auto id = obj->ID();
 
-            if (range_any_of(override_vis_ids, [id](int oid) { return id == oid; }))
+            if (range_contains(override_vis_ids, id))
                 return true;
 
             if constexpr (std::is_same_v<FleetOrPlanet, Planet>) {
@@ -2386,10 +2374,10 @@ namespace {
 
     /** Returns true iff there is an appropriate combination of objects in the
       * system with id \a system_id for a combat to occur. */
-    [[nodiscard]] bool CombatConditionsInSystem(int system_id, const ScriptingContext& context,
+    [[nodiscard]] bool CombatConditionsInSystem(UniverseObjectID system_id, const ScriptingContext& context,
                                                 const auto& empire_vis_overrides)
-        requires(std::is_same_v<int, std::decay_t<decltype(empire_vis_overrides.begin()->first)>> &&
-                 std::is_same_v<int, std::decay_t<decltype(*empire_vis_overrides.begin()->second.begin())>>)
+        requires(std::is_same_v<EmpireID, std::decay_t<decltype(empire_vis_overrides.begin()->first)>> &&
+                 std::is_same_v<UniverseObjectID, std::decay_t<decltype(*empire_vis_overrides.begin()->second.begin())>>)
     {
         const auto& objects{context.ContextObjects()};
 
@@ -2440,7 +2428,7 @@ namespace {
 
 
         // what combinations of present empires are at war?
-        std::map<int, std::set<int>> empires_here_at_war;  // for each empire, what other empires here is it at war with?
+        std::map<EmpireID, std::set<EmpireID>> empires_here_at_war;  // for each empire, what other empires here is it at war with?
         for (auto emp1_it = empires_here.begin(); emp1_it != empires_here.end(); ++emp1_it) {
             auto emp2_it = emp1_it;
             ++emp2_it;
@@ -2461,8 +2449,8 @@ namespace {
 
         // ships blockading this empire from GetBlockadingFleetsForEmpires
         const auto overrides_for_empire =
-            [&empire_vis_overrides](const int override_empire_id) -> const std::vector<int>& {
-                static CONSTEXPR_VEC const std::vector<int> EMPTY_VEC;
+            [&empire_vis_overrides](const EmpireID override_empire_id) -> const std::vector<UniverseObjectID>& {
+                static CONSTEXPR_VEC const std::vector<UniverseObjectID> EMPTY_VEC;
                 auto it = empire_vis_overrides.find(override_empire_id);
                 return it == empire_vis_overrides.end() ? EMPTY_VEC : it->second;
             };
@@ -2470,7 +2458,7 @@ namespace {
             const auto& empires_targets = GetBombardingTargetsAtSystem(system_id, context);
 
             // is an empire with a bombarding fleet here able to see the target planet
-            for (int bombarding_empire_id : empires_with_bombarding_fleets_here) {
+            for (auto bombarding_empire_id : empires_with_bombarding_fleets_here) {
                 // what planets can the aggressive empire see?
                 const auto bombarding_empire_visible_planets =
                   GetObjsVisibleToEmpireOrNeutralsAtSystem<Planet>(
@@ -2485,7 +2473,7 @@ namespace {
                     const auto& targets = it->second;
 
                     if (std::binary_search(targets.begin(), targets.end(), visible_planet->ID())) {
-                        ErrorLogger(combat) << "   bombarding fleet empire " << bombarding_empire_id
+                        ErrorLogger(combat) << "   bombarding fleet empire " << to_string(bombarding_empire_id)
                                             << " sees a target planet";
                         return true; // an aggressive empire can see a fleet owned by an empire it is at war with
                     }
@@ -2496,7 +2484,7 @@ namespace {
 
         // is an empire with an aggressive fleet here able to see a planet of an
         // empire it is at war with here?
-        for (int aggressive_empire_id : empires_with_aggressive_armed_fleets_here) {
+        for (auto aggressive_empire_id : empires_with_aggressive_armed_fleets_here) {
             // what empires is the aggressive empire at war with?
             const auto& at_war_with_empire_ids = empires_here_at_war[aggressive_empire_id];
 
@@ -2508,14 +2496,14 @@ namespace {
 
             // is any planet owned by an empire at war with aggressive empire?
             for (const auto* planet : aggressive_empire_visible_planets | range_filter(not_null)) {
-                const int visible_planet_empire_id = planet->Owner();
+                const auto visible_planet_empire_id = planet->Owner();
 
                 if (aggressive_empire_id != visible_planet_empire_id &&
                     at_war_with_empire_ids.contains(visible_planet_empire_id))
                 {
-                    DebugLogger(combat) << "   Aggressive fleet empire " << aggressive_empire_id
+                    DebugLogger(combat) << "   Aggressive fleet empire " << to_string(aggressive_empire_id)
                                         << " sees at war target planet " << planet->Name()
-                                        << " (owner: " << visible_planet_empire_id << ")";
+                                        << " (owner: " << to_string(visible_planet_empire_id) << ")";
                     return true;  // an aggressive empire can see a planet onwned by an empire it is at war with
                 }
             }
@@ -2524,7 +2512,7 @@ namespace {
 
         // is an empire with an aggressive fleet here able to see a fleet of an
         // empire it is at war with here?
-        for (int aggressive_empire_id : empires_with_aggressive_armed_fleets_here) {
+        for (auto aggressive_empire_id : empires_with_aggressive_armed_fleets_here) {
             // what empires is the aggressive empire at war with?
             const auto& at_war_with_empire_ids = empires_here_at_war[aggressive_empire_id];
             if (at_war_with_empire_ids.empty())
@@ -2532,13 +2520,12 @@ namespace {
 
             // what fleets can the aggressive empire see?
             const auto& overrides = overrides_for_empire(aggressive_empire_id);
-            DebugLogger(combat) << "   aggressive fleet empire " << aggressive_empire_id
+            DebugLogger(combat) << "   aggressive fleet empire " << to_string(aggressive_empire_id)
                                 << " vis overrides here: " << to_string(overrides);
 
             const auto aggressive_empire_visible_fleets =
-                GetObjsVisibleToEmpireOrNeutralsAtSystem<Fleet>(aggressive_empire_id, system_id,
-                                                                overrides, context);
-            DebugLogger(combat) << "   aggressive fleet empire " << aggressive_empire_id
+                GetObjsVisibleToEmpireOrNeutralsAtSystem<Fleet>(aggressive_empire_id, system_id, overrides, context);
+            DebugLogger(combat) << "   aggressive fleet empire " << to_string(aggressive_empire_id)
                                 << " can see fleets here: " << to_string(aggressive_empire_visible_fleets);
 
             const auto not_self_owned = [aggressive_empire_id](const UniverseObject* obj) noexcept
@@ -2551,9 +2538,9 @@ namespace {
             for (const auto* fleet : aggressive_empire_visible_fleets
                  | range_filter(not_self_owned) | range_filter(at_war_with))
             {
-                DebugLogger(combat) << "   aggressive fleet empire " << aggressive_empire_id
+                DebugLogger(combat) << "   aggressive fleet empire " << to_string(aggressive_empire_id)
                                     << " sees at-war target fleet " << fleet->Name()
-                                    << " (" << fleet->ID() << " of empire " << fleet->Owner() << ")";
+                                    << " (" << to_string(fleet->ID()) << " of empire " << to_string(fleet->Owner()) << ")";
                 return true;  // an aggressive empire can see a fleet owned by an empire it is at war with
             }
         }
@@ -2678,7 +2665,7 @@ namespace {
                 // ensure all participants get updates on system.  this ensures
                 // that an empire who lose all objects in the system still
                 // knows about a change in system ownership
-                for (EmpireID empire_id : combat_info.empire_ids)
+                for (auto empire_id : combat_info.empire_ids)
                     universe.EmpireKnownObjects(empire_id).CopyObject(system, ALL_EMPIRES, universe);
             }
         }
@@ -2693,7 +2680,7 @@ namespace {
             int log_id = log_manager.AddNewLog(CombatLog{combat_info});
 
             // basic "combat occured" sitreps
-            for (EmpireID empire_id : combat_info.empire_ids) {
+            for (auto empire_id : combat_info.empire_ids) {
                 if (auto empire{combat_info.GetEmpire(empire_id)})
                     empire->AddSitRepEntry(CreateCombatSitRep(
                         combat_info.system_id, log_id, EnemyId(empire_id, combat_info.empire_ids),
@@ -2705,7 +2692,7 @@ namespace {
                  combat_info.destroyed_object_knowers)
             {
                 if (auto empire{combat_info.GetEmpire(knowing_empire_id)}) {
-                    for (int dest_obj_id : known_destroyed_object_ids) {
+                    for (auto dest_obj_id : known_destroyed_object_ids) {
                         if (auto* obj = combat_info.objects.getRaw(dest_obj_id))
                             empire->AddSitRepEntry(CreateCombatDestroyedObjectSitRep(
                                 obj, combat_info.system_id, knowing_empire_id, combat_info.turn));
@@ -2714,7 +2701,7 @@ namespace {
             }
 
             // sitreps about damaged objects
-            for (int damaged_object_id : combat_info.damaged_object_ids) {
+            for (auto damaged_object_id : combat_info.damaged_object_ids) {
                 //DebugLogger() << "Checking object " << damaged_object_id << " for damaged sitrep";
                 // is object destroyed? If so, don't need a damage sitrep
                 if (combat_info.destroyed_object_ids.contains(damaged_object_id)) {
@@ -2723,7 +2710,7 @@ namespace {
                 }
                 const auto* obj = combat_info.objects.getRaw(damaged_object_id);
                 if (!obj) {
-                    ErrorLogger() << "CreateCombatSitreps couldn't find damaged object with id: " << damaged_object_id;
+                    ErrorLogger() << "CreateCombatSitreps couldn't find damaged object with id: " << to_string(damaged_object_id);
                     continue;
                 }
 
@@ -2783,7 +2770,7 @@ namespace {
                     events_that_killed.push_back(fire_event);
                 }
             }
-            DebugLogger() << "Combat combat_info system: " << combat_info.system_id
+            DebugLogger() << "Combat combat_info system: " << to_string(combat_info.system_id)
                           << "  Total Kill Events: " << events_that_killed.size();
 
 
@@ -3087,7 +3074,7 @@ namespace {
       * ground combat resolution. Returns IDs of planets that had ground combat
       * occur on them and IDs of ships that invaded a planet. */
     [[nodiscard]] std::pair<std::vector<UniverseObjectID>, std::vector<UniverseObjectID>> HandleInvasion(ScriptingContext& context) {
-        std::map<UniverseObjectID, std::map<EmpireId, double>> planet_empire_troops;  // map from planet ID to map from empire ID to pair consisting of set of ship IDs and amount of troops empires have at planet
+        std::map<UniverseObjectID, std::map<EmpireID, double>> planet_empire_troops;  // map from planet ID to map from empire ID to pair consisting of set of ship IDs and amount of troops empires have at planet
         std::vector<Ship*> invade_ships;
         Universe& universe = context.ContextUniverse();
         ObjectMap& objects = context.ContextObjects();
@@ -3161,7 +3148,7 @@ namespace {
             //    planet_empire_troops[planet->ID()].insert(empire_forces.begin(), empire_forces.end());
         }
 
-        std::vector<int> ground_combat_planet_ids;
+        std::vector<UniverseObjectID> ground_combat_planet_ids;
         ground_combat_planet_ids.reserve(planet_empire_troops.size());
 
         // process each planet's ground combats
@@ -3171,25 +3158,25 @@ namespace {
 
             static constexpr auto is_valid_empire_id = [](const auto id) noexcept { return id != ALL_EMPIRES; };
             auto all_involved_empires = empires_troops | range_keys
-                | range_filter(is_valid_empire_id) | range_to<std::set<int>>();
+                | range_filter(is_valid_empire_id) | range_to_set;
 
             auto planet = objects.get<Planet>(planet_id);
             if (!planet) {
-                ErrorLogger() << "Ground combat couldn't get planet with id " << planet_id;
+                ErrorLogger() << "Ground combat couldn't get planet with id " << to_string(planet_id);
                 continue;
             }
-            const int planet_initial_owner_id = planet->Owner();
+            const auto planet_initial_owner_id = planet->Owner();
             if (planet_initial_owner_id != ALL_EMPIRES)
                 all_involved_empires.insert(planet_initial_owner_id);
 
             {
                 // find which, if any, empire has invaded with the most troops, excluding
                 // the current owner, no empire / rebels, and any ally of the current owner
-                const int biggest_new_invader =
+                const auto biggest_new_invader =
                     [&context, planet_initial_owner_id](const auto& empires_troops)
                 {
                     int biggest_troop_count = 0;
-                    int biggest_empire_id = ALL_EMPIRES;
+                    auto biggest_empire_id = ALL_EMPIRES;
                     for (auto& [empire_id, troop_count] : empires_troops) {
                         if (empire_id == planet_initial_owner_id)
                             continue; // self defense of a planet with troops doesn't erase another empire having previous invaded
@@ -3212,7 +3199,7 @@ namespace {
             }
 
             if (empires_troops.size() == 1) {
-                const int empire_with_troops_id = empires_troops.begin()->first;
+                const auto empire_with_troops_id = empires_troops.begin()->first;
                 if (planet->Unowned() && empire_with_troops_id == ALL_EMPIRES)
                     continue;   // if troops are neutral and planet is unowned, not a combat.
                 if (planet->OwnedBy(empire_with_troops_id))
@@ -3221,7 +3208,7 @@ namespace {
             } else {
                 DebugLogger() << "Ground combat troops on " << planet->Name() << " :";
                 for (const auto& [empire_with_troops_id, empire_troop_level] : empires_troops)
-                    DebugLogger() << " ... empire: " << empire_with_troops_id << " : " << empire_troop_level;
+                    DebugLogger() << " ... empire: " << to_string(empire_with_troops_id) << " : " << empire_troop_level;
                 Planet::ResolveGroundCombat(empires_troops, empires.GetDiplomaticStatuses());
                 ground_combat_planet_ids.push_back(planet_id);
             }
@@ -3235,7 +3222,7 @@ namespace {
 
             // process post-combat cleanup...
             if (empires_troops.size() == 1) {
-                int victor_id = empires_troops.begin()->first;
+                auto victor_id = empires_troops.begin()->first;
                 // single empire was victorious.  conquer planet if appropriate...
                 // if planet is unowned and victor is an empire, or if planet is
                 // owned by an empire that is not the victor, conquer it
@@ -3250,15 +3237,15 @@ namespace {
 
                     DebugLogger() << "Empire conquers planet";
                     for (auto& [empire_with_post_battle_troops_id, troop_count] : empires_troops)
-                        DebugLogger() << " empire: " << empire_with_post_battle_troops_id << ": " << troop_count;
+                        DebugLogger() << " empire: " << to_string(empire_with_post_battle_troops_id) << ": " << troop_count;
 
 
                 } else if (!planet->Unowned() && victor_id == ALL_EMPIRES) {
-                    int previous_owner_id = planet->Owner();
+                    auto previous_owner_id = planet->Owner();
                     planet->Conquer(ALL_EMPIRES, context);
                     DebugLogger() << "Independents conquer planet";
                     for (const auto& empire_troops : empires_troops)
-                        DebugLogger() << " empire: " << empire_troops.first << ": " << empire_troops.second;
+                        DebugLogger() << " empire: " << to_string(empire_troops.first) << ": " << empire_troops.second;
 
                     for (EmpireID empire_id : all_involved_empires) {
                         if (auto empire = empires.GetEmpire(empire_id))
@@ -3269,7 +3256,7 @@ namespace {
                     // defender held the planet
                     DebugLogger() << "Defender holds planet";
                     for (auto& [empire_with_post_battle_troops_id, troop_count] : empires_troops)
-                        DebugLogger() << " empire: " << empire_with_post_battle_troops_id << ": " << troop_count;
+                        DebugLogger() << " empire: " << to_string(empire_with_post_battle_troops_id) << ": " << troop_count;
                 }
 
                 // regardless of whether battle resulted in conquering, it did
@@ -3300,14 +3287,14 @@ namespace {
 
     /** Determines which fleets or planets ordered given to other empires,
       * and sets their new ownership. Returns the IDs of anything gifted. */
-    std::vector<int> HandleGifting(EmpireManager& empires, ObjectMap& objects, int current_turn,
-                                   const std::span<const UniverseObjectID> invaded_planet_ids,
-                                   const std::span<const UniverseObjectID> invading_ship_ids,
-                                   const std::span<const UniverseObjectID> colonizing_ship_ids,
-                                   const std::span<const UniverseObjectID> annexed_planets_ids) // TODO: disallow annexed planets
+    std::vector<UniverseObjectID> HandleGifting(EmpireManager& empires, ObjectMap& objects, int current_turn,
+                                                const std::span<const UniverseObjectID> invaded_planet_ids,
+                                                const std::span<const UniverseObjectID> invading_ship_ids,
+                                                const std::span<const UniverseObjectID> colonizing_ship_ids,
+                                                const std::span<const UniverseObjectID> annexed_planets_ids) // TODO: disallow annexed planets
     {
         // determine system IDs where empires can receive gifts
-        std::map<int, std::set<int>> empire_receiving_locations;
+        std::map<UniverseObjectID, std::set<EmpireID>> empire_receiving_locations;
         auto owned_planet = [](const Planet& p) { return !p.Unowned(); };
         for (const auto* planet : objects.findRaw<const Planet>(owned_planet))
             empire_receiving_locations[planet->SystemID()].insert(planet->Owner());
@@ -3317,8 +3304,8 @@ namespace {
 
 
         // collect fleets ordered to be given and their ships
-        std::map<int, std::vector<Fleet*>> empire_gifted_fleets; // indexed by recipient empire id
-        std::map<int, std::vector<Ship*>> empire_gifted_ships;
+        std::map<EmpireID, std::vector<Fleet*>> empire_gifted_fleets; // indexed by recipient empire id
+        std::map<EmpireID, std::vector<Ship*>> empire_gifted_ships;
         auto owned_given_stationary_fleet = [&empire_receiving_locations](const Fleet& f) {
             if (f.Unowned() ||
                 f.OrderedGivenToEmpire() == ALL_EMPIRES ||
@@ -3346,8 +3333,8 @@ namespace {
 
         // collect planets ordered to be given but that aren't being invaded,
         // and buildings on them
-        std::map<int, std::vector<Planet*>> empire_gifted_planets; // indexed by recipient empire id
-        std::map<int, std::vector<Building*>> empire_gifted_buildings;
+        std::map<EmpireID, std::vector<Planet*>> empire_gifted_planets; // indexed by recipient empire id
+        std::map<EmpireID, std::vector<Building*>> empire_gifted_buildings;
         auto owned_given_not_invaded_planet =
             [invaded_planet_ids, &empire_receiving_locations](const Planet& p)
         {
@@ -3374,7 +3361,7 @@ namespace {
 
 
         // storage for list of all gifted objects
-        std::vector<int> gifted_object_ids;
+        std::vector<UniverseObjectID> gifted_object_ids;
         auto do_giving = [&gifted_object_ids, &empires, current_turn](auto& recipients_objs) {
             for (auto& [recipient_empire_id, objs] : recipients_objs) {
                 for (auto* gifted_obj : objs) {
@@ -3448,7 +3435,7 @@ namespace {
         });
 
         for (const auto* ship : scrapped_ships) {
-            DebugLogger() << "... ship: " << ship->ID() << " ordered scrapped";
+            DebugLogger() << "... ship: " << to_string(ship->ID()) << " ordered scrapped";
             const auto ship_id = ship->ID();
             const auto fleet_id = ship->FleetID();
             const auto sys_id = ship->SystemID();
@@ -3501,15 +3488,15 @@ namespace {
       * Returns the IDs of anything so marked as annexed.
       * Note: Consumption of IP is done later, when updating the influence
       * queue, which deducts IP for appropriately marked planets. */
-    std::vector<int> HandleAnnexation(ScriptingContext& context,
-                                      const std::span<int> invaded_planet_ids,
-                                      const auto& empire_planet_annexation_costs)
+    std::vector<UniverseObjectID> HandleAnnexation(ScriptingContext& context,
+                                                   const std::span<UniverseObjectID> invaded_planet_ids,
+                                                   const auto& empire_planet_annexation_costs)
 #if !defined(FREEORION_ANDROID)
         requires requires {{*empire_planet_annexation_costs.begin()->second.begin()}
-                           -> std::convertible_to<std::pair<int, double>>; }
+                           -> std::convertible_to<std::pair<UniverseObjectID, double>>; }
 #endif
     {
-        std::vector<int> annexed_object_ids;
+        std::vector<UniverseObjectID> annexed_object_ids;
         if (empire_planet_annexation_costs.empty())
             return annexed_object_ids;
 
@@ -3524,7 +3511,7 @@ namespace {
 
 
         // collect planets being annexed from passed-in IDs, that aren't also being invaded
-        boost::container::flat_map<int, std::vector<std::pair<Planet*, double>>> empire_annexing_planets_and_costs; // indexed by recipient / annexer empire id
+        boost::container::flat_map<EmpireID, std::vector<std::pair<Planet*, double>>> empire_annexing_planets_and_costs; // indexed by recipient / annexer empire id
         empire_annexing_planets_and_costs.reserve(empire_planet_annexation_costs.size());
         for (const auto& [by_empire_id, planet_id_costs] : empire_planet_annexation_costs) {
             auto& planets_costs = empire_annexing_planets_and_costs[by_empire_id];
@@ -3546,7 +3533,7 @@ namespace {
 
 
         // reserve space to store ids of everything that is annexed after considering IP limits
-        boost::container::flat_map<int, std::vector<int>> empire_annexed_object_ids;
+        boost::container::flat_map<EmpireID, std::vector<UniverseObjectID>> empire_annexed_object_ids;
         empire_annexed_object_ids.reserve(empires.NumEmpires());
         {
             std::size_t total_annexed_count = 0u;
@@ -3560,7 +3547,7 @@ namespace {
 
         // determine available IP for annexation per empire: stockpile minus costs for policy adoption
         auto empire_available_ip = [&empires, &context]() {
-            boost::container::flat_map<int, double> empire_available_ip;
+            boost::container::flat_map<EmpireID, double> empire_available_ip;
             empire_available_ip.reserve(empires.NumEmpires());
             for (const auto& [id, empire] : empires) {
                 const auto stockpile = empire ? empire->ResourceStockpile(ResourceType::RE_INFLUENCE) : 0.0;
@@ -3594,7 +3581,7 @@ namespace {
 
             const auto emit_annexation_sitrep =
                 [&annexer_empire, current_turn, annexer_empire_id{annexer_empire_id}, &empires]
-                (int initial_owner_id, int obj_id, UniverseObjectType obj_type)
+                (EmpireID initial_owner_id, UniverseObjectID obj_id, UniverseObjectType obj_type)
             {
                 if (obj_type == UniverseObjectType::OBJ_PLANET) {
                     if (annexer_empire)
@@ -3707,12 +3694,14 @@ namespace {
         static constexpr auto not_empty_path = [](const fleet_and_path& fleet_and_move_path) noexcept
         { return !fleet_and_move_path.second.empty(); };
 
-        const auto path_to_ids_and_blockading_fleets = [&context](fleet_and_path mp) -> two_ids_and_ids {
+        const auto path_to_ids_and_blockading_fleets = [&context](fleet_and_path mp)
+            -> std::pair<std::pair<UniverseObjectID, EmpireID>, std::vector<UniverseObjectID>>
+        {
             const auto& [fleet, nodes] = mp;
             if (!fleet || nodes.empty())
                 return {std::pair{INVALID_OBJECT_ID, ALL_EMPIRES}, {}}; // no valid fleet??? (unexpected) or no path
 
-            std::pair<int, int> fleet_id_and_owner{fleet->ID(), fleet->Owner()};
+            std::pair<UniverseObjectID, EmpireID> fleet_id_and_owner{fleet->ID(), fleet->Owner()};
 
             static constexpr auto is_turn_end = [](const MovePathNode& n) { return n.turn_end || n.blockaded_here; };
             // get first turn end node. blockades also count as a turn end for this purpose
@@ -3748,23 +3737,20 @@ namespace {
             return {fleet_id_and_owner, blockading_fleets};
         };
 
-        std::vector<two_ids_and_ids> fleet_owner_and_blockading_fleets;
-        fleet_owner_and_blockading_fleets.reserve(context.ContextObjects().size<Fleet>());
-        range_copy(move_pathes | range_filter(not_empty_path)
-                   | range_transform(path_to_ids_and_blockading_fleets),
-                   std::back_inserter(fleet_owner_and_blockading_fleets));
+        auto fleet_owner_and_blockading_fleets = move_pathes | range_filter(not_empty_path)
+            | range_transform(path_to_ids_and_blockading_fleets) | range_to_vec;
         DebugLogger(combat) << "total fleet count: " << context.ContextObjects().size<Fleet>();
         DebugLogger(combat) << "count of not empty fleet move pathes: " << fleet_owner_and_blockading_fleets.size();
 
-        static constexpr auto not_null_and_has_blockaders = [](const two_ids_and_ids& fbids)
+        static constexpr auto not_null_and_has_blockaders = [](const auto& fbids)
         { return fbids.first.first != INVALID_OBJECT_ID && !fbids.second.empty(); };
         auto blockades_rng = fleet_owner_and_blockading_fleets | range_filter(not_null_and_has_blockaders);
 
         // sort list of fleets are blockading into a per-empire list of
         // fleets that are to be revealed to each empire
-        std::map<int, std::vector<int>> empires_blockaded_by_fleets;
+        std::map<EmpireID, std::vector<UniverseObjectID>> empires_blockaded_by_fleets;
         for (const auto& [fleet_and_owner, blockader_ids] : blockades_rng) {
-            DebugLogger(combat) << "fleet: " << fleet_and_owner.first << " owner: " << fleet_and_owner.second
+            DebugLogger(combat) << "fleet: " << to_string(fleet_and_owner.first) << " owner: " << to_string(fleet_and_owner.second)
                                 << " blockaders: " << to_string(blockader_ids);
             auto& revealed_ids = empires_blockaded_by_fleets[fleet_and_owner.second];
             revealed_ids.insert(revealed_ids.end(), blockader_ids.begin(), blockader_ids.end());
@@ -3786,9 +3772,9 @@ namespace {
     // in the fleet. do not pick any ships in aggressive fleets, as these will reveal
     // themselves in combat, rather than by this mechanism.
     auto GetShipsToRevealForEmpiresBlockadedByFleets(
-        const std::map<int, std::vector<int>>& empires_blockaded_by_fleets, const ScriptingContext& context)
+        const std::map<EmpireID, std::vector<UniverseObjectID>>& empires_blockaded_by_fleets, const ScriptingContext& context)
     {
-        std::map<int, std::vector<int>> retval;
+        std::map<EmpireID, std::vector<UniverseObjectID>> retval;
         for (const auto& [empire_id, fleets] : empires_blockaded_by_fleets)
             retval[empire_id].reserve(fleets.size()); // reveal at most one ship per fleet
 
@@ -3797,7 +3783,7 @@ namespace {
         static constexpr auto is_obstructive = [](const Fleet* f) noexcept -> bool
         { return f->Aggression() == FleetAggression::FLEET_OBSTRUCTIVE; };
 
-        const auto id_to_ship = [&context](int ship_id) -> const Ship*
+        const auto id_to_ship = [&context](UniverseObjectID ship_id) -> const Ship*
         { return context.ContextObjects().getRaw<Ship>(ship_id); };
 
         static constexpr auto ship_to_ship_and_stealth = [](const Ship* ship) noexcept
@@ -3811,15 +3797,15 @@ namespace {
         for (const auto& [empire_id, fleet_ids] : empires_blockaded_by_fleets) {
             const auto fleets = objs.findRaw<Fleet>(fleet_ids);
 
-            const auto id_is_visible = [empire_id{empire_id}, &context](int id)
+            const auto id_is_visible = [empire_id{empire_id}, &context](UniverseObjectID id)
             { return context.ContextVis(id, empire_id) >= Visibility::VIS_BASIC_VISIBILITY; };
-            const auto id_not_visible = [id_is_visible](int id)
+            const auto id_not_visible = [id_is_visible](UniverseObjectID id)
             { return !id_is_visible(id); };
 
             // intentionally excluding aggressive fleets
             for (const Fleet* fleet : fleets | range_filter(not_null) | range_filter(is_obstructive)) {
                 DebugLogger(combat) << "   finding ship to reveal for obstructive fleet: "
-                                    << fleet->Name() << " (" << fleet->ID()
+                                    << fleet->Name() << " (" << to_string(fleet->ID())
                                     << ") ship ids: " << to_string(fleet->ShipIDs());
 
                 // if there is already a blockade-capable visible ship, don't need to reveal anything
@@ -3846,7 +3832,7 @@ namespace {
                     static_assert(std::is_same_v<std::decay_t<decltype(ship)>, const Ship*>);
                     retval[empire_id].push_back(ship->ID());
                     DebugLogger(combat) << "      picked lowest stealth not-visible blockade capable ship in fleet: "
-                                        << ship->Name() << " (id: " << ship->ID() << " stealth: " << stealth << ")";
+                                        << ship->Name() << " (id: " << to_string(ship->ID()) << " stealth: " << stealth << ")";
                 } else {
                     DebugLogger(combat) << "      no not-visible blockade capable ships in fleet!";
                 }
@@ -3884,7 +3870,7 @@ namespace {
         if (move_path.empty())
             return;
 
-        DebugLogger() << "Fleet " << fleet->Name() << " (" << fleet->ID()
+        DebugLogger() << "Fleet " << fleet->Name() << " (" << to_string(fleet->ID())
                       << ")  route:" << [&]()
             {
                 std::string ss;
@@ -3892,9 +3878,9 @@ namespace {
                 for (auto sys_id : fleet->TravelRoute()) {
                     if (auto sys = objects.getRaw<const System>(sys_id))
                         ss.append("  ").append(sys->Name()).append(" (")
-                        .append(std::to_string(sys_id)).append(")");
+                        .append(to_string(sys_id)).append(")");
                     else
-                        ss.append("  (?) (").append(std::to_string(sys_id)).append(")");
+                        ss.append("  (?) (").append(to_string(sys_id)).append(")");
                 }
                 return ss;
             }()
@@ -3905,7 +3891,7 @@ namespace {
                 for (const auto& node : move_path) {
                     if (auto sys = objects.getRaw<const System>(node.object_id))
                         ss.append("  ").append(sys->Name()).append(" (")
-                        .append(std::to_string(node.object_id)).append(")");
+                        .append(to_string(node.object_id)).append(")");
                     else
                         ss.append("  (-)");
                 }
@@ -3914,40 +3900,34 @@ namespace {
     }
 
     void LogTruncation(const auto* fleet, const auto& old_route,
-                       int last_sys_id, const ScriptingContext& context)
+                       UniverseObjectID last_sys_id, const ScriptingContext& context)
     {
         const System* sys = context.ContextObjects().getRaw<const System>(last_sys_id);
-        DebugLogger() << "Truncated fleet " << fleet->Name() << " (" << fleet->ID()
+        DebugLogger() << "Truncated fleet " << fleet->Name() << " (" << to_string(fleet->ID())
                       << ") route from: " << to_string(old_route)
                       << " to end at last reachable system: "
-                      << (sys ? sys->Name() : "(Unknown system)") << " (" << last_sys_id << ")"
+                      << (sys ? sys->Name() : "(Unknown system)") << " (" << to_string(last_sys_id) << ")"
                       << " :" << to_string(fleet->TravelRoute());
     }
 
     void GenerateSitrepsForBlockades(const auto& fleet_owner_and_blockading_fleets,
                                      ScriptingContext& context)
     {
-        static constexpr auto obj_to_id_and_owner = [](const auto* obj) noexcept -> std::pair<int, int>
+        static constexpr auto obj_to_id_and_owner = [](const auto* obj) noexcept -> std::pair<UniverseObjectID, EmpireID>
         { return {obj->ID(), obj->Owner()}; };
 
-        const auto fleet_ids_to_also_owner_empires = [&context](const std::vector<int>& fleet_ids) {
-            std::vector<std::pair<int, int>> fleet_ids_owner_empire_ids;
-            fleet_ids_owner_empire_ids.reserve(fleet_ids.size());
+        const auto id_to_fleet = [&context](const auto fleet_id) -> const Fleet*
+        { return context.ContextObjects().getRaw<const Fleet>(fleet_id); };
 
-            const auto id_to_fleet = [&context](const int fleet_id) -> const Fleet*
-            { return context.ContextObjects().getRaw<const Fleet>(fleet_id); };
-
-            auto empires_rng = fleet_ids | range_transform(id_to_fleet)
-                | range_filter(not_null) | range_transform(obj_to_id_and_owner);
-            range_copy(empires_rng, std::back_inserter(fleet_ids_owner_empire_ids));
-
-            return fleet_ids_owner_empire_ids;
+        const auto fleet_ids_to_also_owner_empires = [&id_to_fleet](const std::vector<UniverseObjectID>& fleet_ids) {
+            return fleet_ids | range_transform(id_to_fleet) | range_filter(not_null)
+                             | range_transform(obj_to_id_and_owner) | range_to_vec;
         };
 
         for (const auto& [fleet_id_owner_id, blockading_fleet_ids] : fleet_owner_and_blockading_fleets) {
             const auto [blockaded_fleet_id, blockaded_fleet_owner_id] = fleet_id_owner_id;
-            static_assert(std::is_same_v<std::decay_t<decltype(blockaded_fleet_id)>, int>);
-            static_assert(std::is_same_v<std::decay_t<decltype(blockading_fleet_ids)>, std::vector<int>>);
+            static_assert(std::is_same_v<std::decay_t<decltype(blockaded_fleet_id)>, UniverseObjectID>);
+            static_assert(std::is_same_v<std::decay_t<decltype(blockading_fleet_ids)>, std::vector<UniverseObjectID>>);
 
             // which fleet and system is blockaded?
             const Fleet* blockaded_fleet = context.ContextObjects().getRaw<const Fleet>(blockaded_fleet_id);
@@ -3983,7 +3963,7 @@ namespace {
     auto GetBlockadingFleetsForEmpires(auto&& fleet_owner_and_blockading_fleets) {
         // map from empire ID to IDs of fleets that are blockading one of its fleets, and thus
         // should be considered visible (as a fleet, not the contained ships) for combat initiation
-        std::map<int, std::vector<int>> empire_blockading_fleets;
+        std::map<EmpireID, std::vector<UniverseObjectID>> empire_blockading_fleets;
         for (const auto& [fleet_id_owner_id, blockading_fleet_ids] : fleet_owner_and_blockading_fleets) {
             const auto [blockaded_fleet_id, blockaded_fleet_owner_id] = fleet_id_owner_id;
             std::copy(blockading_fleet_ids.begin(), blockading_fleet_ids.end(),
@@ -4077,7 +4057,7 @@ namespace {
         {
             if (path.empty())
                 return INVALID_OBJECT_ID;
-            const int first_node_obj_id = path.front().object_id;
+            const UniverseObjectID first_node_obj_id = path.front().object_id;
             for (const MovePathNode& node : path) {
                 if (node.object_id != first_node_obj_id && node.object_id != INVALID_OBJECT_ID)
                     return node.object_id; // next object on path
@@ -4103,8 +4083,8 @@ namespace {
         for (auto& [fleet, path] : fleets_move_pathes | range_filter(in_system_and_moving)) {
             const auto fleet_sys_id = fleet->SystemID();
             if (!context.ContextObjects().getRaw<System>(fleet_sys_id)) {
-                ErrorLogger() << "Couldn't find system with id " << fleet_sys_id << " that fleet "
-                              << fleet->Name() << " (" << fleet->ID() << ") is supposedly in / departing";
+                ErrorLogger() << "Couldn't find system with id " << to_string(fleet_sys_id) << " that fleet "
+                              << fleet->Name() << " (" << to_string(fleet->ID()) << ") is supposedly in / departing";
                 continue;
             }
             fleet->SetArrivalStarlane(fleet_sys_id);
@@ -4140,7 +4120,7 @@ namespace {
 
         auto empire_blockading_fleets = GetBlockadingFleetsForEmpires(fleet_owner_and_blockading_fleets);
         for (const auto& [blockaded_empire_id, blockading_fleets] : empire_blockading_fleets) {
-            DebugLogger() << "FleetMovement blockading fleets for empire " << blockaded_empire_id
+            DebugLogger() << "FleetMovement blockading fleets for empire " << to_string(blockaded_empire_id)
                           << ": " << to_string(blockading_fleets);
         }
         return empire_blockading_fleets;
@@ -4200,7 +4180,7 @@ void ServerApp::CacheCostsTimes(const ScriptingContext& context) {
     m_cached_empire_annexation_costs = [&context]() {
         std::map<EmpireID, std::vector<std::pair<UniverseObjectID, double>>> retval;
         // ensure every empire has an entry, even if empty
-        for (const int auto : context.EmpireIDs())
+        for (auto id : context.EmpireIDs())
             retval.emplace(std::piecewise_construct, std::forward_as_tuple(id), std::forward_as_tuple());
         // loop over planets, for each being annexed, store its annexation cost
         const auto being_annexed = [](const Planet& p) { return p.IsAboutToBeAnnexed(); };
@@ -4229,7 +4209,7 @@ void ServerApp::PreCombatProcessTurns() {
 
     // execute orders
     for (auto& pd : m_player_data) {
-        DebugLogger() << "<<= Executing Orders for empire " << pd.empire_id << " =>>";
+        DebugLogger() << "<<= Executing Orders for empire " << to_string(pd.empire_id) << " =>>";
         pd.orders.ApplyOrders(m_context);
     }
 
@@ -4346,7 +4326,8 @@ void ServerApp::ProcessCombats() {
         if (combat_system)
             combat_system->SetLastTurnBattleHere(m_context.current_turn);
 
-        DebugLogger(combat) << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System id: " + std::to_string(combat_info.system_id) + ")");
+        DebugLogger(combat) << "Processing combat at " << (combat_system ? combat_system->Name() :
+                                                           "(No System id: " + to_string(combat_info.system_id) + ")");
         TraceLogger(combat) << combat_info.objects.Dump();
 
         AutoResolveCombat(combat_info);
@@ -4415,8 +4396,8 @@ void ServerApp::PostCombatProcessTurns() {
 
     // check for loss of empire capitals
     for (auto& [empire_id, empire] : m_empires) {
-        int capital_id = empire->CapitalID();
-        if (auto capital = m_universe.Objects().get(capital_id)) {
+        auto capital_id = empire->CapitalID();
+        if (auto* capital = m_universe.Objects().getRaw(capital_id)) {
             if (!capital->OwnedBy(empire_id))
                 empire->SetCapitalID(INVALID_OBJECT_ID, m_universe.Objects());
         } else {
@@ -4550,7 +4531,7 @@ void ServerApp::PostCombatProcessTurns() {
 
     // check for loss of empire capitals
     for (auto& [empire_id, empire] : m_empires) {
-        int capital_id = empire->CapitalID();
+        auto capital_id = empire->CapitalID();
         if (const auto* capital = m_universe.Objects().getRaw(capital_id)) {
             if (!capital || !capital->OwnedBy(empire_id))
                 empire->SetCapitalID(INVALID_OBJECT_ID, m_universe.Objects());
@@ -4662,7 +4643,7 @@ void ServerApp::PostCombatProcessTurns() {
             if (it1->second != it2->second) {
                 WarnLogger() << "PostCombatProcessTurns constructed player info differs from server player info:\n" <<
                     it1->second.name << " ? " << it2->second.name << "\n" <<
-                    it1->second.empire_id << " ? " << it2->second.empire_id << "\n" <<
+                    to_string(it1->second.empire_id) << " ? " << to_string(it2->second.empire_id) << "\n" <<
                     it1->second.client_type << " ? " << it2->second.client_type << "\n" <<
                     it1->second.host << " ? " << it2->second.host;
             }
@@ -4754,7 +4735,7 @@ void ServerApp::CheckForEmpireElimination() {
     }
 }
 
-void ServerApp::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
+void ServerApp::HandleDiplomaticStatusChange(EmpireID empire1_id, EmpireID empire2_id) {
     DiplomaticStatus status = m_empires.GetDiplomaticStatus(empire1_id, empire2_id);
     DiplomaticStatusUpdateInfo update(empire1_id, empire2_id, status);
 
@@ -4762,7 +4743,7 @@ void ServerApp::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
         player->SendMessage(DiplomaticStatusMessage(update));
 }
 
-void ServerApp::HandleDiplomaticMessageChange(int empire1_id, int empire2_id) {
+void ServerApp::HandleDiplomaticMessageChange(EmpireID empire1_id, EmpireID empire2_id) {
     const DiplomaticMessage& message = m_empires.GetDiplomaticMessage(empire1_id, empire2_id);
     // get players corresponding to empires in message
     int player1_id = EmpirePlayerID(empire1_id);

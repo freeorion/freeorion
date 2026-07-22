@@ -609,7 +609,7 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length,
     auto sys_rng = std::as_const(universe.Objects()).all<System>();
     const auto sys_vec = sys_rng | range_to_vec;
     static constexpr auto to_id_sys = [](const std::shared_ptr<const System>& p) { return std::pair{p->ID(), p}; };
-    const auto sys_map = sys_rng | range_transform(to_id_sys) | range_to<std::map<UniverseObjectID, std::shared_ptr<const System>>>();
+    const auto sys_map = sys_rng | range_transform(to_id_sys) | range_to_map;
 
     // generate lanes
     if (GetGameRules().Get<bool>("RULE_STARLANES_EVERYWHERE")) {

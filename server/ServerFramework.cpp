@@ -294,7 +294,7 @@ auto PythonServer::PutChatHistoryEntity(const ChatHistoryEntity& chat_history_en
              py::make_tuple(std::get<0>(color), std::get<1>(color), std::get<2>(color), std::get<3>(color)));
 }
 
-auto PythonServer::CreateUniverse(std::map<int, PlayerSetupData>& player_setup_data) -> bool
+auto PythonServer::CreateUniverse(std::map<EmpireID, PlayerSetupData>& player_setup_data) -> bool
 {
     // import universe generator script file
     m_python_module_universe_generator = py::import("universe_generator");
@@ -305,9 +305,8 @@ auto PythonServer::CreateUniverse(std::map<int, PlayerSetupData>& player_setup_d
     // so set the ErrorReport member function to use it
     SetErrorModule(m_python_module_universe_generator);
 
-    for (auto& psd : player_setup_data) {
-        py_player_setup_data[psd.first] = py::object(psd.second);
-    }
+    for (auto& [eid, psd]: player_setup_data)
+        py_player_setup_data[Value(eid)] = py::object(psd);
 
     py::object f = m_python_module_universe_generator.attr("create_universe");
     if (!f) {

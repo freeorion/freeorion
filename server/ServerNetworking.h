@@ -262,9 +262,7 @@ public:
     void SetHostPlayerID(int host_player_id) noexcept { m_host_player_id = host_player_id; }
 
     /** Generate cookies for player's name, roles, and authentication status. */
-    boost::uuids::uuid GenerateCookie(std::string player_name,
-                                      Networking::AuthRoles roles,
-                                      bool authenticated);
+    boost::uuids::uuid GenerateCookie(std::string player_name, Networking::AuthRoles roles, bool authenticated);
 
     /** Bump cookie's expired date. */
     void UpdateCookie(boost::uuids::uuid cookie);
@@ -273,7 +271,7 @@ public:
     void CleanupCookies();
 
     /** Signal to notify if message sent successfully or failed for empire about turn. */
-    mutable boost::signals2::signal<void (bool, int, int)> MessageSentSignal;
+    mutable boost::signals2::signal<void (bool, EmpireID, int)> MessageSentSignal;
 
 private:
     void Init();

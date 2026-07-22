@@ -75,7 +75,7 @@ public:
     [[nodiscard]] int EffectsProcessingThreads() const override;
 
     /** Returns the empire ID for the player with ID \a player_id */
-    [[nodiscard]] int PlayerEmpireID(int player_id) const;
+    [[nodiscard]] EmpireID PlayerEmpireID(int player_id) const;
 
     /** Returns the player ID for the player controlling the empire with id \a
         empire_id */
@@ -193,14 +193,14 @@ public:
     [[nodiscard]] bool EliminatePlayer(const PlayerConnectionPtr& player_connection);
 
     /** Drop link between player with \a player_id and his empire. */
-    void DropPlayerEmpireLink(int planet_id);
+    void DropPlayerEmpireLink(int player_id);
 
     /** Adds new player to running game.
       * Search empire by player's name or delegation list if \a target_empire_id set and return
       * empire id if success and ALL_EMPIRES if no empire found.
       * Simply sends GAME_START message so established player knows he is in the game.
       * Notificates the player about statuses of other empires. */
-    int AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, int target_empire_id);
+    EmpireID AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, EmpireID target_empire_id);
 
     /** Get list of players delegated by \a player_name */
     [[nodiscard]] std::vector<std::string> GetPlayerDelegation(const std::string& player_name);
@@ -258,7 +258,7 @@ private:
     /** Calls Python universe generator script.
       * Supposed to be called to create a new universe so it can be used by content
       * scripters to customize universe generation. */
-    void GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data);
+    void GenerateUniverse(std::map<EmpireID, PlayerSetupData>& player_setup_data);
 
     /** Calls Python turn events script.
       * Supposed to be called every turn so it can be used by content scripters to
@@ -369,12 +369,12 @@ private:
 
     // storage for cached costs between pre- and post-combat update steps
     void CacheCostsTimes(const ScriptingContext& context);
-    std::map<int, std::vector<std::pair<std::string_view, double>>> m_cached_empire_policy_adoption_costs;
-    std::map<int, std::vector<std::tuple<std::string_view, double, int>>> m_cached_empire_research_costs_times;
-    std::map<int, std::vector<std::tuple<std::string_view, int, float, int>>> m_cached_empire_production_costs_times; // item name, design ID, cost PP, turns
-    std::map<int, std::vector<std::pair<int, double>>> m_cached_empire_annexation_costs;
+    std::map<EmpireID, std::vector<std::pair<std::string_view, double>>> m_cached_empire_policy_adoption_costs;
+    std::map<EmpireID, std::vector<std::tuple<std::string_view, double, int>>> m_cached_empire_research_costs_times;
+    std::map<EmpireID, std::vector<std::tuple<std::string_view, int, float, int>>> m_cached_empire_production_costs_times; // item name, design ID, cost PP, turns
+    std::map<EmpireID, std::vector<std::pair<UniverseObjectID, double>>> m_cached_empire_annexation_costs;
 
-    std::map<int, std::vector<int>> m_empire_fleet_combat_initiation_vis_overrides;
+    std::map<EmpireID, std::vector<UniverseObjectID>> m_empire_fleet_combat_initiation_vis_overrides;
 
     // Give FSM and its states direct access.  We are using the FSM code as a
     // control-flow mechanism; it is all notionally part of this class.

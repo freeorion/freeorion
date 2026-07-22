@@ -1,6 +1,7 @@
 #ifndef _UniverseGenerator_h_
 #define _UniverseGenerator_h_
 
+#include "../universe/ConstantsFwd.h"
 
 #include <map>
 #include <string>
@@ -27,13 +28,13 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length,
 //! Sets empire homeworld
 //! This includes setting ownership, capital, species, preferred environment
 //! (planet type) for the species
-bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name,
+bool SetEmpireHomeworld(Empire* empire, UniverseObjectID planet_id, std::string species_name,
                         ScriptingContext& context);
 
 //! Creates Empires objects for each entry in \a player_setup_data with empire
 //! ids equal to the corresponding map keys (so that the calling code can know
 //! which empire belongs to which player).
-void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data,
+void InitEmpires(const std::map<EmpireID, PlayerSetupData>& player_setup_data,
                  EmpireManager& empries);
 
 

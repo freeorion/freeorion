@@ -1070,7 +1070,7 @@ boost::statechart::result WaitingForGameStart::react(const UnpackFailedNotificat
 // WaitingForTurnData
 ////////////////////////////////////////////////////////////
 struct WaitingForTurnData::TurnDataUnpackedNotification::UnpackedData {
-    UnpackedData(std::string message, const int client_empire_id) {
+    UnpackedData(std::string message, const EmpireID client_empire_id) {
         // may throw, caller should catch
         ExtractTurnUpdateMessageData(std::move(message), client_empire_id, current_turn,
                                      empires, universe, species, combat_logs, supply,

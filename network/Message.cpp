@@ -421,8 +421,7 @@ Message TurnProgressMessage(Message::TurnProgressPhase phase_id) {
     return Message{Message::MessageType::TURN_PROGRESS, std::move(os).str()};
 }
 
-Message PlayerStatusMessage(Message::PlayerStatus player_status,
-                            int about_empire_id)
+Message PlayerStatusMessage(Message::PlayerStatus player_status, EmpireID about_empire_id)
 {
     std::ostringstream os;
     {
@@ -878,7 +877,7 @@ void ExtractServerPlayerChatMessageData(const Message& msg,
     }
 }
 
-void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn,
+void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, EmpireID& empire_id, int& current_turn,
                                  EmpireManager& empires, Universe& universe, SpeciesManager& species,
                                  CombatLogManager& combat_logs, SupplyManager& supply,
                                  std::map<int, PlayerInfo>& players, OrderSet& orders, bool& loaded_game_data,
