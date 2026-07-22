@@ -3549,15 +3549,15 @@ ObjectMap Universe::GetObjectsToSerialize(EmpireID encoding_empire) const {
 }
 
 std::set<int> Universe::GetDestroyedObjectsToSerialize(EmpireID encoding_empire) const {
-    static constexpr auto as_int = [](UniverseObjectID id) noexcept { return Value(id); };
+    static constexpr auto as_int = [](UniverseObjectID id) noexcept -> int { return Value(id); };
 
     if (encoding_empire == ALL_EMPIRES) { // all destroyed objects
-        return m_destroyed_object_ids | range_transform(as_int) | range_to<std::set<int>>();
+        return m_destroyed_object_ids | range_transform(as_int) | range_to_set;
     } else { // get empire's known destroyed objects
         auto it = m_empire_known_destroyed_object_ids.find(encoding_empire);
         if (it == m_empire_known_destroyed_object_ids.end())
             return {};
-        return it->second | range_transform(as_int) | range_to<std::set<int>>();
+        return it->second | range_transform(as_int) | range_to_set;
     }
 }
 

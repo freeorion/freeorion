@@ -93,7 +93,7 @@ namespace {
         auto it = species_homeworlds.find(species.Name());
         if (it == species_homeworlds.end())
             return {};
-        return it->second | range_transform(to_value) | range_to<std::set<int>>();
+        return it->second | range_transform(to_value) | range_to_set;
     }
 
     void UpdateMetersWrapper(Universe& universe, const py::object&)
@@ -147,7 +147,7 @@ namespace {
     {
         const auto neighbours{universe.GetPathfinder().ImmediateNeighbors(UniverseObjectID{system1_id}, EmpireID{empire_id})};
         static constexpr auto swap_kvp = [](const auto& kvp) noexcept { return std::pair{Value(kvp.second), kvp.first}; };
-        return neighbours | range_transform(swap_kvp) | range_to<std::map<int, double>>();
+        return neighbours | range_transform(swap_kvp) | range_to_map;
     }
 
     auto GetObjEmpireVisTurns(const Universe& universe, int object_id, int empire_id) -> std::map<Visibility, int>

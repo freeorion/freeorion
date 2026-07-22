@@ -729,7 +729,7 @@ void ProductionQueue::Update(const ScriptingContext& context,
     // cache producibility, and production item costs and times
     // initialize production queue item completion status to 'never'
     auto is_producible = [this, &context, &empire]() {
-        const auto to_producible = [&context, &empire](const auto& elem)
+        const auto to_producible = [&context, &empire](const auto& elem) -> uint8_t // intentionally not bool, avoiding vector<bool>
         { return empire->ProducibleItem(elem.item, elem.location, context); };
         return m_queue | range_transform(to_producible) | range_to<std::vector<uint8_t>>();
     }();

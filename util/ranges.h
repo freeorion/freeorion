@@ -245,5 +245,24 @@ inline constexpr auto operator|(R&& r, range_to_vec_t) {
     return range_to<std::vector<ValT>>(std::forward<R>(r));
 }
 
+constexpr struct range_to_map_t {} range_to_map{};
+
+template <typename R>
+inline constexpr auto operator|(R&& r, range_to_map_t) {
+    using std::begin;
+    using KeyT = std::remove_cvref_t<decltype((*begin(r)).first)>;
+    using ValT = std::remove_cvref_t<decltype((*begin(r)).second)>;
+    return range_to<std::map<KeyT, ValT>>(std::forward<R>(r));
+}
+
+constexpr struct range_to_set_t {} range_to_set{};
+
+template <typename R>
+inline constexpr auto operator|(R&& r, range_to_set_t) {
+    using std::begin;
+    using ValT = std::remove_cvref_t<decltype(*begin(r))>;
+    return range_to<std::set<ValT>>(std::forward<R>(r));
+}
+
 
 #endif

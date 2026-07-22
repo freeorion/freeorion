@@ -12,9 +12,6 @@ namespace {
     constexpr auto to_uid = [](const auto& i) noexcept { return UniverseObjectID{i}; };
     constexpr auto to_value_int = [](const auto& i) noexcept -> int { return Value(i); };
 
-    auto ToUniverseObjectIDSet(const auto& in)
-    { return in | range_transform(to_uid) | range_to<std::set<UniverseObjectID>>(); }
-
     auto ToIntFlatSet(const auto& in)
     { return in | range_transform(to_value_int) | range_to<flat_set<int>>(); }
 
