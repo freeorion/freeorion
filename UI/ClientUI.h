@@ -72,16 +72,16 @@ public:
 
     void RestoreFromSaveData(const SaveGameUIData& elem);   //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
 
-    bool ZoomToObject(const std::string& name, ScriptingContext& context, int client_empire_id);
-    bool ZoomToObject(int id, ScriptingContext& context, int client_empire_id);
-    bool ZoomToPlanet(int id, ScriptingContext& context);    //!< Zooms to a particular planet on the galaxy map and opens the sidepanel to show it, or if production screen is open selects it
-    bool ZoomToPlanetPedia(int id, const ObjectMap& objects);//!< Opens the encyclodedia window and presents the entry for the given planet
-    bool ZoomToSystem(int id, ScriptingContext& context);    //!< Zooms to a particular system on the galaxy map and opens the sidepanel to show it
+    bool ZoomToObject(const std::string& name, ScriptingContext& context, EmpireID client_empire_id);
+    bool ZoomToObject(UniverseObjectID id, ScriptingContext& context, EmpireID client_empire_id);
+    bool ZoomToPlanet(UniverseObjectID id, ScriptingContext& context);    //!< Zooms to a particular planet on the galaxy map and opens the sidepanel to show it, or if production screen is open selects it
+    bool ZoomToPlanetPedia(UniverseObjectID id, const ObjectMap& objects);//!< Opens the encyclodedia window and presents the entry for the given planet
+    bool ZoomToSystem(UniverseObjectID id, ScriptingContext& context);    //!< Zooms to a particular system on the galaxy map and opens the sidepanel to show it
     bool ZoomToSystem(const System& system, ScriptingContext& context); //!< Zooms to a particular system on the galaxy map and opens the sidepanel to show it
-    bool ZoomToFleet(int id, const ScriptingContext& context, int client_empire_id); //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
-    bool ZoomToShip(int id, const ScriptingContext& context, int client_empire_id); //!< Zooms to a particular ship on the galaxy map and opens its fleet and/or ship window
-    bool ZoomToBuilding(int id, ScriptingContext& context);  //!< Zooms to a particular building on the galaxy map and opens the sidepanel to show it
-    bool ZoomToField(int id, const ObjectMap& objects);      //!< Zooms to a particular field on the map
+    bool ZoomToFleet(UniverseObjectID id, const ScriptingContext& context, EmpireID client_empire_id); //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
+    bool ZoomToShip(UniverseObjectID id, const ScriptingContext& context, EmpireID client_empire_id); //!< Zooms to a particular ship on the galaxy map and opens its fleet and/or ship window
+    bool ZoomToBuilding(UniverseObjectID id, ScriptingContext& context);  //!< Zooms to a particular building on the galaxy map and opens the sidepanel to show it
+    bool ZoomToField(UniverseObjectID id, const ObjectMap& objects);      //!< Zooms to a particular field on the map
     bool ZoomToCombatLog(int id);                            //!< Opens combat log for indicated combat
 
     bool ZoomToContent(const std::string& name, bool reverse_lookup = false);
@@ -100,7 +100,7 @@ public:
     bool ZoomToMeterTypeArticle(MeterType meter_type);       //!< Opens the encyclopedia and presents the entry for MeterType @a meter_type
     bool ZoomToEncyclopediaEntry(std::string str);           //!< Opens the encyclodedia window and presents the entry for the given term
 
-    void DumpObject(int object_id);                                 //!< Displays debug info about specified object in messages window
+    void DumpObject(UniverseObjectID object_id);             //!< Displays debug info about specified object in messages window
 
     void InitializeWindows();
 

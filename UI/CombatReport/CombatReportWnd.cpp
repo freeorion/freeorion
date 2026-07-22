@@ -82,7 +82,7 @@ public:
         auto& context = app.GetContext();
         auto& objects = context.ContextObjects();
         auto& universe = context.ContextUniverse();
-        auto client_empire_id = app.EmpireID();
+        auto client_empire_id = app.GetEmpireID();
         auto& ui = app.GetUI();
         const auto data_int = [&data]() { return boost::lexical_cast<int>(data); }; // TODO: replace with custom ToInt
 
