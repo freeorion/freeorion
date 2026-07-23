@@ -2574,28 +2574,19 @@ namespace {
     }
 
     /** removes ids of objects that the indicated empire knows have been destroyed */
-    template <typename DS>
     void FilterObjectIDsByKnownDestruction(std::vector<int>& object_ids, int empire_id,
-                                           const DS& empire_known_destroyed_object_ids)
+                                           const auto& empire_known_destroyed_object_ids)
     {
         if (empire_id == ALL_EMPIRES)
             return;
-        for (auto it = object_ids.begin(); it != object_ids.end();) {
-            int object_id = *it;
-            auto obj_it = empire_known_destroyed_object_ids.find(object_id);
-            if (obj_it == empire_known_destroyed_object_ids.end()) {
-                ++it;
-                continue;
-            }
-            const auto& empires_that_know = obj_it->second;
-            if (!empires_that_know.contains(empire_id)) {
-                ++it;
-                continue;
-            }
-            // remove object from vector...
-            *it = object_ids.back();
-            object_ids.pop_back();
-        }
+        auto empire_it = empire_known_destroyed_object_ids.find(empire_id);
+        if (empire_it == empire_known_destroyed_object_ids.end())
+            return;
+        const auto& known_destroyed_object_ids = empire_it->second;
+
+        const auto is_known_destroyed = [&known_destroyed_object_ids](auto obj_id) { return known_destroyed_object_ids.contains(obj_id); };
+
+        object_ids.erase(std::remove_if(object_ids.begin(), object_ids.end(), is_known_destroyed), object_ids.end());
     }
 
     /** sets visibility of field objects for empires based on input locations
