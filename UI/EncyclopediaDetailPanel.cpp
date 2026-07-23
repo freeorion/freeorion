@@ -2979,7 +2979,7 @@ namespace {
                                             GG::Clr&/* color*/, std::weak_ptr<const ShipDesign>& inc_design,
                                             bool only_description = false)
     {
-        int client_empire_id = GetApp().EmpireID();
+        const int client_empire_id = GetApp().EmpireID();
         general_type = UserString("ENC_INCOMPETE_SHIP_DESIGN");
 
         auto incomplete_design = inc_design.lock();
@@ -3010,7 +3010,12 @@ namespace {
             texture = ui.GetTexture(ClientUI::ArtDir() / design_icon, true);
 
         const int default_location_id = DefaultLocationForEmpire(client_empire_id, context);
-        universe.InsertShipDesignID(*incomplete_design, client_empire_id, incomplete_design->ID());
+        turns = incomplete_design->ProductionTime(client_empire_id, default_location_id, context);
+        cost = incomplete_design->ProductionCost(client_empire_id, default_location_id, context);
+        cost_units = UserString("ENC_PP");
+
+        const auto incomplete_design_id = incomplete_design->ID();
+        universe.InsertShipDesignID(*incomplete_design, client_empire_id, incomplete_design_id);
         detailed_description = GetDetailedDescriptionBase(*incomplete_design);
 
         // baseline values, may be overridden
@@ -3063,31 +3068,31 @@ namespace {
             if (this_ship && !this_ship->SpeciesName().empty())
                 additional_species.insert(this_ship->SpeciesName());
         }
-        // temporary ship to use for estimating design's meter values
-        auto temp = universe.InsertTemp<Ship>(client_empire_id, incomplete_design->ID(), "",
-                                              universe, species_manager, client_empire_id,
-                                              context.current_turn);
 
-        // apply empty species for 'Generic' entry
-        universe.UpdateMeterEstimates(temp->ID(), context);
-        temp->Resupply(context.current_turn);
+        // create temporary ship to use for estimating design's meter values
+        if (auto temp_ship = universe.InsertTemp<Ship>(client_empire_id, incomplete_design_id, "",
+                                                       universe, species_manager, client_empire_id,
+                                                       context.current_turn))
+        {
+            const auto temporary_ship_id = temp_ship->ID();
 
-        turns = incomplete_design->ProductionTime(client_empire_id, default_location_id, context);
-        cost = incomplete_design->ProductionCost(client_empire_id, default_location_id, context);
-        cost_units = UserString("ENC_PP");
+            // apply empty species for 'Generic' entry
+            universe.UpdateMeterEstimates(temporary_ship_id, context);
+            temp_ship->Resupply(context.current_turn);
 
-        detailed_description.append(GetDetailedDescriptionStats(temp, enemy_DR, enemy_shots, cost));
+            detailed_description.append(GetDetailedDescriptionStats(temp_ship, enemy_DR, enemy_shots, cost));
 
-        // apply various species to ship, re-calculating the meter values for each
-        for (auto& species_name : additional_species) {
-            temp->SetSpecies(species_name, species_manager);
-            universe.UpdateMeterEstimates(temp->ID(), context);
-            temp->Resupply(context.current_turn);
-            detailed_description.append(GetDetailedDescriptionStats(temp, enemy_DR, enemy_shots, cost));
+            // apply various species to ship, re-calculating the meter values for each
+            for (auto& species_name : additional_species) {
+                temp_ship->SetSpecies(species_name, species_manager);
+                universe.UpdateMeterEstimates(temporary_ship_id, context);
+                temp_ship->Resupply(context.current_turn);
+                detailed_description.append(GetDetailedDescriptionStats(temp_ship, enemy_DR, enemy_shots, cost));
+            }
+
+            universe.Delete(temporary_ship_id);
+            universe.DeleteShipDesign(incomplete_design_id);
         }
-
-        universe.Delete(temp->ID());
-        universe.DeleteShipDesign(TEMPORARY_OBJECT_ID);
     }
 
     void RefreshDetailPanelObjectTag(       const std::string&/* item_type*/, const std::string& item_name,
