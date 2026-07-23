@@ -3087,7 +3087,7 @@ namespace {
         }
 
         universe.Delete(temp->ID());
-        universe.DeleteShipDesign(TEMPORARY_OBJECT_ID);
+        universe.DeleteShipDesign(incomplete_design->ID());
     }
 
     void RefreshDetailPanelObjectTag(       const std::string&/* item_type*/, const std::string& item_name,
