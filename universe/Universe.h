@@ -71,7 +71,7 @@ public:
     using IDSet = ::IDSet;
 
 private:
-    using ObjectKnowledgeMap = std::map<int, std::unordered_set<int>>; ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
+    using ObjectKnowledgeMap = std::map<int, std::unordered_set<int>>;
 
     using VisValRef = const ValueRef::ValueRef<Visibility>*;
     using SrcVisValRefVec = std::vector<std::pair<int, VisValRef>>;

@@ -3258,9 +3258,9 @@ void MapWnd::InitSystemRenderingBuffers(const ObjectMap& objects) {
             m_galaxy_gas_quad_vertices.store(GAS_X3,GAS_Y3); // rotated lower left
             m_galaxy_gas_quad_vertices.store(GAS_X4,GAS_Y4); // rotated lower right
 
-            unsigned int subtexture_index = system_id % 12;                             //  0  1  2  3  4  5  6  7  8  9 10 11
-            unsigned int subtexture_x_index = subtexture_index / 3;                     //  0  0  0  0  1  1  1  1  2  2  2  2
-            unsigned int subtexture_y_index = subtexture_index - 4*subtexture_x_index;  //  0  1  2  3  0  1  2  3  0  1  2  3
+            uint8_t subtexture_index = static_cast<uint8_t>(std::abs(system_id) % 12); //  0  1  2  3  4  5  6  7  8  9 10 11
+            uint8_t subtexture_x_index = subtexture_index / 4;                         //  0  0  0  0  1  1  1  1  2  2  2  2
+            uint8_t subtexture_y_index = subtexture_index % 4;                         //  0  1  2  3  0  1  2  3  0  1  2  3
 
             const auto [tex_coord_min_x, tex_coord_min_y, tex_coord_max_x, tex_coord_max_y] =
                 gas_texture->DefaultTexCoords();
