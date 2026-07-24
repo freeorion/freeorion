@@ -817,6 +817,20 @@ if(BUILD_CLIENT_GODOT EQUAL "3")
     target_dependencies_copy_to_build(freeoriongodot)
 elseif(BUILD_CLIENT_GODOT EQUAL "4")
     set(GODOT_PROJECT_DIR "godot4")
+
+    if(NOT GODOT_CPP_ROOT)
+        include(FetchContent)
+        FetchContent_Declare(
+            godot-cpp
+            GIT_REPOSITORY https://github.com/godotengine/godot-cpp.git
+            GIT_TAG b0e3b1e4b78a606f48d162898afb5eeda533d2a9
+        )
+        FetchContent_MakeAvailable(godot-cpp)
+
+        target_link_libraries(freeoriongodot godot-cpp)
+    else()
+        # Not implemented yet
+    endif()
 endif()
 
 if(WIN32 AND BUILD_CLIENT_GG)
