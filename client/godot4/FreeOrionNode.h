@@ -5,7 +5,9 @@
 
 class FreeOrionNode : public godot::Node {
     GDCLASS(FreeOrionNode, Node)
-
+public:
+    FreeOrionNode();
+    ~FreeOrionNode();
 protected:
 	static void _bind_methods();
 };
