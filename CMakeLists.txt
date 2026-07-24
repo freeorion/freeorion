@@ -457,6 +457,7 @@ target_link_libraries(freeorioncommon
         Boost::boost
         Boost::disable_autolinking
         $<$<NOT:$<PLATFORM_ID:Android>>:Boost::dynamic_linking>
+        Python3::Python
     INTERFACE
         Boost::filesystem
         Boost::iostreams
@@ -467,7 +468,6 @@ target_link_libraries(freeorioncommon
         Boost::thread
         Boost::serialization
         $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.86>:Boost::process>
-        ${Python3_LIBRARIES}
         ZLIB::ZLIB
         ${ICUI18N_LIBRARY}
         ${ICUUC_LIBRARY}
