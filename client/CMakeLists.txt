@@ -7,6 +7,9 @@ endif()
 if(BUILD_CLIENT_GODOT EQUAL "3")
     add_subdirectory(godot)
 endif()
+if(BUILD_CLIENT_GODOT EQUAL "4")
+    add_subdirectory(godot4)
+endif()
 
 if(BUILD_AI)
     target_sources(freeorionca
@@ -30,7 +33,7 @@ if(BUILD_CLIENT_GG)
     )
 endif()
 
-if(BUILD_CLIENT_GODOT EQUAL "3")
+if(NOT BUILD_CLIENT_GODOT EQUAL "OFF")
     target_sources(freeoriongodot
         PUBLIC
             ${CMAKE_CURRENT_LIST_DIR}/ClientApp.h
@@ -40,4 +43,3 @@ if(BUILD_CLIENT_GODOT EQUAL "3")
             ${CMAKE_CURRENT_LIST_DIR}/ClientNetworking.cpp
     )
 endif()
-
