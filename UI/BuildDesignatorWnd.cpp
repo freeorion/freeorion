@@ -180,7 +180,7 @@ namespace {
                     name_text = design->Name(true);
                     texture = ClientUI::ShipDesignIcon(*design);
                 } else {
-                    texture = ClientUI::ShipDesignIcon(INVALID_OBJECT_ID, context.ContextUniverse());
+                    texture = ClientUI::ShipDesignIcon(INVALID_DESIGN_ID, context.ContextUniverse());
                 }
                 break;
             }
