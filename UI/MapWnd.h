@@ -54,6 +54,30 @@ struct LaneEndpoints {
     float Y2 = UniverseObject::INVALID_POSITION;
 };
 
+namespace hash_detail {
+    template <typename V>
+    inline static std::size_t combine(std::size_t hash_val, const V& val) noexcept {
+        hash_val ^= std::hash<V>::operator()(val) + 0x9e3779b9 + (hash_val<<6) + (hash_val>>2);
+        return hash_val;
+    }
+}
+
+namespace std {
+    template <typename F, typename S> class hash<std::pair<F, S>>
+    {
+    public:
+        static std::size_t operator()(const std::pair<F, S>& p) noexcept
+        { return hash_detail::combine(hash_detail::combine(8334358, p.first), p.second); }
+    };
+
+    template <typename F, typename S, typename T> class hash<std::pair<std::pair<F, S>, T>>
+    {
+    public:
+        static std::size_t operator()(const std::pair<std::pair<F, S>, T>& p) noexcept
+        { return hash_detail::combine(hash_detail::combine(hash_detail::combine(8334358, p.first.first), p.first.second), p.second); }
+    };
+}
+
 
 /** This class is a window that graphically displays everything in the universe */
 class MapWnd : public GG::Wnd {
@@ -105,7 +129,7 @@ public:
     GG::Pt ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const;
     /** returns the universe position (X and Y in pair) that corresponds to
       * the specified screen coordinates. */
-    std::pair<double, double>   UniversePositionFromScreenCoords(GG::Pt screen_coords) const;
+    std::pair<double, double> UniversePositionFromScreenCoords(GG::Pt screen_coords) const;
 
     /** Returns the id of the currently-selected object or INVALID_OBJECT_ID if no planet is selected */
     UniverseObjectID SelectedSystemID() const;
@@ -287,13 +311,11 @@ private:
 
     /** Return fleets ids of all fleet buttons containing or overlapping the
         fleet button for \p fleet_id. */
-    std::vector<int> FleetIDsOfFleetButtonsOverlapping(UniverseObjectID fleet_id,
-                                                       const ScriptingContext& context,
-                                                       EmpireID empire_id) const;
+    std::vector<UniverseObjectID> FleetIDsOfFleetButtonsOverlapping(
+        UniverseObjectID fleet_id, const ScriptingContext& context, EmpireID empire_id) const;
     /** Return fleets ids of all fleet buttons containing or overlapping \p fleet_btn. */
-    std::vector<int> FleetIDsOfFleetButtonsOverlapping(const FleetButton& fleet_btn,
-                                                       const ScriptingContext& context,
-                                                       EmpireID empire_id) const;
+    std::vector<UniverseObjectID> FleetIDsOfFleetButtonsOverlapping(
+        const FleetButton& fleet_btn, const ScriptingContext& context, EmpireID empire_id) const;
 
     /** Returns position on map where a moving fleet should be displayed.  This
         is different from the fleet's actual universe position due to the
@@ -354,7 +376,7 @@ private:
     void SystemLeftClicked(UniverseObjectID system_id);
     void SystemRightClicked(UniverseObjectID system_id, GG::Flags<GG::ModKey> mod_keys);
     void MouseEnteringSystem(UniverseObjectID system_id, GG::Flags<GG::ModKey> mod_keys);
-    void MouseLeavingSystem(int system_id);
+    void MouseLeavingSystem(UniverseObjectID system_id);
 
     void PlanetDoubleClicked(UniverseObjectID planet_id);
     void PlanetRightClicked(UniverseObjectID planet_id);
@@ -486,19 +508,19 @@ private:
     /** Sets of fleet ids of fleets moving on a starlane, keyed by starlane end system ids. */
     std::unordered_map<std::pair<UniverseObjectID, UniverseObjectID>,
                        std::vector<UniverseObjectID>,
-                       boost::hash<std::pair<UniverseObjectID, UniverseObjectID>>>
+                       std::hash<std::pair<UniverseObjectID, UniverseObjectID>>>
         m_moving_fleets;
 
     /** Icons representing fleets moving on a starlane, keyed by starlane end system ids. */
     std::unordered_map<std::pair<UniverseObjectID, UniverseObjectID>,
                        std::unordered_set<std::shared_ptr<FleetButton>>,
-                       boost::hash<std::pair<UniverseObjectID, UniverseObjectID>>>
+                       std::hash<std::pair<UniverseObjectID, UniverseObjectID>>>
         m_moving_fleet_buttons;
 
     /** Icons representing fleets moving and not on a starlane, indexed by (x,y) location. */
     std::unordered_map<std::pair<double, double>,
                        std::unordered_set<std::shared_ptr<FleetButton>>,
-                       boost::hash<std::pair<double, double>>>
+                       std::hash<std::pair<double, double>>>
         m_offroad_fleet_buttons;
 
     std::unordered_map<UniverseObjectID, std::shared_ptr<FleetButton>>

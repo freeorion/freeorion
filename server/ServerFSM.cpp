@@ -282,13 +282,13 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
                     // AI abnormally disconnected during a regular game
                     ErrorLogger(FSM) << "AI Player #" << id << ", named \""
                                      << player_connection->PlayerName() << "\" quit before empire #"
-                                     << empire->EmpireID() << " "
+                                     << empire->GetEmpireID() << " "
                                      << empire->Name() << " of player "
                                      << empire->PlayerName() << " was eliminated.";
                 } else {
                     InfoLogger(FSM) << "AI Player #" << id << ", named \""
                                     << player_connection->PlayerName() << "\" killed after empire #"
-                                    << empire->EmpireID() << " "
+                                    << empire->GetEmpireID() << " "
                                     << empire->Name() << " of player "
                                     << empire->PlayerName() << " was eliminated.";
                     // detach player from empire
@@ -436,7 +436,7 @@ void ServerFSM::UpdateIngameLobby() {
                                   empire ? empire->Color() : SOLID_WHITE,
                                   EMPTY_STRING, // starting species
                                   est_player->IsAuthenticated(),
-                                  empire ? empire->EmpireID() : ALL_EMPIRES));
+                                  empire ? empire->GetEmpireID() : ALL_EMPIRES));
     }
     dummy_lobby_data.start_lock_cause = UserStringNop("SERVER_ALREADY_PLAYING_GAME");
 
@@ -3038,7 +3038,7 @@ sc::result PlayingGame::react(const AutoTurn& msg) {
         return discard_event();
     }
 
-    EmpireID empire_id = empire->EmpireID();
+    EmpireID empire_id = empire->GetEmpireID();
     if (empire->Eliminated()) {
         ErrorLogger(FSM) << "PlayingGame::react(AutoTurn&) received orders from player " << empire->PlayerName() << "(id: "
                          << player_id << ") who controls empire " << to_string(empire_id)
@@ -3247,7 +3247,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
             return discard_event();
         }
 
-        EmpireID empire_id = empire->EmpireID();
+        EmpireID empire_id = empire->GetEmpireID();
         if (empire->Eliminated()) {
             ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnOrders&) received orders from player " << empire->PlayerName() << "(id: "
                              << player_id << ") who controls empire " << to_string(empire_id)
@@ -3261,10 +3261,10 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
                 ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnOrders&) couldn't get order from order set!";
                 continue;
             }
-            if (empire_id != order->EmpireID()) {
+            if (empire_id != order->GetEmpireID()) {
                 ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnOrders&) received orders from player " << empire->PlayerName()
                                  << "(id: " << player_id << ") who controls empire " << to_string(empire_id)
-                                 << " but those orders were for empire " << order->EmpireID() << ".  Orders being ignored.";
+                                 << " but those orders were for empire " << order->GetEmpireID() << ".  Orders being ignored.";
                 sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
                 return discard_event();
             }
@@ -3351,7 +3351,7 @@ sc::result WaitingForTurnEnd::react(const TurnPartialOrders& msg) {
             return discard_event();
         }
 
-        EmpireID empire_id = empire->EmpireID();
+        EmpireID empire_id = empire->GetEmpireID();
         if (empire->Eliminated()) {
             ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) received orders from player " << empire->PlayerName()
                              << " (id: " << player_id << ") who controls empire " << to_string(empire_id)
@@ -3363,10 +3363,10 @@ sc::result WaitingForTurnEnd::react(const TurnPartialOrders& msg) {
         for (const auto& [order_id, order] : added) {
             if (!order) {
                 ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) couldn't get order from order set!";
-            } else if (empire_id != order->EmpireID()) {
+            } else if (empire_id != order->GetEmpireID()) {
                 ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) received orders from player " << empire->PlayerName() << "(id: "
                                  << player_id << ") who controls empire " << to_string(empire_id)
-                                 << " but those orders were for empire " << order->EmpireID() << ".  Orders being ignored.";
+                                 << " but those orders were for empire " << order->GetEmpireID() << ".  Orders being ignored.";
                 sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
                 return discard_event();
             }
@@ -3400,7 +3400,7 @@ sc::result WaitingForTurnEnd::react(const RevertOrders& msg) {
         return discard_event();
     }
 
-    const EmpireID empire_id = empire->EmpireID();
+    const EmpireID empire_id = empire->GetEmpireID();
     if (empire->Eliminated()) {
         ErrorLogger(FSM) << "WaitingForTurnEnd::react(RevertOrders&) received orders from player " << empire->PlayerName() << "(id: "
             << player_id << ") who controls empire " << to_string(empire_id) << " but empire was eliminated";
@@ -3452,7 +3452,7 @@ sc::result WaitingForTurnEnd::react(const RevokeReadiness& msg) {
             return discard_event();
         }
 
-        const EmpireID empire_id = empire->EmpireID();
+        const EmpireID empire_id = empire->GetEmpireID();
         if (empire->Eliminated()) {
             ErrorLogger(FSM) << "WaitingForTurnEnd::react(RevokeReadiness&) received orders from player " << empire->PlayerName() << "(id: "
                              << player_id << ") who controls empire " << to_string(empire_id)

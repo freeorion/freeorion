@@ -39,7 +39,7 @@ namespace {
 
     auto obstructedStarlanes(const Empire& empire) -> std::vector<std::pair<int, int>>
     {
-        const auto& laneset = IApp::GetApp()->GetSupplyManager().SupplyObstructedStarlaneTraversals(empire.EmpireID());
+        const auto& laneset = IApp::GetApp()->GetSupplyManager().SupplyObstructedStarlaneTraversals(empire.GetEmpireID());
         static_assert(!std::is_same_v<std::decay_t<decltype(laneset)>, std::vector<std::pair<int, int>>>); // if are the same, don't need to explicitly construct the return value...
         try {
             return laneset | range_transform(to_int_value_pair) | range_to_vec;
@@ -56,7 +56,7 @@ namespace {
         const auto empire_starlanes = empire.KnownStarlanes(context.ContextUniverse());
         std::deque<UniverseObjectID> propagating_list;
 
-        for (auto system_id : context.supply.FleetSupplyableSystemIDs(empire.EmpireID(), true, context)) {
+        for (auto system_id : context.supply.FleetSupplyableSystemIDs(empire.GetEmpireID(), true, context)) {
             retval[Value(system_id)] = 0;
             propagating_list.push_back(system_id);
         }
@@ -89,7 +89,7 @@ namespace {
         }
 
         //// DEBUG
-        //DebugLogger() << "jumpsToSuppliedSystem results for empire, " << empire.Name() << " (" << empire.EmpireID() << ") :";
+        //DebugLogger() << "jumpsToSuppliedSystem results for empire, " << empire.Name() << " (" << empire.GetEmpireID() << ") :";
         //for (const auto& system_jumps : retval) {
         //    DebugLogger() << "sys " << system_jumps.first << "  range: " << system_jumps.second;
         //}
@@ -369,13 +369,13 @@ namespace FreeOrionPython {
 
             .def("preservedLaneTravel",             &Empire::PreservedLaneTravel)
             .add_property("fleetSupplyableSystemIDs",   make_function(
-                                                            +[](const Empire& empire) -> std::set<int> { return ToIntSet(IApp::GetApp()->GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID())); },
+                                                            +[](const Empire& empire) -> std::set<int> { return ToIntSet(IApp::GetApp()->GetSupplyManager().FleetSupplyableSystemIDs(empire.GetEmpireID())); },
                                                             py::return_value_policy<py::return_by_value>()
                                                         ))
             .add_property("supplyUnobstructedSystems",  make_function(&Empire::SupplyUnobstructedSystems,   py::return_internal_reference<>()))
             .add_property("systemSupplyRanges",         make_function(&Empire::SystemSupplyRanges,          py::return_internal_reference<>()))
             .add_property("resourceSupplyGroups",       make_function(
-                                                             +[](const Empire& empire) -> std::set<std::set<int>> { return ToIntSetSet(IApp::GetApp()->GetSupplyManager().ResourceSupplyGroups(empire.EmpireID())); },
+                                                             +[](const Empire& empire) -> std::set<std::set<int>> { return ToIntSetSet(IApp::GetApp()->GetSupplyManager().ResourceSupplyGroups(empire.GetEmpireID())); },
                                                              py::return_value_policy<py::return_by_value>()
                                                         ))
 
@@ -503,7 +503,7 @@ namespace FreeOrionPython {
             .add_property("shortDescription",       make_function(&Policy::ShortDescription,    py::return_value_policy<py::copy_const_reference>()))
             .add_property("category",               make_function(&Policy::Category,            py::return_value_policy<py::copy_const_reference>()))
             .def("adoptionCost",                    +[](const Policy& p)                       { return p.AdoptionCost(IApp::GetApp()->GetEmpireID(), IApp::GetApp()->GetContext()); })
-            .def("adoptionCost",                    +[](const Policy& p, const Empire& empire) { return p.AdoptionCost(empire.EmpireID(), IApp::GetApp()->GetContext()); })
+            .def("adoptionCost",                    +[](const Policy& p, const Empire& empire) { return p.AdoptionCost(empire.GetEmpireID(), IApp::GetApp()->GetContext()); })
             .def("adoptionCost",                    +[](const Policy& p, EmpireID empire_id)        { return p.AdoptionCost(empire_id, IApp::GetApp()->GetContext()); })
         ;
 

@@ -66,16 +66,6 @@ template <typename Archive, typename EOV>
 FO_COMMON_API void SerializeEmpireObjectVisMap(Archive& a, EOV& eov, bool old_map_format = false,
                                                const char* xml_tag = "empire_object_visibility");
 
-//extern template void SerializeEmpireObjectVisMap<freeorion_bin_oarchive, const EOVM>(freeorion_bin_oarchive&, const EOVM&, bool, const char*);
-//extern template void SerializeEmpireObjectVisMap<freeorion_xml_oarchive, const EOVM>(freeorion_xml_oarchive&, const EOVM&, bool, const char*);
-//extern template void SerializeEmpireObjectVisMap<freeorion_bin_iarchive, EOVM>(freeorion_bin_iarchive&, EOVM&, bool, const char*);
-//extern template void SerializeEmpireObjectVisMap<freeorion_xml_iarchive, EOVM>(freeorion_xml_iarchive&, EOVM&, bool, const char*);
-//extern template void SerializeEmpireObjectVisMap<freeorion_bin_oarchive, const IOVM>(freeorion_bin_oarchive&, const IOVM&, bool, const char*);
-//extern template void SerializeEmpireObjectVisMap<freeorion_xml_oarchive, const IOVM>(freeorion_xml_oarchive&, const IOVM&, bool, const char*);
-//extern template void SerializeEmpireObjectVisMap<freeorion_bin_iarchive, IOVM>(freeorion_bin_iarchive&, IOVM&, bool, const char*);
-//extern template void SerializeEmpireObjectVisMap<freeorion_xml_iarchive, IOVM>(freeorion_xml_iarchive&, IOVM&, bool, const char*);
-
-
 //! Deserialize @p universe from input archive @p ia.
 template <typename Archive>
 FO_COMMON_API void Deserialize(Archive& ia, Universe& universe);

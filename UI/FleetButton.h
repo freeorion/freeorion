@@ -23,13 +23,13 @@ public:
         LARGE
     };
 
-    FleetButton(std::vector<int> fleet_IDs, SizeType size_type) :
+    FleetButton(std::vector<UniverseObjectID> fleet_IDs, SizeType size_type) :
         GG::Button("", nullptr, GG::CLR_ZERO),
         m_fleets(std::move(fleet_IDs)),
         m_size(size_type)
     {}
-    FleetButton(int fleet_id, SizeType size_type) :
-        FleetButton(std::vector<int>{fleet_id}, size_type)
+    FleetButton(UniverseObjectID fleet_id, SizeType size_type) :
+        FleetButton(std::vector{fleet_id}, size_type)
     {}
 
     void CompleteConstruction() override;
@@ -57,7 +57,7 @@ protected:
 private:
     void LayoutIcons();
 
-    std::vector<int>                                m_fleets;   ///< the fleets represented by this button
+    std::vector<UniverseObjectID>                   m_fleets;   ///< the fleets represented by this button
     SizeType                                        m_size = SizeType::NONE;
     std::vector<std::shared_ptr<GG::StaticGraphic>> m_icons;
     std::shared_ptr<RotatingGraphic>                m_selection_indicator;
@@ -67,8 +67,7 @@ private:
 };
 
 /* returns head icon for passed fleet at passed icon size */
-std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(const Fleet* fleet,
-                                                         FleetButton::SizeType size_type);
+std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(const Fleet* fleet, FleetButton::SizeType size_type);
 
 /* returns head icon for passed fleets at passed icon size */
 std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(const std::vector<const Fleet*>& fleets,

@@ -271,7 +271,7 @@ namespace {
             InfluenceIcon(ui)->OrthoBlit(UpperLeft() + m_influence_icon_ul, UpperLeft() + m_influence_icon_ul + ICON_SIZE);
             DetectionIcon(ui)->OrthoBlit(UpperLeft() + m_detection_icon_ul, UpperLeft() + m_detection_icon_ul + ICON_SIZE);
 
-            if (m_empire_id != app.EmpireID()) {
+            if (m_empire_id != app.GetEmpireID()) {
                 // render diplomacy icon
                 switch (m_diplo_status) {
                 case DiplomaticStatus::DIPLO_WAR:                 WarIcon(ui)->OrthoBlit(    UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
@@ -284,7 +284,7 @@ namespace {
 
             // render incoming diplomatic message icon, if there is one
             const DiplomaticMessage& incoming_message_to_client =
-                app.Empires().GetDiplomaticMessage(m_empire_id, app.EmpireID());
+                app.Empires().GetDiplomaticMessage(m_empire_id, app.GetEmpireID());
             if (incoming_message_to_client.GetType() != DiplomaticMessage::Type::INVALID)
                 MessageIcon(ui)->OrthoBlit(UpperLeft() + m_diplo_msg_ul, UpperLeft() + m_diplo_msg_ul + ICON_SIZE);
 
@@ -323,7 +323,7 @@ namespace {
                 DoLayout(GetApp().Empires());
         }
 
-        void Update(const ClientApp& app) { Update(app.GetContext(), app.Players(), app.EmpireID()); }
+        void Update(const ClientApp& app) { Update(app.GetContext(), app.Players(), app.GetEmpireID()); }
 
         void Update(const ScriptingContext& context, const auto& players, int app_empire_id) {
             const auto& objects = context.ContextObjects();
@@ -379,7 +379,7 @@ namespace {
 
             if (empire) {
                 for (auto* ship : objects.allRaw<Ship>()) {
-                    if (ship->Owner() == empire->EmpireID()
+                    if (ship->Owner() == empire->GetEmpireID()
                         && !this_client_known_destroyed_objects.contains(ship->ID())
                         && !this_client_stale_object_info.contains(ship->ID())) {
                             empires_ship_count += 1;
@@ -387,7 +387,7 @@ namespace {
                 }
 
                 for (auto* planet : objects.allRaw<Planet>()) {
-                    if (planet->Owner() == empire->EmpireID()) {
+                    if (planet->Owner() == empire->GetEmpireID()) {
                         empires_planet_count      += 1;
                         empires_production_points += planet->GetMeter(MeterType::METER_INDUSTRY)->Initial();
                         empires_research_points   += planet->GetMeter(MeterType::METER_RESEARCH)->Initial();
@@ -588,7 +588,7 @@ namespace {
         }
 
         auto PlayerID() const noexcept { return m_player_id; }
-        auto EmpireID() const noexcept { return m_empire_id; }
+        auto GetEmpireID() const noexcept { return m_empire_id; }
 
         void Update(const ClientApp& app) {
             if (m_panel)
@@ -698,7 +698,7 @@ std::set<int> PlayerListWnd::SelectedPlayerIDs() const {
 void PlayerListWnd::HandleDiplomaticMessageChange(int empire1_id, int empire2_id, const ClientApp& app) {
     Update(app);
 
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     if (client_empire_id == ALL_EMPIRES)
         return;
 
@@ -872,14 +872,14 @@ namespace {
 
 void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
     // check that a valid player was clicked and that it wasn't this client's own player
-    int clicked_empire_id = EmpireInRow(it);
+    auto clicked_empire_id = EmpireInRow(it);
     if (clicked_empire_id == ALL_EMPIRES)
         return;
     const auto& app = GetApp();
     int client_player_id = app.PlayerID();
     if (client_player_id == Networking::INVALID_PLAYER_ID)
         return;
-    int client_empire_id = app.EmpireID();
+    auto client_empire_id = app.GetEmpireID();
 
     if (!app.GetEmpire(clicked_empire_id)) {
         ErrorLogger() << "PlayerListWnd::PlayerRightClicked tried to look up empire id "
@@ -1000,12 +1000,12 @@ int PlayerListWnd::PlayerInRow(GG::ListBox::iterator it) const {
     return Networking::INVALID_PLAYER_ID;
 }
 
-int PlayerListWnd::EmpireInRow(GG::ListBox::iterator it) const {
+EmpireID PlayerListWnd::EmpireInRow(GG::ListBox::iterator it) const {
     if (it == m_player_list->end())
         return ALL_EMPIRES;
 
     if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(it->get()))
-        return player_row->EmpireID();
+        return player_row->GetEmpireID();
 
     return ALL_EMPIRES;
 }

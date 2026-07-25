@@ -272,6 +272,27 @@ constexpr Clr FloatClr(float r, float g, float b, float a) noexcept
 
 }
 
+namespace std {
+    template <> class hash<GG::Clr>
+    {
+        static constexpr size_t offset = 14695981039346656037ull;
+        static constexpr size_t prime = 1099511628211ull;
+    public:
+        // based on MSVC STL hash using the FNV-1a algorithm
+        static constexpr std::size_t operator()(const GG::Clr& clr) noexcept {
+            std::size_t retval = offset;
+            retval ^= static_cast<std::size_t>(clr.r);
+            retval *= prime;
+            retval ^= static_cast<std::size_t>(clr.g);
+            retval *= prime;
+            retval ^= static_cast<std::size_t>(clr.b);
+            retval *= prime;
+            retval ^= static_cast<std::size_t>(clr.a);
+            retval *= prime;
+            return retval;
+        }
+    };
+}
 
 //! Calls the appropriate version of glColor*() with @a clr.
 GG_API void glColor(GG::Clr clr);

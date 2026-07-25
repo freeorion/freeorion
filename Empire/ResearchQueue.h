@@ -58,7 +58,7 @@ struct FO_COMMON_API ResearchQueue {
     [[nodiscard]] bool                     Paused(int idx) const;                      ///< Returns true iff there are at least \a idx - 1 items in the queue and item with index \a idx is paused
     [[nodiscard]] int                      ProjectsInProgress() const noexcept { return m_projects_in_progress; }
     [[nodiscard]] float                    TotalRPsSpent() const noexcept { return m_total_RPs_spent; }
-    [[nodiscard]] auto                     EmpireID() const noexcept { return m_empire_id; }
+    [[nodiscard]] auto                     GetEmpireID() const noexcept { return m_empire_id; }
     [[nodiscard]] std::vector<std::string> AllEnqueuedProjects() const;
     [[nodiscard]] std::string              Dump() const;
 

@@ -967,7 +967,7 @@ float GGHumanClientApp::GLVersion() const
 void GGHumanClientApp::StartTurn(const SaveGameUIData& ui_data) {
     DebugLogger() << "GGHumanClientApp::StartTurn";
 
-    if (auto empire = m_empires.GetEmpire(EmpireID())) {
+    if (auto empire = m_empires.GetEmpire(GetEmpireID())) {
         const double RP = empire->ResourceOutput(ResourceType::RE_RESEARCH);
         const double PP = empire->ResourceOutput(ResourceType::RE_INDUSTRY);
         const auto turn_number = this->m_current_turn;
@@ -1247,7 +1247,7 @@ void GGHumanClientApp::StartGame(bool is_new_game) {
         map_wnd->ResetEmpireShown();
 
     if (auto* sdm = m_ui.GetShipDesignManager())
-        sdm->StartGame(EmpireID(), is_new_game);
+        sdm->StartGame(GetEmpireID(), is_new_game);
 }
 
 void GGHumanClientApp::UpdateCombatLogManager() {
@@ -1354,7 +1354,7 @@ namespace {
         }
     }
 
-    std::filesystem::path CreateNewAutosaveFilePath(int client_empire_id, bool is_single_player,
+    std::filesystem::path CreateNewAutosaveFilePath(EmpireID client_empire_id, bool is_single_player,
                                                     const EmpireManager& empires, int turn)
     {
         static constexpr const char* legal_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-";
@@ -1443,7 +1443,7 @@ void GGHumanClientApp::Autosave() {
     if (!(is_initial_save || is_valid_autosave || is_final_save))
         return;
 
-    auto autosave_file_path = CreateNewAutosaveFilePath(EmpireID(), m_single_player_game,
+    auto autosave_file_path = CreateNewAutosaveFilePath(GetEmpireID(), m_single_player_game,
                                                         m_empires, m_current_turn);
 
     // check for and remove excess oldest autosaves.

@@ -49,7 +49,7 @@ constexpr auto operator-(typeName x, underlyingType i) noexcept { return x -= i;
 constexpr auto operator--(typeName& x, int) noexcept { auto rv = x; --x; return rv; }           \
                                                                                                 \
 template<> struct std::hash<typeName> {                                                         \
-    static size_t operator()(typeName x) noexcept                                               \
+    static constexpr size_t operator()(typeName x) noexcept                                     \
     { return std::hash<underlyingType>{}(x.Value()); }                                          \
 };                                                                                              \
                                                                                                 \

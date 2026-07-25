@@ -12,7 +12,7 @@ class ScanlineControl;
 /** Contains various BuildingIndicator to represent buildings on a planet. */
 class BuildingsPanel final : public AccordionPanel {
 public:
-    BuildingsPanel(GG::X w, int columns, int planet_id);
+    BuildingsPanel(GG::X w, int columns, UniverseObjectID planet_id);
     ~BuildingsPanel() = default;
     void CompleteConstruction() override;
 
@@ -50,7 +50,7 @@ private:
 
     /** map indexed by planet ID indicating whether the BuildingsPanel for each
       * object is expanded (true) or collapsed (false) */
-    static std::map<int, bool> s_expanded_map;
+    static std::map<UniverseObjectID, bool> s_expanded_map;
 };
 
 /** Represents and allows some user interaction with a building */

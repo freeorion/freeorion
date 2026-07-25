@@ -1514,10 +1514,10 @@ void ResearchQueueOrder::ExecuteImpl(ScriptingContext& context) const {
 ////////////////////////////////////////////////
 ProductionQueueOrder::ProductionQueueOrder(ProdQueueOrderAction action, EmpireID empire,
                                            ProductionQueue::ProductionItem item,
-                                           int number, int location, int pos) :
+                                           int number, UniverseObjectID location, int pos) :
     Order(empire),
     m_item(std::move(item)),
-    m_location(location),
+    m_location(Value(location)),
     m_new_quantity(number),
     m_new_index(pos),
     m_uuid(boost::uuids::random_generator()()),

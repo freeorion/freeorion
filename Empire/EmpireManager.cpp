@@ -133,7 +133,7 @@ void EmpireManager::InsertEmpire(std::shared_ptr<Empire>&& empire) {
         return;
     }
 
-    auto empire_id = empire->EmpireID();
+    auto empire_id = empire->GetEmpireID();
 
     if (m_empire_map.contains(empire_id)) {
         ErrorLogger() << "EmpireManager::InsertEmpire passed empire with id (" << to_string(empire_id)

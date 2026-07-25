@@ -49,8 +49,8 @@ public:
     GG::Clr         SideColor() const;
     std::string     SideName() const;
     unsigned int    DestroyedUnits() const;
-    void            AddUnit(int unit_id, const CombatParticipantState& state);  // Adds a summary of a unit to the summary of its side and aggregates its data.
-    void            Sort();                                                     // Sorts the units of this side in some sensible fashion
+    void            AddUnit(UniverseObjectID unit_id, const CombatParticipantState& state); // Adds a summary of a unit to the summary of its side and aggregates its data.
+    void            Sort(); // Sorts the units of this side in some sensible fashion
 };
 
 

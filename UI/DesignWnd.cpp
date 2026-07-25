@@ -420,7 +420,7 @@ namespace {
         manager.SetObsolete(design_id, obsolete);
 
         auto& app = GetApp();
-        const auto empire_id = app.EmpireID();
+        const auto empire_id = app.GetEmpireID();
         ScriptingContext& context = app.GetContext();
 
         if (obsolete) {
@@ -448,7 +448,7 @@ namespace {
         const auto maybe_obsolete = manager.IsObsolete(design_id, context.ContextUniverse()); // purpose of this obsolescence check is unclear... author didn't comment
         if (maybe_obsolete && !*maybe_obsolete) {
             // erase design id order : empire should forget this design
-            app.Orders().IssueOrder<ShipDesignOrder>(context, app.EmpireID(), design_id, true);
+            app.Orders().IssueOrder<ShipDesignOrder>(context, app.GetEmpireID(), design_id, true);
         }
         manager.Remove(design_id);
     }
@@ -547,7 +547,7 @@ namespace {
 
         // If requested on the first turn copy all of the saved designs to the client empire.
         if (GetOptionsDB().Get<bool>("resource.shipdesign.saved.enabled")) {
-            const auto empire_id = GetApp().EmpireID();
+            const auto empire_id = GetApp().GetEmpireID();
             TraceLogger() << "Adding saved designs to empire.";
             // assume the saved designs are preferred by the user: add them to the front.
             // note that this also ensures correct ordering.
@@ -1049,7 +1049,7 @@ namespace {
     AvailabilityManager::DisplayedDesignAvailability(const ShipDesign& design) const {
         const auto& app = GetApp();
         const ScriptingContext& context = app.GetContext();
-        auto empire = context.GetEmpire(app.EmpireID());
+        auto empire = context.GetEmpire(app.GetEmpireID());
         bool available = empire ? empire->ShipDesignAvailable(design) : true;
 
         const auto& manager = GetDisplayedDesignsManager();
@@ -1061,7 +1061,7 @@ namespace {
 
     [[nodiscard]] boost::optional<AvailabilityManager::DisplayedAvailabilies>
     AvailabilityManager::DisplayedHullAvailability(const std::string& id) const {
-        EmpireID empire_id = GetApp().EmpireID();
+        EmpireID empire_id = GetApp().GetEmpireID();
         const Empire* empire = GetEmpire(empire_id);  // may be nullptr
         bool available = empire ? empire->ShipHullAvailable(id) : true;
 
@@ -1073,7 +1073,7 @@ namespace {
 
     [[nodiscard]] boost::optional<AvailabilityManager::DisplayedAvailabilies>
     AvailabilityManager::DisplayedPartAvailability(const std::string& id) const {
-        EmpireID empire_id = GetApp().EmpireID();
+        EmpireID empire_id = GetApp().GetEmpireID();
         const Empire* empire = GetEmpire(empire_id);  // may be nullptr
         bool available = empire ? empire->ShipPartAvailable(id) : true;
 
@@ -1591,7 +1591,7 @@ void PartsListBox::Populate() {
 
     const auto& app = GetApp();
     const auto& context = app.GetContext();
-    const EmpireID empire_id = app.EmpireID();
+    const EmpireID empire_id = app.GetEmpireID();
     const auto empire = context.GetEmpire(empire_id);  // may be nullptr
 
     int cur_col = NUM_COLUMNS;
@@ -2000,7 +2000,7 @@ void DesignWnd::PartPalette::HandleShipPartRightClicked(const ShipPart* part, GG
     // create popup menu with a commands in it
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-    if (GetApp().EmpireID() != ALL_EMPIRES) {
+    if (GetApp().GetEmpireID() != ALL_EMPIRES) {
         popup->AddMenuItem(is_obsolete ? UserString("DESIGN_WND_UNOBSOLETE_PART"): UserString("DESIGN_WND_OBSOLETE_PART"),
                            false, false, toggle_obsolete_design_action);
     }
@@ -2214,7 +2214,7 @@ protected:
     /** If \p wnd is a valid dragged child return a replacement row.  Otherwise return nullptr. */
     virtual std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) = 0;
 
-    int EmpireID() const noexcept { return m_empire_id_shown; }
+    int GetEmpireID() const noexcept { return m_empire_id_shown; }
 
     const AvailabilityManager& AvailabilityState() const noexcept { return m_availabilities_state; }
 
@@ -2227,7 +2227,7 @@ protected:
 private:
     void InitRowSizes();
 
-    int                                m_empire_id_shown = ALL_EMPIRES;
+    EmpireID                           m_empire_id_shown = ALL_EMPIRES;
     const AvailabilityManager&         m_availabilities_state;
     boost::signals2::scoped_connection m_empire_designs_changed_signal;
 };
@@ -2572,7 +2572,7 @@ protected:
 
 void EmptyHullsListBox::PopulateCore() {
     ScopedTimer scoped_timer("EmptyHulls::PopulateCore");
-    DebugLogger() << "EmptyHulls::PopulateCore EmpireID(): " << EmpireID();
+    DebugLogger() << "EmptyHulls::PopulateCore GetEmpireID(): " << GetEmpireID();
 
     const GG::Pt row_size = ListRowSize();
 
@@ -2607,7 +2607,7 @@ void EmptyHullsListBox::PopulateCore() {
 
 void CompletedDesignsListBox::PopulateCore() {
     ScopedTimer scoped_timer("CompletedDesignsListBox::PopulateCore");
-    DebugLogger() << "CompletedDesignsListBox::PopulateCore for empire " << EmpireID();
+    DebugLogger() << "CompletedDesignsListBox::PopulateCore for empire " << GetEmpireID();
 
     const auto availability{AvailabilityState()};
     const bool showing_available = availability.GetAvailability(Availability::Available);
@@ -2616,7 +2616,7 @@ void CompletedDesignsListBox::PopulateCore() {
     const auto& app = GetApp();
     const auto& universe = app.GetContext().ContextUniverse();
 
-    if (const auto empire = app.GetContext().GetEmpire(this->EmpireID())) {
+    if (const auto empire = app.GetContext().GetEmpire(this->GetEmpireID())) {
         // add rows for designs this empire is keeping
         const auto& manager = GetDisplayedDesignsManager();
         for (int design_id : manager.AllOrderedIDs()) {
@@ -2913,7 +2913,7 @@ void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt, GG::
     if (!design)
         return;
     if (modkeys & GG::MOD_KEY_CTRL)
-        AddSavedDesignToDisplayedDesigns(design->UUID(), this->EmpireID());
+        AddSavedDesignToDisplayedDesigns(design->UUID(), this->GetEmpireID());
     else
         DesignClickedSignal(design);
 }
@@ -2951,7 +2951,7 @@ void EmptyHullsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG
     // create popup menu with a commands in it
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-    if (this->EmpireID() != ALL_EMPIRES) {
+    if (this->GetEmpireID() != ALL_EMPIRES) {
         popup->AddMenuItem(is_obsolete ? UserString("DESIGN_WND_UNOBSOLETE_HULL") : UserString("DESIGN_WND_OBSOLETE_HULL"),
                            false, false, toggle_obsolete_design_action);
     }
@@ -2993,7 +2993,7 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt 
         DesignUpdatedSignal(design_id);
     };
 
-    const auto empire_id = app.EmpireID();
+    const auto empire_id = app.GetEmpireID();
 
     auto rename_design_action = [empire_id, design_id, design, &design_row]() {
         auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(
@@ -3070,7 +3070,7 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt, 
     const auto design = manager.GetDesign(design_uuid);
     if (!design)
         return;
-    const auto empire_id = EmpireID();
+    const auto empire_id = GetEmpireID();
 
     DesignRightClickedSignal(design);
 
@@ -3134,7 +3134,7 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt, 
 
 void EmptyHullsListBox::QueueItemMoved(const GG::ListBox::iterator row_it, const GG::ListBox::iterator) {
     const auto control = dynamic_cast<HullAndPartsListBoxRow*>(row_it->get());
-    if (!control || !GetEmpire(EmpireID()))
+    if (!control || !GetEmpire(GetEmpireID()))
         return;
 
     const std::string& hull_name = control->Hull();
@@ -3152,7 +3152,7 @@ void EmptyHullsListBox::QueueItemMoved(const GG::ListBox::iterator row_it, const
 
 void CompletedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator row_it, const GG::ListBox::iterator) {
     const auto control = dynamic_cast<BasesListBox::CompletedDesignListBoxRow*>(row_it->get());
-    if (!control || !GetEmpire(EmpireID()))
+    if (!control || !GetEmpire(GetEmpireID()))
         return;
 
     int design_id = control->DesignID();
@@ -3363,7 +3363,7 @@ void DesignWnd::BaseSelector::SizeMove(GG::Pt ul, GG::Pt lr) {
 void DesignWnd::BaseSelector::Reset() {
     ScopedTimer scoped_timer("BaseSelector::Reset");
 
-    const EmpireID empire_id = GetApp().EmpireID();
+    const EmpireID empire_id = GetApp().GetEmpireID();
     SetEmpireShown(empire_id, false);
 
     if (auto base_box = dynamic_cast<BasesListBox*>(m_tabs->CurrentWnd()))
@@ -4065,7 +4065,7 @@ boost::optional<int> DesignWnd::MainPanel::GetReplacedDesignID() const
 boost::optional<const ShipDesign*> DesignWnd::MainPanel::CurrentDesignIsRegistered() const {
     auto& app = GetApp();
     const auto& universe = app.GetContext().ContextUniverse();
-    const EmpireID empire_id = app.EmpireID();
+    const EmpireID empire_id = app.GetEmpireID();
     const auto empire = GetEmpire(empire_id);
     if (!empire) {
         ErrorLogger() << "DesignWnd::MainPanel::CurrentDesignIsRegistered couldn't get the current empire.";
@@ -4470,7 +4470,7 @@ void DesignWnd::MainPanel::DesignChanged() {
     m_replace_button->ClearBrowseInfoWnd();
     m_confirm_button->ClearBrowseInfoWnd();
 
-    const int client_empire_id = GetApp().EmpireID();
+    const auto client_empire_id = GetApp().GetEmpireID();
     m_disabled_by_name = false;
     m_disabled_by_part_conflict = false;
 
@@ -4706,7 +4706,7 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
         m_incomplete_design = std::make_shared<ShipDesign>(
             std::invalid_argument(""),
             name.StoredString(), description.StoredString(),
-            GetApp().CurrentTurn(), GetApp().EmpireID(),
+            GetApp().CurrentTurn(), GetApp().GetEmpireID(),
             hull, Parts(), icon, "", name.IsInStringtable(),
             ShipDesign::Monster::NOTMONSTER, std::move(uuid));
         m_incomplete_design->SetID(INCOMPLETE_DESIGN_ID);
@@ -4771,7 +4771,7 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
         auto new_design_id = INVALID_DESIGN_ID;
 
         auto& app = GetApp();
-        EmpireID empire_id = app.EmpireID();
+        EmpireID empire_id = app.GetEmpireID();
 
         // create design from stuff chosen in UI
         ShipDesign design(std::invalid_argument(""),
@@ -4851,7 +4851,7 @@ void DesignWnd::MainPanel::ReplaceDesign() {
             const auto maybe_obsolete = manager.IsObsolete(replaced_id, context.ContextUniverse());
             bool is_obsolete = maybe_obsolete && *maybe_obsolete;
             if (!is_obsolete)
-                app.Orders().IssueOrder<ShipDesignOrder>(context, app.EmpireID(), replaced_id, true);
+                app.Orders().IssueOrder<ShipDesignOrder>(context, app.GetEmpireID(), replaced_id, true);
 
             // Replace the old id in the manager.
             manager.MoveBefore(new_design_id, replaced_id);

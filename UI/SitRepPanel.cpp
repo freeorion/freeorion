@@ -58,7 +58,7 @@ namespace {
         auto& app = GetApp();
         auto& context = app.GetContext();
         auto& universe = context.ContextUniverse();
-        auto client_empire_id = app.EmpireID();
+        auto client_empire_id = app.GetEmpireID();
         auto& ui = app.GetUI();
         const auto data_int = [&data]() { return boost::lexical_cast<int>(data); };
 
@@ -576,7 +576,7 @@ void SitRepPanel::CloseClicked()
 { ClosingSignal(); }
 
 void SitRepPanel::PrevClicked() {
-    const Empire* empire = GetEmpire(GetApp().EmpireID());
+    const Empire* empire = GetEmpire(GetApp().GetEmpireID());
     if (!empire)
         return; // TODO: for all empires?
     ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(empire->SitReps(), m_showing_turn, empire->SitRepFixedInfos(),
@@ -584,7 +584,7 @@ void SitRepPanel::PrevClicked() {
 }
 
 void SitRepPanel::NextClicked() {
-    const Empire* empire = GetEmpire(GetApp().EmpireID());
+    const Empire* empire = GetEmpire(GetApp().GetEmpireID());
     if (!empire)
         return; // TODO: for all empires?
     ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(empire->SitReps(), m_showing_turn, empire->SitRepFixedInfos(),
@@ -592,7 +592,7 @@ void SitRepPanel::NextClicked() {
 }
 
 void SitRepPanel::LastClicked() {
-    const Empire* empire = GetEmpire(GetApp().EmpireID());
+    const Empire* empire = GetEmpire(GetApp().GetEmpireID());
     if (!empire)
         return; // TODO: for all empires?
     ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(empire->SitReps(), GetApp().CurrentTurn() + 1,
@@ -786,7 +786,7 @@ void SitRepPanel::Update() {
     const auto& app = GetApp();
     const auto& context = app.GetContext();
 
-    const auto empire = context.GetEmpire(app.EmpireID());
+    const auto empire = context.GetEmpire(app.GetEmpireID());
     if (!empire)
         return;
     const auto& sitreps = empire->SitReps();
@@ -934,7 +934,7 @@ void SitRepPanel::SetHiddenSitRepLabels(const std::set<std::string>& labels) {
 
 bool SitRepPanel::HasVisibleSitrepsOnTurn(const ClientApp& app, int turn) const {
     const auto& context = app.GetContext();
-    const auto empire = context.GetEmpire(app.EmpireID());
+    const auto empire = context.GetEmpire(app.GetEmpireID());
     if (!empire)
         return false;
 
@@ -979,7 +979,7 @@ bool SitRepPanel::HasVisibleSitrepsOnTurn(const ClientApp& app, int turn) const 
 std::size_t SitRepPanel::NumVisibleSitrepsThisTurn() const {
     const auto& app = GetApp();
     const auto& context = app.GetContext();
-    const auto empire = context.GetEmpire(app.EmpireID());
+    const auto empire = context.GetEmpire(app.GetEmpireID());
     if (!empire)
         return 0; // TODO: for all empires?
     const auto current_turn = app.CurrentTurn();

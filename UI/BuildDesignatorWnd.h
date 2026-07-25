@@ -39,18 +39,16 @@ public:
 
     /** Programatically sets this Wnd's selected system.
       * Does not emit a SystemSelectedSignal. */
-    void SelectSystem(int system_id, const ObjectMap& objects);
+    void SelectSystem(UniverseObjectID system_id, const ObjectMap& objects);
 
     /** Programatically sets this Wnd's selected planet.
       * Does not emit a PlanetSelectedSignal. */
-    void SelectPlanet(int planet_id, const ObjectMap& objects);
+    void SelectPlanet(UniverseObjectID planet_id, const ObjectMap& objects);
 
-    /** Attempts to find a planet to select, and if successful, selects that
-      * planet */
+    /** Attempts to find a planet to select, and if successful, selects that planet */
     void SelectDefaultPlanet(const ObjectMap& objects);
 
-    /** Sets BuildSelector's empire ID to empire of this client, and then calls
-      * Update. */
+    /** Sets BuildSelector's empire ID to empire of this client, and then calls Update. */
     void Refresh();
 
     /** Updates sidepanels and refreshes encyclopedia and build selector. */
@@ -81,7 +79,7 @@ public:
     /** Open a pedia entry on the encyclopedia */
     void ShowBuildingTypeInEncyclopedia(std::string building_type);
     void ShowShipDesignInEncyclopedia(int design_id);
-    void ShowPlanetInEncyclopedia(int planet_id);
+    void ShowPlanetInEncyclopedia(UniverseObjectID planet_id);
     void ShowTechInEncyclopedia(std::string tech_name);
     void ShowPolicyInEncyclopedia(std::string policy_name);
     void ShowShipPartInEncyclopedia(std::string part_name);
@@ -99,30 +97,30 @@ public:
     bool PediaVisible();
 
     /** emitted when the indicated build is indicated by the user */
-    mutable boost::signals2::signal<void (ProductionQueue::ProductionItem, int, int, int)> AddBuildToQueueSignal;
+    mutable boost::signals2::signal<void (ProductionQueue::ProductionItem, int, UniverseObjectID, int)> AddBuildToQueueSignal;
     /** emitted when the quantity of items in a single build queue item is
       * changed by the user */
     mutable boost::signals2::signal<void (int, int)> BuildQuantityChangedSignal;
     /** emitted when the user selects a system from within this Wnd (but not
       * when this Wnd's system is set programatically) */
-    mutable boost::signals2::signal<void (int)> SystemSelectedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> SystemSelectedSignal;
     /** emitted when the user changes the planet selection from within this
       * Wnd (but not when this Wnd's selected planet is set programatically) */
-    mutable boost::signals2::signal<void (int)> PlanetSelectedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> PlanetSelectedSignal;
 
 private:
     class BuildSelector;
 
-    int BuildLocation() const;
+    UniverseObjectID BuildLocation() const;
     void BuildItemRequested(ProductionQueue::ProductionItem item, int num_to_build, int pos);
     void BuildQuantityChanged(int queue_idx, int quantity);
     void SetBuild(int queue_idx);
     void InitializeWindows();
 
-    std::shared_ptr<EncyclopediaDetailPanel>    m_enc_detail_panel;
-    std::shared_ptr<BuildSelector>              m_build_selector;
-    std::shared_ptr<SidePanel>                  m_side_panel;
-    std::map<int, int>                          m_system_default_planets;   //!< map from system id to id of planet to auto select when viewing each system
+    std::shared_ptr<EncyclopediaDetailPanel>     m_enc_detail_panel;
+    std::shared_ptr<BuildSelector>               m_build_selector;
+    std::shared_ptr<SidePanel>                   m_side_panel;
+    std::map<UniverseObjectID, UniverseObjectID> m_system_default_planets;   //!< map from system id to id of planet to auto select when viewing each system
 };
 
 

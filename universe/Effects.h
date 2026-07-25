@@ -875,7 +875,7 @@ public:
     void SetTopLevelContent(const std::string& content_name) override;
 
     [[nodiscard]] ValueRef::ValueRef<Visibility>* GetVisibility() const noexcept { return m_vis.get(); }
-    [[nodiscard]] ValueRef::ValueRef<int>* EmpireID() const noexcept { return m_empire_id.get(); }
+    [[nodiscard]] ValueRef::ValueRef<int>* GetEmpireID() const noexcept { return m_empire_id.get(); }
     [[nodiscard]] EmpireAffiliationType Affiliation() const noexcept { return m_affiliation; }
     [[nodiscard]] Condition::Condition* OfObjectsCondition() const noexcept  { return m_condition.get(); }
     [[nodiscard]] uint32_t GetCheckSum() const override;

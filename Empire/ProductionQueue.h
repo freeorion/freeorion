@@ -168,7 +168,7 @@ struct FO_COMMON_API ProductionQueue {
 
     [[nodiscard]] int      ProjectsInProgress() const noexcept { return m_projects_in_progress; } ///< number of production projects currently (perhaps partially) funded.
     [[nodiscard]] float    TotalPPsSpent() const; ///< number of PPs currently spent on the projects in this queue.
-    [[nodiscard]] EmpireID EmpireID() const noexcept { return m_empire_id; }
+    [[nodiscard]] EmpireID GetEmpireID() const noexcept { return m_empire_id; }
 
     /** Returns map from sets of object ids that can share resources to amount
       * of PP allocated to production queue elements that have build locations

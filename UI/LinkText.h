@@ -143,6 +143,7 @@ std::string LinkTaggedText(std::string_view tag, std::string_view stringtable_en
 
 /// Helper for generating a link string
 std::string LinkTaggedIDText(std::string_view tag, int id, std::string_view text);
+std::string LinkTaggedIDText(std::string_view tag, auto id, std::string_view text) { return LinkTaggedIDText(tag, static_cast<int>(Value(id)), text); }
 
 /// Helper for generating a link string with preset display text (not to be looked up in stringtable)
 std::string LinkTaggedPresetText(std::string_view tag, std::string_view stringtable_entry,

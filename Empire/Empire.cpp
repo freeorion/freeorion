@@ -1002,7 +1002,7 @@ void Empire::Eliminate(EmpireManager& empires, int current_turn) {
     m_eliminated = true;
 
     for (auto& entry : empires | range_values)
-        entry->AddSitRepEntry(CreateEmpireEliminatedSitRep(EmpireID(), current_turn));
+        entry->AddSitRepEntry(CreateEmpireEliminatedSitRep(GetEmpireID(), current_turn));
 
     // some Empire data not cleared when eliminating since it might be useful
     // to remember later, and having it doesn't hurt anything (as opposed to
@@ -1037,7 +1037,7 @@ void Empire::Eliminate(EmpireManager& empires, int current_turn) {
 void Empire::Win(const std::string& reason, const EmpireManager::container_type& empires, int current_turn) {
     if (m_victories.insert(reason).second) {
         for (auto& entry : empires)
-            entry.second->AddSitRepEntry(CreateVictorySitRep(reason, EmpireID(), current_turn));
+            entry.second->AddSitRepEntry(CreateVictorySitRep(reason, GetEmpireID(), current_turn));
     }
 }
 
@@ -1061,7 +1061,7 @@ void Empire::UpdateSystemSupplyRanges(const std::span<const UniverseObjectID> kn
     TraceLogger(supply) << "Empire::UpdateSystemSupplyRanges() for empire " << this->Name();
     m_supply_system_ranges.clear();
 
-    const auto owned = [owner_id{this->EmpireID()}](const Planet* plt) { return plt->OwnedBy(owner_id); };
+    const auto owned = [owner_id{this->GetEmpireID()}](const Planet* plt) { return plt->OwnedBy(owner_id); };
     const auto known_planets = objects.findRaw<Planet>(known_objects);
     for (const Planet* obj : known_planets | range_filter(owned)) {
         //std::cout << "... considering owned planet: " << obj->Name() << std::endl;
@@ -1090,10 +1090,10 @@ void Empire::UpdateSystemSupplyRanges(const Universe& universe) {
     if (AppEmpireID() != ALL_EMPIRES)
         ErrorLogger() << "Empire::UpdateSystemSupplyRanges unexpectedly called by an App with a specific empire ID";
     const ObjectMap& empire_known_objects{AppEmpireID() == ALL_EMPIRES ?
-        universe.EmpireKnownObjects(this->EmpireID()) : universe.Objects()};
+        universe.EmpireKnownObjects(this->GetEmpireID()) : universe.Objects()};
 
     // get ids of objects partially or better visible to this empire.
-    const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
+    const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->GetEmpireID());
 
     // exclude objects known to have been destroyed (or rather, include ones that aren't known
     // by this empire to be destroyed). this should already contain sorted unique ids.
@@ -1121,12 +1121,12 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context, bo
     const Universe& universe = context.ContextUniverse();
 
     // get ids of systems partially or better visible to this empire.
-    const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
+    const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->GetEmpireID());
 
     // exclude systems known to have been destroyed (or rather, include ones that aren't known
     // by this empire to be destroyed). this should already contain sorted unique ids.
     const auto not_known_destroyed = [&](const UniverseObjectID id) { return !known_destroyed_objects.contains(id); };
-    const auto known_system_ids = universe.EmpireKnownObjects(this->EmpireID()).findIDs<System>(not_known_destroyed);
+    const auto known_system_ids = universe.EmpireKnownObjects(this->GetEmpireID()).findIDs<System>(not_known_destroyed);
 
     UpdateSupplyUnobstructedSystems(context, known_system_ids, precombat);
 }
@@ -1150,7 +1150,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
     }
 
     // get all fleets, or just those visible to this client's empire
-    const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
+    const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->GetEmpireID());
 
     // find systems that contain fleets that can either maintain supply or block supply.
     // to affect supply in either manner, a fleet must be armed & aggressive, & must be not
@@ -1346,7 +1346,7 @@ Empire::LaneSet Empire::KnownStarlanes(const Universe& universe) const {
     std::vector<Empire::LaneEndpoints> scratch;
     scratch.reserve(objects.size<System>()*10); // guesstimate
 
-    const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
+    const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->GetEmpireID());
     const auto not_known_destroyed = [&known_destroyed_objects](const auto& obj) {
         if constexpr (std::is_integral_v<std::decay_t<decltype(obj)>> ||
                       requires { { Value(obj) } -> std::integral; })
@@ -2130,7 +2130,7 @@ void Empire::AddShipDesign(int ship_design_id, const Universe& universe, int nex
             ShipDesignsChangedSignal();
 
             TraceLogger() << "AddShipDesign::  " << ship_design->Name() << " (" << ship_design_id
-                          << ") to empire #" << to_string(EmpireID());
+                          << ") to empire #" << to_string(GetEmpireID());
         }
     } else {
         // design in not valid
@@ -2257,7 +2257,7 @@ namespace {
                     done = true;        // got all the way through the queue without finding an invalid tech
                     break;
                 } else if (!GetTech(it->name)) {
-                    DebugLogger() << "SanitizeResearchQueue for empire " << to_string(queue.EmpireID())
+                    DebugLogger() << "SanitizeResearchQueue for empire " << to_string(queue.GetEmpireID())
                                   << " removed invalid tech: " << it->name;
                     queue.erase(it);    // remove invalid tech, end inner loop without marking as finished
                     break;
@@ -3015,7 +3015,7 @@ void Empire::UpdateResearchQueue(const ScriptingContext& context,
 void Empire::UpdateProductionQueue(const ScriptingContext& context,
                                    const std::vector<std::tuple<std::string_view, int, float, int>>& prod_costs)
 {
-    DebugLogger() << "========= Production Update for empire: " << to_string(EmpireID()) << " ========";
+    DebugLogger() << "========= Production Update for empire: " << to_string(GetEmpireID()) << " ========";
 
     m_industry_pool.Update(context.ContextObjects());
     m_production_queue.Update(context, prod_costs);
@@ -3080,7 +3080,7 @@ void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
     m_species_colonies_owned.clear();
     m_outposts_owned = 0;
     for (const auto* planet : objects.allExistingRaw<Planet>()) {
-        if (!planet || !planet->OwnedBy(this->EmpireID()))
+        if (!planet || !planet->OwnedBy(this->GetEmpireID()))
             continue;
         if (planet->SpeciesName().empty())
             m_outposts_owned++;
@@ -3091,7 +3091,7 @@ void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
     // buildings of each type
     m_building_types_owned.clear();
     for (const Building* building: objects.allExistingRaw<Building>()) {
-        if (building->OwnedBy(this->EmpireID()))
+        if (building->OwnedBy(this->GetEmpireID()))
             m_building_types_owned[building->BuildingTypeName()]++;
     }
 }

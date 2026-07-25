@@ -448,7 +448,7 @@ void MessageWnd::HandleLogMessage(const std::string& text) {
 void MessageWnd::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
     auto& app = GetApp();
     const auto& context = app.GetContext();
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     DiplomaticStatus status = context.ContextDiploStatus(empire1_id, empire2_id);
     std::string text;
 
@@ -541,7 +541,7 @@ void MessageWnd::HandleTextCommand(const std::string& text) {
     if (boost::iequals(command, "zoom") && !params.empty()) {
         // params came from chat, so will be localized, so should be reverse looked up
         // to find internal name from human-readable name for zooming to content
-        if (ui.ZoomToObject(params, app.GetContext(), app.EmpireID()))
+        if (ui.ZoomToObject(params, app.GetContext(), app.GetEmpireID()))
             return;
         ui.ZoomToContent(params, true);
     }

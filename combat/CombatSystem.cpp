@@ -74,7 +74,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_,
 {
     auto system = universe_mutable_in.Objects().get<System>(system_id);
     if (!system) {
-        ErrorLogger() << "CombatInfo constructed with invalid system id: " << system_id;
+        ErrorLogger() << "CombatInfo constructed with invalid system id: " << to_string(system_id);
         return;
     }
     auto ships = universe_mutable_in.Objects().find<Ship>(system->ShipIDs());

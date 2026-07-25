@@ -96,7 +96,7 @@ namespace {
         if (!fleet)
             return retval;
 
-        const int client_empire_id = app.EmpireID();
+        const auto client_empire_id = app.GetEmpireID();
         const auto map_wnd = app.GetUI().GetMapWndConst();
         const bool fleet_is_exploring = map_wnd && map_wnd->IsFleetExploring(fleet_id);
 
@@ -277,7 +277,7 @@ namespace {
             return; // TODO: handle moderator actions for this...
 
         auto& app = GetApp();
-        int client_empire_id = app.EmpireID();
+        auto client_empire_id = app.GetEmpireID();
         if (client_empire_id == ALL_EMPIRES)
             return;
 
@@ -620,7 +620,7 @@ namespace {
 
         bool                                m_initialized = false;
         bool                                m_needs_refresh = true;
-        int                                 m_ship_id = INVALID_OBJECT_ID;
+        UniverseObjectID                    m_ship_id = INVALID_OBJECT_ID;
         std::shared_ptr<GG::StaticGraphic>  m_ship_icon;
         std::vector<std::shared_ptr<GG::StaticGraphic>>
                                             m_ship_icon_overlays;   /// An overlays for orders like scrap, colonize, invade, bombard destroy etc.
@@ -634,7 +634,7 @@ namespace {
         boost::signals2::scoped_connection  m_fleet_connection;
     };
 
-    ShipDataPanel::ShipDataPanel(GG::X w, GG::Y h, int ship_id) :
+    ShipDataPanel::ShipDataPanel(GG::X w, GG::Y h, UniverseObjectID ship_id) :
         Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
         m_ship_id(ship_id)
     {
@@ -751,7 +751,7 @@ namespace {
         if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID)
             add_overlay("bombarding.png");
 
-        if ((ship->GetVisibility(app.EmpireID(), universe) < Visibility::VIS_BASIC_VISIBILITY)
+        if ((ship->GetVisibility(app.GetEmpireID(), universe) < Visibility::VIS_BASIC_VISIBILITY)
             && GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
         {
             m_scanline_control = GG::Wnd::Create<ScanlineControl>(
@@ -770,7 +770,7 @@ namespace {
         const ScriptingContext& context = app.GetContext();
         const Universe& universe = context.ContextUniverse();
         const ObjectMap& objects = context.ContextObjects();
-        const EmpireID empire_id = app.EmpireID();
+        const EmpireID empire_id = app.GetEmpireID();
         auto& ui = app.GetUI();
 
         auto ship = objects.get<Ship>(m_ship_id);
@@ -788,7 +788,7 @@ namespace {
         // name and design name update
         const std::string& ship_name = ship->PublicName(empire_id, universe);
         std::string id_name_part{GetOptionsDB().Get<bool>("ui.name.id.shown")
-            ? " (" + std::to_string(m_ship_id) + ")"
+            ? " (" + to_string(m_ship_id) + ")"
             : ""};
         if (!ship->Unowned() && ship_name == UserString("FW_FOREIGN_SHIP")) {
             const auto ship_owner_empire = context.GetEmpire(ship->Owner());
@@ -911,7 +911,7 @@ namespace {
         auto ship = objects.get<const Ship>(m_ship_id);
         std::string ship_name{
             (ship ? ship->Name() : "") +
-            (GetOptionsDB().Get<bool>("ui.name.id.shown") ? " (" + std::to_string(m_ship_id) + ")" : "")
+            (GetOptionsDB().Get<bool>("ui.name.id.shown") ? " (" + to_string(m_ship_id) + ")" : "")
         };
         m_ship_name_text = GG::Wnd::Create<CUILabel>(std::move(ship_name), ui, GG::FORMAT_LEFT);
         AttachChild(m_ship_name_text);
@@ -988,7 +988,7 @@ namespace {
     /** A ListBox::Row subclass used to represent ships in ShipListBoxes. */
     class ShipRow : public GG::ListBox::Row {
     public:
-        ShipRow(GG::X w, GG::Y h, int ship_id) :
+        ShipRow(GG::X w, GG::Y h, UniverseObjectID ship_id) :
             GG::ListBox::Row(w, h),
             m_ship_id(ship_id)
         {
@@ -1011,11 +1011,11 @@ namespace {
                 m_panel->Resize(Size());
         }
 
-        [[nodiscard]] int ShipID() const noexcept { return m_ship_id; }
+        [[nodiscard]] UniverseObjectID ShipID() const noexcept { return m_ship_id; }
 
     private:
-        int                             m_ship_id = INVALID_OBJECT_ID;
-        std::shared_ptr<ShipDataPanel>  m_panel;
+        UniverseObjectID               m_ship_id = INVALID_OBJECT_ID;
+        std::shared_ptr<ShipDataPanel> m_panel;
     };
 }
 
@@ -1026,8 +1026,8 @@ namespace {
   * FleetWnd or as the sole Control in each FleetRow. */
 class FleetDataPanel : public GG::Control {
 public:
-    FleetDataPanel(GG::X w, GG::Y h, int fleet_id);
-    FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_drop_target);
+    FleetDataPanel(GG::X w, GG::Y h, UniverseObjectID fleet_id);
+    FleetDataPanel(GG::X w, GG::Y h, UniverseObjectID system_id, bool new_fleet_drop_target);
     ~FleetDataPanel() = default;
 
     /** Upper left plus border insets. */
@@ -1052,12 +1052,12 @@ public:
     bool                Selected() const noexcept { return m_selected; }
     FleetAggression     GetFleetAggression() const noexcept { return m_new_fleet_aggression; }
     void                Select(bool b);
-    void                SetSystemID(int id);
+    void                SetSystemID(UniverseObjectID id);
 
     /** Indicate fleet data has changed and needs refresh. */
     void RequireRefresh() noexcept;
 
-    mutable boost::signals2::signal<void (const std::vector<int>&)> NewFleetFromShipsSignal;
+    mutable boost::signals2::signal<void (const std::vector<UniverseObjectID>&)> NewFleetFromShipsSignal;
 
 protected:
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
@@ -1073,11 +1073,11 @@ private:
     void Init();
     void ColorTextForSelect();
 
-    const int           m_fleet_id = INVALID_OBJECT_ID;
-    int                 m_system_id = INVALID_OBJECT_ID;
-    const bool          m_is_new_fleet_drop_target = false;
-    FleetAggression     m_new_fleet_aggression = FleetAggression::FLEET_DEFENSIVE;
-    bool                m_needs_refresh = true;
+    const UniverseObjectID m_fleet_id = INVALID_OBJECT_ID;
+    UniverseObjectID       m_system_id = INVALID_OBJECT_ID;
+    const bool             m_is_new_fleet_drop_target = false;
+    FleetAggression        m_new_fleet_aggression = FleetAggression::FLEET_DEFENSIVE;
+    bool                   m_needs_refresh = true;
 
     boost::signals2::scoped_connection              m_fleet_connection;
     std::vector<boost::signals2::scoped_connection> m_ship_connections;
@@ -1095,7 +1095,7 @@ private:
     bool m_initialized = false;
 };
 
-FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
+FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, UniverseObjectID fleet_id) :
     Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
     m_fleet_id(fleet_id),
     m_new_fleet_aggression(NewFleetsAggressiveOptionSetting())
@@ -1104,7 +1104,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
     SetChildClippingMode(ChildClippingMode::ClipToClient);
 }
 
-FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_drop_target) :
+FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, UniverseObjectID system_id, bool new_fleet_drop_target) :
     Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
     m_system_id(system_id),
     m_is_new_fleet_drop_target(new_fleet_drop_target),
@@ -1215,7 +1215,7 @@ void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableI
 
     const auto& app = GetApp();
     const auto& objects = app.GetContext().ContextObjects();
-    int this_client_empire_id = app.EmpireID();
+    int this_client_empire_id = app.GetEmpireID();
 
     auto this_panel_fleet = objects.get<const Fleet>(m_fleet_id);
 
@@ -1315,7 +1315,7 @@ void FleetDataPanel::ToggleAggression() {
         if (ClientPlayerIsModerator())
             return; // TODO: handle moderator actions for this...
 
-        const int client_empire_id = app.EmpireID();
+        const auto client_empire_id = app.GetEmpireID();
         if (client_empire_id == ALL_EMPIRES)
             return;
 
@@ -1379,7 +1379,7 @@ void FleetDataPanel::Refresh() {
         AttachChild(m_fleet_icon);
 
     } else if (auto fleet = o.get<Fleet>(m_fleet_id)) {
-        int client_empire_id = app.EmpireID();
+        auto client_empire_id = app.GetEmpireID();
         // set fleet name and destination text
         std::string public_fleet_name = fleet->PublicName(client_empire_id, u);
         if (!fleet->Unowned() && public_fleet_name == UserString("FW_FOREIGN_FLEET")) {
@@ -1493,7 +1493,7 @@ void FleetDataPanel::RefreshStateChangedSignals() {
 
 void FleetDataPanel::SetStatIconValues() {
     const auto& app = GetApp();
-    int client_empire_id = app.EmpireID();
+    auto client_empire_id = app.GetEmpireID();
     const ScriptingContext& context = app.GetContext();
     const Universe& universe = context.ContextUniverse();
     const ObjectMap& objects = context.ContextObjects();
@@ -1720,7 +1720,7 @@ void FleetDataPanel::Init() {
     m_initialized = true;
 
     auto& app = GetApp();
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     const auto& context = app.GetContext();
     const auto& u = context.ContextUniverse();
     const auto& o = context.ContextObjects();
@@ -1969,7 +1969,7 @@ public:
 
         // order the transfer
         if (!ship_ids.empty())
-            app.Orders().IssueOrder<FleetTransferOrder>(context, app.EmpireID(), target_fleet_id, ship_ids);
+            app.Orders().IssueOrder<FleetTransferOrder>(context, app.GetEmpireID(), target_fleet_id, ship_ids);
     }
 
     void DragDropHere(GG::Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
@@ -2275,7 +2275,7 @@ public:
         SetNumCols(1);
         ManuallyManageColProps();
 
-        const int this_client_empire_id = app.EmpireID();
+        const int this_client_empire_id = app.GetEmpireID();
         const auto& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this_client_empire_id);
         const auto& this_client_stale_object_info = universe.EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
@@ -2367,7 +2367,7 @@ public:
         if (ClientPlayerIsModerator())
             return; // TODO: handle moderator actions for this...
 
-        app.Orders().IssueOrder<FleetTransferOrder>(context, app.EmpireID(), m_fleet_id, ship_ids);
+        app.Orders().IssueOrder<FleetTransferOrder>(context, app.GetEmpireID(), m_fleet_id, ship_ids);
     }
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override {
@@ -2619,7 +2619,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, GG::Pt pt,
     }
 
     const ShipDesign* design = universe.GetShipDesign(ship->DesignID()); // may be null
-    int client_empire_id = GetApp().EmpireID();
+    auto client_empire_id = GetApp().GetEmpireID();
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
@@ -2765,11 +2765,9 @@ namespace {
     { return (ll.Width() <= rr.Width() && ll.Height() <= rr.Height()); }
 }
 
-FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
-                   double allowed_bounding_box_leeway,
-                   int selected_fleet_id,
-                   GG::Flags<GG::WndFlag> flags,
-                   std::string_view config_name) :
+FleetWnd::FleetWnd(const std::vector<UniverseObjectID>& fleet_ids, bool order_issuing_enabled,
+                   double allowed_bounding_box_leeway, UniverseObjectID selected_fleet_id,
+                   GG::Flags<GG::WndFlag> flags, std::string_view config_name) :
     MapWndPopup("", flags | GG::RESIZABLE, config_name),
     m_fleet_ids(fleet_ids.begin(), fleet_ids.end()),
     m_order_issuing_enabled(order_issuing_enabled)
@@ -2782,8 +2780,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
     }
 
     // verify that the selected fleet id is valid.
-    if (selected_fleet_id != INVALID_OBJECT_ID &&
-        !m_fleet_ids.contains(selected_fleet_id))
+    if (selected_fleet_id != INVALID_OBJECT_ID  &&  !m_fleet_ids.contains(selected_fleet_id))
     {
         ErrorLogger() << "FleetWnd::FleetWnd couldn't find requested selected fleet with id " << selected_fleet_id;
         selected_fleet_id = INVALID_OBJECT_ID;
@@ -2865,13 +2862,13 @@ void FleetWnd::CompleteConstruction() {
     const auto& context = app.GetContext();
 
     // determine fleets to show and populate list
-    Refresh(app.EmpireID(), context);
+    Refresh(app.GetEmpireID(), context);
 
     // create drop target
     m_new_fleet_drop_target = GG::Wnd::Create<FleetDataPanel>(GG::X1, ListRowHeight(), m_system_id, true);
     AttachChild(m_new_fleet_drop_target);
     m_new_fleet_drop_target->NewFleetFromShipsSignal.connect([this](const auto& ship_ids)
-        { CreateNewFleetFromDrops(ship_ids, GetApp().GetContext(), GetApp().EmpireID()); });
+        { CreateNewFleetFromDrops(ship_ids, GetApp().GetContext(), GetApp().GetEmpireID()); });
 
     context.ContextUniverse().UniverseObjectDeleteSignal.connect(
         boost::bind(&FleetWnd::UniverseObjectDeleted, this, ph::_1));
@@ -2899,7 +2896,7 @@ FleetWnd::~FleetWnd() {
 void FleetWnd::PreRender() {
     MapWndPopup::PreRender();
     if (m_needs_refresh)
-        Refresh(GetApp().EmpireID(), GetApp().GetContext());
+        Refresh(GetApp().GetEmpireID(), GetApp().GetContext());
 }
 
 GG::Rect FleetWnd::CalculatePosition() const {
@@ -2910,7 +2907,7 @@ GG::Rect FleetWnd::CalculatePosition() const {
 
 void FleetWnd::SetStatIconValues() {
     const auto& app = GetApp();
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     int ship_count =        0;
     float damage_tally =    0.0f;
     float destroy_tally   = 0.0f; // number of destroyed fighters
@@ -2996,7 +2993,7 @@ void FleetWnd::RequireRefresh() {
     RequirePreRender();
 }
 
-void FleetWnd::Refresh(int this_client_empire_id, const ScriptingContext& context) {
+void FleetWnd::Refresh(EmpireID this_client_empire_id, const ScriptingContext& context) {
     m_needs_refresh = false;
 
     const auto& universe = context.ContextUniverse();
@@ -3013,11 +3010,11 @@ void FleetWnd::Refresh(int this_client_empire_id, const ScriptingContext& contex
     const auto initial_fleet_ids{m_fleet_ids};
     m_fleet_ids.clear();
 
-    std::multimap<std::pair<int, GG::Pt>, int> fleet_locations_ids;
-    std::multimap<std::pair<int, GG::Pt>, int> selected_fleet_locations_ids;
+    std::multimap<std::pair<UniverseObjectID, GG::Pt>, UniverseObjectID> fleet_locations_ids;
+    std::multimap<std::pair<UniverseObjectID, GG::Pt>, UniverseObjectID> selected_fleet_locations_ids;
 
     // Check all fleets in initial_fleet_ids and keep those that exist.
-    std::unordered_set<int> fleets_that_exist;
+    std::unordered_set<UniverseObjectID> fleets_that_exist;
     GG::Rect fleets_bounding_box;
     for (const auto* fleet : objects.findRaw<const Fleet>(initial_fleet_ids)) {
         if (!fleet)
@@ -3069,7 +3066,7 @@ void FleetWnd::Refresh(int this_client_empire_id, const ScriptingContext& contex
     // Otherwise, is the current location a system?  Use that location.
     // Otherwise remove all fleets as all fleets have gone in separate directions.
 
-    std::pair<int, GG::Pt> location{INVALID_OBJECT_ID, GG::Pt0};
+    std::pair<UniverseObjectID, GG::Pt> location{INVALID_OBJECT_ID, GG::Pt0};
     if (!fleet_locations_ids.empty()
         && fleet_locations_ids.begin()->first.first != INVALID_OBJECT_ID
         && (fleet_locations_ids.count(fleet_locations_ids.begin()->first) == fleet_locations_ids.size()))
@@ -3087,7 +3084,7 @@ void FleetWnd::Refresh(int this_client_empire_id, const ScriptingContext& contex
                && SmallerOrEqual(fleets_bounding_box, m_bounding_box))
     {
         location = {INVALID_OBJECT_ID, bounding_box_center};
-        std::multimap<std::pair<int, GG::Pt>, int> fleets_near_enough;
+        std::multimap<std::pair<UniverseObjectID, GG::Pt>, UniverseObjectID> fleets_near_enough;
         for (const auto& loc_and_id: fleet_locations_ids)
             fleets_near_enough.emplace(location, loc_and_id.second);
         fleet_locations_ids.swap(fleets_near_enough);
@@ -3096,7 +3093,7 @@ void FleetWnd::Refresh(int this_client_empire_id, const ScriptingContext& contex
                && SmallerOrEqual(selected_fleets_bounding_box, m_bounding_box))
     {
         location = {INVALID_OBJECT_ID, selected_bounding_box_center};
-        std::multimap<std::pair<int, GG::Pt>, int> fleets_near_enough;
+        std::multimap<std::pair<UniverseObjectID, GG::Pt>, UniverseObjectID> fleets_near_enough;
         // Center bounding box on selected fleets.
         m_bounding_box = m_bounding_box +
             GG::Pt(selected_fleets_bounding_box.MidX() - m_bounding_box.MidX(),
@@ -3207,7 +3204,7 @@ void FleetWnd::DoLayout() {
     // are there any fleets owned by this client's empire int his FleetWnd?
     bool this_client_owns_fleets_in_this_wnd(false);
     const auto& app = GetApp();
-    const int this_client_empire_id = app.EmpireID();
+    const int this_client_empire_id = app.GetEmpireID();
 
     for (const auto& fleet : app.GetContext().ContextObjects().find<const Fleet>(m_fleet_ids)) {
         if (!fleet)
@@ -3337,7 +3334,7 @@ void FleetWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
         DoLayout();
 }
 
-bool FleetWnd::ContainsFleet(int fleet_id) const {
+bool FleetWnd::ContainsFleet(UniverseObjectID fleet_id) const {
     const auto& objects = GetApp().GetContext().ContextObjects();
     for (auto it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
         auto fleet = objects.get<Fleet>(FleetInRow(it));
@@ -3366,23 +3363,20 @@ bool FleetWnd::ContainsFleets(Set fleet_ids) const {
     return fleet_ids.empty();
 }
 
-const std::set<int>& FleetWnd::FleetIDs() const
-{ return m_fleet_ids; }
-
-std::set<int> FleetWnd::SelectedFleetIDs() const {
-    std::set<int> retval;
+std::set<UniverseObjectID> FleetWnd::SelectedFleetIDs() const {
+    std::set<UniverseObjectID> retval;
     for (auto it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
         if (!m_fleets_lb->Selected(it))
             continue;
 
-        int selected_fleet_id = FleetInRow(it);
+        UniverseObjectID selected_fleet_id = FleetInRow(it);
         if (selected_fleet_id != INVALID_OBJECT_ID)
             retval.insert(selected_fleet_id);
     }
     return retval;
 }
 
-std::set<int> FleetWnd::SelectedShipIDs() const
+std::set<UniverseObjectID> FleetWnd::SelectedShipIDs() const
 { return m_fleet_detail_panel->SelectedShipIDs(); }
 
 FleetAggression FleetWnd::GetNewFleetAggression() const {
@@ -3431,7 +3425,7 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
 
 void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
     auto& app = GetApp();
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     ScriptingContext& context = app.GetContext();
     const Universe& u = context.ContextUniverse();
     const ObjectMap& o = context.ContextObjects();
@@ -3495,7 +3489,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
         && fleet->OwnedBy(client_empire_id))
     {
         auto explore_action = [id{fleet->ID()}, mapwnd]()
-        { auto& app = GetApp(); mapwnd->SetFleetExploring(id, app.GetContext(), app.EmpireID()); };
+        { auto& app = GetApp(); mapwnd->SetFleetExploring(id, app.GetContext(), app.GetEmpireID()); };
 
         popup->AddMenuItem(UserString("ORDER_FLEET_EXPLORE"), false, false, std::move(explore_action));
         popup->AddMenuItem(GG::MenuItem::menu_separator);
@@ -3505,7 +3499,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
              && fleet->OwnedBy(client_empire_id))
     {
         auto stop_explore_action = [fleet_id{fleet->ID()}, mapwnd]()
-        { mapwnd->StopFleetExploring(fleet_id, GetApp().GetContext(), GetApp().EmpireID()); };
+        { mapwnd->StopFleetExploring(fleet_id, GetApp().GetContext(), GetApp().GetEmpireID()); };
         popup->AddMenuItem(UserString("ORDER_CANCEL_FLEET_EXPLORE"), false, false, std::move(stop_explore_action));
         popup->AddMenuItem(GG::MenuItem::menu_separator);
     }
@@ -3547,7 +3541,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
        )
     {
         auto split_unfueled_action = [nfa{fleet->Aggression()}, unfueled_ship_ids]()
-        { CreateNewFleetFromShips(unfueled_ship_ids, nfa, GetApp().GetContext(), GetApp().EmpireID()); };
+        { CreateNewFleetFromShips(unfueled_ship_ids, nfa, GetApp().GetContext(), GetApp().GetEmpireID()); };
 
         popup->AddMenuItem(UserString("FW_SPLIT_UNFUELED_FLEET"), false, false,
                                         std::move(split_unfueled_action));
@@ -3792,7 +3786,7 @@ std::string FleetWnd::TitleText() const {
     const ObjectMap& objects{u.Objects()};
     const EmpireManager& empires{context.Empires()};
 
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
 
     // at least one fleet is available, so show appropriate title this
     // FleetWnd's empire and system

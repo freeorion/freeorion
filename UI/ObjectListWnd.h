@@ -18,10 +18,10 @@ public:
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void Refresh(const ScriptingContext& context);
 
-    mutable boost::signals2::signal<void ()>    SelectedObjectsChangedSignal;
-    mutable boost::signals2::signal<void (int)> ObjectDoubleClickedSignal;
-    mutable boost::signals2::signal<void (int)> ObjectDumpSignal;
-    mutable boost::signals2::signal<void ()>    ClosingSignal;
+    mutable boost::signals2::signal<void ()>                 SelectedObjectsChangedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> ObjectDoubleClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> ObjectDumpSignal;
+    mutable boost::signals2::signal<void ()>                 ClosingSignal;
 
 private:
     void            CloseClicked() override;
@@ -33,8 +33,8 @@ private:
     void            ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
     int             ObjectInRow(GG::ListBox::iterator it) const;
 
-    void            SetSelectedObjects(std::set<int> sel_ids);
-    std::set<int>   SelectedObjectIDs() const;
+    void                       SetSelectedObjects(std::set<UniverseObjectID> sel_ids);
+    std::set<UniverseObjectID> SelectedObjectIDs() const;
 
     void            FilterClicked();
     void            CollapseExpandClicked();

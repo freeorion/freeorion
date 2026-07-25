@@ -102,10 +102,10 @@ public:
     template <typename Set>
     bool ContainsFleets(Set fleet_ids) const;
 
-    const std::set<UniverseObjectID>& FleetIDs() const;                   ///< returns IDs of all fleets shown in this FleetWnd
-    std::set<UniverseObjectID>        SelectedFleetIDs() const;           ///< returns IDs of selected fleets in this FleetWnd
-    std::set<UniverseObjectID>        SelectedShipIDs() const;            ///< returns IDs of selected ships in this FleetWnd
-    FleetAggression                   GetNewFleetAggression() const;      ///< returns this FleetWnd's setting for new fleet aggression (auto, aggressive, obstructive, or passive)
+    const auto&                 FleetIDs() const noexcept { return m_fleet_ids; };        ///< returns IDs of all fleets shown in this FleetWnd
+    std::set<UniverseObjectID>  SelectedFleetIDs() const;           ///< returns IDs of selected fleets in this FleetWnd
+    std::set<UniverseObjectID>  SelectedShipIDs() const;            ///< returns IDs of selected ships in this FleetWnd
+    FleetAggression             GetNewFleetAggression() const;      ///< returns this FleetWnd's setting for new fleet aggression (auto, aggressive, obstructive, or passive)
 
     GG::Rect CalculatePosition() const override;
 
@@ -134,7 +134,7 @@ protected:
 
 private:
     void RequireRefresh();
-    void Refresh(::EmpireID this_client_empire_id, const ScriptingContext& context); ///< regenerates contents
+    void Refresh(EmpireID this_client_empire_id, const ScriptingContext& context); ///< regenerates contents
     void RefreshStateChangedSignals();
 
     void AddFleet(UniverseObjectID fleet_id);     ///< adds a new fleet row to this FleetWnd's ListBox of FleetRows and updates internal fleets bookkeeping
@@ -144,9 +144,9 @@ private:
     void FleetLeftClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
     void FleetDoubleClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
 
-    int         FleetInRow(GG::ListBox::iterator it) const;
-    std::string TitleText() const;
-    void        CreateNewFleetFromDrops(const std::vector<UniverseObjectID>& ship_ids, ScriptingContext& context, ::EmpireID empire_id);
+    UniverseObjectID FleetInRow(GG::ListBox::iterator it) const;
+    std::string      TitleText() const;
+    void             CreateNewFleetFromDrops(const std::vector<UniverseObjectID>& ship_ids, ScriptingContext& context, ::EmpireID empire_id);
 
     void ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
     void UniverseObjectDeleted(const std::shared_ptr<const UniverseObject>& obj);

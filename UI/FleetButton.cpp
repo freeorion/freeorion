@@ -87,7 +87,7 @@ void FleetButton::Refresh(SizeType size_type) {
     const Universe& u = context.ContextUniverse();
     const ObjectMap& o = context.ContextObjects();
     const EmpireManager& e = context.Empires();
-    const EmpireID empire_id = app.EmpireID();
+    const EmpireID empire_id = app.GetEmpireID();
 
     const auto fleets = o.findRaw<const Fleet>(m_fleets);
 
@@ -300,7 +300,7 @@ void FleetButton::SizeMove(GG::Pt ul, GG::Pt lr) {
 void FleetButton::LayoutIcons() {
     auto& app = GetApp();
     const ScriptingContext& context = app.GetContext();
-    const auto client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     const auto& u{context.ContextUniverse()};
     const auto& o{context.ContextObjects()};
 

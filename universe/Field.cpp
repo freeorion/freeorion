@@ -82,7 +82,7 @@ std::string Field::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-const std::string& Field::PublicName(EmpireID empire_id, const Universe&) const {
+const std::string& Field::PublicName(EmpireID, const Universe&) const {
     // always just return name since fields (as of this writing) don't have owners
     return UserString(m_type_name);
 }
