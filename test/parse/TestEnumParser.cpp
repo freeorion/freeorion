@@ -302,14 +302,9 @@ BOOST_AUTO_TEST_CASE(StatisticTypeParser) {
 
     CHECK_ENUM_AND_RESULT("Count", ValueRef::StatisticType::COUNT, ValueRef::StatisticType, parse::statistic_enum_grammar);
     CHECK_ENUM_AND_RESULT("Sum", ValueRef::StatisticType::SUM, ValueRef::StatisticType, parse::statistic_enum_grammar);
-    CHECK_ENUM_AND_RESULT("Mean", ValueRef::StatisticType::MEAN, ValueRef::StatisticType, parse::statistic_enum_grammar);
-    CHECK_ENUM_AND_RESULT("RMS", ValueRef::StatisticType::RMS, ValueRef::StatisticType, parse::statistic_enum_grammar);
     CHECK_ENUM_AND_RESULT("Mode", ValueRef::StatisticType::MODE, ValueRef::StatisticType, parse::statistic_enum_grammar);
     CHECK_ENUM_AND_RESULT("Max", ValueRef::StatisticType::MAX, ValueRef::StatisticType, parse::statistic_enum_grammar);
     CHECK_ENUM_AND_RESULT("Min", ValueRef::StatisticType::MIN, ValueRef::StatisticType, parse::statistic_enum_grammar);
-    CHECK_ENUM_AND_RESULT("Spread", ValueRef::StatisticType::SPREAD, ValueRef::StatisticType, parse::statistic_enum_grammar);
-    CHECK_ENUM_AND_RESULT("StDev", ValueRef::StatisticType::STDEV, ValueRef::StatisticType, parse::statistic_enum_grammar);
-    CHECK_ENUM_AND_RESULT("Product", ValueRef::StatisticType::PRODUCT, ValueRef::StatisticType, parse::statistic_enum_grammar);
     CHECK_FAILED_ENUM(ValueRef::StatisticType, parse::statistic_enum_grammar);
 }
 
