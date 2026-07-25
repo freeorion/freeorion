@@ -652,7 +652,7 @@ namespace {
         std::vector<std::pair<int, double>> retval;
 
         const auto& app = GetApp();
-        const auto client_empire_id = app.EmpireID();
+        const auto client_empire_id = app.GetEmpireID();
         if (!source_for_empire ||
             source_for_empire->Owner() == ALL_EMPIRES ||
             source_for_empire->Owner() != client_empire_id)
@@ -726,7 +726,7 @@ namespace {
   * one time in a SidePanel */
 class SidePanel::PlanetPanel : public GG::Control {
 public:
-    PlanetPanel(GG::X w, int planet_id, StarType star_type) :
+    PlanetPanel(GG::X w, UniverseObjectID planet_id, StarType star_type) :
         GG::Control(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
         m_planet_id(planet_id),
         m_star_type(star_type)
@@ -734,9 +734,9 @@ public:
 
     void CompleteConstruction() override;
 
-    bool InWindow(GG::Pt pt) const override;
+    [[nodiscard]] bool InWindow(GG::Pt pt) const override;
 
-    int PlanetID() const noexcept { return m_planet_id; }
+    [[nodiscard]] auto PlanetID() const noexcept { return m_planet_id; }
 
     void PreRender() override;
 
@@ -758,15 +758,15 @@ public:
 
     /** emitted when the planet panel is left clicked by the user.
       * returns the id of the clicked planet */
-    mutable boost::signals2::signal<void (int)> LeftClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> LeftClickedSignal;
 
     /** emitted when the planet is left double clicked by the user.
       * returns id of the clicked planet */
-    mutable boost::signals2::signal<void (int)> LeftDoubleClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> LeftDoubleClickedSignal;
 
     /** emitted when the planet panel is right clicked by the user.
       * returns the id of the clicked planet */
-    mutable boost::signals2::signal<void (int)> RightClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> RightClickedSignal;
 
     /** emitted when resized, so external container can redo
       * layout */
@@ -775,7 +775,7 @@ public:
     /** emitted when focus is changed */
     mutable boost::signals2::signal<void (std::string_view)> FocusChangedSignal;
 
-    mutable boost::signals2::signal<void (int)> BuildingRightClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> BuildingRightClickedSignal;
 
     /** Emitted when an order button changes state, used to update controls
      *  of panels for other planets in the same system */
@@ -792,7 +792,7 @@ private:
 
     void FocusDropListSelectionChangedSlot(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
 
-    int                                     m_planet_id = INVALID_OBJECT_ID;///< id for the planet with is represented by this planet panel
+    UniverseObjectID                        m_planet_id = INVALID_OBJECT_ID;///< id for the planet with is represented by this planet panel
     std::shared_ptr<GG::TextControl>        m_planet_name;                  ///< planet name;
     std::shared_ptr<GG::Label>              m_env_size;                     ///< indicates size and planet environment rating uncolonized planets;
     std::shared_ptr<GG::Button>             m_annex_button;                 ///< btn which can be pressed to annex this planet;
@@ -837,11 +837,11 @@ public:
 
     void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
 
-    int         SelectedPlanetID() const noexcept { return m_selected_planet_id; }
-    const auto& SelectionCandidates() const noexcept { return m_candidate_ids; }
-    int         ScrollPosition() const;
+    [[nodiscard]] int         SelectedPlanetID() const noexcept { return m_selected_planet_id; }
+    [[nodiscard]] const auto& SelectionCandidates() const noexcept { return m_candidate_ids; }
+    [[nodiscard]] int         ScrollPosition() const;
 
-    auto        NumPanels() const noexcept { return m_planet_panels.size(); }
+    [[nodiscard]] auto        NumPanels() const noexcept { return m_planet_panels.size(); }
 
     void LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
@@ -851,7 +851,7 @@ public:
     void Clear();
     void SetPlanets(const std::vector<int>& planet_ids, StarType star_type, 
                     ScriptingContext& context, EmpireID empire_id);
-    void SelectPlanet(int planet_id); //!< programatically selects a planet with id \a planet_id
+    void SelectPlanet(UniverseObjectID planet_id); //!< programatically selects a planet with id \a planet_id
     void SetValidSelectionPredicate(std::function<bool(const UniverseObject*)> pred);
     void ClearValidSelectionPedicate();
     void ScrollTo(int pos);
@@ -861,7 +861,7 @@ public:
      *  @param[in] require_prerender Set panels to RequirePreRender */
     void RefreshAllPlanetPanels(ScriptingContext& context,
                                 EmpireID empire_id,
-                                int excluded_planet_id = INVALID_OBJECT_ID,
+                                UniverseObjectID excluded_planet_id = INVALID_OBJECT_ID,
                                 bool require_prerender = false);
 
     virtual void ShowScrollbar();
@@ -872,15 +872,15 @@ public:
     void EnableOrderIssuing(bool enable = true);
 
     /** emitted when an enabled planet panel is clicked by the user */
-    mutable boost::signals2::signal<void (int)> PlanetClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> PlanetClickedSignal;
 
     /** emitted when a planet panel is left-double-clicked*/
-    mutable boost::signals2::signal<void (int)> PlanetLeftDoubleClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> PlanetLeftDoubleClickedSignal;
 
     /** emitted when a planet panel is right-clicked */
-    mutable boost::signals2::signal<void (int)> PlanetRightClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> PlanetRightClickedSignal;
 
-    mutable boost::signals2::signal<void (int)> BuildingRightClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> BuildingRightClickedSignal;
 
 private:
     void DisableNonSelectionCandidates();    //!< disables planet panels that aren't selection candidates
@@ -894,8 +894,8 @@ private:
     void VScroll(int pos_top, int pos_bottom, int range_min, int range_max); //!< responds to user scrolling of planet panels list.  all but first parameter ignored
 
     std::vector<std::shared_ptr<PlanetPanel>>   m_planet_panels;
-    int                                         m_selected_planet_id = INVALID_OBJECT_ID;
-    std::set<int>                               m_candidate_ids;
+    UniverseObjectID                            m_selected_planet_id = INVALID_OBJECT_ID;
+    std::set<UniverseObjectID>                  m_candidate_ids;
     std::function<bool(const UniverseObject*)>  m_valid_selection_predicate;
     std::shared_ptr<GG::Scroll>                 m_vscroll; ///< the vertical scroll (for viewing all the planet panes);
     bool                                        m_ignore_recursive_resize = false;
@@ -903,13 +903,13 @@ private:
 
 class RotatingPlanetControl : public GG::Control {
 public:
-    RotatingPlanetControl(GG::X x, GG::Y y, int planet_id, StarType star_type) :
+    RotatingPlanetControl(GG::X x, GG::Y y, UniverseObjectID planet_id, StarType star_type) :
         GG::Control(x, y, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
         m_planet_id(planet_id),
         m_initial_rotation(fmod(planet_id / 7.352535f, 1.0f)), // arbitrary scale number applied to id to give consistent by varied angles
         m_star_type(star_type)
     {
-        Refresh(GetApp().GetContext(), GetApp().EmpireID());
+        Refresh(GetApp().GetContext(), GetApp().GetEmpireID());
     }
 
     void Render() override {
@@ -941,7 +941,7 @@ public:
         }
     }
 
-    void Refresh(const ScriptingContext& context, int client_empire_id) {
+    void Refresh(const ScriptingContext& context, EmpireID client_empire_id) {
         ScopedTimer timer("RotatingPlanetControl::Refresh", true);
 
         auto planet = context.ContextObjects().get<Planet>(m_planet_id);
@@ -982,7 +982,7 @@ public:
     }
 
 private:
-    int                             m_planet_id = INVALID_OBJECT_ID;
+    UniverseObjectID                m_planet_id = INVALID_OBJECT_ID;
     float                           m_rpm = 1.0f;
     int                             m_diameter = 1;
     float                           m_axial_tilt = 0.0f;
@@ -1008,7 +1008,7 @@ namespace {
 
     class SystemRow : public GG::ListBox::Row {
     public:
-        SystemRow(int system_id, GG::Y h) :
+        SystemRow(UniverseObjectID system_id, GG::Y h) :
             GG::ListBox::Row(GG::X1, h),
             m_system_id(system_id)
         {
@@ -1036,7 +1036,7 @@ namespace {
         [[nodiscard]] SortKeyType SortKey(std::size_t) const noexcept override { return EMPTY_STRING; }
 
     private:
-        int m_system_id;
+        UniverseObjectID m_system_id;
     };
 }
 /** A class to display all of the system names*/
@@ -1082,16 +1082,16 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
             if (!m_order_issuing_enabled)
                 return;
 
-            if (!RenameOrder::Check(app.EmpireID(), system->ID(), edit_wnd->Result(), context))
+            if (!RenameOrder::Check(app.GetEmpireID(), system->ID(), edit_wnd->Result(), context))
                 return;
 
-            app.Orders().IssueOrder<RenameOrder>(context, app.EmpireID(), system->ID(), edit_wnd->Result());
+            app.Orders().IssueOrder<RenameOrder>(context, app.GetEmpireID(), system->ID(), edit_wnd->Result());
 
             if (SidePanel* side_panel = dynamic_cast<SidePanel*>(Parent().get()))
                 side_panel->Refresh();
         };
 
-        if (m_order_issuing_enabled && system->OwnedBy(app.EmpireID()))
+        if (m_order_issuing_enabled && system->OwnedBy(app.GetEmpireID()))
             popup->AddMenuItem(UserString("SP_RENAME_SYSTEM"), false, false, rename_action);
 
         popup->Run();
@@ -1155,7 +1155,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     const ScriptingContext& context = app.GetContext();
     auto* planet = context.ContextObjects().getRaw<const Planet>(m_planet_id);
     if (!planet) {
-        ErrorLogger() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << m_planet_id;
+        ErrorLogger() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << to_string(m_planet_id);
         return;
     }
 
@@ -1170,7 +1170,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     // need to check all empires for capitals
     for (const auto& [loop_empire_id, loop_empire] : context.Empires()) {
         if (!loop_empire) {
-            ErrorLogger() << "PlanetPanel::PlanetPanel got null empire pointer for id " << loop_empire_id;
+            ErrorLogger() << "PlanetPanel::PlanetPanel got null empire pointer for id " << to_string(loop_empire_id);
             continue;
         }
         if (loop_empire->CapitalID() == m_planet_id) {
@@ -1258,7 +1258,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     SetChildClippingMode(ChildClippingMode::ClipToWindow);
 
     ScriptingContext planet_context(context, ScriptingContext::Source{}, planet);
-    Refresh(planet_context, app.EmpireID());
+    Refresh(planet_context, app.GetEmpireID());
 
     RequirePreRender();
 
@@ -1508,7 +1508,7 @@ namespace {
 
         const Universe& u = context.ContextUniverse();
         const ObjectMap& o = context.ContextObjects();
-        const auto client_empire_id = GetApp().EmpireID();
+        const auto client_empire_id = GetApp().GetEmpireID();
         const auto selected_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
         retval.reserve(selected_ids.size());
 
@@ -1533,7 +1533,7 @@ namespace {
 
         const Universe& u = context.ContextUniverse();
         const ObjectMap& o = context.ContextObjects();
-        const auto client_empire_id = GetApp().EmpireID();
+        const auto client_empire_id = GetApp().GetEmpireID();
         const auto selected_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
         retval.reserve(selected_ids.size());
 
@@ -1563,14 +1563,14 @@ namespace {
             if (ship && 
                 ship->SystemID() == system_id &&
                 ship->CanColonize(u, sm) &&
-                ship->OwnedBy(GetApp().EmpireID()))
+                ship->OwnedBy(GetApp().GetEmpireID()))
             { return ship; }
         }
         return nullptr;
     }
 
     int AutomaticallyChosenColonyShip(int target_planet_id, ScriptingContext& context) {
-        const EmpireID empire_id = GetApp().EmpireID();
+        const EmpireID empire_id = GetApp().GetEmpireID();
         if (empire_id == ALL_EMPIRES)
             return INVALID_OBJECT_ID;
         const Universe& u = context.ContextUniverse();
@@ -1689,7 +1689,7 @@ namespace {
     auto AutomaticallyChosenInvasionShips(int target_planet_id, const ScriptingContext& context) {
         std::vector<const Ship*> retval;
 
-        const EmpireID empire_id = GetApp().EmpireID();
+        const EmpireID empire_id = GetApp().GetEmpireID();
         if (empire_id == ALL_EMPIRES)
             return retval;
 
@@ -1734,7 +1734,7 @@ namespace {
     auto AutomaticallyChosenBombardShips(int target_planet_id, const ScriptingContext& context) {
         std::vector<const Ship*> retval;
 
-        const EmpireID empire_id = GetApp().EmpireID();
+        const EmpireID empire_id = GetApp().GetEmpireID();
         if (empire_id == ALL_EMPIRES)
             return retval;
 
@@ -1776,7 +1776,7 @@ namespace {
     auto BombardingShips(int target_planet_id, const ScriptingContext& context) {
         std::vector<const Ship*> retval;
 
-        const EmpireID empire_id = GetApp().EmpireID(); // TODO pass in app / empire_id
+        const EmpireID empire_id = GetApp().GetEmpireID(); // TODO pass in app / empire_id
         if (empire_id == ALL_EMPIRES)
             return retval;
 
@@ -2416,7 +2416,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in, EmpireID empi
     m_planet_connection = planet->StateChangedSignal.connect(
         [this]() {
             auto& app = GetApp();
-            Refresh(app.GetContext(), app.EmpireID());
+            Refresh(app.GetContext(), app.GetEmpireID());
         },
         boost::signals2::at_front);
 }
@@ -2432,7 +2432,7 @@ void SidePanel::PlanetPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
 
 void SidePanel::PlanetPanel::SetFocus(std::string focus) const {
     auto& app = GetApp();
-    const int app_empire_id = app.EmpireID();
+    const int app_empire_id = app.GetEmpireID();
     ScriptingContext context = app.GetContext();
     const auto planet = context.ContextObjects().get<const Planet>(m_planet_id);
     if (!planet || !planet->OwnedBy(app_empire_id))
@@ -2495,7 +2495,7 @@ void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     auto planet = objects.getRaw<const Planet>(m_planet_id);
     if (!planet)
         return;
-    const EmpireID empire_id = app.EmpireID();
+    const EmpireID empire_id = app.GetEmpireID();
 
 
     auto system = objects.getRaw<const System>(planet->SystemID());
@@ -2780,7 +2780,7 @@ void SidePanel::PlanetPanel::ClickAnnex() {
     if (!planet || !m_order_issuing_enabled)
         return;
 
-    const EmpireID empire_id = app.EmpireID();
+    const EmpireID empire_id = app.GetEmpireID();
     if (empire_id == ALL_EMPIRES)
         return;
 
@@ -2822,7 +2822,7 @@ void SidePanel::PlanetPanel::ClickColonize() {
     if (!planet || planet->GetMeter(MeterType::METER_POPULATION)->Initial() != 0.0 || !m_order_issuing_enabled)
         return;
 
-    const EmpireID empire_id = app.EmpireID();
+    const EmpireID empire_id = app.GetEmpireID();
     if (empire_id == ALL_EMPIRES)
         return;
 
@@ -2867,7 +2867,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
         (planet->GetMeter(MeterType::METER_POPULATION)->Initial() <= 0.0 && planet->Unowned()))
     { return; }
 
-    EmpireID empire_id = app.EmpireID();
+    EmpireID empire_id = app.GetEmpireID();
     if (empire_id == ALL_EMPIRES)
         return;
 
@@ -2908,7 +2908,7 @@ void SidePanel::PlanetPanel::ClickBombard() {
         (planet->GetMeter(MeterType::METER_POPULATION)->Initial() <= 0.0 && planet->Unowned()))
     { return; }
 
-    EmpireID empire_id = app.EmpireID();
+    EmpireID empire_id = app.GetEmpireID();
     if (empire_id == ALL_EMPIRES)
         return;
 
@@ -3002,7 +3002,7 @@ void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable) {
     }
 
     const auto obj = GetApp().GetContext().ContextObjects().get(m_planet_id);
-    if (!obj || !obj->OwnedBy(GetApp().EmpireID()))
+    if (!obj || !obj->OwnedBy(GetApp().GetEmpireID()))
         m_focus_drop->Disable();
     else
         m_focus_drop->Disable(false);
@@ -3127,7 +3127,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(
         m_planet_panels.back()->OrderButtonChangedSignal.connect(
             [this](int excluded_planet_id) {
                 auto& app = GetApp();
-                RefreshAllPlanetPanels(app.GetContext(), app.EmpireID(), excluded_planet_id, true);
+                RefreshAllPlanetPanels(app.GetContext(), app.GetEmpireID(), excluded_planet_id, true);
             });
     }
 
@@ -3232,8 +3232,8 @@ void SidePanel::PlanetPanelContainer::DoLayout() {
     DoPanelsLayout();
 }
 
-void SidePanel::PlanetPanelContainer::SelectPlanet(int planet_id) {
-    //std::cout << "SidePanel::PlanetPanelContainer::SelectPlanet(" << planet_id << ")" << std::endl;
+void SidePanel::PlanetPanelContainer::SelectPlanet(UniverseObjectID planet_id) {
+    //std::cout << "SidePanel::PlanetPanelContainer::SelectPlanet(" << to_string(planet_id) << ")" << std::endl;
     if (planet_id != m_selected_planet_id && m_candidate_ids.contains(planet_id)) {
         m_selected_planet_id = planet_id;
         bool planet_id_match_found = false;
@@ -3280,7 +3280,7 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
 
         // find selectables
         for (auto& panel : m_planet_panels) {
-            int planet_id = panel->PlanetID();
+            UniverseObjectID planet_id = panel->PlanetID();
             const auto* planet = objects.getRaw<Planet>(planet_id);
 
             if (planet && m_valid_selection_predicate(planet)) {
@@ -3314,7 +3314,7 @@ void SidePanel::PlanetPanelContainer::VScroll(int pos_top, int pos_bottom, int r
 }
 
 void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels(
-    ScriptingContext& context, EmpireID empire_id, int excluded_planet_id, bool require_prerender)
+    ScriptingContext& context, EmpireID empire_id, UniverseObjectID excluded_planet_id, bool require_prerender)
 {
     for (auto& panel : m_planet_panels) {
         if (!panel)
@@ -3359,7 +3359,7 @@ namespace {
 
     class SystemMeterBrowseWnd : public GG::BrowseInfoWnd {
     public:
-        SystemMeterBrowseWnd(MeterType meter_type, int system_id) :
+        SystemMeterBrowseWnd(MeterType meter_type, UniverseObjectID system_id) :
             GG::BrowseInfoWnd(GG::X0, GG::Y0, LabelWidth() + ValueWidth(), GG::Y1),
             m_meter_type(meter_type),
             m_system_id(system_id)
@@ -3444,7 +3444,7 @@ namespace {
 
     private:
         MeterType m_meter_type;
-        int m_system_id;
+        UniverseObjectID m_system_id;
         std::vector<std::pair<std::shared_ptr<GG::Label>,
                               std::shared_ptr<GG::Label>>> m_labels_and_amounts;
     };
@@ -3454,19 +3454,19 @@ namespace {
 // SidePanel
 ////////////////////////////////////////////////
 // static(s)
-int                                        SidePanel::s_system_id = INVALID_OBJECT_ID;
-int                                        SidePanel::s_planet_id = INVALID_OBJECT_ID;
-bool                                       SidePanel::s_needs_update = false;
-bool                                       SidePanel::s_needs_refresh = false;
+UniverseObjectID                                 SidePanel::s_system_id = INVALID_OBJECT_ID;
+UniverseObjectID                                 SidePanel::s_planet_id = INVALID_OBJECT_ID;
+bool                                             SidePanel::s_needs_update = false;
+bool                                             SidePanel::s_needs_refresh = false;
 std::set<std::weak_ptr<SidePanel>, std::owner_less<std::weak_ptr<SidePanel>>> SidePanel::s_side_panels;
-std::set<boost::signals2::scoped_connection>      SidePanel::s_system_connections;
-std::map<int, boost::signals2::scoped_connection> SidePanel::s_fleet_state_change_signals;
-boost::signals2::signal<void ()>           SidePanel::ResourceCenterChangedSignal;
-boost::signals2::signal<void (int)>        SidePanel::PlanetSelectedSignal;
-boost::signals2::signal<void (int)>        SidePanel::PlanetRightClickedSignal;
-boost::signals2::signal<void (int)>        SidePanel::PlanetDoubleClickedSignal;
-boost::signals2::signal<void (int)>        SidePanel::BuildingRightClickedSignal;
-boost::signals2::signal<void (int)>        SidePanel::SystemSelectedSignal;
+std::set<boost::signals2::scoped_connection>     SidePanel::s_system_connections;
+std::map<UniverseObjectID, boost::signals2::scoped_connection> SidePanel::s_fleet_state_change_signals;
+boost::signals2::signal<void ()>                 SidePanel::ResourceCenterChangedSignal;
+boost::signals2::signal<void (UniverseObjectID)> SidePanel::PlanetSelectedSignal;
+boost::signals2::signal<void (UniverseObjectID)> SidePanel::PlanetRightClickedSignal;
+boost::signals2::signal<void (UniverseObjectID)> SidePanel::PlanetDoubleClickedSignal;
+boost::signals2::signal<void (UniverseObjectID)> SidePanel::BuildingRightClickedSignal;
+boost::signals2::signal<void (UniverseObjectID)> SidePanel::SystemSelectedSignal;
 
 SidePanel::SidePanel(std::string_view config_name) :
     CUIWnd("", GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP, config_name)
@@ -3639,7 +3639,7 @@ void SidePanel::PreRender() {
 
     auto& app = GetApp();
     ScriptingContext& context = app.GetContext(); // mutable because RefreshInPreRender modifies universe to simulate effects
-    const auto empire_id = app.EmpireID();
+    const auto empire_id = app.GetEmpireID();
 
     // Needs refresh updates all data related to all SizePanels, including system list etc.
     if (s_needs_refresh)
@@ -3848,7 +3848,7 @@ void SidePanel::RefreshImpl(GGHumanClientApp& app) {
 
     m_star_type_text->SetText("<s>" + GetStarTypeName(system) + "</s>");
 
-    const auto client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
 
     // configure selection of planet panels in panel container
     const auto owned_by_client_empire = [client_empire_id](const UniverseObject* obj) noexcept
@@ -3860,7 +3860,7 @@ void SidePanel::RefreshImpl(GGHumanClientApp& app) {
 
     // update planet panel container contents (applying just-set selection predicate)
     //std::cout << " ... setting planet panel container planets" << std::endl;
-    const std::vector<int> planet_ids = system->PlanetIDs() | range_to_vec;
+    const std::vector<UniverseObjectID> planet_ids = system->PlanetIDs() | range_to_vec;
     m_planet_panel_container->SetPlanets(planet_ids, system->GetStarType(), context, client_empire_id);
 
 
@@ -3869,7 +3869,7 @@ void SidePanel::RefreshImpl(GGHumanClientApp& app) {
     // If all planets are owned by the same empire, then we show the Shields/Defense/Troops/Supply;
     // regardless, if there are any planets owned by the player in the system, we show
     // Production/Research/Influnce.
-    int all_owner_id = ALL_EMPIRES;
+    EmpireID all_owner_id = ALL_EMPIRES;
     bool all_planets_share_owner = true;
     std::vector<int> all_planets, player_planets;
     for (const auto* planet : objects.findRaw<const Planet>(planet_ids)) {
@@ -4044,12 +4044,12 @@ void SidePanel::NextButtonClicked() {
     SystemSelectionChangedSlot(m_system_name->CurrentItem());
 }
 
-void SidePanel::PlanetClickedSlot(int planet_id, const ObjectMap& objects) const {
+void SidePanel::PlanetClickedSlot(UniverseObjectID planet_id, const ObjectMap& objects) const {
     if (m_selection_enabled)
         SelectPlanet(planet_id, objects);
 }
 
-void SidePanel::FleetsInserted(std::vector<int> fleets, const ObjectMap& objects) {
+void SidePanel::FleetsInserted(std::vector<UniverseObjectID> fleets, const ObjectMap& objects) {
     for (auto fleet_id: fleets) {
         if (const auto* fleet = objects.getRaw<Fleet>(fleet_id))
             s_fleet_state_change_signals[fleet_id] = fleet->StateChangedSignal.connect(&SidePanel::Update);
@@ -4063,7 +4063,7 @@ void SidePanel::FleetsRemoved(std::vector<int> fleets) {
     SidePanel::Update();
 }
 
-bool SidePanel::PlanetSelectable(int planet_id, const ObjectMap& objects) const {
+bool SidePanel::PlanetSelectable(UniverseObjectID planet_id, const ObjectMap& objects) const {
     if (!m_selection_enabled)
         return false;
 
@@ -4082,11 +4082,10 @@ bool SidePanel::PlanetSelectable(int planet_id, const ObjectMap& objects) const 
     if (planet->Unowned())
         return false;
 
-    int client_empire_id = GetApp().EmpireID();
-    return planet->OwnedBy(client_empire_id);
+    return planet->OwnedBy(GetApp().GetEmpireID());
 }
 
-void SidePanel::SelectPlanet(int planet_id, const ObjectMap& objects) {
+void SidePanel::SelectPlanet(UniverseObjectID planet_id, const ObjectMap& objects) {
     if (s_planet_id == planet_id)
         return;
 
@@ -4114,7 +4113,7 @@ void SidePanel::SelectPlanet(int planet_id, const ObjectMap& objects) {
     PlanetSelectedSignal(s_planet_id);
 }
 
-void SidePanel::SetSystem(int system_id, const ObjectMap& objects) {
+void SidePanel::SetSystem(UniverseObjectID system_id, const ObjectMap& objects) {
     if (s_system_id == system_id)
         return;
 

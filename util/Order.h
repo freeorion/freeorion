@@ -637,7 +637,7 @@ public:
     };
 
     ProductionQueueOrder(ProdQueueOrderAction action, EmpireID empire, ProductionQueue::ProductionItem item,
-                         int number, int location, int pos = -1);
+                         int number, UniverseObjectID location, int pos = -1);
     // num1 and num2 may be quantity and blocksize, or just quantity, or rally point id, or new index in queue
     ProductionQueueOrder(ProdQueueOrderAction action, EmpireID empire, boost::uuids::uuid uuid,
                          int num1 = -1, int num2 = -1);

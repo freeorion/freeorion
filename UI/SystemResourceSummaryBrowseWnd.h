@@ -27,11 +27,11 @@ private:
     void UpdateAllocation(GG::Y& top);  // adds pairs of labels for allocation of resources in system, starting at vertical position \a top and updates \a top to be the vertical position after the last entry
     void UpdateImportExport(GG::Y& top);// sets m_import_export_label and m_import_export text and amount to indicate how much resource is being imported or exported from this system, and moves them to vertical position \a top and updates \a top to be the vertical position below these labels
 
-    ResourceType    m_resource_type{0};
-    int             m_system_id = INVALID_OBJECT_ID;
-    int             m_empire_id = ALL_EMPIRES;
-    double          m_production = 0.0; // set by UpdateProduction - used to store production in system so that import / export / unused can be more easily calculated
-    double          m_allocation = 0.0; // set by UpdateAllocation - used like m_production
+    ResourceType     m_resource_type{0};
+    UniverseObjectID m_system_id = INVALID_OBJECT_ID;
+    EmpireID         m_empire_id = ALL_EMPIRES;
+    double           m_production = 0.0; // set by UpdateProduction - used to store production in system so that import / export / unused can be more easily calculated
+    double           m_allocation = 0.0; // set by UpdateAllocation - used like m_production
 
     std::shared_ptr<GG::Label> m_production_label;
     std::shared_ptr<GG::Label> m_allocation_label;

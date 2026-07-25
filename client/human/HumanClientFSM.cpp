@@ -766,7 +766,7 @@ boost::statechart::result PlayingGame::react(const PlayerStatus& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.PlayerStatus";
     try {
         Message::PlayerStatus status = Message::PlayerStatus::WAITING;
-        int about_empire_id = ALL_EMPIRES;
+        auto about_empire_id = ALL_EMPIRES;
         ExtractPlayerStatusMessageData(msg.m_message, status, about_empire_id);
         Client().SetEmpireStatus(about_empire_id, status);
     } catch (...) {}
@@ -887,7 +887,7 @@ boost::statechart::result PlayingGame::react(const TurnPartialUpdate& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.TurnPartialUpdate";
 
     try {
-        ExtractTurnPartialUpdateMessageData(msg.m_message, Client().EmpireID(), Client().GetUniverse());
+        ExtractTurnPartialUpdateMessageData(msg.m_message, Client().GetEmpireID(), Client().GetUniverse());
         if (auto mapwnd = Client().GetUI().GetMapWnd(ClientUI::ConstructFlag::NEVER))
             mapwnd->MidTurnUpdate();
     } catch (...) {}
@@ -1125,7 +1125,7 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
         TraceLogger(FSM) << "Unpacking TurnUpdate...";
         try {
             auto unpacked_data = std::make_shared<TurnDataUnpackedNotification::UnpackedData>(
-                std::move(message), client.EmpireID());
+                std::move(message), client.GetEmpireID());
             boost::intrusive_ptr<const TurnDataUnpackedNotification> unpacking_finished_event{
                 new TurnDataUnpackedNotification(unpacked_data), true};
 
@@ -1309,7 +1309,7 @@ boost::statechart::result PlayingTurn::react(const PlayerStatus& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingTurn.PlayerStatus";
     try {
         Message::PlayerStatus status;
-        int about_empire_id = ALL_EMPIRES;
+        EmpireID about_empire_id = ALL_EMPIRES;
         ExtractPlayerStatusMessageData(msg.m_message, status, about_empire_id);
 
         Client().SetEmpireStatus(about_empire_id, status);

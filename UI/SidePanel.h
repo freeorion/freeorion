@@ -23,22 +23,22 @@ public:
     void CompleteConstruction() override;
     ~SidePanel();
 
-    bool InWindow(GG::Pt pt) const override;
+    [[nodiscard]] bool InWindow(GG::Pt pt) const override;
 
-    GG::Pt ClientUpperLeft() const noexcept override;
+    [[nodiscard]] GG::Pt ClientUpperLeft() const noexcept override;
 
     /** Returns the id of the system shown in the SidePanels, or
       * INVALID_OBJECT_ID if no system is shown */
-    static UniverseObjectID SystemID() noexcept { return s_system_id; }
+    [[nodiscard]] static UniverseObjectID SystemID() noexcept { return s_system_id; }
 
     /** Returns the id of the currently-selected planet, or
       * INVALID_OBJECT_ID if no planet is selected */
-    UniverseObjectID SelectedPlanetID() const noexcept { return (m_selection_enabled ? s_planet_id : INVALID_OBJECT_ID); }
+    [[nodiscard]] UniverseObjectID SelectedPlanetID() const noexcept { return (m_selection_enabled ? s_planet_id : INVALID_OBJECT_ID); }
 
 
     /** Returns whether this SidePanel contains an object with the indicated
       * \a object_id that can be selected within the SidePanel. */
-    bool PlanetSelectable(UniverseObjectID planet_id, const ObjectMap& objects) const;
+    [[nodiscard]] bool PlanetSelectable(UniverseObjectID planet_id, const ObjectMap& objects) const;
 
     void PreRender() override;
 

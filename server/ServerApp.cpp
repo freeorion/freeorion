@@ -4703,7 +4703,7 @@ void ServerApp::CheckForEmpireElimination() {
             // empires could be controlled only by connected AI client, connected human client, or
             // disconnected human client.
             // Disconnected AI client controls non-eliminated empire is an error.
-            if (!Networking::is_ai(GetEmpireClientType(empire->EmpireID())))
+            if (!Networking::is_ai(GetEmpireClientType(empire->GetEmpireID())))
                 non_eliminated_non_ai_controlled_empires.insert(empire);
         }
     }
@@ -4722,7 +4722,7 @@ void ServerApp::CheckForEmpireElimination() {
                 auto emp2_it = emp1_it;
                 ++emp2_it;
                 for (; emp2_it != non_eliminated_non_ai_controlled_empires.end(); ++emp2_it) {
-                    const auto status = m_empires.GetDiplomaticStatus((*emp1_it)->EmpireID(), (*emp2_it)->EmpireID());
+                    const auto status = m_empires.GetDiplomaticStatus((*emp1_it)->GetEmpireID(), (*emp2_it)->GetEmpireID());
                     // if diplomacy forbidden then allow peace status
                     if (status == DiplomaticStatus::DIPLO_WAR || (GetGameRules().Get<std::string>("RULE_DIPLOMACY") != UserStringNop("RULE_DIPLOMACY_FORBIDDEN_FOR_ALL") && status == DiplomaticStatus::DIPLO_PEACE))
                         return;

@@ -39,7 +39,7 @@ private:
     void PlayerDoubleClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
     void PlayerRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
     int  PlayerInRow(GG::ListBox::iterator it) const;
-    int  EmpireInRow(GG::ListBox::iterator it) const;
+    EmpireID EmpireInRow(GG::ListBox::iterator it) const;
 
     std::shared_ptr<PlayerListBox>     m_player_list;
     boost::signals2::scoped_connection m_diplo_message_connection;

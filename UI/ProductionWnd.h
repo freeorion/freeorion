@@ -18,8 +18,8 @@ public:
     ProductionWnd(GG::X w, GG::Y h);
     void CompleteConstruction() override;
 
-    int SelectedPlanetID() const noexcept;
-    int ShownEmpireID() const noexcept { return m_empire_shown_id; }
+    UniverseObjectID SelectedPlanetID() const noexcept;
+    auto ShownEmpireID() const noexcept { return m_empire_shown_id; }
 
     bool InWindow(GG::Pt pt) const noexcept override;
     bool InClient(GG::Pt pt) const noexcept override;
@@ -35,7 +35,7 @@ public:
 
     void ShowBuildingTypeInEncyclopedia(std::string building_type); //! Shows \a building_type in production encyclopedia window
     void ShowShipDesignInEncyclopedia(int design_id);               //! Shows ShipDesign with id \a design_id in production encyclopedia window
-    void ShowPlanetInEncyclopedia(int planet_id);                   //! Shows \a planet in production encyclopedia window
+    void ShowPlanetInEncyclopedia(UniverseObjectID planet_id);                   //! Shows \a planet in production encyclopedia window
     void ShowTechInEncyclopedia(std::string tech_name);             //! Shows \a tech in production encyclopedia window
     void ShowPolicyInEncyclopedia(std::string policy_name);         //! Shows @a policy_name in production encyclopedia window
     void ShowShipPartInEncyclopedia(std::string part_name);         //! Shows @a part_name in production encyclopedia window
@@ -56,15 +56,15 @@ public:
     //! Centres map wnd on location of item on queue with index \a queue_idx
     //! and displays info about that item in encyclopedia window.
     //! If \a open is true, the location is set as the selected planet.
-    void CenterOnBuild(int queue_idx, bool open = false);
+    void CenterOnBuild(UniverseObjectID queue_idx, bool open = false);
 
     //! Programatically sets this Wnd's selected system.
     //! Does not emit a SystemSelectedSignal.
-    void SelectSystem(int system_id, ScriptingContext& context);
+    void SelectSystem(UniverseObjectID system_id, ScriptingContext& context);
 
     //! Programatically sets this Wnd's selected planet.
     //! Does not emit a PlanetSelectedSignal.
-    void SelectPlanet(int planet_id, const ScriptingContext& context);
+    void SelectPlanet(UniverseObjectID planet_id, const ScriptingContext& context);
 
     //! Attempts to find a planet to select, and if successful, selects that
     //! planet
@@ -77,11 +77,11 @@ public:
 
     //! emitted when the user changes the selected system in the
     //! production screen
-    mutable boost::signals2::signal<void (int)> SystemSelectedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> SystemSelectedSignal;
 
     //! emitted when the user changes the selected planet in the
     //! production screen
-    mutable boost::signals2::signal<void (int)> PlanetSelectedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> PlanetSelectedSignal;
 
     mutable boost::signals2::signal<void (int,int)> RowQuantChangedSignal;
 
@@ -91,7 +91,7 @@ private:
     void UpdateQueue(const ScriptingContext& context);     ///< Clears and repopulates queue list with listitems corresponding to contents of empire's production queue
     void UpdateInfoPanel(const ScriptingContext& context); ///< Updates production summary at top left of production screen, and signals that the empire's minerals resource pool has changed (propagates to the mapwnd to update indicator)
 
-    void AddBuildToQueueSlot(ProductionQueue::ProductionItem item, int number, int location, int pos);
+    void AddBuildToQueueSlot(ProductionQueue::ProductionItem item, int number, UniverseObjectID location, int pos);
 
     void ChangeBuildQuantitySlot(int queue_idx, int quantity) const;
     void ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, int blocksize) const;
@@ -100,7 +100,7 @@ private:
     void QueueItemMoved(const GG::ListBox::iterator row_it, const GG::ListBox::iterator original_position_it);
     void QueueItemClickedSlot(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
     void QueueItemDoubleClickedSlot(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
-    void QueueItemRallied(GG::ListBox::iterator it, int object_id);
+    void QueueItemRallied(GG::ListBox::iterator it, UniverseObjectID object_id);
     void QueueItemPaused(GG::ListBox::iterator it, bool pause);
     void QueueItemDuped(GG::ListBox::iterator it);
     void QueueItemSplit(GG::ListBox::iterator it);
@@ -110,7 +110,7 @@ private:
     std::shared_ptr<ProductionQueueWnd> m_queue_wnd;
     std::shared_ptr<BuildDesignatorWnd> m_build_designator_wnd;
     boost::signals2::scoped_connection  m_empire_connection;
-    int                                 m_empire_shown_id = ALL_EMPIRES;
+    EmpireID                            m_empire_shown_id = ALL_EMPIRES;
     bool                                m_order_issuing_enabled = false;
 };
 

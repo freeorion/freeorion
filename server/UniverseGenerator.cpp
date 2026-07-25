@@ -758,7 +758,7 @@ bool SetEmpireHomeworld(Empire* empire, UniverseObjectID planet_id, std::string 
         return false;
 
     DebugLogger() << "SetEmpireHomeworld: setting system " << to_string(home_system->ID())
-                  << " (planet " << to_string(home_planet->ID()) << ") to be home system for empire " << to_string(empire->EmpireID());
+                  << " (planet " << to_string(home_planet->ID()) << ") to be home system for empire " << to_string(empire->GetEmpireID());
 
     // get species, check if it exists
     auto species = context.species.GetSpecies(species_name);
@@ -786,7 +786,7 @@ bool SetEmpireHomeworld(Empire* empire, UniverseObjectID planet_id, std::string 
         }
     }
 
-    home_planet->Colonize(empire->EmpireID(), species_name, Meter::LARGE_VALUE, context);
+    home_planet->Colonize(empire->GetEmpireID(), species_name, Meter::LARGE_VALUE, context);
     context.species.AddSpeciesHomeworld(std::move(species_name), home_planet->ID());
 
     empire->SetCapitalID(home_planet->ID(), context.ContextObjects());

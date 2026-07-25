@@ -185,7 +185,7 @@ public:
     }
 
     GG::Pt GetSideBarSize(const Empire* empire) const
-    { return GetSideBarSize( empire ? empire->EmpireID() : ALL_EMPIRES ); }
+    { return GetSideBarSize( empire ? empire->GetEmpireID() : ALL_EMPIRES ); }
 
     void SetAvailableSize(GG::Pt size) {
         m_available_space = size;
@@ -268,7 +268,7 @@ public:
         const auto& app = GetApp();
         const auto& context = app.GetContext();
         if (auto object = context.ContextObjects().getRaw(participant.object_id)) {
-            SetBrowseText(object->PublicName(app.EmpireID(), context.ContextUniverse()) +
+            SetBrowseText(object->PublicName(app.GetEmpireID(), context.ContextUniverse()) +
                           " " + DoubleToString(participant.current_health, 3, false) +
                           "/" + DoubleToString(participant.max_health, 3, false));
         }

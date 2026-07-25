@@ -3461,7 +3461,7 @@ void Universe::UpdateStatRecords(const ScriptingContext& context) {
         auto source = empire->Source(m_objects).get();
         if (!source) {
             ErrorLogger() << "Universe::UpdateStatRecords() unable to find source for empire, id = "
-                          <<  to_string(empire->EmpireID());
+                          <<  to_string(empire->GetEmpireID());
             continue;
         }
         empire_sources.insert_or_assign(empire_id, source);

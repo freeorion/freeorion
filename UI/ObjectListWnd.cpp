@@ -2167,7 +2167,7 @@ public:
             return false;
 
         const int object_id = obj->ID();
-        const int client_empire_id = GetApp().EmpireID();
+        const auto client_empire_id = GetApp().GetEmpireID();
 
         if (context.ContextUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).contains(object_id))
             return it->second.contains(VIS_DISPLAY::SHOW_DESTROYED);
@@ -2679,7 +2679,7 @@ void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it, GG::Pt pt,
         ObjectDoubleClickedSignal(object_id);
 
     auto& app = GetApp();
-    app.GetUI().ZoomToObject(object_id, app.GetContext(), app.EmpireID());
+    app.GetUI().ZoomToObject(object_id, app.GetContext(), app.GetEmpireID());
 }
 
 std::set<int> ObjectListWnd::SelectedObjectIDs() const {
@@ -2748,7 +2748,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
     std::map<std::string, int> all_foci, avail_blds;    // counts of how many planets can use each focus or can produce each building type
     std::map<int, int> avail_designs_planet_counts;     // count of how many planets can produce each ship design
     UniverseObjectType type = obj->ObjectType();
-    auto cur_empire = context.GetEmpire(app.EmpireID());
+    auto cur_empire = context.GetEmpire(app.GetEmpireID());
 
     if (type == UniverseObjectType::OBJ_PLANET) {
         popup->AddMenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, suitability_action);
@@ -2759,7 +2759,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
                 continue;
 
             auto one_planet = context.ContextObjects().getRaw<const Planet>(row->ObjectID());
-            if (one_planet && one_planet->OwnedBy(app.EmpireID())) {
+            if (one_planet && one_planet->OwnedBy(app.GetEmpireID())) {
                 for (const auto& planet_focus : one_planet->AvailableFoci(context))
                     all_foci[std::string{planet_focus}]++;
 
@@ -2779,7 +2779,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
             }
         }
 
-        const int app_empire_id{app.EmpireID()};
+        const int app_empire_id{app.GetEmpireID()};
 
         GG::MenuItem focus_menu_item(UserString("MENUITEM_SET_FOCUS"), false, false/*, no action*/);
         for (auto& [focus_name, count_of_planets_that_have_focus_available] : all_foci) {
@@ -2829,7 +2829,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
 
                 auto& app = GetApp();
                 auto& context = app.GetContext();
-                const auto empire_id = app.EmpireID();
+                const auto empire_id = app.GetEmpireID();
                 const auto cur_empire = context.GetEmpire(empire_id);
 
                 for (const auto& entry : m_list_box->Selections()) {
@@ -2838,7 +2838,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
                         continue;
                     {
                         auto one_planet = context.ContextObjects().get<Planet>(row->ObjectID());
-                        if (!one_planet || !one_planet->OwnedBy(app.EmpireID()) ||
+                        if (!one_planet || !one_planet->OwnedBy(app.GetEmpireID()) ||
                             !cur_empire->ProducibleItem(BuildType::BT_SHIP, design_id,
                                                     row->ObjectID(), context))
                         { continue; }
@@ -2885,7 +2885,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
                 auto& app = GetApp();
                 auto& context = app.GetContext();
                 const auto& objects = context.ContextObjects();
-                const auto cur_empire = context.GetEmpire(app.EmpireID());
+                const auto cur_empire = context.GetEmpire(app.GetEmpireID());
 
                 for (const auto& selection : m_list_box->Selections()) {
                     auto row = dynamic_cast<const ObjectRow*>(selection->get());
@@ -2893,7 +2893,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
                         continue;
 
                     auto one_planet = objects.get<Planet>(row->ObjectID());
-                    if (!one_planet || !one_planet->OwnedBy(app.EmpireID()))
+                    if (!one_planet || !one_planet->OwnedBy(app.GetEmpireID()))
                         continue;
                     if (!cur_empire->EnqueuableItem(BuildType::BT_BUILDING, building_type_name,
                                                     row->ObjectID(), context)
@@ -2903,7 +2903,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
 
                     app.Orders().IssueOrder<ProductionQueueOrder>(
                         context,
-                        ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE, app.EmpireID(),
+                        ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE, app.GetEmpireID(),
                         ProductionQueue::ProductionItem{BuildType::BT_BUILDING, building_type_name},
                         1, row->ObjectID(), pos); // TODO: pass bld_item with move?
 

@@ -83,7 +83,7 @@ public:
     [[nodiscard]] const auto&  Name() const noexcept { return m_name; }
     [[nodiscard]] const auto&  PlayerName() const noexcept { return m_player_name; }
     [[nodiscard]] bool         IsAuthenticated() const noexcept { return m_authenticated; }
-    [[nodiscard]] auto         EmpireID() const noexcept { return m_id; }
+    [[nodiscard]] auto         GetEmpireID() const noexcept { return m_id; }
     [[nodiscard]] auto         Color() const noexcept { return m_color; }
     [[nodiscard]] auto         CapitalID() const noexcept { return m_capital_id; }
 

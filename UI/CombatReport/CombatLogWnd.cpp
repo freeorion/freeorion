@@ -85,16 +85,16 @@ namespace {
         }
     }
 
-    // TODO: Function adapted from CombatEvents.cpp, will need to beextracted to a common library
-    std::string WrapWithTagAndId(std::string_view meat, std::string_view tag, int id)
-    { return boost::str(boost::format("<%1% %2%>%3%</%1%>") % tag % id % meat); }
+    // TODO: Function adapted from CombatEvents.cpp, will need to be extracted to a common library
+    std::string WrapWithTagAndId(std::string_view meat, std::string_view tag, auto id)
+    { return boost::str(boost::format("<%1% %2%>%3%</%1%>") % tag % to_string(id) % meat); }
 
     /// Segregates \a objects into categories based on \a categories and ownership;
     /// only applies to objects owned by one of \a owners;
     /// within a category, sorts by \a order
-    std::map<int, std::vector<std::vector<std::shared_ptr<UniverseObject>>>> SegregateForces(
-        const std::set<int>& owners,
-        const std::set<int>& objects,
+    std::map<EmpireID, std::vector<std::vector<std::shared_ptr<UniverseObject>>>> SegregateForces(
+        const std::set<EmpireID>& owners,
+        const std::set<UniverseObjectID>& objects,
         std::vector<std::function<bool(std::shared_ptr<UniverseObject>)>> categories,
         std::function<bool(std::shared_ptr<UniverseObject>, std::shared_ptr<UniverseObject>)> order)
     {
@@ -139,7 +139,7 @@ namespace {
         const auto& context = GetApp().GetContext();
         if (const auto empire = context.GetEmpire(empire_id))
             return retval.append(GG::RgbaTag(empire->Color())).append("<").append(VarText::EMPIRE_ID_TAG).append(" ")
-                         .append(to_string(empire->EmpireID())).append(">").append(empire->Name()).append("</")
+                         .append(to_string(empire->GetEmpireID())).append(">").append(empire->Name()).append("</")
                          .append(VarText::EMPIRE_ID_TAG).append(">").append("</rgba>");
         else
             return retval.append(GG::RgbaTag(ClientUI::DefaultLinkColor())).append(UserString("NEUTRAL")).append("</rgba>");
@@ -570,7 +570,7 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
 
     const auto& app = GetApp();
     const ScriptingContext& context = app.GetContext();
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     const Universe& universe = context.ContextUniverse();
     const ObjectMap& objects = context.ContextObjects();
     const auto font = app.GetUI().GetFont();
@@ -578,11 +578,11 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
     // Write Header text
     const auto* system = objects.getRaw<System>(log->system_id);
     const std::string& sys_name = (system ? system->PublicName(client_empire_id, universe) : UserString("ERROR"));
-    DebugLogger(combat_log) << "Showing combat log #" << log_id << " at " << sys_name << " (" << log->system_id
+    DebugLogger(combat_log) << "Showing combat log #" << log_id << " at " << sys_name << " (" << to_string(log->system_id)
                             << ") with " << log->combat_events.size() << " events";
 
     AddRow(DecorateLinkText(str(FlexibleFormat(UserString("ENC_COMBAT_LOG_DESCRIPTION_STR"))
-                                % LinkTaggedIDText(VarText::SYSTEM_ID_TAG, log->system_id, sys_name)
+                                % LinkTaggedIDText(VarText::SYSTEM_ID_TAG, Value(log->system_id), sys_name)
                                 % log->turn) + "\n"));
 
 

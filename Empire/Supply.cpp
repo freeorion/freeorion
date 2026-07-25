@@ -705,11 +705,11 @@ void SupplyManager::Update(const ScriptingContext& context) {
 
                     // erase any previous obstructed traversal that just succeeded
                     if (m_supply_starlane_obstructed_traversals[empire_id].contains({system_id, lane_end_sys_id})) {
-                        //TraceLogger(supply) << "Removed obstructed traversal from " << system_id << " to " << lane_end_sys_id;
+                        //TraceLogger(supply) << "Removed obstructed traversal from " << to_string(system_id) << " to " << lane_end_sys_id;
                         m_supply_starlane_obstructed_traversals[empire_id].erase({system_id, lane_end_sys_id});
                     }
                     if (m_supply_starlane_obstructed_traversals[empire_id].contains({lane_end_sys_id, system_id})) {
-                        //TraceLogger(supply) << "Removed obstructed traversal from " << lane_end_sys_id << " to " << system_id;
+                        //TraceLogger(supply) << "Removed obstructed traversal from " << lane_end_sys_id << " to " << to_string(system_id);
                         m_supply_starlane_obstructed_traversals[empire_id].erase({lane_end_sys_id, system_id});
                     }
                 }

@@ -60,7 +60,7 @@ struct FO_COMMON_API InfluenceQueue {
 
     [[nodiscard]] int   ProjectsInProgress() const noexcept { return m_projects_in_progress; }
     [[nodiscard]] float TotalIPsSpent() const noexcept { return m_total_IPs_spent; };
-    [[nodiscard]] auto  EmpireID() const noexcept { return m_empire_id; }
+    [[nodiscard]] auto  GetEmpireID() const noexcept { return m_empire_id; }
 
     /** Returns amount of stockpile IP allocated to Influence queue elements. */
     [[nodiscard]] float AllocatedStockpileIP() const noexcept;

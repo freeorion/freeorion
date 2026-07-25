@@ -208,7 +208,7 @@ public:
     static constexpr std::string_view FIELD_ID_TAG = "field";
     //! Variable value represents a CombatLog.
     static constexpr std::string_view COMBAT_ID_TAG = "combat";
-    //! Variable value is an Empire::EmpireID().
+    //! Variable value is an Empire::GetEmpireID().
     static constexpr std::string_view EMPIRE_ID_TAG = "empire";
     //! Variable value is a ShipDesign::ID().
     static constexpr std::string_view DESIGN_ID_TAG = "shipdesign";
