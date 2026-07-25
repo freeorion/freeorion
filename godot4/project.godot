@@ -16,6 +16,10 @@ run/main_scene="uid://badnwt3uvk5lb"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="uid://cj7u2a5f57ueg"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gut/plugin.cfg")
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
