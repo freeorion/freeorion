@@ -177,8 +177,8 @@
     (HighestCostResearchableTech)               \
     (HighestCostTransferrableTech)              \
     (HistogramMax)                              \
-    (HistogramMin)                              \
-    (HistogramSpread)                           \
+ /* (HistogramMin) */                           \
+ /* (HistogramSpread) */                        \
     (Homeworld)                                 \
     (Hostile)                                   \
     (Huge)                                      \
@@ -243,7 +243,7 @@
     (MaxStructure)                              \
     (MaxSupply)                                 \
     (MaxTroops)                                 \
-    (Mean)                                      \
+ /* (Mean) */                                   \
     (Medium)                                    \
     (message)                                   \
     (meter)                                     \
@@ -355,7 +355,7 @@
     (ProducedByEmpire)                          \
     (ProducedByEmpireID)                        \
     (Producible)                                \
-    (Product)                                   \
+ /* (Product) */                                \
     (ProductionCenter)                          \
     (ProductionLocation)                        \
     (PropagatedSupplyRange)                     \
@@ -384,7 +384,7 @@
     (ResourceSupplyConnected)                   \
     (ResupplyableBy)                            \
     (Retain)                                    \
-    (RMS)                                       \
+ /* (RMS) */                                    \
     (RootCandidate)                             \
     (round)                                     \
     (scope)                                     \
@@ -515,7 +515,7 @@
     (SpeciesShipsScrapped)                      \
     (speed)                                     \
     (Speed)                                     \
-    (Spread)                                    \
+ /* (Spread) */                                 \
     (stackinggroup)                             \
     (Star)                                      \
     (StarlaneToWouldBeAngularlyCloseToExistingStarlane) \
@@ -524,7 +524,7 @@
     (StarType)                                  \
     (Stationary)                                \
     (Statistic)                                 \
-    (StDev)                                     \
+ /* (StDev) */                                  \
     (stealth)                                   \
     (Stealth)                                   \
     (Stockpile)                                 \
