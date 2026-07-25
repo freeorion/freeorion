@@ -20,6 +20,10 @@ config/icon="uid://cj7u2a5f57ueg"
 
 enabled=PackedStringArray("res://addons/gut/plugin.cfg")
 
+[autoload]
+
+GlobalFreeOrionNode="*res://FreeOrionNode.tscn"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
