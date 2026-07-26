@@ -218,10 +218,10 @@ namespace {
         std::vector<int> OrderedIDs() const override;
 
         /** Return all ids including obsoleted designs. */
-        std::vector<int> AllOrderedIDs() const;
+        const auto& AllOrderedIDs() const noexcept { return m_ordered_design_ids; }
 
         /** Return non-obsolete available hulls. */
-        std::vector<std::string> OrderedHulls() const;
+        const auto& OrderedHulls() const noexcept { return m_ordered_hulls; }
 
         template <typename T>
         void InsertOrderedIDs(const T& new_order);
@@ -234,8 +234,7 @@ namespace {
 
         bool IsKnown(const int id) const;
 
-        /** Return true if design \p id is obsolete or boost::none if \p id is not in
-            the manager. */
+        /** Return true if design \p id is obsolete or boost::none if \p id is not in the manager. */
         boost::optional<bool> IsObsolete(const int id, const Universe& universe) const;
         /** Return UI event number that obsoletes \p hull if it is obsolete. */
         boost::optional<int> IsHullObsolete(const std::string& hull) const;
@@ -364,7 +363,7 @@ namespace {
             return current_design && *current_design == *design;
         };
 
-        const auto current_ids = GetDisplayedDesignsManager().AllOrderedIDs();
+        const auto& current_ids = GetDisplayedDesignsManager().AllOrderedIDs();
         return range_none_of(current_ids, is_same_design);
     }
 
@@ -402,7 +401,7 @@ namespace {
 
         auto& current_manager = GetDisplayedDesignsManager();
         const auto& all_ids = current_manager.AllOrderedIDs();
-        const int before_id = (all_ids.empty() || !is_front) ? INVALID_OBJECT_ID : all_ids.front();
+        const int before_id = (all_ids.empty() || !is_front) ? INVALID_DESIGN_ID : all_ids.front();
         current_manager.InsertBefore(order ? order->DesignID() : INVALID_DESIGN_ID, before_id);
     }
 
@@ -687,12 +686,6 @@ namespace {
                      });
         return retval;
     }
-
-    std::vector<int> DisplayedShipDesignManager::AllOrderedIDs() const
-    { return std::vector<int>(m_ordered_design_ids.begin(), m_ordered_design_ids.end()); }
-
-    std::vector<std::string> DisplayedShipDesignManager::OrderedHulls() const
-    { return std::vector<std::string>(m_ordered_hulls.begin(), m_ordered_hulls.end()); }
 
     template <typename T>
     void DisplayedShipDesignManager::InsertOrderedIDs(const T& new_order) {
@@ -2576,19 +2569,18 @@ void EmptyHullsListBox::PopulateCore() {
 
     const GG::Pt row_size = ListRowSize();
 
-    const auto& manager = GetDisplayedDesignsManager();
+    auto ordered_hulls = GetDisplayedDesignsManager().OrderedHulls() | range_to_vec;
 
-    auto hulls = manager.OrderedHulls();
-    if (hulls.size() < GetShipHullManager().size()) {
+    if (ordered_hulls.size() < GetShipHullManager().size()) {
         ErrorLogger() << "EmptyHulls::PopulateCoreordered has fewer than expected entries...";
-        for (auto& hull : GetShipHullManager() | range_keys) {
-            if (!range_contains(hulls, hull))
-                hulls.push_back(hull);
+        for (const auto& hull : std::as_const(GetShipHullManager()) | range_keys) {
+            if (!range_contains(ordered_hulls, hull))
+                ordered_hulls.push_back(hull);
         }
     }
 
-    for (auto& hull_name : hulls) {
-        const auto& ship_hull =  GetShipHullManager().GetShipHull(hull_name);
+    for (auto& hull_name : ordered_hulls) {
+        const auto* ship_hull = GetShipHullManager().GetShipHull(hull_name);
 
         if (!ship_hull || !ship_hull->Producible())
             continue;
@@ -2596,9 +2588,8 @@ void EmptyHullsListBox::PopulateCore() {
         auto shown = AvailabilityState().DisplayedHullAvailability(hull_name);
         if (!shown)
             continue;
-        auto row = GG::Wnd::Create<HullAndPartsListBoxRow>(row_size.x, row_size.y,
-                                                           std::move(hull_name),
-                                                           std::vector<std::string>{});
+        auto row = GG::Wnd::Create<HullAndPartsListBoxRow>(
+            row_size.x, row_size.y, std::move(hull_name), std::vector<std::string>{});
         row->SetAvailability(*shown);
         row->Resize(row_size);  // TODO: should this and following be swapped?
         Insert(std::move(row));
