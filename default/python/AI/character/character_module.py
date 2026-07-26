@@ -605,7 +605,7 @@ for funcname in [
     "may_surge_industry",
     "may_maximize_research",
     "may_invade",
-    "may-invade_with_bases",
+    "may_invade_with_bases",
     "may_build_building",
     "may_produce_troops",
     "may_research_heavily",
