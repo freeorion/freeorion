@@ -24,8 +24,8 @@ public:
 
     int EffectsProcessingThreads() const override;
 protected:
-    std::set<int>        m_ai_empires;             ///< Ids of AI empires in game.
-    std::set<int>        m_ai_waiting;             ///< Ids of AI empires not yet send orders.
+    std::set<EmpireID>   m_ai_empires;             ///< Ids of AI empires in game.
+    std::set<EmpireID>   m_ai_waiting;             ///< Ids of AI empires not yet send orders.
     boost::uuids::uuid   m_cookie;                 ///< Cookie from server login.
     MultiplayerLobbyData m_lobby_data;             ///< Lobby data.
     bool                 m_lobby_updated = false;  ///< Did player get updated lobby.

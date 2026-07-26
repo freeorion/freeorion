@@ -4,6 +4,8 @@
 #include <GG/Wnd.h>
 #include <boost/uuid/uuid.hpp>
 
+#include "../universe/ConstantsFwd.h"
+
 class EncyclopediaDetailPanel;
 struct SaveGameUIData;
 

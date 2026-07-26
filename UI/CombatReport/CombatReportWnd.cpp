@@ -2,6 +2,7 @@
 #include "../ClientUI.h"
 #include "../CUIControls.h"
 #include "../client/human/GGHumanClientApp.h"
+#include "../combat/CombatLogManager.h"
 #include "../../util/i18n.h"
 #include "../../util/Logger.h"
 #include "../../util/VarText.h"
@@ -16,6 +17,33 @@
 #include <GG/Layout.h>
 #include <GG/ScrollPanel.h>
 #include <GG/TabWnd.h>
+
+#if !defined(CONSTEXPR_FROM_CHARS)
+# if defined(__cpp_lib_constexpr_charconv)
+#  define CONSTEXPR_FROM_CHARS constexpr
+# else
+#  define CONSTEXPR_FROM_CHARS
+# endif
+#endif
+
+namespace {
+    // wrapper for converting string to integer
+    [[nodiscard]] CONSTEXPR_FROM_CHARS int ToInt(std::string_view sv, int default_result = -1)
+        noexcept(noexcept(std::from_chars("", "", std::declval<int&>())))
+    {
+        int retval = default_result;
+        std::from_chars(sv.data(), sv.data() + sv.size(), retval);
+        return retval;
+    }
+
+    [[nodiscard]] CONSTEXPR_FROM_CHARS UniverseObjectID ToInt(std::string_view sv, UniverseObjectID default_result)
+        noexcept(noexcept(ToInt("", -1)))
+    { return UniverseObjectID{ToInt(sv, Value(default_result))}; }
+
+    [[nodiscard]] CONSTEXPR_FROM_CHARS EmpireID ToInt(std::string_view sv, EmpireID default_result)
+        noexcept(noexcept(ToInt("", -1)))
+    { return EmpireID{ToInt(sv, Value(default_result))}; }
+}
 
 // The implementation class for CombatReportWnd
 class CombatReportWnd::Impl {
@@ -84,7 +112,8 @@ public:
         auto& universe = context.ContextUniverse();
         auto client_empire_id = app.GetEmpireID();
         auto& ui = app.GetUI();
-        const auto data_int = [&data]() { return boost::lexical_cast<int>(data); }; // TODO: replace with custom ToInt
+        
+        const auto data_int = [&data]<typename T = UniverseObjectID>(T invalid_result = T{-1}) { return ToInt(data, invalid_result); };
 
         try {
             if (link_type == VarText::PLANET_ID_TAG) {
@@ -102,12 +131,12 @@ public:
                 ui.ZoomToField(data_int(), objects);
 
             } else if (link_type == VarText::COMBAT_ID_TAG) {
-                ui.ZoomToCombatLog(data_int());
+                ui.ZoomToCombatLog(data_int(CombatLogManager::INVALID_COMBAT_LOG_ID));
 
             } else if (link_type == VarText::EMPIRE_ID_TAG) {
-                ui.ZoomToEmpire(data_int());
+                ui.ZoomToEmpire(data_int(ALL_EMPIRES));
             } else if (link_type == VarText::DESIGN_ID_TAG) {
-                ui.ZoomToShipDesign(data_int());
+                ui.ZoomToShipDesign(data_int(INVALID_DESIGN_ID));
             } else if (link_type == VarText::PREDEFINED_DESIGN_TAG) {
                 if (const ShipDesign* design = universe.GetGenericShipDesign(data))
                     ui.ZoomToShipDesign(design->ID());

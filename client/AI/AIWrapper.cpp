@@ -390,9 +390,10 @@ namespace {
         app->Orders().IssueOrder<ProductionQueueOrder>(
             context,
             ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
-            empire_id,
+            EmpireID{empire_id},
             ProductionQueue::ProductionItem(BuildType::BT_BUILDING, item_name),
-            1, location_id);
+            1,
+            UniverseObjectID{location_id});
 
         return 1;
     }
@@ -433,7 +434,8 @@ namespace {
             ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
             empire_id,
             ProductionQueue::ProductionItem(BuildType::BT_SHIP, design_id, universe),
-            1, location_id);
+            1,
+            UniverseObjectID{location_id});
 
         return 1;
     }

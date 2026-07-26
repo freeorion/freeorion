@@ -44,7 +44,7 @@ public:
     float           max_current_health = 0.0f;
 
     CombatSummary() = default;
-    CombatSummary(EmpireID empire_id);
+    explicit CombatSummary(EmpireID empire_id);
 
     GG::Clr         SideColor() const;
     std::string     SideName() const;
