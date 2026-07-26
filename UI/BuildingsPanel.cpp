@@ -93,16 +93,16 @@ void BuildingsPanel::Update() {
         ErrorLogger() << "BuildingsPanel::Update couldn't get planet with id " << m_planet_id;
         return;
     }
-    const int system_id = planet->SystemID();
+    const auto system_id = planet->SystemID();
 
     const int indicator_size = static_cast<int>(Width() / static_cast<float>(m_columns));
 
-    const int this_client_empire_id = app.GetEmpireID();
+    const auto this_client_empire_id = app.GetEmpireID();
     const auto& this_client_known_destroyed_objects = context.ContextUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
     const auto& this_client_stale_object_info = context.ContextUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
     // get existing / finished buildings and use them to create building indicators
-    for (int object_id : planet->BuildingIDs()) {
+    for (auto object_id : planet->BuildingIDs()) {
         // skip known destroyed and stale info objects
         if (this_client_known_destroyed_objects.contains(object_id))
             continue;
@@ -111,7 +111,7 @@ void BuildingsPanel::Update() {
 
         auto building = context.ContextObjects().get<Building>(object_id);
         if (!building) {
-            ErrorLogger() << "BuildingsPanel::Update couldn't get building with id: " << object_id
+            ErrorLogger() << "BuildingsPanel::Update couldn't get building with id: " << to_string(object_id)
                           << " on planet " << planet->Name();
             continue;
         }

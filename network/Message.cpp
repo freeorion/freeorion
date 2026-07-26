@@ -1203,7 +1203,7 @@ void ExtractTurnProgressMessageData(const Message& msg, Message::TurnProgressPha
     }
 }
 
-void ExtractPlayerStatusMessageData(const Message& msg, Message::PlayerStatus& status, int& about_empire_id) {
+void ExtractPlayerStatusMessageData(const Message& msg, Message::PlayerStatus& status, EmpireID& about_empire_id) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);

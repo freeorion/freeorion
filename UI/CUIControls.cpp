@@ -1902,14 +1902,13 @@ void ResourceInfoPanel::SetLocalPointsCost(
 }
 
 void ResourceInfoPanel::SetEmpireID(EmpireID empire_id) {
-    int old_empire_id = m_empire_id;
+    if (empire_id == m_empire_id)
+        return;
     m_empire_id = empire_id;
-    if (old_empire_id != m_empire_id) {
-        const auto empire = GetApp().GetContext().GetEmpire(m_empire_id);
-        const auto& empire_name{empire ? empire->Name() : EMPTY_STRING};
-        // let a subsequent SetLocalPointsCost call re-set the title to include location info if necessary
-        SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % empire_name));
-    }
+    const auto empire = GetApp().GetContext().GetEmpire(empire_id);
+    const auto& empire_name{empire ? empire->Name() : EMPTY_STRING};
+    // let a subsequent SetLocalPointsCost call re-set the title to include location info if necessary
+    SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % empire_name));
 }
 
 void ResourceInfoPanel::ClearLocalInfo() {

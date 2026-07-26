@@ -73,7 +73,7 @@ public:
     /** Enables, or disables if \a enable is false, issuing orders via this BuildingIndicator. */
     void EnableOrderIssuing(bool enable = true);
 
-    mutable boost::signals2::signal<void (int)> RightClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> RightClickedSignal;
 
 private:
     void Refresh();

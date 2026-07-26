@@ -766,7 +766,7 @@ boost::statechart::result PlayingGame::react(const PlayerStatus& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.PlayerStatus";
     try {
         Message::PlayerStatus status = Message::PlayerStatus::WAITING;
-        auto about_empire_id = ALL_EMPIRES;
+        EmpireID about_empire_id = ALL_EMPIRES;
         ExtractPlayerStatusMessageData(msg.m_message, status, about_empire_id);
         Client().SetEmpireStatus(about_empire_id, status);
     } catch (...) {}

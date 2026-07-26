@@ -455,9 +455,7 @@ FO_COMMON_API void ExtractTurnPartialUpdateMessageData(const Message& msg, Empir
 
 FO_COMMON_API void ExtractTurnProgressMessageData(const Message& msg, Message::TurnProgressPhase& phase_id);
 
-FO_COMMON_API void ExtractPlayerStatusMessageData(const Message& msg,
-                                                  Message::PlayerStatus& status,
-                                                  int& about_empire_id);
+FO_COMMON_API void ExtractPlayerStatusMessageData(const Message& msg, Message::PlayerStatus& status, EmpireID& about_empire_id);
 
 FO_COMMON_API void ExtractHostSPGameMessageData(const Message& msg, SinglePlayerSetupData& setup_data, std::string& client_version_string, std::map<std::string, std::string>& dependencies);
 

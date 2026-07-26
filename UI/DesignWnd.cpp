@@ -402,7 +402,7 @@ namespace {
 
         auto& current_manager = GetDisplayedDesignsManager();
         const auto& all_ids = current_manager.AllOrderedIDs();
-        const int before_id = (all_ids.empty() || !is_front) ? INVALID_OBJECT_ID : all_ids.front();
+        const int before_id = (all_ids.empty() || !is_front) ? INVALID_DESIGN_ID : all_ids.front();
         current_manager.InsertBefore(order ? order->DesignID() : INVALID_DESIGN_ID, before_id);
     }
 
@@ -1540,7 +1540,7 @@ namespace {
     }
 }
 
-void PartsListBox::CullSuperfluousParts(std::vector<const ShipPart*>& this_group, EmpireID empire_id, int loc_id) const {
+void PartsListBox::CullSuperfluousParts(std::vector<const ShipPart*>& this_group, EmpireID empire_id, UniverseObjectID loc_id) const {
     // This is not merely a check for obsolescence;
     // see PartsListBox::Populate for more info
     const float min_bargain_ratio = GetOptionsDB().Get<double>("ui.design.functional.bargain.ratio");
@@ -2214,7 +2214,7 @@ protected:
     /** If \p wnd is a valid dragged child return a replacement row.  Otherwise return nullptr. */
     virtual std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) = 0;
 
-    int GetEmpireID() const noexcept { return m_empire_id_shown; }
+    auto GetEmpireID() const noexcept { return m_empire_id_shown; }
 
     const AvailabilityManager& AvailabilityState() const noexcept { return m_availabilities_state; }
 

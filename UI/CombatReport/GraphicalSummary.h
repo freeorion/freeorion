@@ -34,7 +34,7 @@ public:
 
 private:
     std::vector<std::shared_ptr<SideBar>>   m_side_boxes;
-    std::map<int, CombatSummary>            m_summaries;
+    std::map<EmpireID, CombatSummary>       m_summaries;
     std::unique_ptr<BarSizer>               m_sizer;
     std::shared_ptr<OptionsBar>             m_options_bar; // Is a child window->GG handles memory
 
