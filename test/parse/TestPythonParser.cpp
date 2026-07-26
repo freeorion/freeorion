@@ -855,6 +855,125 @@ BOOST_AUTO_TEST_CASE(parse_ship_hulls) {
 
     const auto ship_hulls = *std::move(ship_hulls_opt);
     BOOST_CHECK_EQUAL(1, ship_hulls.size());
+
+    const auto ship_hulls_it = ship_hulls.find("SH_BASIC_SMALL");
+    BOOST_REQUIRE(ship_hulls_it != ship_hulls.end());
+
+    const auto& ship_hull = ship_hulls_it->second;
+    BOOST_CHECK_EQUAL("SH_BASIC_SMALL", ship_hull->Name());
+    BOOST_CHECK_EQUAL("SH_BASIC_SMALL_DESC", ship_hull->Description());
+    BOOST_CHECK_EQUAL(75, ship_hull->Speed());
+    BOOST_CHECK_EQUAL(8, ship_hull->Fuel());
+    BOOST_CHECK_EQUAL(5, ship_hull->Stealth());
+    BOOST_CHECK_EQUAL(40, ship_hull->Structure());
+    BOOST_CHECK_EQUAL(0, ship_hull->Shields());
+    BOOST_CHECK_EQUAL(0, ship_hull->ColonyCapacity());
+    BOOST_CHECK_EQUAL(0, ship_hull->TroopCapacity());
+    BOOST_CHECK_EQUAL(0, ship_hull->Detection());
+    BOOST_CHECK_EQUAL(true, ship_hull->Producible());
+    BOOST_CHECK_EQUAL("hulls_design/basic-small-hull.png", ship_hull->Graphic());
+    BOOST_CHECK_EQUAL("icons/ship_hulls/basic-small-hull_small.png", ship_hull->Icon());
+
+    const auto& slots = ship_hull->Slots();
+    std::vector<ShipHull::Slot> test_slots{
+        {ShipSlotType::SL_EXTERNAL, 0.50, 0.45}
+    };
+    BOOST_CHECK(test_slots == slots);
+
+    const auto& tags = ship_hull->Tags();
+    BOOST_REQUIRE_EQUAL(2, tags.size());
+    BOOST_CHECK_EQUAL("GREAT_FUEL_EFFICIENCY", tags[0]);
+    BOOST_CHECK_EQUAL("PEDIA_HULL_LINE_GENERIC", tags[1]);
+
+    BOOST_CHECK_EQUAL(0, ship_hull->Exclusions().size());
+
+    // Location
+    const auto location = ship_hull->Location();
+    BOOST_REQUIRE(location != nullptr);
+    BOOST_CHECK_EQUAL(false, location->InitialCandidatesAllMatch());
+    BOOST_CHECK_EQUAL(true, location->RootCandidateInvariant());
+    BOOST_CHECK_EQUAL(false, location->LocalCandidateInvariant());
+    BOOST_CHECK_EQUAL(true, location->TargetInvariant());
+    BOOST_CHECK_EQUAL(false, location->SourceInvariant());
+    const auto location_and = dynamic_cast<const Condition::And*>(location);
+    BOOST_REQUIRE(location_and != nullptr);
+    const auto& location_opers = location_and->OperandsRaw();
+    BOOST_REQUIRE_EQUAL(3, location_opers.size());
+    BOOST_CHECK(dynamic_cast<const Condition::Type*>(location_opers[0]) != nullptr);
+    BOOST_CHECK(dynamic_cast<const Condition::EmpireAffiliation*>(location_opers[1]) != nullptr);
+    BOOST_CHECK(dynamic_cast<const Condition::Contains<std::unique_ptr<Condition::Condition>>*>(location_opers[2]) != nullptr);
+    BOOST_CHECK_EQUAL(3267, location_opers[0]->GetCheckSum());
+    BOOST_CHECK_EQUAL(5108, location_opers[1]->GetCheckSum());
+    BOOST_CHECK_EQUAL(14121, location_opers[2]->GetCheckSum());
+
+    // Effects
+    const auto& effects = ship_hull->Effects();
+    const std::initializer_list<std::tuple<const char*, const char*, const char*, int,
+            bool, bool, bool,
+            const char*, uint32_t, size_t>> expected_effects{
+        {"", "", "", 0,
+            true, false, false,
+            "", 4017890, 1},
+        {"", "", "", 0,
+            true, false, false,
+            "", 4027682, 1},
+        {"", "", "", 0,
+            true, false, false,
+            "", 4039111, 1},
+        {"", "HULL_FUEL_EFFICIENCY_DESC", "GREAT_FUEL_EFFICIENCY_LABEL", 120,
+            true, false, false,
+            "SH_BASIC_SMALL", 4036545, 1},
+        {"", "MAX_FUEL_LESS_THAN_ONE_DESC", "MAX_FUEL_LESS_THAN_ONE_LABEL", 700,
+            true, false, false,
+            "SH_BASIC_SMALL", 4022616, 1},
+        {"", "", "TT_SHIP_HULL", 199,
+            true, false, false,
+            "SH_BASIC_SMALL", 14042, 1},
+        {"BASE_FUEL_REGEN", "AVERAGE_BASE_FUEL_REGEN_DESC", "BASE_FUEL_REGEN_LABEL", 500,
+            true, false, false,
+            "SH_BASIC_SMALL", 4027332, 1},
+        {"", "", "", 100,
+            false, false, true,
+            "SH_BASIC_SMALL", 4101870, 1},
+        {"", "", "", 100,
+            true, false, false,
+            "SH_BASIC_SMALL", 4023288, 1},
+        {"", "", "", 100,
+            true, false, false,
+            "SH_BASIC_SMALL", 8016811, 1},
+        {"", "", "GOOD_VISION_LABEL", 100,
+            true, false, false,
+            "SH_BASIC_SMALL", 4030456, 1},
+        {"MONSTER_FLEET_MOVE_STACK", "", "", 100,
+            false, false, false,
+            "SH_BASIC_SMALL", 4062928, 1}
+    };
+
+    BOOST_CHECK_EQUAL(expected_effects.size(), effects.size());
+
+    for (std::size_t i = 0; const auto& [stacking_group, description, accounting_label, priority,
+            has_meter_effects, has_appearance_effects, has_sitrep_effects,
+            content_name, checksum, effects_size]
+        : expected_effects)
+    {
+        BOOST_REQUIRE_GT(effects.size(), i);
+        const auto& effect = effects[i];
+        BOOST_TEST_CONTEXT("at effect #" << i) {
+            BOOST_CHECK_EQUAL(stacking_group, effect.StackingGroup());
+            BOOST_CHECK_EQUAL(description, effect.GetDescription());
+            BOOST_CHECK_EQUAL(accounting_label, effect.AccountingLabel());
+            BOOST_CHECK_EQUAL(priority, effect.Priority());
+
+            BOOST_CHECK_EQUAL(has_meter_effects, effect.HasMeterEffects());
+            BOOST_CHECK_EQUAL(has_appearance_effects, effect.HasAppearanceEffects());
+            BOOST_CHECK_EQUAL(has_sitrep_effects, effect.HasSitrepEffects());
+
+            BOOST_CHECK_EQUAL(content_name, effect.TopLevelContent());
+            BOOST_CHECK_EQUAL(checksum, effect.GetCheckSum());
+            BOOST_CHECK_EQUAL(effects_size, effect.Effects().size());
+        }
+        i ++;
+    }
 }
 
 
