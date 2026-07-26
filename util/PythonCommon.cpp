@@ -184,7 +184,7 @@ bool PythonCommon::InitModuleLoader() {
         try {
             py::import("freeorion_loader");
             m_meta_path = py::extract<py::list>(py::import("sys").attr("meta_path"))();
-            m_meta_path->append(boost::cref(*this));
+            m_meta_path->insert(0, boost::cref(*this));
             m_meta_path_len = static_cast<int>(py::len(*m_meta_path));
         } catch (const py::error_already_set&) {
             HandleErrorAlreadySet();
@@ -285,7 +285,7 @@ void PythonCommon::FinalizeModuleLoader() {
     if (Py_IsInitialized()) {
         if (m_meta_path) {
             try {
-                m_meta_path->pop(m_meta_path_len - 1);
+                m_meta_path->pop(0);
                 m_meta_path = boost::none;
             } catch (const py::error_already_set&) {
                 ErrorLogger() << "Python parser destructor throw exception";
