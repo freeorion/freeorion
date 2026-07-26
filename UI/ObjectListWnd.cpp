@@ -1399,7 +1399,7 @@ namespace {
                     retval.push_back(ClientUI::ShipDesignIcon(*design));
             }
             if (retval.empty())
-                retval.push_back(ClientUI::ShipDesignIcon(INVALID_OBJECT_ID, app.GetContext().ContextUniverse()));  // default icon
+                retval.push_back(ClientUI::ShipDesignIcon(INVALID_DESIGN_ID, app.GetContext().ContextUniverse()));  // default icon
 
         } else if (obj->ObjectType() == UniverseObjectType::OBJ_FLEET) {
             if (auto* fleet = static_cast<const Fleet*>(obj.get())) {
