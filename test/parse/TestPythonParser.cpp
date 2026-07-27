@@ -848,7 +848,7 @@ BOOST_AUTO_TEST_CASE(parse_named_values) {
 BOOST_AUTO_TEST_CASE(parse_ship_hulls) {
     PythonParser parser(m_python);
 
-    auto ship_hulls_p = Pending::StartAsyncParsing(parse::ship_hulls, m_scripting_dir / "ship_hulls");
+    auto ship_hulls_p = Pending::ParseSynchronously(parse::ship_hulls, parser, m_scripting_dir / "ship_hulls");
     auto ship_hulls_opt = Pending::WaitForPendingUnlocked(std::move(ship_hulls_p));
 
     BOOST_REQUIRE(ship_hulls_opt);

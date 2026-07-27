@@ -389,7 +389,7 @@ namespace parse {
             ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/ship_parts").string();
 
         if (IsExistingDir(rdir / "scripting/ship_hulls"))
-            GetShipHullManager().SetShipHulls(Pending::StartAsyncParsing(parse::ship_hulls, rdir / "scripting/ship_hulls"));
+            GetShipHullManager().SetShipHulls(Pending::ParseSynchronously(parse::ship_hulls, python, rdir / "scripting/ship_hulls"));
         else
             ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/ship_hulls").string();
 

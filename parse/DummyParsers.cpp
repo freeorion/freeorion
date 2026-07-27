@@ -59,8 +59,11 @@ namespace parse {
     std::map<std::string, std::unique_ptr<ShipPart>, std::less<>> ship_parts(const std::filesystem::path& path)
     { return {}; }
 
-    std::map<std::string, std::unique_ptr<ShipHull>, std::less<>> ship_hulls(const std::filesystem::path& path)
-    { return {}; }
+    std::map<std::string, std::unique_ptr<ShipHull>, std::less<>> ship_hulls(const PythonParser& parser, const std::filesystem::path& path, bool& success)
+    {
+        success = true;
+        return {};
+    }
 
     ship_designs_type ship_designs(const std::filesystem::path& path)
     { return {}; }

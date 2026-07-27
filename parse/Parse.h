@@ -69,7 +69,7 @@ namespace parse {
     FO_PARSE_API std::vector<UnlockableItem> items(const std::filesystem::path& path);
     FO_PARSE_API std::vector<UnlockableItem> starting_buildings(const std::filesystem::path& path);
     FO_PARSE_API std::map<std::string, std::unique_ptr<ShipPart>, std::less<>> ship_parts(const std::filesystem::path& path);
-    FO_PARSE_API std::map<std::string, std::unique_ptr<ShipHull>, std::less<>> ship_hulls(const std::filesystem::path& path);
+    FO_PARSE_API std::map<std::string, std::unique_ptr<ShipHull>, std::less<>> ship_hulls(const PythonParser& parser, const std::filesystem::path& path, bool& success);
 
     /** Parse all ship designs in directory \p path, store them with their filename in \p
         design_and_path. If a file exists called ShipDesignOrdering.focs.txt, parse it and
