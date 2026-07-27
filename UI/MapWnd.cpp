@@ -4613,20 +4613,20 @@ void MapWnd::SetFleetMovementLine(UniverseObjectID fleet_id) {
     auto path = fleet->MovePath(route, true, context);
     auto route_it = route.begin();
     if (!route.empty() && (++route_it) != route.end()) {
-        //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" checking for blockade at system "<< route.front() <<
+        //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << to_string(fleet_id) << " checking for blockade at system " << route.front() <<
         //    " with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
         if (fleet->SystemID() == route.front() &&
             fleet->BlockadedAtSystem(route.front(), *route_it, context))
         {
             //adjust ETAs if necessary
             //if (!route.empty() && fleet->SystemID()==route.front() && (++(path.begin()))->post_blockade) {
-            //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() <<
+            //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << to_string(fleet_id)<<" blockaded at system "<< route.front() <<
             //    " with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
             if (route_it != route.end() && !( (*route_it == fleet->ArrivalStarlane())  ||
                 (empire && empire->PreservedLaneTravel(fleet->SystemID(), *route_it)) ) )
             {
                 for (MovePathNode& node : path) {
-                    //DebugLogger() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" node obj " << node.object_id <<
+                    //DebugLogger() <<   "MapWnd::SetFleetMovementLine fleet id " << to_string(fleet_id) <<" node obj " << node.object_id <<
                     //                            ", node lane end " << node.lane_end_id << ", is post-blockade (" << node.post_blockade << ")";
                     if (node.eta >= 250)
                         node.eta = Fleet::ETA_NEVER;
@@ -4634,7 +4634,7 @@ void MapWnd::SetFleetMovementLine(UniverseObjectID fleet_id) {
                         node.eta++;
                 }
             } else {
-                //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" slips through second block check";
+                //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << to_string(fleet_id) << " slips through second block check";
             }
         }
     }
@@ -4677,13 +4677,13 @@ void MapWnd::SetProjectedFleetMovementLine(UniverseObjectID fleet_id, const std:
         {
             //adjust ETAs if necessary
             //if (!route.empty() && fleet->SystemID()==route.front() && (++(path.begin()))->post_blockade) {
-            //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() <<
+            //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << to_string(fleet_id) <<" blockaded at system "<< route.front() <<
             //" with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
             if (route_it != travel_route.end() && !((*route_it == fleet->ArrivalStarlane()) ||
                 (empire && empire->PreservedLaneTravel(fleet->SystemID(), *route_it))))
             {
                 for (MovePathNode& node : path) {
-                    //DebugLogger() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id << " node obj " << node.object_id <<
+                    //DebugLogger() <<   "MapWnd::SetFleetMovementLine fleet id " << to_string(fleet_id) << " node obj " << node.object_id <<
                     //                            ", node lane end " << node.lane_end_id << ", is post-blockade (" << node.post_blockade << ")";
                     if (node.eta >= 250)
                         node.eta = Fleet::ETA_NEVER;

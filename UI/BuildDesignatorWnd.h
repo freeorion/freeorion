@@ -112,7 +112,7 @@ private:
     class BuildSelector;
 
     UniverseObjectID BuildLocation() const;
-    void BuildItemRequested(ProductionQueue::ProductionItem item, int num_to_build, int pos);
+    void BuildItemRequested(ProductionQueue::ProductionItem item, int num_to_build, int queue_pos);
     void BuildQuantityChanged(int queue_idx, int quantity);
     void SetBuild(int queue_idx);
     void InitializeWindows();

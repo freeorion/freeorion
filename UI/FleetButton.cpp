@@ -94,7 +94,7 @@ void FleetButton::Refresh(SizeType size_type) {
     // determine owner(s) of fleet(s).  Only care whether or not there is more than one owner, as owner
     // is used to determine colouration
     int multiple_owners = false;
-    int owner_id = fleets.empty() ? ALL_EMPIRES : (fleets.front() ? fleets.front()->Owner() : ALL_EMPIRES);
+    auto owner_id = fleets.empty() ? ALL_EMPIRES : (fleets.front() ? fleets.front()->Owner() : ALL_EMPIRES);
     if (!fleets.empty()) {
         // use ALL_EMPIRES if there are multiple owners
         for (auto* fleet : fleets) {
@@ -252,7 +252,7 @@ void FleetButton::Refresh(SizeType size_type) {
     }
 
     bool at_least_one_fleet_visible = false;
-    for (int fleet_id : m_fleets) {
+    for (auto fleet_id : m_fleets) {
         if (u.GetObjectVisibilityByEmpire(fleet_id, empire_id) >= Visibility::VIS_BASIC_VISIBILITY) {
             at_least_one_fleet_visible = true;
             break;

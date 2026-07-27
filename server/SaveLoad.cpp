@@ -41,7 +41,7 @@ namespace fs = std::filesystem;
 namespace {
     void CompileSaveGamePreviewData(const ServerSaveGameData& server_save_game_data,
                                     const std::vector<PlayerSaveGameData>& player_save_game_data,
-                                    const std::map<int, SaveGameEmpireData>& empire_save_game_data,
+                                    const std::map<EmpireID, SaveGameEmpireData>& empire_save_game_data,
                                     SaveGamePreviewData& preview)
     {
         // First compile the non-player related data
@@ -65,7 +65,7 @@ namespace {
 
                 preview.main_player_name = human_player.name;
 
-                auto empire_it = empire_save_game_data.find(Value(human_player.empire_id));
+                auto empire_it = empire_save_game_data.find(human_player.empire_id);
                 if (empire_it != empire_save_game_data.end()) {
                     preview.main_player_empire_name = empire_it->second.empire_name;
                     preview.main_player_empire_colour = empire_it->second.color;
@@ -81,8 +81,8 @@ namespace {
     constexpr const std::string_view BINARY_MARKER("binary");
 }
 
-std::map<int, SaveGameEmpireData> CompileSaveGameEmpireData(const EmpireManager& empires) {
-    std::map<int, SaveGameEmpireData> retval;
+std::map<EmpireID, SaveGameEmpireData> CompileSaveGameEmpireData(const EmpireManager& empires) {
+    std::map<EmpireID, SaveGameEmpireData> retval;
     for (const auto& [empire_id, empire] : empires) {
         retval.emplace(std::piecewise_construct,
                        std::forward_as_tuple(empire_id),

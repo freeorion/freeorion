@@ -133,7 +133,7 @@ public:
     /** Sets cookie value to this connection to update expire date. */
     void SetCookie(boost::uuids::uuid cookie) noexcept;
 
-    mutable boost::signals2::signal<void(bool, int, int)> MessageSentSignal;
+    mutable boost::signals2::signal<void(bool, EmpireID, int)> MessageSentSignal;
     mutable boost::signals2::signal<void (const NullaryFn&)> EventSignal;
 
     PlayerConnection(boost::asio::io_context& io_context,

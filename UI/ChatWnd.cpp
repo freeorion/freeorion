@@ -314,7 +314,7 @@ void MessageWnd::CompleteConstruction() {
     m_history.push_front("");
 
     m_diplo_status_connection = Empires().DiplomaticStatusChangedSignal.connect(
-        [this](int empire1_id, int empire2_id) { HandleDiplomaticStatusChange(empire1_id, empire2_id); });
+        [this](EmpireID empire1_id, EmpireID empire2_id) { HandleDiplomaticStatusChange(empire1_id, empire2_id); });
 
     DoLayout();
     SaveDefaultedOptions();
@@ -445,7 +445,7 @@ void MessageWnd::HandleLogMessage(const std::string& text) {
     m_display_show_time = GetApp().Ticks();
 }
 
-void MessageWnd::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
+void MessageWnd::HandleDiplomaticStatusChange(EmpireID empire1_id, EmpireID empire2_id) {
     auto& app = GetApp();
     const auto& context = app.GetContext();
     const auto client_empire_id = app.GetEmpireID();
