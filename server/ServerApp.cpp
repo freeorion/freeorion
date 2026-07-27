@@ -2165,7 +2165,7 @@ namespace {
         vec.erase(unique_it, vec.end());
     }
 
-    std::string to_string(const auto& stuff) {
+    std::string to_string(const auto& stuff) requires requires { stuff.empty(); } {
         if (stuff.empty())
             return "(none)";
 

@@ -5,6 +5,7 @@
 #include <GG/BrowseInfoWnd.h>
 
 #include "../universe/EnumsFwd.h"
+#include "../universe/ConstantsFwd.h"
 #include <tuple>
 
 class UniverseObject;
@@ -15,8 +16,8 @@ struct ScriptingContext;
   * predicted current meter value for next turn. */
 class MeterBrowseWnd : public GG::BrowseInfoWnd {
 public:
-    MeterBrowseWnd(int object_id, MeterType primary_meter_type, MeterType secondary_meter_type);
-    MeterBrowseWnd(int object_id, MeterType primary_meter_type);
+    MeterBrowseWnd(UniverseObjectID object_id, MeterType primary_meter_type, MeterType secondary_meter_type);
+    MeterBrowseWnd(UniverseObjectID object_id, MeterType primary_meter_type);
 
     bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
     void Render() override;
@@ -29,7 +30,7 @@ protected:
 
     MeterType                   m_primary_meter_type;
     MeterType                   m_secondary_meter_type;
-    int                         m_object_id;
+    UniverseObjectID            m_object_id;
 
     std::shared_ptr<GG::Label>  m_summary_title;
     std::shared_ptr<GG::Label>  m_current_label;
@@ -52,7 +53,7 @@ protected:
   * predicted current meter value for next turn. */
 class ShipDamageBrowseWnd : public MeterBrowseWnd {
 public:
-    ShipDamageBrowseWnd(int object_id, MeterType primary_meter_type);
+    ShipDamageBrowseWnd(UniverseObjectID object_id, MeterType primary_meter_type);
 
 private:
     void UpdateImpl(std::size_t mode, const Wnd* target) override;
@@ -63,7 +64,7 @@ private:
 
 class ShipFightersBrowseWnd : public MeterBrowseWnd {
 public:
-    ShipFightersBrowseWnd(int object_id, MeterType primary_meter_type, bool show_all_bouts = false);
+    ShipFightersBrowseWnd(UniverseObjectID object_id, MeterType primary_meter_type, bool show_all_bouts = false);
 
 private:
     void UpdateImpl(std::size_t mode, const Wnd* target) override;

@@ -1369,7 +1369,7 @@ public:
 
 private:
     PartGroupsType GroupAvailableDisplayableParts(const Empire* empire) const;
-    void CullSuperfluousParts(std::vector<const ShipPart*>& this_group, EmpireID empire_id, int loc_id) const;
+    void CullSuperfluousParts(std::vector<const ShipPart*>& this_group, EmpireID empire_id, UniverseObjectID loc_id) const;
 
     std::set<ShipPartClass>     m_part_classes_shown;   // which part classes should be shown
     bool                        m_show_superfluous_parts = true;
@@ -1624,7 +1624,7 @@ void PartsListBox::Populate() {
     PartGroupsType part_groups = GroupAvailableDisplayableParts(empire.get());
 
     // get empire id and location to use for cost and time comparisons
-    int loc_id = INVALID_OBJECT_ID;
+    UniverseObjectID loc_id = INVALID_OBJECT_ID;
     if (empire) {
         auto location = context.ContextObjects().get(empire->CapitalID());
         loc_id = location ? location->ID() : INVALID_OBJECT_ID;

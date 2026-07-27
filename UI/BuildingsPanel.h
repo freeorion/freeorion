@@ -29,7 +29,7 @@ public:
     /** Enables, or disables if \a enable is false, issuing orders via this panel. */
     void EnableOrderIssuing(bool enable = true);
 
-    mutable boost::signals2::signal<void (int)> BuildingRightClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> BuildingRightClickedSignal;
 
 protected:
     /** resizes panel and positions widgets */

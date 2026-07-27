@@ -10,27 +10,23 @@
 #include <map>
 
 #include "Export.h"
+#include "../universe/ConstantsFwd.h"
 
 class OrderSet;
 class Universe;
 class UniverseObject;
 class Visibilities;
-struct EmpireID;
 
 typedef boost::archive::binary_iarchive freeorion_bin_iarchive;
 typedef boost::archive::binary_oarchive freeorion_bin_oarchive;
 typedef boost::archive::xml_iarchive freeorion_xml_iarchive;
 typedef boost::archive::xml_oarchive freeorion_xml_oarchive;
 
-template <typename T>
-concept has_under_ref = requires { UnderRef(std::declval<T>()); } &&
-                        std::is_reference_v<decltype(UnderRef(std::declval<T>()))>;
-
 namespace boost::serialization {
-    inline decltype(auto) make_nvp(const char* n, has_under_ref auto& v) noexcept
+    inline decltype(auto) make_nvp(const char* n, strong_id_typedef auto& v) noexcept
     { return make_nvp(n, UnderRef(v)); }
 
-    inline decltype(auto) make_nvp(const char* n, const has_under_ref auto& v) noexcept
+    inline decltype(auto) make_nvp(const char* n, const strong_id_typedef auto& v) noexcept
     { return make_nvp(n, UnderRef(v)); }
 }
 

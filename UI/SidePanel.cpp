@@ -1784,7 +1784,7 @@ namespace {
 
         retval.reserve(10); // guesstimate
         for (const auto* ship : o.allRaw<Ship>()) {
-            //ErrorLogger() << " Ship(" << ship->ID() << ") "
+            //ErrorLogger() << " Ship(" << to_string(ship->ID()) << ") "
             //              << (ship->OrderedBombardPlanet() == target_planet_id?"":" not") <<" bombarding " << target_planet_id;
             if (ship->OrderedBombardPlanet() == target_planet_id)
                 retval.push_back(ship);

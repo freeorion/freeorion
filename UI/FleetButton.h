@@ -5,6 +5,8 @@
 #include <GG/Button.h>
 #include <GG/StaticGraphic.h>
 
+#include "../universe/ConstantsFwd.h"
+
 #include <memory>
 
 

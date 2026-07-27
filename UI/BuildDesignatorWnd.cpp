@@ -247,7 +247,7 @@ namespace {
         std::shared_ptr<GG::Label>              m_desc;
     };
 
-    std::string EnqueueAndLocationConditionDescription(const std::string& building_name, int candidate_object_id,
+    std::string EnqueueAndLocationConditionDescription(const std::string& building_name, UniverseObjectID candidate_object_id,
                                                        EmpireID empire_id, bool only_failed_conditions)
     {
         std::vector<const Condition::Condition*> enqueue_conditions;
@@ -272,7 +272,7 @@ namespace {
             return ConditionDescription(enqueue_conditions, source_context, candidate);
     }
 
-    std::string LocationConditionDescription(int ship_design_id, int candidate_object_id,
+    std::string LocationConditionDescription(int ship_design_id, UniverseObjectID candidate_object_id,
                                              EmpireID empire_id, bool only_failed_conditions)
     {
 #if defined(__GNUC__) && (__GNUC__ < 13)
@@ -314,7 +314,7 @@ namespace {
     class ProductionItemRowBrowseWnd : public GG::BrowseInfoWnd {
     public:
         ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
-                                   int candidate_object_id, EmpireID empire_id) :
+                                   UniverseObjectID candidate_object_id, EmpireID empire_id) :
             GG::BrowseInfoWnd(GG::X0, GG::Y0, ICON_BROWSE_TEXT_WIDTH + ICON_BROWSE_ICON_WIDTH, GG::Y1),
             m_item(std::move(item)),
             m_candidate_object_id(candidate_object_id),
@@ -407,7 +407,7 @@ namespace {
             auto obj = context.ContextObjects().getRaw(m_candidate_object_id);
             std::string candidate_name = obj ? obj->Name() : "";
             if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
-                candidate_name += " (" + std::to_string(m_candidate_object_id) + ")";
+                candidate_name += " (" + to_string(m_candidate_object_id) + ")";
             return std::pair{obj, std::move(candidate_name)};
         }
 
@@ -763,8 +763,8 @@ private:
     std::pair<bool, bool>                                   m_availabilities_shown; //!< .first -> available items; .second -> unavailable items
     std::shared_ptr<BuildableItemsListBox>                  m_buildable_items;
     GG::Pt                                                  m_original_ul;
-    int                                                     m_production_location;
-    int                                                     m_empire_id;
+    UniverseObjectID                                        m_production_location;
+    EmpireID                                                m_empire_id;
     mutable boost::signals2::scoped_connection              m_empire_ship_designs_changed_connection;
 
     friend class BuildDesignatorWnd;        // so BuildDesignatorWnd can access buttons
@@ -1250,8 +1250,8 @@ void BuildDesignatorWnd::CompleteConstruction() {
     m_build_selector->ShowPediaSignal.connect([this]() { ShowPedia(); });
 
     m_build_selector->RequestBuildItemSignal.connect(
-        [this](ProductionQueue::ProductionItem item, int num, int pos)
-        { BuildItemRequested(std::move(item), num, pos); });
+        [this](ProductionQueue::ProductionItem item, int num, int queue_pos)
+        { BuildItemRequested(std::move(item), num, queue_pos); });
 
     SidePanel::PlanetSelectedSignal.connect(PlanetSelectedSignal);
     SidePanel::SystemSelectedSignal.connect(SystemSelectedSignal);
@@ -1294,7 +1294,7 @@ bool BuildDesignatorWnd::InWindow(GG::Pt pt) const noexcept
 bool BuildDesignatorWnd::InClient(GG::Pt pt) const noexcept
 { return m_enc_detail_panel->InClient(pt) || m_build_selector->InClient(pt) || m_side_panel->InClient(pt); }
 
-int BuildDesignatorWnd::SelectedPlanetID() const noexcept
+UniverseObjectID BuildDesignatorWnd::SelectedPlanetID() const noexcept
 { return m_side_panel->SelectedPlanetID(); }
 
 void BuildDesignatorWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
@@ -1326,7 +1326,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
         const auto location_id = queue[queue_idx].location;
         if (auto build_location = objects.get(location_id)) {
             // centre map on system of build location
-            const int system_id = build_location->SystemID();
+            const auto system_id = build_location->SystemID();
             if (auto map = app.GetUI().GetMapWnd(ClientUI::ConstructFlag::NEVER)) {
                 map->CenterOnObject(system_id, objects);
                 if (open) {
@@ -1580,12 +1580,12 @@ bool BuildDesignatorWnd::PediaVisible()
 UniverseObjectID BuildDesignatorWnd::BuildLocation() const
 { return m_side_panel->SelectedPlanetID(); }
 
-void BuildDesignatorWnd::BuildItemRequested(ProductionQueue::ProductionItem item, int num_to_build, int pos) {
+void BuildDesignatorWnd::BuildItemRequested(ProductionQueue::ProductionItem item, int num_to_build, int queue_pos) {
     const auto& app = GetApp();
     const auto& context = app.GetContext();
     auto empire = context.GetEmpire(app.GetEmpireID());
     if (empire && empire->EnqueuableItem(item, BuildLocation(), context))
-        AddBuildToQueueSignal(std::move(item), num_to_build, BuildLocation(), pos);
+        AddBuildToQueueSignal(std::move(item), num_to_build, BuildLocation(), queue_pos);
 }
 
 void BuildDesignatorWnd::BuildQuantityChanged(int queue_idx, int quantity)
