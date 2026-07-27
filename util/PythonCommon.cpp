@@ -387,7 +387,7 @@ py::object PythonCommon::find_spec(const std::string& fullname, const py::object
         });
     }
 
-    WarnLogger() << "Couldn't find file for module spec " << fullname;
+    DebugLogger() << "Couldn't find file for module spec " << fullname;
     return py::object();
 }
 
