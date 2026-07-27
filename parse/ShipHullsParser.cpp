@@ -207,12 +207,13 @@ struct ShipHullStats {
 }
 
 namespace parse {
-    start_rule_payload ship_hulls(const std::filesystem::path& path) {
+    start_rule_payload ship_hulls(const PythonParser& parser, const std::filesystem::path& path, bool& success) {
         start_rule_payload hulls;
 
         for (const auto& file : ListDir(path, IsFOCScript))
             detail::parse_file<grammar, start_rule_payload>(GetLexer(), file, hulls);
 
+        success = true;
         return hulls;
     }
 }
