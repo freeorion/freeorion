@@ -56,7 +56,7 @@ public:
     //! Centres map wnd on location of item on queue with index \a queue_idx
     //! and displays info about that item in encyclopedia window.
     //! If \a open is true, the location is set as the selected planet.
-    void CenterOnBuild(UniverseObjectID queue_idx, bool open = false);
+    void CenterOnBuild(int queue_idx, bool open = false);
 
     //! Programatically sets this Wnd's selected system.
     //! Does not emit a SystemSelectedSignal.

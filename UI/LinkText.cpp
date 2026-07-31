@@ -3,6 +3,7 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "../Empire/Empire.h"
+#include "../universe/ConstantsFwd.h"
 #include "../universe/NamedValueRefManager.h"
 #include "../universe/Species.h"
 #include "../universe/UniverseObject.h"
@@ -255,7 +256,7 @@ namespace {
     }
 
     std::string ColorByEmpireDecorate(const std::string& empire_id, const std::string& content) {
-        const int id = CastStringToInt(empire_id);
+        const EmpireID id{CastStringToInt(empire_id)};
         const Empire* empire = GetEmpire(id);
         const GG::Clr color = empire ? empire->Color() : ClientUI::DefaultLinkColor();
         return GG::RgbaTag(color) + content + "</rgba>";
@@ -264,7 +265,7 @@ namespace {
     std::string ColorByOwnerDecorate(const std::string& object_id_str, const std::string& content) {
         GG::Clr color = ClientUI::DefaultLinkColor();
         // get object indicated by object_id, and then get object's owner, if any
-        int object_id = CastStringToInt(object_id_str);
+        const UniverseObjectID object_id{CastStringToInt(object_id_str)};
         const auto& context = GetApp().GetContext();
         auto object = context.ContextObjects().get(object_id);
         if (object && !object->Unowned())

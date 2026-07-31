@@ -42,16 +42,17 @@ public:
         checking parent InWindow method. */
     bool InWindow(GG::Pt pt) const override;
 
-    UniverseObjectID SystemID() const;                           //!< returns ID of system this icon represents
+    /** Returns ID of system this icon represents. */
+    UniverseObjectID SystemID() const noexcept { return m_system_id; }
 
     /** Returns the solid star disc texture. */
-    const std::shared_ptr<GG::Texture>& DiscTexture() const;
+    const auto& DiscTexture() const noexcept { return m_disc_texture; }
 
     /** Returns the transparent star halo texture. */
-    const std::shared_ptr<GG::Texture>& HaloTexture() const;
+    const auto& HaloTexture() const noexcept { return m_halo_texture; }
 
     /** Returns the alternate texture shown when icon very small. */
-    const std::shared_ptr<GG::Texture>& TinyTexture() const;
+    const auto& TinyTexture() const noexcept { return m_tiny_texture; }
 
     GG::Pt NthFleetButtonUpperLeft(unsigned int button_number, bool moving) const; //!< returns upper left point of moving or stationary fleetbutton number \a button_number
     int    EnclosingCircleDiameter() const;        //!< returns diameter of circle enclosing icon around which other icons can be placed and within which the mouse is over the icon

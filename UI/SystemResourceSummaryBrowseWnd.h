@@ -12,7 +12,7 @@
   * over the system resource production summary. */
 class SystemResourceSummaryBrowseWnd : public GG::BrowseInfoWnd {
 public:
-    SystemResourceSummaryBrowseWnd(ResourceType resource_type, int system_id,
+    SystemResourceSummaryBrowseWnd(ResourceType resource_type, UniverseObjectID system_id,
                                    EmpireID empire_id = ALL_EMPIRES);
 
     bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;

@@ -79,8 +79,8 @@ constexpr auto operator--(strong_id_typedef auto& x, int) noexcept { auto rv = x
 template<strong_id_typedef ST>
 struct std::hash<ST>
 {
-    constexpr size_t operator()(ST x) const noexcept
-    { return std::hash<ST::UnderlyingType>{}(x.Value()); }
+    static constexpr size_t operator()(ST x) noexcept
+    { return std::hash<ST::UnderlyingType>::operator()(x.Value()); }
 };
 
 std::ostream& operator<<(std::ostream& os, strong_id_typedef auto t) = delete;

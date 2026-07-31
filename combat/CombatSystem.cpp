@@ -204,7 +204,7 @@ namespace boost {
     struct hash<UniverseObjectID>
     {
         std::size_t operator()(UniverseObjectID v) const noexcept
-        { return std::hash<UniverseObjectID>::operator()(v); }
+        { return std::hash<UniverseObjectID>{}.operator()(v); }
     };
 }
 

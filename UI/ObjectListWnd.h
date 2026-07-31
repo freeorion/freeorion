@@ -2,6 +2,7 @@
 #define _ObjectListWnd_h_
 
 #include "CUIWnd.h"
+#include "../universe/ConstantsFwd.h"
 
 #include <GG/GGFwd.h>
 #include <GG/ListBox.h>
@@ -24,20 +25,21 @@ public:
     mutable boost::signals2::signal<void ()>                 ClosingSignal;
 
 private:
-    void            CloseClicked() override;
+    void CloseClicked() override;
 
-    void            DoLayout();
+    void DoLayout();
 
-    void            ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows);
-    void            ObjectDoubleClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
-    void            ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
-    int             ObjectInRow(GG::ListBox::iterator it) const;
+    void ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows);
+    void ObjectDoubleClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
+    void ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
+
+    UniverseObjectID ObjectInRow(GG::ListBox::iterator it) const;
 
     void                       SetSelectedObjects(std::set<UniverseObjectID> sel_ids);
     std::set<UniverseObjectID> SelectedObjectIDs() const;
 
-    void            FilterClicked();
-    void            CollapseExpandClicked();
+    void FilterClicked();
+    void CollapseExpandClicked();
 
     std::shared_ptr<ObjectListBox>  m_list_box;
     std::shared_ptr<GG::Button>     m_filter_button;

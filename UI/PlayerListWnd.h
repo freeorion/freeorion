@@ -17,7 +17,7 @@ public:
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
-    void HandleDiplomaticMessageChange(int empire1_id, int empire2_id, const ClientApp& app);
+    void HandleDiplomaticMessageChange(EmpireID empire1_id, EmpireID empire2_id, const ClientApp& app);
     void Update(const ClientApp& app);
     void Refresh(const ClientApp& app);
     void Clear();

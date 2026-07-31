@@ -125,7 +125,7 @@ private:
     static void FleetsInserted(std::vector<UniverseObjectID> fleets, const ObjectMap& objects);
 
     /** Responds to removal fleets from system during a turn.  may update colonize buttons. */
-    static void FleetsRemoved(std::vector<int> fleets);
+    static void FleetsRemoved(std::vector<UniverseObjectID> fleets);
 
     class SystemNameDropDownList;
     std::shared_ptr<SystemNameDropDownList>     m_system_name;

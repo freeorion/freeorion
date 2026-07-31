@@ -1369,7 +1369,7 @@ void BuildDesignatorWnd::SetBuild(int queue_idx) {
     m_enc_detail_panel->Refresh();
 }
 
-void BuildDesignatorWnd::SelectSystem(int system_id, const ObjectMap& objects) {
+void BuildDesignatorWnd::SelectSystem(UniverseObjectID system_id, const ObjectMap& objects) {
     if (system_id == SidePanel::SystemID()) {
         // don't need to do anything.  already showing the requested system.
         return;

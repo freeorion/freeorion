@@ -1564,6 +1564,18 @@ ProductionQueueOrder::ProductionQueueOrder(ProdQueueOrderAction action, EmpireID
     }
 }
 
+ProductionQueueOrder::ProductionQueueOrder(ProdQueueOrderAction action, EmpireID empire,
+                                           boost::uuids::uuid uuid, UniverseObjectID rally_id) :
+    Order(empire),
+    m_uuid(uuid),
+    m_action(action)
+{
+    if (m_action != ProdQueueOrderAction::SET_RALLY_POINT)
+        ErrorLogger() << "ProductionQueueOrder given unrecognized action!";
+    else
+        m_rally_point_id = Value(rally_id);
+}
+
 std::string ProductionQueueOrder::Dump() const
 { return UserString("ORDER_PRODUCTION"); }
 

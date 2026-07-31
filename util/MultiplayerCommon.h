@@ -277,7 +277,7 @@ struct FO_COMMON_API MultiplayerLobbyData final : public GalaxySetupData {
 
     std::string                                 start_lock_cause;
     std::string                                 save_game;            //< File name of a save file
-    std::map<int, SaveGameEmpireData>           save_game_empire_data;// indexed by empire_id
+    std::map<EmpireID, SaveGameEmpireData>      save_game_empire_data;
     std::list<std::pair<int, PlayerSetupData>>  players;              // <player_id, PlayerSetupData>   // TODO: Change from a list<(player_id, PlayerSetupData)> where PlayerSetupData contain player_id to a vector of PlayerSetupData
     int                                         save_game_current_turn = 0;
     bool                                        in_game = false; ///< In-game lobby

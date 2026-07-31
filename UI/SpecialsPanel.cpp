@@ -18,7 +18,7 @@ namespace {
     constexpr GG::Y SPECIAL_ICON_HEIGHT{24};
 }
 
-SpecialsPanel::SpecialsPanel(GG::X w, int object_id) :
+SpecialsPanel::SpecialsPanel(GG::X w, UniverseObjectID object_id) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y(32), GG::INTERACTIVE),
     m_object_id(object_id)
 {
@@ -57,7 +57,7 @@ void SpecialsPanel::Update() {
     // get specials to display
     auto obj = std::as_const(app).GetContext().ContextObjects().get(m_object_id);
     if (!obj) {
-        ErrorLogger() << "SpecialsPanel::Update couldn't get object with id " << m_object_id;
+        ErrorLogger() << "SpecialsPanel::Update couldn't get object with id " << to_string(m_object_id);
         return;
     }
     m_icons.reserve(obj->Specials().size());

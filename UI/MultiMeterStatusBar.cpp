@@ -71,7 +71,7 @@ namespace {
     constexpr double MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE_INCREMENT = 100.0;
 }
 
-MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, int object_id,
+MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, UniverseObjectID object_id,
                                          std::vector<std::pair<MeterType, MeterType>> meter_types) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_bar_shading_texture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "misc" / "meter_bar_shading.png")),
@@ -196,7 +196,7 @@ void MultiMeterStatusBar::Update(const ObjectMap& objects) {
 
     auto obj = objects.get(m_object_id);
     if (!obj) {
-        ErrorLogger() << "MultiMeterStatusBar::Update couldn't get object with id  " << m_object_id;
+        ErrorLogger() << "MultiMeterStatusBar::Update couldn't get object with id  " << to_string(m_object_id);
         return;
     }
 
