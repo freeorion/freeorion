@@ -195,7 +195,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(UniverseObjectID system_id, int f
             if (const auto owner_empire = context.GetEmpire(*owner_empire_ids.begin()))
                 text_color = owner_empire->Color();
             else
-                DebugLogger() << "OwnerColoredSystemName couldn't get empire with id: " << *owner_empire_ids.begin();
+                DebugLogger() << "OwnerColoredSystemName couldn't get empire with id: " << to_string(*owner_empire_ids.begin());
         }
     } else if (has_neutrals) {
         text_color = ClientUI::TextColor();
@@ -311,15 +311,6 @@ void SystemIcon::CompleteConstruction() {
 
     Refresh();
 }
-
-const std::shared_ptr<GG::Texture>& SystemIcon::DiscTexture() const
-{ return m_disc_texture; }
-
-const std::shared_ptr<GG::Texture>& SystemIcon::HaloTexture() const
-{ return m_halo_texture; }
-
-const std::shared_ptr<GG::Texture>& SystemIcon::TinyTexture() const
-{ return m_tiny_texture; }
 
 GG::Pt SystemIcon::NthFleetButtonUpperLeft(unsigned int button_number, bool moving) const {
     if (button_number < 1) {

@@ -433,19 +433,19 @@ SitRepEntry CreatePlanetOutpostedSitRep(UniverseObjectID planet_id, int current_
     return sitrep;
 }
 
-SitRepEntry CreatePlanetEstablishFailedSitRep(UniverseObjectID planet_id, int ship_id, int current_turn) {
+SitRepEntry CreatePlanetEstablishFailedSitRep(UniverseObjectID planet_id, UniverseObjectID ship_id, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_ESTABLISH_FAILED"),
         current_turn + 1,
         "icons/sitrep/planet_colonized.png",
         UserStringNop("SITREP_PLANET_ESTABLISH_FAILED_LABEL"), true);
     sitrep.AddVariable(VarText::PLANET_ID_TAG,     to_string(planet_id));
-    sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
+    sitrep.AddVariable(VarText::SHIP_ID_TAG,       to_string(ship_id));
     return sitrep;
 }
 
-SitRepEntry CreatePlanetEstablishFailedVisibleOtherSitRep(UniverseObjectID planet_id, int ship_id, int other_empire_id,
-                                                          int current_turn)
+SitRepEntry CreatePlanetEstablishFailedVisibleOtherSitRep(UniverseObjectID planet_id, UniverseObjectID ship_id,
+                                                          EmpireID other_empire_id, int current_turn)
 {
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_ESTABLISH_FAILED_VISIBLE_OTHER"),
@@ -453,8 +453,8 @@ SitRepEntry CreatePlanetEstablishFailedVisibleOtherSitRep(UniverseObjectID plane
         "icons/sitrep/planet_colonized.png",
         UserStringNop("SITREP_PLANET_ESTABLISH_FAILED_VISIBLE_OTHER_LABEL"), true);
     sitrep.AddVariable(VarText::PLANET_ID_TAG,     to_string(planet_id));
-    sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     std::to_string(other_empire_id));
+    sitrep.AddVariable(VarText::SHIP_ID_TAG,       to_string(ship_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     to_string(other_empire_id));
     return sitrep;
 }
 
