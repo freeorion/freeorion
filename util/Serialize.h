@@ -57,7 +57,7 @@ void Serialize(Archive& oa, const std::map<int, std::shared_ptr<UniverseObject>>
 template <typename Archive>
 void Serialize(Archive& oa, const OrderSet& order_set);
 
-////! (De)Serialize @p eov to/from archive @p a.
+//! (De)Serialize @p eov to/from archive @p a.
 template <typename Archive, typename EOV>
 FO_COMMON_API void SerializeEmpireObjectVisMap(Archive& a, EOV& eov, bool old_map_format = false,
                                                const char* xml_tag = "empire_object_visibility");

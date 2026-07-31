@@ -409,12 +409,12 @@ void SerializeEmpireObjectVisMap(Archive& a, EOV& eov, bool old_map_format, cons
     }
 }
 
-template void SerializeEmpireObjectVisMap<freeorion_bin_oarchive, const EOVM>(freeorion_bin_oarchive&, const EOVM&, bool, const char*);
-template void SerializeEmpireObjectVisMap<freeorion_xml_oarchive, const EOVM>(freeorion_xml_oarchive&, const EOVM&, bool, const char*);
+template void SerializeEmpireObjectVisMap<freeorion_bin_oarchive, EOVM>(freeorion_bin_oarchive&, EOVM&, bool, const char*);
+template void SerializeEmpireObjectVisMap<freeorion_xml_oarchive, EOVM>(freeorion_xml_oarchive&, EOVM&, bool, const char*);
 template void SerializeEmpireObjectVisMap<freeorion_bin_iarchive, EOVM>(freeorion_bin_iarchive&, EOVM&, bool, const char*);
 template void SerializeEmpireObjectVisMap<freeorion_xml_iarchive, EOVM>(freeorion_xml_iarchive&, EOVM&, bool, const char*);
-template void SerializeEmpireObjectVisMap<freeorion_bin_oarchive, const IOVM>(freeorion_bin_oarchive&, const IOVM&, bool, const char*);
-template void SerializeEmpireObjectVisMap<freeorion_xml_oarchive, const IOVM>(freeorion_xml_oarchive&, const IOVM&, bool, const char*);
+template void SerializeEmpireObjectVisMap<freeorion_bin_oarchive, IOVM>(freeorion_bin_oarchive&, IOVM&, bool, const char*);
+template void SerializeEmpireObjectVisMap<freeorion_xml_oarchive, IOVM>(freeorion_xml_oarchive&, IOVM&, bool, const char*);
 template void SerializeEmpireObjectVisMap<freeorion_bin_iarchive, IOVM>(freeorion_bin_iarchive&, IOVM&, bool, const char*);
 template void SerializeEmpireObjectVisMap<freeorion_xml_iarchive, IOVM>(freeorion_xml_iarchive&, IOVM&, bool, const char*);
 
@@ -600,7 +600,7 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
 
 
     if constexpr (Archive::is_saving::value)
-        SerializeEmpireObjectVisMap(ar, empire_object_visibility);
+        SerializeEmpireObjectVisMap(ar, std::as_const(empire_object_visibility));
     else
         SerializeEmpireObjectVisMap(ar, u.m_empire_object_visibility, version < 5);
 
