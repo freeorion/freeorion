@@ -2572,7 +2572,7 @@ protected:
 
 void EmptyHullsListBox::PopulateCore() {
     ScopedTimer scoped_timer("EmptyHulls::PopulateCore");
-    DebugLogger() << "EmptyHulls::PopulateCore GetEmpireID(): " << GetEmpireID();
+    DebugLogger() << "EmptyHulls::PopulateCore GetEmpireID(): " << to_string(GetEmpireID());
 
     const GG::Pt row_size = ListRowSize();
 
@@ -2607,7 +2607,7 @@ void EmptyHullsListBox::PopulateCore() {
 
 void CompletedDesignsListBox::PopulateCore() {
     ScopedTimer scoped_timer("CompletedDesignsListBox::PopulateCore");
-    DebugLogger() << "CompletedDesignsListBox::PopulateCore for empire " << GetEmpireID();
+    DebugLogger() << "CompletedDesignsListBox::PopulateCore for empire " << to_string(GetEmpireID());
 
     const auto availability{AvailabilityState()};
     const bool showing_available = availability.GetAvailability(Availability::Available);

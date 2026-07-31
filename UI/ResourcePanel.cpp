@@ -27,7 +27,7 @@ namespace {
     }
 }
 
-ResourcePanel::ResourcePanel(GG::X w, int object_id) :
+ResourcePanel::ResourcePanel(GG::X w, UniverseObjectID object_id) :
     AccordionPanel(w, GG::Y(ClientUI::Pts()*2)),
     m_rescenter_id(object_id)
 {}
@@ -40,7 +40,7 @@ void ResourcePanel::CompleteConstruction() {
     auto& app = GetApp();
     auto obj = app.GetContext().ContextObjects().get(m_rescenter_id);
     if (!obj) {
-        ErrorLogger() << "ResourcePanel::CompleteConstruction couldn't get object with id  " << m_rescenter_id;
+        ErrorLogger() << "ResourcePanel::CompleteConstruction couldn't get object with id " << to_string(m_rescenter_id);
         return;
     }
     auto& ui = app.GetUI();
@@ -138,7 +138,7 @@ void ResourcePanel::Update(const ObjectMap& objects) {
 
     auto obj = objects.get(m_rescenter_id);
     if (!obj) {
-        ErrorLogger() << "BuildingPanel::Update couldn't get object with id " << m_rescenter_id;
+        ErrorLogger() << "BuildingPanel::Update couldn't get object with id " << to_string(m_rescenter_id);
         return;
     }
 
@@ -232,4 +232,4 @@ void ResourcePanel::DoLayout() {
     SetCollapsed(!s_expanded_map[m_rescenter_id]);
 }
 
-std::map<int, bool> ResourcePanel::s_expanded_map;
+std::map<UniverseObjectID, bool> ResourcePanel::s_expanded_map;

@@ -384,7 +384,7 @@ public:
 
     ResearchQueueListBox* GetQueueListBox() { return m_queue_lb.get(); }
 
-    void SetEmpire(int id, const ScriptingContext& context) {
+    void SetEmpire(EmpireID id, const ScriptingContext& context) {
         if (auto empire = context.GetEmpire(id))
             SetName(boost::io::str(FlexibleFormat(UserString("RESEARCH_QUEUE_EMPIRE")) % empire->Name()));
         else
@@ -398,7 +398,7 @@ private:
             GG::Pt(ClientWidth(), ClientHeight() - GG::Y(CUIWnd::INNER_BORDER_ANGLE_OFFSET)));
     }
 
-    std::shared_ptr<ResearchQueueListBox>   m_queue_lb;
+    std::shared_ptr<ResearchQueueListBox> m_queue_lb;
 };
 
 

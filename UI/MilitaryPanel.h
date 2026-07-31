@@ -3,6 +3,7 @@
 
 #include "AccordionPanel.h"
 #include "../universe/EnumsFwd.h"
+#include "../universe/ConstantsFwd.h"
 
 
 class MultiIconValueIndicator;
@@ -14,7 +15,7 @@ class ObjectMap;
 /** Shows military-related meters including stealth, detection, shields, defense; with meter bars */
 class MilitaryPanel : public AccordionPanel {
 public:
-    MilitaryPanel(GG::X w, int planet_id);
+    MilitaryPanel(GG::X w, UniverseObjectID planet_id);
     void CompleteConstruction() override;
 
     auto PlanetID() const noexcept { return m_planet_id; }
@@ -37,7 +38,7 @@ private:
     void ExpandCollapseButtonPressed();
 
     /** object id for the Planet that this panel displays */
-    const int m_planet_id;
+    const UniverseObjectID m_planet_id;
 
     /** Icons for the associated meter type. */
     std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>> m_meter_stats;
@@ -48,7 +49,7 @@ private:
     std::shared_ptr<MultiMeterStatusBar> m_multi_meter_status_bar;
 
     /** map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false) */
-    static std::map<int, bool> s_expanded_map;
+    static std::map<UniverseObjectID, bool> s_expanded_map;
 };
 
 #endif

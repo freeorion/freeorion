@@ -112,23 +112,23 @@ public:
         auto& universe = context.ContextUniverse();
         auto client_empire_id = app.GetEmpireID();
         auto& ui = app.GetUI();
-        
-        const auto data_int = [&data]<typename T = UniverseObjectID>(T invalid_result = T{-1}) { return ToInt(data, invalid_result); };
+
+        const auto data_int = [&data](auto invalid_result) { return ToInt(data, invalid_result); };
 
         try {
             if (link_type == VarText::PLANET_ID_TAG) {
-                ui.ZoomToPlanet(data_int(), context);
+                ui.ZoomToPlanet(data_int(INVALID_OBJECT_ID), context);
 
             } else if (link_type == VarText::SYSTEM_ID_TAG) {
-                ui.ZoomToSystem(data_int(), context);
+                ui.ZoomToSystem(data_int(INVALID_OBJECT_ID), context);
             } else if (link_type == VarText::FLEET_ID_TAG) {
-                ui.ZoomToFleet(data_int(), context, client_empire_id);
+                ui.ZoomToFleet(data_int(INVALID_OBJECT_ID), context, client_empire_id);
             } else if (link_type == VarText::SHIP_ID_TAG) {
-                ui.ZoomToShip(data_int(), context, client_empire_id);
+                ui.ZoomToShip(data_int(INVALID_OBJECT_ID), context, client_empire_id);
             } else if (link_type == VarText::BUILDING_ID_TAG) {
-                ui.ZoomToBuilding(data_int(), context);
+                ui.ZoomToBuilding(data_int(INVALID_OBJECT_ID), context);
             } else if (link_type == VarText::FIELD_ID_TAG) {
-                ui.ZoomToField(data_int(), objects);
+                ui.ZoomToField(data_int(INVALID_OBJECT_ID), objects);
 
             } else if (link_type == VarText::COMBAT_ID_TAG) {
                 ui.ZoomToCombatLog(data_int(CombatLogManager::INVALID_COMBAT_LOG_ID));

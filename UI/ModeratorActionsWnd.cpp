@@ -260,7 +260,7 @@ PlanetSize ModeratorActionsWnd::SelectedPlanetSize() const
 StarType ModeratorActionsWnd::SelectedStarType() const
 { return StarTypeFromIndex(m_star_type_drop->CurrentItemIndex()); }
 
-int ModeratorActionsWnd::SelectedEmpire() const
+EmpireID ModeratorActionsWnd::SelectedEmpire() const
 { return EmpireIDFromIndex(m_empire_drop->CurrentItemIndex()); }
 
 void ModeratorActionsWnd::DoLayout() {
@@ -357,7 +357,7 @@ PlanetSize ModeratorActionsWnd::PlanetSizeFromIndex(std::size_t i) const {
     return PlanetSize(i + 1);// enum index 0 is NO_WORLD, but don't put that into the list, so have to add 1 to all the list indices
 }
 
-int ModeratorActionsWnd::EmpireIDFromIndex(std::size_t i) const {
+EmpireID ModeratorActionsWnd::EmpireIDFromIndex(std::size_t i) const {
     if (i == static_cast<std::size_t>(-1) ||
         i >= static_cast<std::size_t>(Empires().NumEmpires()))
     { return ALL_EMPIRES; }

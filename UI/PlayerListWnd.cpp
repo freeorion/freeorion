@@ -175,10 +175,10 @@ namespace {
         void RButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override { ForwardEventToParent(); }
 
     private:
-        int                             m_empire_id;
-        boost::container::flat_set<int> m_empire_ids;
-        DiplomaticStatus                m_diplo_status;
-        std::shared_ptr<GG::Texture>    m_icon;
+        EmpireID                             m_empire_id;
+        boost::container::flat_set<EmpireID> m_empire_ids;
+        DiplomaticStatus                     m_diplo_status;
+        std::shared_ptr<GG::Texture>         m_icon;
 
         int IconSize() const noexcept { return Value(Height()); }
         static constexpr int PAD = 3;
@@ -325,7 +325,7 @@ namespace {
 
         void Update(const ClientApp& app) { Update(app.GetContext(), app.Players(), app.GetEmpireID()); }
 
-        void Update(const ScriptingContext& context, const auto& players, int app_empire_id) {
+        void Update(const ScriptingContext& context, const auto& players, EmpireID app_empire_id) {
             const auto& objects = context.ContextObjects();
             const auto& universe = context.ContextUniverse();
             const auto& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(app_empire_id);
@@ -524,7 +524,7 @@ namespace {
         }
 
         const int                                   m_player_id;
-        const int                                   m_empire_id;
+        const EmpireID                              m_empire_id;
         //std::shared_ptr<GG::Label>                  m_player_name_text;
         std::shared_ptr<GG::Label>                  m_empire_name_text;
         std::shared_ptr<GG::Label>                  m_empire_ship_text;
@@ -606,9 +606,9 @@ namespace {
         }
 
     private:
-        int                 m_player_id;
-        int                 m_empire_id;
-        std::shared_ptr<PlayerDataPanel>    m_panel;
+        int                              m_player_id;
+        EmpireID                         m_empire_id;
+        std::shared_ptr<PlayerDataPanel> m_panel;
     };
 }
 
@@ -695,7 +695,7 @@ std::set<int> PlayerListWnd::SelectedPlayerIDs() const {
     return retval;
 }
 
-void PlayerListWnd::HandleDiplomaticMessageChange(int empire1_id, int empire2_id, const ClientApp& app) {
+void PlayerListWnd::HandleDiplomaticMessageChange(EmpireID empire1_id, EmpireID empire2_id, const ClientApp& app) {
     Update(app);
 
     const auto client_empire_id = app.GetEmpireID();
@@ -861,8 +861,8 @@ void PlayerListWnd::PlayerDoubleClicked(GG::ListBox::iterator it, GG::Pt pt, GG:
 
 namespace {
     std::function<void()> MakeSendDiplomaticAction(
-        const int client_empire_id, const int clicked_empire_id,
-        const std::function<DiplomaticMessage(int, int)>& message)
+        const EmpireID client_empire_id, const EmpireID clicked_empire_id,
+        const std::function<DiplomaticMessage(EmpireID, EmpireID)>& message)
     {
         auto& networking = GetApp().Networking();
         return boost::bind(&ClientNetworking::SendMessage, &networking,
@@ -883,7 +883,7 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
 
     if (!app.GetEmpire(clicked_empire_id)) {
         ErrorLogger() << "PlayerListWnd::PlayerRightClicked tried to look up empire id "
-                      << clicked_empire_id
+                      << to_string(clicked_empire_id)
                       << " but couldn't find such an empire";
         return;
     }

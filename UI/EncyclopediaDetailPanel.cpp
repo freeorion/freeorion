@@ -2556,7 +2556,7 @@ namespace {
                     detailed_description.append(LinkTaggedIDText(VarText::EMPIRE_ID_TAG, op_id, empire->Name()));
                 else
                     detailed_description.append(boost::io::str(FlexibleFormat(UserString("UNKNOWN_EMPIRE"))
-                                                               % op_id));
+                                                               % Value(op_id)));
                 detailed_description.append(" : Opinion: ").append(DoubleToString(opinion.Initial(), 3, false))
                     .append(" : Target Opinion: ").append(DoubleToString(target.Initial(), 3, false))
                     .append("\n");
@@ -3114,7 +3114,7 @@ namespace {
 
         auto obj = app.GetContext().ContextObjects().get(object_id);
         if (!obj) {
-            ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find UniverseObject with id " << object_id;
+            ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find UniverseObject with id " << to_string(object_id);
             return;
         }
 
@@ -3127,7 +3127,7 @@ namespace {
         general_type = GeneralTypeOfObject(obj->ObjectType());
         if (general_type.empty()) {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't interpret object: " << obj->Name()
-                          << " (" << object_id << ")";
+                          << " (" << to_string(object_id) << ")";
         }
     }
 

@@ -27,7 +27,7 @@ public:
     /** .first -> available items; .second -> unavailable items */
     std::pair<bool, bool> GetAvailabilitiesShown() const noexcept;
 
-    int SelectedPlanetID() const noexcept;
+    UniverseObjectID SelectedPlanetID() const noexcept;
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 

@@ -202,7 +202,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(UniverseObjectID system_id, int f
     }
 
     if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
-        wrapped_system_name = wrapped_system_name + " (" + std::to_string(system_id) + ")";
+        wrapped_system_name = wrapped_system_name + " (" + to_string(system_id) + ")";
 
     m_text = GG::Wnd::Create<GG::TextControl>(
         GG::X0, GG::Y0, GG::X1, GG::Y1,
@@ -252,13 +252,13 @@ void SystemIcon::CompleteConstruction() {
         StarType star_type = system->GetStarType();
         m_disc_texture = ui.GetModuloTexture(ClientUI::ArtDir() / "stars",
                                              ClientUI::StarTypeFilePrefix(star_type),
-                                             m_system_id);
+                                             Value(m_system_id));
         m_halo_texture = ui.GetModuloTexture(ClientUI::ArtDir() / "stars",
                                              ClientUI::HaloStarTypeFilePrefix(star_type),
-                                             m_system_id);
+                                             Value(m_system_id));
         m_tiny_texture = ui.GetModuloTexture(ClientUI::ArtDir() / "stars",
                                              std::string("tiny_").append(ClientUI::StarTypeFilePrefix(star_type)),
-                                             m_system_id);
+                                             Value(m_system_id));
     } else {
         m_disc_texture = ui.GetTexture(ClientUI::ArtDir() / "misc" / "missing.png");
         m_halo_texture = m_disc_texture;
@@ -311,9 +311,6 @@ void SystemIcon::CompleteConstruction() {
 
     Refresh();
 }
-
-int SystemIcon::SystemID() const
-{ return m_system_id; }
 
 const std::shared_ptr<GG::Texture>& SystemIcon::DiscTexture() const
 { return m_disc_texture; }

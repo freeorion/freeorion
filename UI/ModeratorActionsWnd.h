@@ -4,6 +4,7 @@
 #include <vector>
 #include <boost/signals2/signal.hpp>
 #include "../universe/EnumsFwd.h"
+#include "../universe/ConstantsFwd.h"
 #include "../util/Enum.h"
 
 #include "CUIWnd.h"
