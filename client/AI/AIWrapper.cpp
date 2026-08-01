@@ -67,9 +67,9 @@ namespace {
         }
     }
 
-    auto EmpirePlayerID(EmpireID empire_id) -> int
+    auto EmpirePlayerID(int empire_id) -> int
     {
-        int player_id = AIClientApp::GetApp()->EmpirePlayerID(empire_id);
+        int player_id = AIClientApp::GetApp()->EmpirePlayerID(EmpireID{empire_id});
         if (Networking::INVALID_PLAYER_ID == player_id)
             DebugLogger() << "AIWrapper::EmpirePlayerID(" << empire_id << ") - passed an invalid empire_id";
         return player_id;
@@ -709,12 +709,12 @@ namespace FreeOrionPython {
                 "Returns the empire object (Empire) of this AI player");
 
         py::def("getEmpire",
-                +[](EmpireID empire_id) -> const Empire* { return AIClientApp::GetApp()->GetEmpire(empire_id); },
+                +[](int empire_id) -> const Empire* { return AIClientApp::GetApp()->GetEmpire(EmpireID{empire_id}); },
                 py::return_value_policy<py::reference_existing_object>(),
                 "Returns the empire object (Empire) with the specified empire ID (int)");
 
         py::def("getDiplomaticStatus",
-                +[](EmpireID empire_id1, EmpireID empire_id2) -> const DiplomaticStatus { return AIClientApp::GetApp()->Empires().GetDiplomaticStatus(empire_id1, empire_id2); },
+                +[](int empire_id1, int empire_id2) -> const DiplomaticStatus { return AIClientApp::GetApp()->Empires().GetDiplomaticStatus(EmpireID{empire_id1}, EmpireID{empire_id2}); },
                 "Returns the diplomatic status between two empires");
 
         py::def("getUniverse",
