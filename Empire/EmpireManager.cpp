@@ -136,7 +136,7 @@ void EmpireManager::InsertEmpire(std::shared_ptr<Empire>&& empire) {
     auto empire_id = empire->GetEmpireID();
 
     if (m_empire_map.contains(empire_id)) {
-        ErrorLogger() << "EmpireManager::InsertEmpire passed empire with id (" << to_string(empire_id)
+        ErrorLogger() << "EmpireManager::InsertEmpire passed empire with id (" << empire_id
                       << ") for which there already is an empire.";
         return;
     }
@@ -160,7 +160,7 @@ DiplomaticStatus EmpireManager::GetDiplomaticStatus(EmpireID empire1, EmpireID e
     auto it = m_empire_diplomatic_statuses.find(DiploKey(empire1, empire2));
     if (it != m_empire_diplomatic_statuses.end())
         return it->second;
-    ErrorLogger() << "Couldn't find diplomatic status between empires " << to_string(empire1) << " and " << to_string(empire2);
+    ErrorLogger() << "Couldn't find diplomatic status between empires " << empire1 << " and " << empire2;
     return DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
 }
 

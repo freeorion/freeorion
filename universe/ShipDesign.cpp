@@ -458,14 +458,14 @@ int ShipDesign::PartCount() const {
 bool ShipDesign::ProductionLocation(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const {
     auto empire = context.GetEmpire(empire_id);
     if (!empire) {
-        DebugLogger() << "ShipDesign::ProductionLocation: Unable to get pointer to empire " << to_string(empire_id);
+        DebugLogger() << "ShipDesign::ProductionLocation: Unable to get pointer to empire " << empire_id;
         return false;
     }
 
     // must own the production location...
     auto location = context.ContextObjects().getRaw(location_id);
     if (!location) {
-        WarnLogger() << "ShipDesign::ProductionLocation unable to get location object with id " << to_string(location_id);
+        WarnLogger() << "ShipDesign::ProductionLocation unable to get location object with id " << location_id;
         return false;
     }
     if (!location->OwnedBy(empire_id))

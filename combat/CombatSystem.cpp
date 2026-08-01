@@ -74,7 +74,7 @@ CombatInfo::CombatInfo(UniverseObjectID system_id_, int turn_,
 {
     auto system = universe_mutable_in.Objects().get<System>(system_id);
     if (!system) {
-        ErrorLogger() << "CombatInfo constructed with invalid system id: " << to_string(system_id);
+        ErrorLogger() << "CombatInfo constructed with invalid system id: " << system_id;
         return;
     }
     auto ships = universe_mutable_in.Objects().find<Ship>(system->ShipIDs());
@@ -143,7 +143,7 @@ void CombatInfo::InitializeObjectVisibility() {
     // this function adjusts those values
 
     for (EmpireID empire_id : empire_ids) {
-        DebugLogger(combat) << "Tweaking CombatInfo object visibility and known objects for empire: " << to_string(empire_id);
+        DebugLogger(combat) << "Tweaking CombatInfo object visibility and known objects for empire: " << empire_id;
 
         auto& empire_vis{empire_object_visibility[empire_id]};
 
@@ -392,8 +392,8 @@ namespace {
             target_structure->AddToCurrent(-damage);
             damaged_object_ids.insert(target->ID());
             DebugLogger(combat) << "COMBAT: Ship " << attacker->Name() << " ("
-                                << to_string(attacker->ID()) << ") does " << damage << " damage to Ship "
-                                << target->Name() << " (" << to_string(target->ID()) << ")";
+                                << attacker->ID() << ") does " << damage << " damage to Ship "
+                                << target->NameAndID();
         }
 
         combat_event.AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
@@ -457,21 +457,18 @@ namespace {
 
         if (shield_damage >= 0) {
             target_shield->AddToCurrent(-shield_damage);
-            DebugLogger(combat) << "COMBAT: Ship " << attacker->Name() << " (" << to_string(attacker->ID()) << ") does "
-                                << shield_damage << " shield damage to Planet " << target->Name() << " ("
-                                << to_string(target->ID()) << ")";
+            DebugLogger(combat) << "COMBAT: Ship " << attacker->NameAndID() << " does "
+                                << shield_damage << " shield damage to Planet " << target->NameAndID();
         }
         if (defense_damage >= 0) {
             target_defense->AddToCurrent(-defense_damage);
-            DebugLogger(combat) << "COMBAT: Ship " << attacker->Name() << " (" << to_string(attacker->ID()) << ") does "
-                                << defense_damage << " defense damage to Planet " << target->Name() << " ("
-                                << to_string(target->ID()) << ")";
+            DebugLogger(combat) << "COMBAT: Ship " << attacker->NameAndID() << " does "
+                                << defense_damage << " defense damage to Planet " << target->NameAndID();
         }
         if (construction_damage >= 0) {
             target_construction->AddToCurrent(-construction_damage);
-            DebugLogger(combat) << "COMBAT: Ship " << attacker->Name() << " (" << to_string(attacker->ID()) << ") does "
-                                << construction_damage << " instrastructure damage to Planet " << target->Name()
-                                << " (" << to_string(target->ID()) << ")";
+            DebugLogger(combat) << "COMBAT: Ship " << attacker->NameAndID() << " does "
+                                << construction_damage << " instrastructure damage to Planet " << target->NameAndID();
         }
 
         //TODO report the planet damage details more clearly
@@ -491,9 +488,8 @@ namespace {
 
         if (power > 0.0f) {
             // any damage is enough to kill any fighter
-            DebugLogger(combat) << "COMBAT: " << attacker->Name() << " of empire " << to_string(attacker->Owner())
-                                << " (" << to_string(attacker->ID()) << ") does " << power
-                                << " damage to " << target->Name() << " (" << to_string(target->ID()) << ")";
+            DebugLogger(combat) << "COMBAT: " << attacker->NameAndID() << " of empire " << attacker->Owner()
+                                << " does " << power << " damage to " << target->NameAndID();
             target->SetDestroyed();
         }
         combat_event.AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
@@ -523,8 +519,8 @@ namespace {
         Meter* target_shield = target->UniverseObject::GetMeter(MeterType::METER_SHIELD);
         float shield = (target_shield ? target_shield->Current() : 0.0f);
 
-        DebugLogger(combat) << "AttackPlanetShip: attacker: " << attacker->Name() << " power: " << power
-                            << "  target: " << target->Name() << " shield: " << target_shield->Current()
+        DebugLogger(combat) << "AttackPlanetShip: attacker: " << attacker->NameAndID() << " power: " << power
+                            << "  target: " << target->NameAndID() << " shield: " << target_shield->Current()
                             << " structure: " << target_structure->Current();
 
         float damage = std::max(0.0f, power - shield);
@@ -532,13 +528,11 @@ namespace {
         if (damage > 0.0f) {
             target_structure->AddToCurrent(-damage);
             damaged_object_ids.insert(target->ID());
-            DebugLogger(combat) << "COMBAT: Planet " << attacker->Name() << " (" << to_string(attacker->ID())
-                                << ") does " << damage << " damage to Ship " << target->Name() << " ("
-                                << to_string(target->ID()) << ")";
+            DebugLogger(combat) << "COMBAT: Planet " << attacker->NameAndID() << " does "
+                                << damage << " damage to Ship " << target->NameAndID();
         }
 
-        combat_event.AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
-                              power, shield, damage);
+        combat_event.AddEvent(target->ID(), target->Owner(), weapon.ship_part_name, power, shield, damage);
 
         target->SetLastTurnActiveInCombat(combat_info.turn);
     }
@@ -572,8 +566,8 @@ namespace {
             return;
         }
 
-        DebugLogger(combat) << "AttackPlanetPlanet: attacker: " << attacker->Name() << " power: " << power
-                            << "\ntarget: " << target->Name() << " shield: " << target_shield->Current()
+        DebugLogger(combat) << "AttackPlanetPlanet: attacker: " << attacker->NameAndID() << " power: " << power
+                            << "\ntarget: " << target->NameAndID() << " shield: " << target_shield->Current()
                             << " defense: " << target_defense->Current() << " infra: " << target_construction->Current();
 
         // damage shields, limited by shield current value and damage amount.
@@ -594,21 +588,18 @@ namespace {
 
         if (shield_damage >= 0) {
             target_shield->AddToCurrent(-shield_damage);
-            DebugLogger(combat) << "COMBAT: Planet " << attacker->Name() << " (" << to_string(attacker->ID()) << ") does "
-                                << shield_damage << " shield damage to Planet " << target->Name() << " ("
-                                << to_string(target->ID()) << ")";
+            DebugLogger(combat) << "COMBAT: Planet " << attacker->NameAndID() << " does "
+                                << shield_damage << " shield damage to Planet " << target->NameAndID();
         }
         if (defense_damage >= 0) {
             target_defense->AddToCurrent(-defense_damage);
-            DebugLogger(combat) << "COMBAT: Planet " << attacker->Name() << " (" << to_string(attacker->ID()) << ") does "
-                                << defense_damage << " defense damage to Planet " << target->Name() << " ("
-                                << to_string(target->ID()) << ")";
+            DebugLogger(combat) << "COMBAT: Planet " << attacker->NameAndID() << " does "
+                                << defense_damage << " defense damage to Planet " << target->NameAndID();
         }
         if (construction_damage >= 0) {
             target_construction->AddToCurrent(-construction_damage);
-            DebugLogger(combat) << "COMBAT: Planet " << attacker->Name() << " (" << to_string(attacker->ID()) << ") does "
-                                << construction_damage << " instrastructure damage to Planet " << target->Name()
-                                << " (" << to_string(target->ID()) << ")";
+            DebugLogger(combat) << "COMBAT: Planet " << attacker->NameAndID() << " does "
+                                << construction_damage << " instrastructure damage to Planet " << target->NameAndID();
         }
 
         //TODO report the planet damage details more clearly
@@ -633,9 +624,9 @@ namespace {
 
         if (power > 0.0f) {
             // any damage is enough to destroy any fighter
-            DebugLogger(combat) << "COMBAT: " << attacker->Name() << " of empire " << to_string(attacker->Owner())
-                                << " (" << to_string(attacker->ID()) << ") does " << power
-                                << " damage to " << target->Name() << " (" << to_string(target->ID()) << ")";
+            DebugLogger(combat) << "COMBAT: " << attacker->Name() << " of empire " << attacker->Owner()
+                                << " (" << attacker->ID() << ") does " << power
+                                << " damage to " << target->NameAndID();
             target->SetDestroyed();
         }
 
@@ -662,8 +653,8 @@ namespace {
         //Meter* target_shield = target->UniverseObject::GetMeter(MeterType::METER_SHIELD);
         float shield = 0.0f; //(target_shield ? target_shield->Current() : 0.0f);
 
-        DebugLogger() << "AttackFighterShip: " << attacker->Name() << " of empire " << to_string(attacker->Owner())
-                      << " power: " << power << "  target: " << target->Name() //<< " shield: " << target_shield->Current()
+        DebugLogger() << "AttackFighterShip: " << attacker->NameAndID() << " of empire " << attacker->Owner()
+                      << " power: " << power << "  target: " << target->NameAndID() //<< " shield: " << target_shield->Current()
                       << " structure: " << target_structure->Current();
 
         float damage = std::max(0.0f, power - shield);
@@ -671,9 +662,8 @@ namespace {
         if (damage > 0.0f) {
             target_structure->AddToCurrent(-damage);
             damaged_object_ids.insert(target->ID());
-            DebugLogger(combat) << "COMBAT: " << attacker->Name() << " of empire " << to_string(attacker->Owner())
-                                << " (" << to_string(attacker->ID()) << ") does " << damage
-                                << " damage to Ship " << target->Name() << " (" << to_string(target->ID()) << ")";
+            DebugLogger(combat) << "COMBAT: " << attacker->NameAndID() << " of empire " << attacker->Owner()
+                                << " does " << damage << " damage to Ship " << target->NameAndID();
         }
 
         float pierced_shield_value(-1.0);
@@ -711,8 +701,8 @@ namespace {
             return;
         }
 
-        DebugLogger(combat) << "AttackFighterPlanet: attacker: " << attacker->Name() << " power: " << power
-                            << "\ntarget: " << target->Name() << " shield: " << target_shield->Current()
+        DebugLogger(combat) << "AttackFighterPlanet: attacker: " << attacker->NameAndID() << " power: " << power
+                            << "\ntarget: " << target->NameAndID() << " shield: " << target_shield->Current()
                             << " defense: " << target_defense->Current() << " infra: " << target_construction->Current();
 
         // damage shields, limited by shield current value and damage amount.
@@ -733,21 +723,18 @@ namespace {
 
         if (shield_damage >= 0) {
             target_shield->AddToCurrent(-shield_damage);
-            DebugLogger(combat) << "COMBAT: Ship " << attacker->Name() << " (" << to_string(attacker->ID()) << ") does "
-                                << shield_damage << " shield damage to Planet " << target->Name() << " ("
-                                << to_string(target->ID()) << ")";
+            DebugLogger(combat) << "COMBAT: Ship " << attacker->NameAndID() << " does "
+                                << shield_damage << " shield damage to Planet " << target->NameAndID();
         }
         if (defense_damage >= 0) {
             target_defense->AddToCurrent(-defense_damage);
-            DebugLogger(combat) << "COMBAT: Ship " << attacker->Name() << " (" << to_string(attacker->ID()) << ") does "
-                                << defense_damage << " defense damage to Planet " << target->Name() << " ("
-                                << to_string(target->ID()) << ")";
+            DebugLogger(combat) << "COMBAT: Ship " << attacker->NameAndID() << "  does "
+                                << defense_damage << " defense damage to Planet " << target->NameAndID();
         }
         if (construction_damage >= 0) {
             target_construction->AddToCurrent(-construction_damage);
-            DebugLogger(combat) << "COMBAT: Ship " << attacker->Name() << " (" << to_string(attacker->ID()) << ") does "
-                                << construction_damage << " instrastructure damage to Planet " << target->Name()
-                                << " (" << to_string(target->ID()) << ")";
+            DebugLogger(combat) << "COMBAT: Ship " << attacker->NameAndID() << " does "
+                                << construction_damage << " instrastructure damage to Planet " << target->NameAndID();
         }
 
         //TODO report the planet damage details more clearly
@@ -773,9 +760,9 @@ namespace {
 
         if (damage > 0.0f) {
             // any damage is enough to destroy any fighter
-            DebugLogger(combat) << "COMBAT: " << attacker->Name() << " of empire " << to_string(attacker->Owner())
-                                << " (" << to_string(attacker->ID()) << ") does " << damage
-                                << " damage to " << target->Name() << " (" << to_string(target->ID()) << ")";
+            DebugLogger(combat) << "COMBAT: " << attacker->Name() << " of empire " << attacker->Owner()
+                                << " (" << attacker->ID() << ") does " << damage
+                                << " damage to " << target->NameAndID();
             target->SetDestroyed();
         }
 
@@ -830,8 +817,8 @@ namespace {
                 return false;
             const auto fleet = context.ContextObjects().get<Fleet>(ship->FleetID());
             if (!fleet) {
-                ErrorLogger(combat) << "ObjectCanAttack unable to find a fleet " << to_string(ship->FleetID())
-                                    << " for ship id " << to_string(ship->ID());
+                ErrorLogger(combat) << "ObjectCanAttack unable to find a fleet " << fleet->NameAndID()
+                                    << " for ship " << ship->NameAndID();
                 return true;
             }
             return !fleet->Passive();
@@ -880,7 +867,7 @@ namespace {
                     for (int shot_count = 0; shot_count < shots; ++shot_count)
                         retval.emplace_back(part_class, part_name, part_attack, part_combat_targets);
                 } else {
-                    TraceLogger(combat) << "ShipWeaponsStrengths for ship " << ship->Name() << " (" << to_string(ship->ID()) << ") "
+                    TraceLogger(combat) << "ShipWeaponsStrengths for ship " << ship->NameAndID()
                                         << " direct weapon part " << part->Name() << " has no shots / zero attack, so is skipped";
                 }
 
@@ -892,7 +879,7 @@ namespace {
 
                     if (!part_combat_targets)
                         part_combat_targets = is_enemy_ship_or_fighter.get();
-                    TraceLogger(combat) << "ShipWeaponsStrengths for ship " << ship->Name() << " (" << to_string(ship->ID()) << ") "
+                    TraceLogger(combat) << "ShipWeaponsStrengths for ship " << ship->NameAndID()
                                         << "when launching fighters, part " << part->Name() << " with targeting condition: "
                                         << part_combat_targets->Dump();
                     if (!fighter_combat_targets)
@@ -1011,10 +998,10 @@ namespace {
             retval.reserve(number);
 
             if (combat_targets)
-                TraceLogger(combat) << "Adding " << number << " fighters for empire " << to_string(owner_empire_id)
+                TraceLogger(combat) << "Adding " << number << " fighters for empire " << owner_empire_id
                                     << " with targetting condition: " << combat_targets->Dump();
             else
-                TraceLogger(combat) << "Adding " << number << " fighters for empire " << to_string(owner_empire_id)
+                TraceLogger(combat) << "Adding " << number << " fighters for empire " << owner_empire_id
                                     << " with no targetting condition";
 
             for (int n = 0; n < number; ++n) {
@@ -1040,7 +1027,7 @@ namespace {
                 if (damage > 0.0f) {
                     valid_attacker_object_ids.insert(new_id);
                     empire_infos[owner_empire_id].attacker_ids.insert(new_id);
-                    DebugLogger(combat) << "Added fighter id: " << to_string(new_id) << " to attackers sets";
+                    DebugLogger(combat) << "Added fighter id: " << new_id << " to attackers sets";
                 }
 
                 // mark fighter visible to all empire participants
@@ -1075,13 +1062,13 @@ namespace {
 
             for (const auto* obj : combat_info.objects.allRaw()) { // TODO: rangify
                 // Check if object is already noted as destroyed; don't need to re-record this
-                if (contains(destroyed_object_ids, obj->ID()))
+                if (!obj || contains(destroyed_object_ids, obj->ID()))
                     continue;
                 // Check if object is destroyed and update lists if yes
                 if (!CheckDestruction(obj))
                     continue;
                 destroyed_object_ids.insert(obj->ID());
-                TraceLogger(combat) << "Added destroyed object id: " << to_string(obj->ID());
+                TraceLogger(combat) << "Added destroyed object: " << obj->NameAndID();
 
                 if (obj->ObjectType() == UniverseObjectType::OBJ_FIGHTER) {
                     bout_event.fighters_destroyed.AddEvent(obj->Owner());
@@ -1122,7 +1109,7 @@ namespace {
                 if (fighter->Destroyed()) {
                     // remove destroyed fighter's ID from lists of valid attackers and targets
                     valid_attacker_object_ids.erase(target_id);
-                    DebugLogger(combat) << "Removed destroyed fighter id: " << to_string(fighter->ID()) << " from attackers";
+                    DebugLogger(combat) << "Removed destroyed fighter id: " << fighter->ID() << " from attackers";
 
                     // Remove target from its empire's list of attackers
                     empire_infos[target->Owner()].attacker_ids.erase(target_id);
@@ -1132,14 +1119,14 @@ namespace {
 
             } else if (target->ObjectType() == UniverseObjectType::OBJ_SHIP) {
                 if (target->GetMeter(MeterType::METER_STRUCTURE)->Current() <= 0.0f) {
-                    DebugLogger(combat) << "!! Target Ship " << to_string(target_id) << " is destroyed!";
+                    DebugLogger(combat) << "!! Target Ship " << target_id << " is destroyed!";
                     // object id destroyed
                     combat_info.destroyed_object_ids.insert(target_id);
                     // all empires in battle know object was destroyed
                     for (EmpireID empire_id : combat_info.empire_ids) {
                         if (empire_id != ALL_EMPIRES) {
-                            DebugLogger(combat) << "Giving knowledge of destroyed object " << to_string(target_id)
-                                                << " to empire " << to_string(empire_id);
+                            DebugLogger(combat) << "Giving knowledge of destroyed object " << target_id
+                                                << " to empire " << empire_id;
                             combat_info.destroyed_object_knowers[empire_id].insert(target_id);
                         }
                     }
@@ -1157,7 +1144,7 @@ namespace {
                 if (!ObjectCanAttack(target, ScriptingContext{combat_info}) &&
                     contains(valid_attacker_object_ids, target_id))
                 {
-                    DebugLogger(combat) << "!! Target Planet " << to_string(target_id) << " knocked out, can no longer attack";
+                    DebugLogger(combat) << "!! Target Planet " << target_id << " knocked out, can no longer attack";
                     // remove disabled planet's ID from lists of valid attackers
                     valid_attacker_object_ids.erase(target_id);
                 }
@@ -1172,11 +1159,11 @@ namespace {
                     // on the next turn, so check that it has been attacked
                     // before excluding it from any remaining battle
                     if (!contains(combat_info.damaged_object_ids, target_id)) {
-                        DebugLogger(combat) << "!! Planet " << to_string(target_id) << " has not yet been attacked, "
+                        DebugLogger(combat) << "!! Planet " << target_id << " has not yet been attacked, "
                                             << "so will not yet be removed from battle, despite being essentially incapacitated";
                         return false;
                     }
-                    DebugLogger(combat) << "!! Target Planet " << to_string(target_id) << " is entirely knocked out of battle";
+                    DebugLogger(combat) << "!! Target Planet " << target_id << " is entirely knocked out of battle";
 
                     // Remove target from its empire's list of attackers
                     empire_infos[target->Owner()].attacker_ids.erase(target_id);
@@ -1206,15 +1193,15 @@ namespace {
 
             for (auto empire_id : no_obj_info_ids) {
                 empire_infos.erase(empire_id);
-                DebugLogger(combat) << "No objects left for empire with id: " << to_string(empire_id);
+                DebugLogger(combat) << "No objects left for empire with id: " << empire_id;
             }
 
             if (!empire_infos.empty()) {
                 DebugLogger(combat) << "Empires with objects remaining:";
                 for (const auto& [empire_id, empire_info] : empire_infos) {
-                    DebugLogger(combat) << " ... " << to_string(empire_id);
+                    DebugLogger(combat) << " ... " << empire_id;
                     for (const auto obj_id : empire_info.attacker_ids)
-                        TraceLogger(combat) << " ... ... " << to_string(obj_id);
+                        TraceLogger(combat) << " ... ... " << obj_id;
                 }
             }
         }
@@ -1238,7 +1225,7 @@ namespace {
                     // get visibility of target to attacker empire
                     auto empire_vis_info_it = combat_info.empire_object_visibility.find(viewing_empire_id);
                     if (empire_vis_info_it == combat_info.empire_object_visibility.end()) {
-                        DebugLogger() << " ReportInvisibleObjects found no visibility info for viewing empire " << to_string(viewing_empire_id);
+                        DebugLogger() << " ReportInvisibleObjects found no visibility info for viewing empire " << viewing_empire_id;
                         report[viewing_empire_id].Set(target->ID(), Visibility::VIS_NO_VISIBILITY);
                         continue;
                     }
@@ -1248,11 +1235,11 @@ namespace {
                         continue;
 
                     if (viewing_empire_id == ALL_EMPIRES) {
-                        DebugLogger(combat) << " Target " << target->Name() << " (" << to_string(target->ID()) << "): "
+                        DebugLogger(combat) << " Target " << target->NameAndID() << ": "
                                             << vis << " to monsters and neutrals";
                     } else {
-                        DebugLogger(combat) << " Target " << target->Name() << " (" << to_string(target->ID()) << "): "
-                                            << vis << " to empire " << to_string(viewing_empire_id);
+                        DebugLogger(combat) << " Target " << target->NameAndID() << ": "
+                                            << vis << " to empire " << viewing_empire_id;
                     }
 
                     // This adds information about invisible and basic visible objects and
@@ -1276,8 +1263,8 @@ namespace {
                         empire_infos[obj->Owner()].attacker_ids.insert(obj->ID());
                     }
 
-                    DebugLogger(combat) << "Considering object " << obj->Name() << " (" << to_string(obj->ID()) << ")"
-                                        << " owned by " << to_string(obj->Owner())
+                    DebugLogger(combat) << "Considering object " << obj->NameAndID()
+                                        << " owned by " << obj->Owner()
                                         << (can_attack ? "... can attack" : "");
                 }
             };
@@ -1364,8 +1351,7 @@ namespace {
     {
         auto weapons = GetWeapons(attacker, combat_state.combat_info.universe);
         if (weapons.empty()) {
-            DebugLogger(combat) << "Attacker " << attacker->Name() << " ("
-                                << to_string(attacker->ID()) << ") has no weapons, so can't attack";
+            DebugLogger(combat) << "Attacker " << attacker->NameAndID() << " has no weapons, so can't attack";
             return;   // no ability to attack!
         }
 
@@ -1396,10 +1382,10 @@ namespace {
             std::stringstream ss;
 
             for (auto& [empire_id, obj_vis] : eov) {
-                ss << "Empire " << to_string(empire_id) << " sees: ";
+                ss << "Empire " << empire_id << " sees: ";
                 for (auto& [obj_id, vis] : obj_vis) {
                     if (vis > Visibility::VIS_NO_VISIBILITY)
-                        ss << to_string(obj_id) << "  ";
+                        ss << obj_id << "  ";
                 }
                 ss << "\n";
             }
@@ -1411,7 +1397,7 @@ namespace {
         {
             std::stringstream ss;
             for (auto& s : ds)
-                ss << "(" << to_string(s.first.first) << ", " << to_string(s.first.second) << "): " << s.second << "    ";
+                ss << "(" << s.first.first << ", " << s.first.second << "): " << s.second << "    ";
             return ss.str();
         }();
 
@@ -1423,9 +1409,9 @@ namespace {
                 continue;
 
             // select object from valid targets for this object's owner
-            DebugLogger(combat) << "Attacker " << attacker->Name() << " ("
-                                << to_string(attacker->ID()) << ") attacks with weapon "
-                                << weapon.ship_part_name << " with power " << weapon.part_attack;
+            DebugLogger(combat) << "Attacker " << attacker->NameAndID() 
+                                << " attacks with weapon " << weapon.ship_part_name
+                                << " with power " << weapon.part_attack;
 
             if (!weapon.combat_targets) {
                 DebugLogger(combat) << "Weapon has no targeting condition?? Should have been set when initializing PartAttackInfo";
@@ -1439,7 +1425,7 @@ namespace {
             TraceLogger(combat) << "all candidate targets: " << [&targets]() -> std::string {
                 std::stringstream retval;
                 for (auto& t : targets)
-                    retval << " " << to_string(t->ID());
+                    retval << " " << t->ID();
                 return retval.str();
             }();
 
@@ -1460,7 +1446,7 @@ namespace {
 
             DebugLogger(combat) << targets.size() << " objects matched targeting condition";
             for (const auto& match : targets)
-                TraceLogger(combat) << " ... " << match->Name() << " (" << to_string(match->ID()) << ")";
+                TraceLogger(combat) << " ... " << match->NameAndID();
 
             // select target object from matches
             int target_idx = RandInt(0, targets.size() - 1);
@@ -1470,7 +1456,7 @@ namespace {
                 ErrorLogger(combat) << "AutoResolveCombat selected null target object?";
                 continue;
             }
-            DebugLogger(combat) << "Selected target: " << target->Name() << " (" << to_string(target->ID()) << ")";
+            DebugLogger(combat) << "Selected target: " << target->NameAndID();
 
             // do actual attacks
             Attack(attacker, weapon, target, combat_state.combat_info,
@@ -1558,8 +1544,8 @@ namespace {
 
             DebugLogger(combat) << "Launching " << weapon.fighters_launched
                                 << " with damage " << weapon.fighter_damage
-                                << " for empire id: " << to_string(attacker_owner_id)
-                                << " from ship id: " << to_string(attacker->ID());
+                                << " for empire id: " << attacker_owner_id
+                                << " from ship id: " << attacker->ID();
             if (weapon.combat_targets)
                 TraceLogger(combat) << " ... with targeting condition: " << weapon.combat_targets->Dump();
             else
@@ -1625,8 +1611,8 @@ namespace {
             float increase = std::min(space, recovered_fighters);
             recovered_fighters -= increase;
 
-            DebugLogger() << "Increasing stored fighter count of ship " << ship.Name()
-                          << " (" << to_string(ship.ID()) << ") from " << cap_max.first->Current()
+            DebugLogger() << "Increasing stored fighter count of ship " << ship.NameAndID()
+                          << " from " << cap_max.first->Current()
                           << " by " << increase << " towards max of "
                           << cap_max.second->Current();
 
@@ -1653,8 +1639,8 @@ namespace {
             const auto launched_from_id = fighter->LaunchedFrom();
             const auto& cidoi = combat_info.destroyed_object_ids;
             if (range_any_of(cidoi, [launched_from_id](UniverseObjectID id) noexcept { return launched_from_id == id; })) {
-                DebugLogger() << " ... Fighter " << fighter->Name() << " (" << to_string(obj_id)
-                              << ") is from destroyed ship id" << to_string(launched_from_id)
+                DebugLogger() << " ... Fighter " << fighter->NameAndID()
+                              << " is from destroyed ship id " << launched_from_id
                               << " so can't be recovered";
                 continue;   // can't return to a destroyed ship
             }
@@ -1662,14 +1648,14 @@ namespace {
         }
         DebugLogger() << "Fighters left at end of combat:";
         for (const auto& [ship_id, fighter_count] : ships_fighters_to_add_back)
-            DebugLogger() << " ... from ship id " << to_string(ship_id) << " : " << fighter_count;
+            DebugLogger() << " ... from ship id " << ship_id << " : " << fighter_count;
 
 
         DebugLogger() << "Returning fighters to ships:";
         for (const auto& [ship_id, fighter_count] : ships_fighters_to_add_back) {
             auto ship = combat_info.objects.getRaw<Ship>(ship_id);
             if (!ship) {
-                ErrorLogger(combat) << "Couldn't get ship with id " << to_string(ship_id) << " for fighter to return to...";
+                ErrorLogger(combat) << "Couldn't get ship with id " << ship_id << " for fighter to return to...";
                 continue;
             }
             IncreaseStoredFighterCount(*ship, fighter_count, combat_info.universe);
@@ -1699,7 +1685,7 @@ namespace {
             std::stringstream ss;
             ss << "Attacker IDs: [";
             for (auto attacker : shuffled_attackers)
-                ss << to_string(attacker) << " ";
+                ss << attacker << " ";
             ss << "]";
             return ss.str();
         }();
@@ -1718,10 +1704,10 @@ namespace {
             if (!planet)
                 continue;
             if (!ObjectCanAttack(planet, context)) {
-                DebugLogger() << "Planet " << planet->Name() << " could not attack.";
+                DebugLogger() << "Planet " << planet->NameAndID() << " could not attack.";
                 continue;
             }
-            DebugLogger(combat) << "Planet: " << planet->Name();
+            DebugLogger(combat) << "Planet: " << planet->NameAndID();
 
             auto platform_event = std::make_shared<WeaponsPlatformEvent>(planet->ID(), planet->Owner());
             if (!platform_event) {
@@ -1743,12 +1729,10 @@ namespace {
                 continue;   // planet attacks processed above
 
             if (!ObjectCanAttack(attacker, context)) {
-                DebugLogger() << "Attacker " << attacker->ObjectType() << " : "
-                              << attacker->Name() << " (" << to_string(attacker->ID()) << ") could not attack.";
+                DebugLogger() << "Attacker " << attacker->ObjectType() << " : " << attacker->NameAndID() << " could not attack.";
                 continue;
             }
-            DebugLogger(combat) << "Attacker: " << attacker->ObjectType() << " : "
-                                << attacker->Name() << " (" << to_string(attacker->ID()) << ")";
+            DebugLogger(combat) << "Attacker: " << attacker->ObjectType() << " : " << attacker->NameAndID();
 
             auto platform_event = std::make_shared<WeaponsPlatformEvent>(attacker->ID(), attacker->Owner());
             if (!platform_event) {
@@ -1773,7 +1757,7 @@ namespace {
                 if (!attacker)
                     continue;
                 if (!ObjectCanAttack(attacker, context)) {
-                    DebugLogger() << "Attacker " << attacker->Name() << " could not attack.";
+                    DebugLogger() << "Attacker " << attacker->NameAndID() << " could not attack.";
                     continue;
                 }
                 const auto weapons = GetWeapons(attacker, combat_info.universe); // includes info about fighter launches with ShipPartClass::PC_FIGHTER_BAY part class, and direct fire weapons (ships, planets, or fighters) with ShipPartClass::PC_DIRECT_WEAPON part class
@@ -1783,12 +1767,12 @@ namespace {
                 // Set launching carrier as at least basically visible to other empires.
                 if (!launched_something)
                     continue;
-                DebugLogger(combat) << "Attacker: " << attacker->Name() << " launched fighters";
+                DebugLogger(combat) << "Attacker: " << attacker->NameAndID() << " launched fighters";
 
                 for (auto detector_empire_id : combat_info.empire_ids) {
                     Visibility initial_vis = combat_info.empire_object_visibility[detector_empire_id].Get(attacker->ID());
-                    TraceLogger(combat) << "Pre-attack visibility of launching carrier id: " << to_string(attacker->ID())
-                                        << " by empire: " << to_string(detector_empire_id) << " was: " << initial_vis;
+                    TraceLogger(combat) << "Pre-attack visibility of launching carrier id: " << attacker->ID()
+                                        << " by empire: " << detector_empire_id << " was: " << initial_vis;
 
                     if (initial_vis >= Visibility::VIS_BASIC_VISIBILITY)
                         continue;
@@ -1812,8 +1796,8 @@ namespace {
             // Set attacker as at least basically visible to other empires.
             for (auto detector_empire_id : combat_info.empire_ids) {
                 Visibility initial_vis = combat_info.empire_object_visibility[detector_empire_id].Get(attack_event->attacker_id);
-                TraceLogger(combat) << "Pre-attack visibility of attacker id: " << to_string(attack_event->attacker_id)
-                                    << " by empire: " << to_string(detector_empire_id) << " was: " << initial_vis;
+                TraceLogger(combat) << "Pre-attack visibility of attacker id: " << attack_event->attacker_id
+                                    << " by empire: " << detector_empire_id << " was: " << initial_vis;
 
                 if (initial_vis >= Visibility::VIS_BASIC_VISIBILITY)
                     continue;
@@ -1861,9 +1845,9 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
     auto system = combat_info.objects.get<System>(combat_info.system_id);
     if (!system)
-        ErrorLogger() << "AutoResolveCombat couldn't get system with id " << to_string(combat_info.system_id);
+        ErrorLogger() << "AutoResolveCombat couldn't get system with id " << combat_info.system_id;
     else
-        DebugLogger() << "AutoResolveCombat at " << system->Name();
+        DebugLogger() << "AutoResolveCombat at " << system->NameAndID();
 
     DebugLogger(combat) << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%";
     DebugLogger(combat) << "AutoResolveCombat objects before resolution: " << combat_info.objects.Dump();
@@ -1895,8 +1879,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             break;
         }
 
-        DebugLogger(combat) << "Combat at " << system->Name() << " ("
-                            << to_string(combat_info.system_id) << ") Bout " << bout;
+        DebugLogger(combat) << "Combat at " << system->NameAndID() << " - Bout " << bout;
         combat_info.bout = bout;
         CombatRound(combat_state);
         last_bout = bout;

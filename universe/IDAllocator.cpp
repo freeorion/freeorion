@@ -58,7 +58,7 @@ IDAllocator::ID_t IDAllocator::NewID(const Universe& universe) {
     // Find the next id for this client in the table.
     auto it = m_empire_id_to_next_assigned_object_id.find(m_empire_id);
     if (it == m_empire_id_to_next_assigned_object_id.end()) {
-        ErrorLogger() << "m_empire_id " << to_string(m_empire_id) << " not in id manager table.";
+        ErrorLogger() << "m_empire_id " << m_empire_id << " not in id manager table.";
         return m_invalid_id;
     }
 
@@ -67,7 +67,7 @@ IDAllocator::ID_t IDAllocator::NewID(const Universe& universe) {
 
     auto apparent_assigning_empire = AssigningEmpireForID(retval);
     if (apparent_assigning_empire != m_empire_id)
-        ErrorLogger() << "m_empire_id " << to_string(m_empire_id) << " does not match apparent assigning id "
+        ErrorLogger() << "m_empire_id " << m_empire_id << " does not match apparent assigning id "
                       << to_string(apparent_assigning_empire) << " for id = " << retval << " m_zero = " << m_zero
                       << " stride = " << m_stride;
 
@@ -83,7 +83,7 @@ IDAllocator::ID_t IDAllocator::NewID(const Universe& universe) {
     if (retval >= m_warn_threshold)
         WarnLogger() << "Object IDs are almost exhausted. Currently assigning id, " << retval;
 
-    TraceLogger(IDallocator) << "Allocating id = " << retval << " for empire = " << to_string(it->first);
+    TraceLogger(IDallocator) << "Allocating id = " << retval << " for empire = " << it->first;
     return retval;
 }
 
@@ -120,7 +120,7 @@ std::pair<bool, bool> IDAllocator::IsIDValidAndUnused(const ID_t checked_id, con
     // Make sure this empire exists.
     const auto& check_it = m_empire_id_to_next_assigned_object_id.find(checked_empire_id);
     if (check_it == m_empire_id_to_next_assigned_object_id.end()) {
-        ErrorLogger() << "empire_id " << to_string(checked_empire_id) << " not in id manager table.";
+        ErrorLogger() << "empire_id " << checked_empire_id << " not in id manager table.";
         return hard_fail;
     }
 
@@ -136,7 +136,7 @@ std::pair<bool, bool> IDAllocator::IsIDValidAndUnused(const ID_t checked_id, con
 
     if (Value(checked_empire_id) != m_server_id)
         TraceLogger(IDallocator) << "Allocated object id = " << checked_id
-                                 << " is valid for empire = " << to_string(checked_empire_id);
+                                 << " is valid for empire = " << checked_empire_id;
     return complete_success;
 }
 
@@ -181,7 +181,7 @@ void IDAllocator::IncrementNextAssignedId(const EmpireID assigning_empire, const
     }
 
     if (init_next_id != next_id)
-        TraceLogger(IDallocator) << "next id for empire " << to_string(assigning_empire) << " updated from "
+        TraceLogger(IDallocator) << "next id for empire " << assigning_empire << " updated from "
                                  << init_next_id << " to " << next_id;
 };
 
@@ -240,16 +240,16 @@ void IDAllocator::ObfuscateBeforeSerialization() {
         // assigning_empire is not in m_offset_to_empire_id, which is an error.
         if (ii_dont_check_more_than_m_stride_ids > m_stride) {
             ErrorLogger()
-                << "While obfuscating id allocation empire " << to_string(assigning_empire)
+                << "While obfuscating id allocation empire " << assigning_empire
                 << "is missing from the table m_offset_to_empire_id: "
                 << "[(offset, empire id), " << [this]() {
                     std::stringstream ss;
                     std::size_t offset = 0;
                     for (auto empire_id : m_offset_to_empire_id)
-                        ss << " (" << offset++ << ", " << to_string(empire_id) << "), ";
+                        ss << " (" << offset++ << ", " << empire_id << "), ";
                     return ss.str();
                 }() << "]"
-                << " Empire " << to_string(assigning_empire)
+                << " Empire " << assigning_empire
                 << " may not be able to create new designs or objects.";
         }
 
@@ -267,11 +267,11 @@ std::string IDAllocator::StateString() const {
     for (const auto empire_id : m_offset_to_empire_id) {
         auto next_id_it = m_empire_id_to_next_assigned_object_id.find(empire_id);
         if (next_id_it == m_empire_id_to_next_assigned_object_id.end()) {
-            ErrorLogger(IDallocator) << "missing empire_id = " << to_string(empire_id);
+            ErrorLogger(IDallocator) << "missing empire_id = " << empire_id;
             continue;
         }
 
-        ss << "(" << to_string(empire_id) << ", " << offset << ", " << next_id_it->second << ") ";
+        ss << "(" << empire_id << ", " << offset << ", " << next_id_it->second << ") ";
         ++offset;
     }
 
@@ -283,7 +283,7 @@ template <typename Archive>
 void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, EmpireID empire_id) {
     DebugLogger(IDallocator) << (Archive::is_loading::value ? "Deserialize " : "Serialize ")
                              << "IDAllocator()  server id = "
-                             << m_server_id << " empire id = " << to_string(empire_id);
+                             << m_server_id << " empire id = " << empire_id;
 
     ar  & BOOST_SERIALIZATION_NVP(m_invalid_id)
         & BOOST_SERIALIZATION_NVP(m_temp_id)
@@ -316,14 +316,14 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, Em
         DebugLogger(IDallocator) << "Deserialized [" << [this]() {
             std::stringstream ss;
             for (const auto& [next_empire_id, next_id] : m_empire_id_to_next_assigned_object_id)
-                ss << "empire = " << to_string(next_empire_id) << " next id = " << next_id << ", ";
+                ss << "empire = " << next_empire_id << " next id = " << next_id << ", ";
             return ss.str();
         }() << "]";
 
     } else { // is saving
         if (m_empire_id != empire_id && Value(m_empire_id) != m_server_id)
-            ErrorLogger() << "An empire with id = " << to_string(m_empire_id) << " which is not the server "
-                          << "is attempting to serialize the IDAllocator for a different empire " << to_string(empire_id);
+            ErrorLogger() << "An empire with id = " << m_empire_id << " which is not the server "
+                          << "is attempting to serialize the IDAllocator for a different empire " << empire_id;
 
         // If the target empire is the server, provide the full map.
         if (Value(empire_id) == m_server_id) {
@@ -350,7 +350,7 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, Em
             auto it = m_empire_id_to_next_assigned_object_id.find(empire_id);
             if (it == m_empire_id_to_next_assigned_object_id.end()) {
                 ErrorLogger() << "Attempt to serialize allocator for an empire_id "
-                              << to_string(empire_id) << " not in id manager table.";
+                              << empire_id << " not in id manager table.";
             } else {
                 temp_empire_id_to_object_id.emplace(Value(it->first), it->second);
                 std::size_t idx = static_cast<std::size_t>(it->second - m_zero) % static_cast<std::size_t>(m_stride);

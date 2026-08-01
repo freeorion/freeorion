@@ -1317,7 +1317,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
 
     auto empire = std::as_const(context).GetEmpire(empire_id);
     if (!empire) {
-        ErrorLogger() << "BuildDesignatorWnd::CenterOnBuild couldn't get empire with id " << to_string(empire_id);
+        ErrorLogger() << "BuildDesignatorWnd::CenterOnBuild couldn't get empire with id " << empire_id;
         return;
     }
 
@@ -1345,7 +1345,7 @@ void BuildDesignatorWnd::SetBuild(int queue_idx) {
     const auto empire = context.GetEmpire(empire_id);
 
     if (!empire) {
-        ErrorLogger() << "BuildDesignatorWnd::SetBuild couldn't get empire with id " << to_string(empire_id);
+        ErrorLogger() << "BuildDesignatorWnd::SetBuild couldn't get empire with id " << empire_id;
         return;
     }
 
@@ -1618,7 +1618,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet(const ObjectMap& objects) {
     // system it can't currently see as a production location.
     auto sys = objects.get<System>(system_id);
     if (!sys) {
-        ErrorLogger() << "BuildDesignatorWnd::SelectDefaultPlanet couldn't get system with id " << to_string(system_id);
+        ErrorLogger() << "BuildDesignatorWnd::SelectDefaultPlanet couldn't get system with id " << system_id;
         return;
     }
 

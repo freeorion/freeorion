@@ -32,12 +32,12 @@ namespace {
             empire = GetEmpire(empire_id);
 
             if (!empire) {
-                ErrorLogger() << "ObjectResourceConsumption requested consumption for empire " << to_string(empire_id) << " but this empire was not found";
+                ErrorLogger() << "ObjectResourceConsumption requested consumption for empire " << empire_id << " but this empire was not found";
                 return 0.0;     // requested a specific empire, but didn't find it in this client, so production is 0.0
             }
 
             if (!obj->OwnedBy(empire_id)) {
-                DebugLogger() << "ObjectResourceConsumption requested consumption for empire " << to_string(empire_id) << " but this empire doesn't own the object";
+                DebugLogger() << "ObjectResourceConsumption requested consumption for empire " << empire_id << " but this empire doesn't own the object";
                 return 0.0;     // if the empire doesn't own the object, assuming it can't be consuming any of the empire's resources.  May need to revisit this assumption later.
             }
         }

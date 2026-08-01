@@ -1023,7 +1023,7 @@ boost::statechart::result WaitingForGameStart::react(const GameStartDataUnpacked
         GameStartDataUnpackedNotification::UnpackedData& unpacked{*data.unpacked};
 
         DebugLogger(FSM) << "Extracted GameStart message for game start on turn: " << unpacked.current_turn
-                         << " with empire: " << to_string(unpacked.empire_id);
+                         << " with empire: " << unpacked.empire_id;
 
         Client().SetCurrentTurn(unpacked.current_turn);
         Client().SetEmpireID(unpacked.empire_id);

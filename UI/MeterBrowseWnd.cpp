@@ -129,7 +129,7 @@ void MeterBrowseWnd::Initialize(const ScriptingContext& context) {
 
     auto obj = context.ContextObjects().get(m_object_id);
     if (!obj) {
-        ErrorLogger() << "MeterBrowseWnd::Initialize couldn't get object with id " << to_string(m_object_id);
+        ErrorLogger() << "MeterBrowseWnd::Initialize couldn't get object with id " << m_object_id;
         return;
     }
     auto& ui = GetApp().GetUI();
@@ -239,7 +239,7 @@ namespace {
         // get object and meter, aborting if not valid
         auto obj = context.ContextObjects().get(obj_id);
         if (!obj) {
-            ErrorLogger() << "Couldn't get object with id " << to_string(obj_id);
+            ErrorLogger() << "Couldn't get object with id " << obj_id;
             return boost::none;
         }
 
@@ -500,7 +500,7 @@ void ShipDamageBrowseWnd::Initialize() {
     const auto& context = GetApp().GetContext();
     auto ship = context.ContextObjects().get<Ship>(m_object_id);
     if (!ship) {
-        ErrorLogger() << "ShipDamageBrowseWnd couldn't get ship with id " << to_string(m_object_id);
+        ErrorLogger() << "ShipDamageBrowseWnd couldn't get ship with id " << m_object_id;
         return;
     }
     GG::Y top = GG::Y0;
@@ -563,7 +563,7 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top, const Scriptin
     // get object and meter, aborting if not valid
     auto ship = context.ContextObjects().getRaw<Ship>(m_object_id);
     if (!ship) {
-        ErrorLogger() << "ShipDamageBrowseWnd::UpdateEffectLabelsAndValues couldn't get ship with id " << to_string(m_object_id);
+        ErrorLogger() << "ShipDamageBrowseWnd::UpdateEffectLabelsAndValues couldn't get ship with id " << m_object_id;
         return;
     }
 
@@ -680,7 +680,7 @@ void ShipFightersBrowseWnd::Initialize() {
     // get objects and meters to verify that they exist
     auto ship = context.ContextObjects().get<Ship>(m_object_id);
     if (!ship) {
-        ErrorLogger() << "Couldn't get ship with id " << to_string(m_object_id);
+        ErrorLogger() << "Couldn't get ship with id " << m_object_id;
         return;
     }
     GG::Y top = GG::Y0;
@@ -765,7 +765,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top, const Script
     // early return if no valid ship, ship design, or no parts in the design
     auto ship = o.get<Ship>(m_object_id);
     if (!ship) {
-        ErrorLogger() << "Couldn't get ship with id " << to_string(m_object_id);
+        ErrorLogger() << "Couldn't get ship with id " << m_object_id;
         return;
     }
     const ShipDesign* design = u.GetShipDesign(ship->DesignID());
@@ -812,7 +812,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top, const Script
                 hangar_part.first = part_name;
                 combat_targets = part->CombatTargets();
             } else if (hangar_part.first != part_name) {
-                ErrorLogger() << "Ship " << to_string(ship->ID()) << "contains different hangar parts: "
+                ErrorLogger() << "Ship " << ship->NameAndID() << " contains different hangar parts: "
                               << hangar_part.first << ", " << part_name;
             }
             // set the current and total fighter capacity

@@ -883,8 +883,7 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
 
     if (!app.GetEmpire(clicked_empire_id)) {
         ErrorLogger() << "PlayerListWnd::PlayerRightClicked tried to look up empire id "
-                      << to_string(clicked_empire_id)
-                      << " but couldn't find such an empire";
+                      << clicked_empire_id << " but couldn't find such an empire";
         return;
     }
 

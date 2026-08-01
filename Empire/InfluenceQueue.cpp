@@ -30,7 +30,7 @@ namespace {
 /////////////////////////////
 std::string InfluenceQueue::Element::Dump() const {
     std::stringstream retval;
-    retval << "InfluenceQueue::Element: name: " << name << "  empire id: " << to_string(empire_id);
+    retval << "InfluenceQueue::Element: name: " << name << "  empire id: " << empire_id;
     retval << "  allocated: " << allocated_ip;
     if (paused)
         retval << "  (paused)";
@@ -107,7 +107,7 @@ void InfluenceQueue::Update(const ScriptingContext& context,
             const auto is_planet = [planet_id](const auto& pac) noexcept { return pac.first == planet_id; };
             const auto p_it = range_find_if(annex_costs, is_planet);
             if (p_it == annex_costs.end()) {
-                ErrorLogger() << "Missing annexation cost for plaent " << to_string(planet_id) << " in InfluenceQueue::Update!";
+                ErrorLogger() << "Missing annexation cost for plaent " << planet_id << " in InfluenceQueue::Update!";
                 continue;
             }
             spending_on_annexation_IP += static_cast<float>(p_it->second);

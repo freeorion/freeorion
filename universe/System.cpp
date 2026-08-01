@@ -307,16 +307,15 @@ void System::Insert(UniverseObject* obj, int orbit, int current_turn, const Obje
                 m_orbits[orbit] = obj->ID();
 
             } else {  // Log as an error, if no current orbit attempt to assign to a free orbit
-                ErrorLogger() << "System::Insert() Planet " << to_string(obj->ID())
+                ErrorLogger() << "System::Insert() Planet " << obj->NameAndID()
                               << " requested orbit " << orbit
-                              << " in system " << to_string(ID())
-                              << ", which is occupied by" << to_string(m_orbits[orbit]);
+                              << " in system " << this->NameAndID()
+                              << ", which is occupied by " << m_orbits[orbit];
                 const auto& free_orbits = FreeOrbits();
                 if (!free_orbits.empty() && OrbitOfPlanet(obj->ID()) == NO_ORBIT) {
                     int new_orbit = *(free_orbits.begin());
                     m_orbits[new_orbit] = obj->ID();
-                    DebugLogger() << "System::Insert() Planet " << to_string(obj->ID())
-                                  << " assigned to orbit " << new_orbit;
+                    DebugLogger() << "System::Insert() Planet " << obj->NameAndID() << " assigned to orbit " << new_orbit;
                 }
             }
         }
@@ -397,7 +396,7 @@ void System::AddStarlane(UniverseObjectID id) {
     const auto added = m_starlanes.insert(id).second;
     if (added) {
         StateChangedSignal();
-        TraceLogger() << "Added starlane from system " << this->Name() << " (" << to_string(this->ID()) << ") system " << to_string(id);
+        TraceLogger() << "Added starlane from system: " << this->NameAndID() << " to system: " << id;
     }
 }
 

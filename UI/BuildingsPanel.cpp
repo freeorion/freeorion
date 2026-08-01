@@ -90,7 +90,7 @@ void BuildingsPanel::Update() {
     const auto& context = app.GetContext();
     const auto planet = context.ContextObjects().get<Planet>(m_planet_id);
     if (!planet) {
-        ErrorLogger() << "BuildingsPanel::Update couldn't get planet with id " << to_string(m_planet_id);
+        ErrorLogger() << "BuildingsPanel::Update couldn't get planet with id " << m_planet_id;
         return;
     }
     const auto system_id = planet->SystemID();
@@ -111,7 +111,7 @@ void BuildingsPanel::Update() {
 
         auto building = context.ContextObjects().get<Building>(object_id);
         if (!building) {
-            ErrorLogger() << "BuildingsPanel::Update couldn't get building with id: " << to_string(object_id)
+            ErrorLogger() << "BuildingsPanel::Update couldn't get building with id: " << object_id
                           << " on planet " << planet->Name();
             continue;
         }

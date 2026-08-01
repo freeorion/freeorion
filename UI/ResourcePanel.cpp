@@ -40,7 +40,7 @@ void ResourcePanel::CompleteConstruction() {
     auto& app = GetApp();
     auto obj = app.GetContext().ContextObjects().get(m_rescenter_id);
     if (!obj) {
-        ErrorLogger() << "ResourcePanel::CompleteConstruction couldn't get object with id " << to_string(m_rescenter_id);
+        ErrorLogger() << "ResourcePanel::CompleteConstruction couldn't get object with id " << m_rescenter_id;
         return;
     }
     auto& ui = app.GetUI();
@@ -138,7 +138,7 @@ void ResourcePanel::Update(const ObjectMap& objects) {
 
     auto obj = objects.get(m_rescenter_id);
     if (!obj) {
-        ErrorLogger() << "BuildingPanel::Update couldn't get object with id " << to_string(m_rescenter_id);
+        ErrorLogger() << "BuildingPanel::Update couldn't get object with id " << m_rescenter_id;
         return;
     }
 

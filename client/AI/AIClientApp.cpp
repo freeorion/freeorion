@@ -256,7 +256,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
                                     save_state_string,       m_galaxy_setup_data);
         m_context.current_turn = m_current_turn;
 
-        DebugLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << to_string(m_empire_id);
+        DebugLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
 
         m_universe.InitializeSystemGraph(m_empires, m_universe.Objects());
         m_universe.UpdateCommonFilteredSystemGraphsWithMainObjectMap(m_empires);

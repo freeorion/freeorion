@@ -57,7 +57,7 @@ void SpecialsPanel::Update() {
     // get specials to display
     auto obj = std::as_const(app).GetContext().ContextObjects().get(m_object_id);
     if (!obj) {
-        ErrorLogger() << "SpecialsPanel::Update couldn't get object with id " << to_string(m_object_id);
+        ErrorLogger() << "SpecialsPanel::Update couldn't get object with id " << m_object_id;
         return;
     }
     m_icons.reserve(obj->Specials().size());

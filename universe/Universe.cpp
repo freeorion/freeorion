@@ -258,7 +258,7 @@ void Universe::ResetAllIDAllocation(const std::vector<EmpireID>& empire_ids) {
     m_design_id_allocator = std::make_unique<IDAllocator>(Value(ALL_EMPIRES), client_ids, INVALID_DESIGN_ID,
                                                           INCOMPLETE_DESIGN_ID, highest_allocated_design_id);
 
-    DebugLogger() << "Reset id allocators with highest object id = " << to_string(highest_allocated_id)
+    DebugLogger() << "Reset id allocators with highest object id = " << highest_allocated_id
                   << " and highest design id = " << highest_allocated_design_id;
 }
 
@@ -611,7 +611,7 @@ void Universe::ObfuscateIDGenerator() {
 bool Universe::VerifyUnusedObjectID(EmpireID empire_id, UniverseObjectID id) {
     auto [good_id, possible_legacy] = m_object_id_allocator->IsIDValidAndUnused(id, empire_id);
     if (!possible_legacy) // Possibly from old save game
-        ErrorLogger() << "object id = " << to_string(id) << " should not have been assigned by empire = " << to_string(empire_id);
+        ErrorLogger() << "object id = " << id << " should not have been assigned by empire = " << empire_id;
 
     return good_id && possible_legacy;
 }
@@ -622,7 +622,7 @@ void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, UniverseObjectI
 
     auto valid = m_object_id_allocator->UpdateIDAndCheckIfOwned(id);
     if (!valid) {
-        ErrorLogger() << "An object has not been inserted into the universe because it's id = " << to_string(id) << " was invalid.";
+        ErrorLogger() << "An object has not been inserted into the universe because it's id = " << id << " was invalid.";
         obj->SetID(INVALID_OBJECT_ID);
         return;
     }
@@ -761,12 +761,12 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(ScriptingContext& context, bool 
 
     TraceLogger(effects) << "Universe::ApplyMeterEffectsAndUpdateMeters resetting...";
     for (const auto& object : context.ContextObjects().allRaw()) {
-        TraceLogger(effects) << "object " << object->Name() << " (" << to_string(object->ID()) << ") before resetting meters: ";
+        TraceLogger(effects) << "object " << object->NameAndID() << " before resetting meters: ";
         for (auto const& [meter_type, meter] : object->Meters())
             TraceLogger(effects) << "    meter: " << meter_type << "  value: " << meter.Current();
         object->ResetTargetMaxUnpairedMeters();
         object->ResetPairedActiveMeters();
-        TraceLogger(effects) << "object " << object->Name() << " (" << to_string(object->ID()) << ") after resetting meters: ";
+        TraceLogger(effects) << "object " << object->NameAndID() << " after resetting meters: ";
         for (auto const& [meter_type, meter] : object->Meters())
             TraceLogger(effects) << "    meter: " << meter_type << "  value: " << meter.Current();
     }
@@ -873,7 +873,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies(ScriptingContext& context) {
         start_map.reserve(obj->Meters().size());
 
         if (!discrep_map.empty())
-            TraceLogger(effects) << "For " << obj->Name() << "(" << to_string(object_id) << ") initial accounting map size: "
+            TraceLogger(effects) << "For " << obj->Name() << "(" << object_id << ") initial accounting map size: "
                                  << account_map.size() << "  discrep map size: " << discrep_map.size()
                                  << "  and starting meters map size: " << start_map.size();
 
@@ -932,8 +932,8 @@ void Universe::UpdateMeterEstimates(UniverseObjectID object_id, ScriptingContext
 
         auto cur_object = m_objects.get(cur_id);
         if (!cur_object) {
-            ErrorLogger() << "Universe::UpdateMeterEstimates tried to get an invalid object for id " << to_string(cur_id)
-                          << " in container " << to_string(container_id)
+            ErrorLogger() << "Universe::UpdateMeterEstimates tried to get an invalid object for id " << cur_id
+                          << " in container " << container_id
                           << ". All meter estimates will be updated.";
             UpdateMeterEstimates(context);
             return false;
@@ -1081,7 +1081,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<UniverseObjectID>& obj
                 if (!meter)
                     continue;
 
-                TraceLogger(effects) << "object " << obj->Name() << "(" << to_string(obj->ID()) << ") has meter " << type
+                TraceLogger(effects) << "object " << obj->NameAndID() << " has meter " << type
                                      << ": discrepancy: " << discrepancy << " and : " << meter->Dump().data();
 
                 meter->AddToCurrent(discrepancy);
@@ -2019,7 +2019,7 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
             // execute Effects in the EffectsGroup
             auto source = context.ContextObjects().getRaw(sourced_effects_group.source_object_id);
             if (!source)
-                WarnLogger() << "No source found for ID: " << to_string(sourced_effects_group.source_object_id);
+                WarnLogger() << "No source found for ID: " << sourced_effects_group.source_object_id;
             ScriptingContext source_context{context, ScriptingContext::Source{}, source};
             effects_group->Execute(source_context,
                                    targets_and_cause,
@@ -2167,7 +2167,7 @@ void Universe::ForgetKnownObject(EmpireID empire_id, UniverseObjectID object_id)
 
         auto empire_it = m_empire_latest_known_objects.find(empire_id);
         if (empire_it == m_empire_latest_known_objects.end()) {
-            ErrorLogger() << "ForgetKnownObject bad empire id: " << to_string(empire_id);
+            ErrorLogger() << "ForgetKnownObject bad empire id: " << empire_id;
             return m_objects;
         }
         return empire_it->second;
@@ -2175,13 +2175,13 @@ void Universe::ForgetKnownObject(EmpireID empire_id, UniverseObjectID object_id)
 
     const auto obj = objects.get(object_id); // shared to ensure remains valid to end of this function
     if (!obj) {
-        ErrorLogger() << "ForgetKnownObject empire: " << to_string(empire_id) << " bad object id: " << to_string(object_id);
+        ErrorLogger() << "ForgetKnownObject empire: " << empire_id << " bad object id: " << object_id;
         return;
     }
 
     if (empire_id != ALL_EMPIRES && obj->OwnedBy(empire_id)) {
-        ErrorLogger() << "ForgetKnownObject empire: " << to_string(empire_id)
-                      << " object: " << to_string(object_id)
+        ErrorLogger() << "ForgetKnownObject empire: " << empire_id
+                      << " object: " << object_id
                       << ". Trying to forget visibility of own object.";
         return;
     }
@@ -2583,7 +2583,7 @@ namespace {
 
         auto empire_it = empire_known_destroyed_object_ids.find(empire_id);
         if (empire_it == empire_known_destroyed_object_ids.end()) {
-            DebugLogger() << "Empire " << to_string(empire_id) << " has no known destroyed objects to filter...";
+            DebugLogger() << "Empire " << empire_id << " has no known destroyed objects to filter...";
             return;
         }
         const auto& known_destroyed_obj_ids = empire_it->second;
@@ -2943,7 +2943,7 @@ namespace {
                     // if special is 0 stealth, or has stealth less than empire's detection strength, mark as visible
                     if (stealth <= 0.0f || stealth <= detection_strength) {
                         visible_specials.insert(special_entry.first);
-                        //DebugLogger() << "Special " << special_entry.first << " on " << obj->Name() << " is visible to empire " << to_string(empire_id);
+                        //DebugLogger() << "Special " << special_entry.first << " on " << obj->Name() << " is visible to empire " << empire_id;
                     }
                 }
             }
@@ -3108,7 +3108,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns(int current_turn
                 known_object_map.insert(full_object->Clone(*this, empire_id), destroyed);
             }
 
-            //DebugLogger() << "Empire " << to_string(empire_id) << " can see object " << object_id << " with vis level " << vis;
+            //DebugLogger() << "Empire " << empire_id << " can see object " << object_id << " with vis level " << vis;
 
             // update empire's visibility turn history for current vis, and lesser vis levels
             SetObjectVisibilityTurnsByEmpire(object_id, empire_id, vis, current_turn);
@@ -3227,7 +3227,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge(EmpireManager& empires) {
 
         //for (int stale_id : stale_set) {
         //    auto obj = latest_known_objects.Object(stale_id);
-        //    DebugLogger() << "Object " << stale_id << " : " << (obj ? obj->Name() : "(unknown)") << " is stale for empire " << to_string(empire_id) ;
+        //    DebugLogger() << "Object " << stale_id << " : " << (obj ? obj->Name() : "(unknown)") << " is stale for empire " << empire_id ;
         //}
     }
 }
@@ -3259,7 +3259,7 @@ void Universe::Destroy(UniverseObjectID object_id, const std::span<const EmpireI
     // remove object from any containing UniverseObject
     auto obj = m_objects.get(object_id);
     if (!obj) {
-        ErrorLogger() << "Universe::Destroy called for nonexistant object with id: " << to_string(object_id);
+        ErrorLogger() << "Universe::Destroy called for nonexistant object with id: " << object_id;
         return;
     }
 
@@ -3287,7 +3287,7 @@ std::vector<UniverseObjectID> Universe::RecursiveDestroy(UniverseObjectID object
 
     auto* obj = m_objects.getRaw(object_id);
     if (!obj) {
-        DebugLogger() << "Universe::RecursiveDestroy asked to destroy nonexistant object with id " << to_string(object_id);
+        DebugLogger() << "Universe::RecursiveDestroy asked to destroy nonexistant object with id " << object_id;
         return retval;
     }
     auto* system = m_objects.getRaw<System>(obj->SystemID());
@@ -3410,12 +3410,12 @@ std::vector<UniverseObjectID> Universe::RecursiveDestroy(UniverseObjectID object
 }
 
 bool Universe::Delete(UniverseObjectID object_id) {
-    DebugLogger() << "Universe::Delete with ID: " << to_string(object_id);
+    DebugLogger() << "Universe::Delete with ID: " << object_id;
     // find object amongst existing objects and delete directly, without storing
     // any info about the previous object (as is done for destroying an object)
     auto obj = m_objects.get(object_id);
     if (!obj) {
-        ErrorLogger() << "Tried to delete a nonexistant object with id: " << to_string(object_id);
+        ErrorLogger() << "Tried to delete a nonexistant object with id: " << object_id;
         return false;
     }
 
@@ -3509,7 +3509,7 @@ Universe::ShipDesignMap Universe::GetShipDesignsToSerialize(EmpireID encoding_em
         if (universe_design_it != m_ship_designs.end()) {
             retval.emplace(design_id, universe_design_it->second);
         } else {
-            ErrorLogger() << "Universe::GetShipDesignsToSerialize empire " << to_string(encoding_empire)
+            ErrorLogger() << "Universe::GetShipDesignsToSerialize empire " << encoding_empire
                             << " should know about design with id " << design_id
                             << " but no such design exists in the Universe!";
         }
@@ -3562,7 +3562,7 @@ std::set<int> Universe::GetDestroyedObjectsToSerialize(EmpireID encoding_empire)
 }
 
 std::map<int, ObjectMap> Universe::GetEmpireKnownObjectsToSerialize(EmpireID encoding_empire) const {
-    DebugLogger() << "GetEmpireKnownObjectsToSerialize encoding empire: " << to_string(encoding_empire);
+    DebugLogger() << "GetEmpireKnownObjectsToSerialize encoding empire: " << encoding_empire;
 
     std::map<int, ObjectMap> retval;
 

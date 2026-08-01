@@ -703,8 +703,7 @@ ErrorLogger() << "Variable<" #T ">::Eval unrecognized object "                  
               << TraceReference(GetPropertyAsString(), m_container_type, m_ref_type, context); \
 if (context.source)                                                                            \
     ErrorLogger() << "source: " << context.source->ObjectType() << " "                         \
-                  << to_string(context.source->ID()) << " ( "                                  \
-                  << context.source->Name() << " ) ";                                          \
+                  << context.source->NameAndID();                                              \
 else                                                                                           \
     ErrorLogger() << "source (none)";
 

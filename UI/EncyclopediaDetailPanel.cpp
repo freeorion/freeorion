@@ -1362,7 +1362,7 @@ namespace {
 
         const auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            DebugLogger() << "DefaultLocationForEmpire: Unable to get empire with ID: " << to_string(empire_id);
+            DebugLogger() << "DefaultLocationForEmpire: Unable to get empire with ID: " << empire_id;
             return INVALID_OBJECT_ID;
         }
         // get a location where the empire might build something.
@@ -3114,7 +3114,7 @@ namespace {
 
         auto obj = app.GetContext().ContextObjects().get(object_id);
         if (!obj) {
-            ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find UniverseObject with id " << to_string(object_id);
+            ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find UniverseObject with id " << object_id;
             return;
         }
 
@@ -3127,7 +3127,7 @@ namespace {
         general_type = GeneralTypeOfObject(obj->ObjectType());
         if (general_type.empty()) {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't interpret object: " << obj->Name()
-                          << " (" << to_string(object_id) << ")";
+                          << " (" << object_id << ")";
         }
     }
 
@@ -3237,7 +3237,7 @@ namespace {
                 universe.ApplyMeterEffectsAndUpdateMeters(planet_id_vec, context, false);
             } catch (const std::exception& e) {
                 ErrorLogger() << "Caught exception applying species name " << species_name
-                              << " and owner empire id " << to_string(empire_id) << " : " << e.what();
+                              << " and owner empire id " << empire_id << " : " << e.what();
             }
 
             try {
@@ -3503,7 +3503,7 @@ namespace {
         UniverseObjectID planet_id = ToInt(item_name, INVALID_OBJECT_ID);
         auto planet = objects.get<Planet>(planet_id); // non-const so it can be test modified to check results for various species
         if (!planet) {
-            ErrorLogger() << "RefreshDetailPlanetSuitability couldn't find planet with id " << to_string(planet_id);
+            ErrorLogger() << "RefreshDetailPlanetSuitability couldn't find planet with id " << planet_id;
             return;
         }
 

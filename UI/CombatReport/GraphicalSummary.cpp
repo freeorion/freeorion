@@ -145,8 +145,8 @@ public:
         auto side_summary_it = m_summaries.find(participant.empire_id);
 
         if (side_summary_it == m_summaries.end()) {
-            ErrorLogger() << "The empire of the object " << to_string(participant.object_id)
-                          << " is not known to be in this battle. (empire_id = " << to_string(participant.empire_id) << ")";
+            ErrorLogger() << "The empire of the object " << participant.object_id
+                          << " is not known to be in this battle. (empire_id = " << participant.empire_id << ")";
             return GG::Pt(GG::X{10}, GG::Y{10});
         }
 
@@ -636,7 +636,7 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
                 continue;   // fighters and invalid objects
             const auto object = objects.get(object_id);
             if (!object) {
-                ErrorLogger() << "GraphicalSummaryWnd::MakeSummaries couldn't find object with id: " << to_string(object_id);
+                ErrorLogger() << "GraphicalSummaryWnd::MakeSummaries couldn't find object with id: " << object_id;
                 continue;
             }
 
@@ -647,11 +647,11 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
             if (map_it != log->participant_states.end())
                 summary.AddUnit(object_id, map_it->second);
             else
-                ErrorLogger() << "Participant state missing from log. Object id: " << to_string(object_id) << " log id: " << log_id;
+                ErrorLogger() << "Participant state missing from log. Object id: " << object_id << " log id: " << log_id;
         }
 
         for (auto& summary : m_summaries) {
-            DebugLogger() << "MakeSummaries: empire " << to_string(summary.first)
+            DebugLogger() << "MakeSummaries: empire " << summary.first
                           << " total health: " << summary.second.total_current_health
                           << " max health: " << summary.second.total_max_health
                           << " units: " << summary.second.unit_summaries.size();

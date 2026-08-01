@@ -234,7 +234,7 @@ void ObjectMap::TypedInsertExisting(UniverseObjectID ID, std::shared_ptr<ObjectT
     if (!range_contains(evec, raw_obj)) // avoid inserting duplicates
         evec.push_back(raw_obj);
 
-    //std::cout << obj->ID() << " -> " << ID << " (" << to_string(raw_obj->ObjectType()) << ") "
+    //std::cout << obj->Name() << " -> " << ID << " (" << to_string(raw_obj->ObjectType()) << ") "
     //          << " as " << typeid(ObjectType).name() << std::endl;
 
     auto& emap = ExistingMap<OT>();

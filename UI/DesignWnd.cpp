@@ -1118,7 +1118,7 @@ void ShipDesignManager::StartGame(EmpireID empire_id, bool is_new_game) {
     ScriptingContext& context = app.GetContext();
     const auto empire = std::as_const(context).GetEmpire(empire_id);
     if (!empire) {
-        ErrorLogger() << "Unable to initialize ShipDesignManager because empire id, " << to_string(empire_id) << ", is invalid";
+        ErrorLogger() << "Unable to initialize ShipDesignManager because empire id, " << empire_id << ", is invalid";
         return;
     }
 
@@ -2572,7 +2572,7 @@ protected:
 
 void EmptyHullsListBox::PopulateCore() {
     ScopedTimer scoped_timer("EmptyHulls::PopulateCore");
-    DebugLogger() << "EmptyHulls::PopulateCore GetEmpireID(): " << to_string(GetEmpireID());
+    DebugLogger() << "EmptyHulls::PopulateCore GetEmpireID(): " << GetEmpireID();
 
     const GG::Pt row_size = ListRowSize();
 
@@ -2607,7 +2607,7 @@ void EmptyHullsListBox::PopulateCore() {
 
 void CompletedDesignsListBox::PopulateCore() {
     ScopedTimer scoped_timer("CompletedDesignsListBox::PopulateCore");
-    DebugLogger() << "CompletedDesignsListBox::PopulateCore for empire " << to_string(GetEmpireID());
+    DebugLogger() << "CompletedDesignsListBox::PopulateCore for empire " << GetEmpireID();
 
     const auto availability{AvailabilityState()};
     const bool showing_available = availability.GetAvailability(Availability::Available);

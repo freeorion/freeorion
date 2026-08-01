@@ -36,7 +36,7 @@ std::string Moderator::DestroyUniverseObject::Dump() const
 void Moderator::SetOwner::Execute() const {
     auto obj = IApp::GetApp()->GetUniverse().Objects().getRaw(m_object_id);
     if (!obj) {
-        ErrorLogger() << "Moderator::SetOwner::Execute couldn't get object with id: " << to_string(m_object_id);
+        ErrorLogger() << "Moderator::SetOwner::Execute couldn't get object with id: " << m_object_id;
         return;
     }
     obj->SetOwner(m_new_owner_empire_id);
@@ -59,12 +59,12 @@ void Moderator::AddStarlane::Execute() const {
 
     auto* sys1 = objects.getRaw<System>(m_id_1);
     if (!sys1) {
-        ErrorLogger() << "Moderator::AddStarlane::Execute couldn't get system with id: " << to_string(m_id_1);
+        ErrorLogger() << "Moderator::AddStarlane::Execute couldn't get system with id: " << m_id_1;
         return;
     }
     auto* sys2 = objects.getRaw<System>(m_id_2);
     if (!sys2) {
-        ErrorLogger() << "Moderator::AddStarlane::Execute couldn't get system with id: " << to_string(m_id_2);
+        ErrorLogger() << "Moderator::AddStarlane::Execute couldn't get system with id: " << m_id_2;
         return;
     }
     sys1->AddStarlane(m_id_2);
@@ -89,12 +89,12 @@ void Moderator::RemoveStarlane::Execute() const {
 
     auto* sys1 = objects.getRaw<System>(m_id_1);
     if (!sys1) {
-        ErrorLogger() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << to_string(m_id_1);
+        ErrorLogger() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << m_id_1;
         return;
     }
     auto* sys2 = objects.getRaw<System>(m_id_2);
     if (!sys2) {
-        ErrorLogger() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << to_string(m_id_2);
+        ErrorLogger() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << m_id_2;
         return;
     }
     sys1->RemoveStarlane(m_id_2);

@@ -97,7 +97,7 @@ Empire::Empire(std::string name, std::string player_name,
     m_influence_queue(m_id),
     m_authenticated(authenticated)
 {
-    //DebugLogger() << "Empire::Empire(" << m_name << ", " << m_player_name << ", " << to_string(empire_id) << ", colour)";
+    //DebugLogger() << "Empire::Empire(" << m_name << ", " << m_player_name << ", " << empire_id << ", colour)";
     Init();
 }
 
@@ -182,7 +182,7 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
 
     // check that policy is available
     if (!m_available_policies.contains(name)) {
-        DebugLogger() << "Policy name: " << name << "  not available to empire with id: " << to_string(m_id);
+        DebugLogger() << "Policy name: " << name << "  not available to empire with id: " << m_id;
         return;
     }
 
@@ -841,7 +841,7 @@ bool Empire::ProducibleItem(BuildType build_type, UniverseObjectID location_id, 
     // must own the production location...
     auto location = context.ContextObjects().getRaw(location_id);
     if (!location) {
-        WarnLogger() << "Empire::ProducibleItem for BT_STOCKPILE unable to get location object with id " << to_string(location_id);
+        WarnLogger() << "Empire::ProducibleItem for BT_STOCKPILE unable to get location object with id " << location_id;
         return false;
     }
 
@@ -1135,7 +1135,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
                                              const std::span<const UniverseObjectID> known_systems,
                                              bool precombat)
 {
-    TraceLogger(supply) << "UpdateSupplyUnobstructedSystems (allowing supply propagation) for empire " << to_string(m_id);
+    TraceLogger(supply) << "UpdateSupplyUnobstructedSystems (allowing supply propagation) for empire " << m_id;
     m_supply_unobstructed_systems.clear();
 
     const Universe& universe{context.ContextUniverse()};
@@ -1175,10 +1175,10 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
             continue; //known to be destroyed so can't affect supply, important just in case being updated on client side
         }
 
-        TraceLogger(supply) << "Fleet " << to_string(fleet->ID())
-                            << " is in system " << to_string(system_id)
-                            << " with next system " << to_string(fleet->NextSystemID())
-                            << " and is owned by " << to_string(fleet->Owner())
+        TraceLogger(supply) << "Fleet " << fleet->NameAndID()
+                            << " is in system " << system_id
+                            << " with next system " << fleet->NextSystemID()
+                            << " and is owned by " << fleet->Owner()
                             << " can damage ships: " << fleet->CanDamageShips(context)
                             << " and obstructive: " << fleet->Obstructive();
         if (fleet->CanDamageShips(context) && fleet->Obstructive()) {
@@ -1213,28 +1213,29 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
     }
 
     TraceLogger(supply) << "Empire::UpdateSupplyUnobstructedSystems systems with obstructing objects for empire "
-                        << to_string(m_id) << " : " << [&]() {
+                        << m_id << " : " << [&]() {
         std::stringstream ss;
         for (auto obj_id : systems_containing_obstructing_objects)
-            ss << to_string(obj_id) << ", ";
+            ss << obj_id << ", ";
         return ss.str();
     }();
 
-    DebugLogger() << "Preserved System-Lanes for empire " << m_name << " (" << to_string(m_id) << ") : " << [&]() {
+    DebugLogger() << "Preserved System-Lanes for empire " << m_name << " (" << m_id << ") : " << [&]() {
         std::stringstream ss2;
         for (const auto& sys_lanes : m_preserved_system_exit_lanes) {
-            ss2 << "[Sys: " << to_string(sys_lanes.first) << " : (";
+            ss2 << "[Sys: " << sys_lanes.first << " : (";
             for (auto lane : sys_lanes.second)
-                ss2 << to_string(lane) << " ";
+                ss2 << lane << " ";
             ss2 << ")]  ";
         }
         return ss2.str();
     }();
 
-    DebugLogger() << "Systems with lane-preserving fleets for empire " << m_name << " (" << to_string(m_id) << ") : " << [&]() {
+    DebugLogger() << "Systems with lane-preserving fleets for empire " << m_name << " (" << m_id << ") : "
+                  << [&]() {
         std::stringstream ss3;
         for (auto sys_id : systems_with_lane_preserving_fleets)
-            ss3 << to_string(sys_id) << ", ";
+            ss3 << sys_id << ", ";
         return ss3.str();
     }();
 
@@ -1246,7 +1247,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
 
         // has empire ever seen this system with partial or better visibility?
         if (!systems_with_at_least_partial_visibility_at_some_point.contains(sys->ID())) {
-            TraceLogger(supply) << "System " << sys->Name() << " (" << to_string(sys->ID()) << ") has never been seen";
+            TraceLogger(supply) << "System " << sys->NameAndID() << " has never been seen";
             continue;
         }
 
@@ -1256,40 +1257,41 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
         if (unrestricted_friendly_systems.contains(sys->ID())) {
             // in unrestricted friendly systems, supply can propagate
             m_supply_unobstructed_systems.insert(sys->ID());
-            TraceLogger(supply) << "System " << sys->Name() << " (" << to_string(sys->ID()) << ") +++ is unrestricted and friendly";
+            TraceLogger(supply) << "System " << sys->NameAndID() << " +++ is unrestricted and friendly";
 
         } else if (systems_containing_friendly_fleets.contains(sys->ID())) {
             // if there are unrestricted friendly ships, and no unrestricted enemy fleets, supply can propagate
             if (!unrestricted_obstruction_systems.contains(sys->ID())) {
                 m_supply_unobstructed_systems.insert(sys->ID());
-                TraceLogger(supply) << "System " << sys->Name() << " (" << to_string(sys->ID()) << ") +++ has friendly fleets and no obstructions";
+                TraceLogger(supply) << "System " << sys->NameAndID() << " +++ has friendly fleets and no obstructions";
             } else {
-                TraceLogger(supply) << "System " << sys->Name() << " (" << to_string(sys->ID()) << ") --- is has friendly fleets but has obstructions";
+                TraceLogger(supply) << "System " << sys->NameAndID() << " --- is has friendly fleets but has obstructions";
             }
 
         } else if (!systems_containing_obstructing_objects.contains(sys->ID())) {
             // if there are no friendly fleets or obstructing enemy fleets, supply can propagate
             m_supply_unobstructed_systems.insert(sys->ID());
-            TraceLogger(supply) << "System " << sys->Name() << " (" << to_string(sys->ID()) << ") +++ has no obstructing objects";
+            TraceLogger(supply) << "System " << sys->NameAndID() << " +++ has no obstructing objects";
 
         } else if (!systems_with_lane_preserving_fleets.contains(sys->ID())) {
             // if there are obstructing enemy fleets but no friendly fleets that could maintain
             // lane access, supply cannot propagate and this empire's available system exit
-            TraceLogger(supply) << "System " << sys->Name() << " (" << to_string(sys->ID()) << ") --- has no lane preserving fleets";
+            TraceLogger(supply) << "System " << sys->NameAndID() << " --- has no lane preserving fleets";
 
             // lanes for this system are cleared
             if (!m_preserved_system_exit_lanes[sys->ID()].empty()) {
                 std::stringstream ssca;
-                ssca << "Empire::UpdateSupplyUnobstructedSystems clearing preserved lanes for system ("
-                     << to_string(sys->ID()) << "); available lanes were:";
+                ssca << "Empire::UpdateSupplyUnobstructedSystems clearing preserved lanes for system "
+                     << sys->NameAndID()<< "; available lanes were:";
                 for (auto system_id : m_preserved_system_exit_lanes[sys->ID()])
-                    ssca << to_string(system_id) << ", ";
+                    ssca << system_id << ", ";
                 TraceLogger(supply) << ssca.str();
             }
             m_preserved_system_exit_lanes[sys->ID()].clear();
 
         } else {
-            TraceLogger(supply) << "Empire::UpdateSupplyUnobstructedSystems : Restricted system " << to_string(sys->ID()) << " with no friendly fleets, no obustrcting enemy fleets, and no lane-preserving fleets";
+            TraceLogger(supply) << "Empire::UpdateSupplyUnobstructedSystems : Restricted system " << sys->NameAndID()
+                                << " with no friendly fleets, no obustrcting enemy fleets, and no lane-preserving fleets";
         }
     }
 }
@@ -1712,26 +1714,26 @@ void Empire::PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item,
         // only buildings have a distinction between enqueuable and producible...
         if (!EnqueuableItem(BuildType::BT_BUILDING, item.name, location, context)) {
             ErrorLogger() << "Empire::PlaceProductionOnQueue() : Attempted to place non-enqueuable item in queue: build_type: Building"
-                          << "  name: " << item.name << "  location: " << to_string(location);
+                          << "  name: " << item.name << "  location: " << location;
             return;
         }
         if (!ProducibleItem(BuildType::BT_BUILDING, item.name, location, context)) {
             ErrorLogger() << "Empire::PlaceProductionOnQueue() : Placed a non-buildable item in queue: build_type: Building"
-                          << "  name: " << item.name << "  location: " << to_string(location);
+                          << "  name: " << item.name << "  location: " << location;
             return;
         }
 
     } else if (item.build_type == BuildType::BT_SHIP) {
         if (!ProducibleItem(BuildType::BT_SHIP, item.design_id, location, context)) {
             ErrorLogger() << "Empire::PlaceProductionOnQueue() : Placed a non-buildable item in queue: build_type: Ship"
-                          << "  design_id: " << item.design_id << "  location: " << to_string(location);
+                          << "  design_id: " << item.design_id << "  location: " << location;
             return;
         }
 
     } else if (item.build_type == BuildType::BT_STOCKPILE) {
         if (!ProducibleItem(BuildType::BT_STOCKPILE, location, context)) {
             ErrorLogger() << "Empire::PlaceProductionOnQueue() : Placed a non-buildable item in queue: build_type: Stockpile"
-                          << "  location: " << to_string(location);
+                          << "  location: " << location;
             return;
         }
 
@@ -1900,11 +1902,11 @@ void Empire::ConquerProductionQueueItemsAtLocation(UniverseObjectID location_id,
     }
 
     DebugLogger() << "Empire::ConquerProductionQueueItemsAtLocation: conquering items located at "
-                  << to_string(location_id) << " to empire " << to_string(empire_id);
+                  << location_id << " to empire " << empire_id;
 
     auto to_empire = empires.GetEmpire(empire_id);    // may be null
     if (!to_empire && empire_id != ALL_EMPIRES) {
-        ErrorLogger() << "Couldn't get empire with id " << to_string(empire_id);
+        ErrorLogger() << "Couldn't get empire with id " << empire_id;
         return;
     }
 
@@ -2092,7 +2094,7 @@ void Empire::AddExploredSystem(UniverseObjectID ID, int turn, const ObjectMap& o
     if (objects.getRaw<System>(ID))
         m_explored_systems.emplace(ID, turn);
     else
-        ErrorLogger() << "Empire::AddExploredSystem given an invalid system id: " << to_string(ID);
+        ErrorLogger() << "Empire::AddExploredSystem given an invalid system id: " << ID;
 }
 
 std::string Empire::NewShipName() {
@@ -2130,7 +2132,7 @@ void Empire::AddShipDesign(int ship_design_id, const Universe& universe, int nex
             ShipDesignsChangedSignal();
 
             TraceLogger() << "AddShipDesign::  " << ship_design->Name() << " (" << ship_design_id
-                          << ") to empire #" << to_string(GetEmpireID());
+                          << ") to empire #" << GetEmpireID();
         }
     } else {
         // design in not valid
@@ -2257,7 +2259,7 @@ namespace {
                     done = true;        // got all the way through the queue without finding an invalid tech
                     break;
                 } else if (!GetTech(it->name)) {
-                    DebugLogger() << "SanitizeResearchQueue for empire " << to_string(queue.GetEmpireID())
+                    DebugLogger() << "SanitizeResearchQueue for empire " << queue.GetEmpireID()
                                   << " removed invalid tech: " << it->name;
                     queue.erase(it);    // remove invalid tech, end inner loop without marking as finished
                     break;
@@ -2746,7 +2748,7 @@ void Empire::CheckProductionProgress(
             if (elem.blocksize == 1) {
                 AddSitRepEntry(CreateShipBuiltSitRep(ship->ID(), system->ID(),
                                                      ship->DesignID(), context.current_turn));
-                DebugLogger() << "New Ship, id " << to_string(ship->ID()) << ", created on turn: " << ship->CreationTurn();
+                DebugLogger() << "New Ship, " << ship->NameAndID() << ", created on turn: " << ship->CreationTurn();
             } else {
                 AddSitRepEntry(CreateShipBlockBuiltSitRep(system->ID(), ship->DesignID(),
                                                           elem.blocksize, context.current_turn));
@@ -2775,7 +2777,7 @@ void Empire::CheckProductionProgress(
     for (auto& [system_id, new_ships] : system_new_ships) {
         auto system = context.ContextObjects().getRaw<System>(system_id);
         if (!system) {
-            ErrorLogger() << "Couldn't get system with id " << to_string(system_id) << " for creating new fleets for newly produced ships";
+            ErrorLogger() << "Couldn't get system with id " << system_id << " for creating new fleets for newly produced ships";
             continue;
         }
         if (new_ships.empty())
@@ -2872,11 +2874,11 @@ void Empire::CheckProductionProgress(
                             if (context.ContextObjects().get<System>(rally_obj->SystemID()))
                                 next_fleet->CalculateRouteTo(rally_obj->SystemID(), universe);
                         } else {
-                            ErrorLogger() << "Unable to find system to route to with rally point id: " << to_string(rally_point_id);
+                            ErrorLogger() << "Unable to find system to route to with rally point id: " << rally_point_id;
                         }
                     }
 
-                    DebugLogger() << "New Fleet \"" << next_fleet->Name()
+                    DebugLogger() << "New Fleet \"" << next_fleet->NameAndID()
                                   <<"\" created on turn: " << next_fleet->CreationTurn();
                 }
             }
@@ -3015,7 +3017,7 @@ void Empire::UpdateResearchQueue(const ScriptingContext& context,
 void Empire::UpdateProductionQueue(const ScriptingContext& context,
                                    const std::vector<std::tuple<std::string_view, int, float, int>>& prod_costs)
 {
-    DebugLogger() << "========= Production Update for empire: " << to_string(GetEmpireID()) << " ========";
+    DebugLogger() << "========= Production Update for empire: " << GetEmpireID() << " ========";
 
     m_industry_pool.Update(context.ContextObjects());
     m_production_queue.Update(context, prod_costs);
@@ -3134,13 +3136,11 @@ int Empire::TotalShipsOwned() const {
 void Empire::RecordShipShotDown(const Ship& ship) {
     bool insert_succeeded = m_ships_destroyed.insert(ship.ID()).second;
     if (!insert_succeeded) {
-        DebugLogger() << "Already recorded empire " << to_string(m_id) << " destruction of ship "
-                      << ship.Name() << " (" << to_string(ship.ID()) << ")";
+        DebugLogger() << "Already recorded empire " << m_id << " destruction of ship " << ship.NameAndID();
         return; // already recorded this destruction
     }
 
-    DebugLogger() << "Recording empire " << to_string(m_id) << " destruction of ship "
-                  << ship.Name() << " (" << to_string(ship.ID()) << ")";
+    DebugLogger() << "Recording empire " << m_id << " destruction of ship " << ship.NameAndID();
     m_empire_ships_destroyed[ship.Owner()]++;
     m_ship_designs_destroyed[ship.DesignID()]++;
     m_species_ships_destroyed[ship.SpeciesName()]++;

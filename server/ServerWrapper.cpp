@@ -853,7 +853,7 @@ namespace {
         if (empire_id != ALL_EMPIRES) {
             empire = context.GetEmpire(empire_id);
             if (!empire) {
-                ErrorLogger() << "CreateShip: couldn't get empire with ID " << to_string(empire_id);
+                ErrorLogger() << "CreateShip: couldn't get empire with ID " << empire_id;
                 return Value(INVALID_OBJECT_ID);
             }
         }

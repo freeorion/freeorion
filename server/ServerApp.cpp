@@ -321,7 +321,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
         DebugLogger() << "Adding Process for setup data: name: " << ai_psd.player_name
                       << " player id: " << ai_psd.player_id
                       << " empire name:" << ai_psd.empire_name
-                      << " save empire id: " << to_string(ai_psd.save_game_empire_id);
+                      << " save empire id: " << ai_psd.save_game_empire_id;
 
         m_ai_client_processes.emplace(ai_psd, Process(m_io_context, AI_CLIENT_EXE, args));
     }
@@ -690,25 +690,25 @@ namespace {
 
             const auto tct_it = range_find_if(tech_costs_times, is_empire);
             if (tct_it == tech_costs_times.end()) {
-                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find tech costs/times for empire " << to_string(empire_id);
+                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find tech costs/times for empire " << empire_id;
                 continue;
             }
 
             const auto ac_it = range_find_if(annex_costs, is_empire);
             if (ac_it == annex_costs.end()) {
-                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find annex costs for empire " << to_string(empire_id);
+                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find annex costs for empire " << empire_id;
                 continue;
             }
 
             const auto pc_it = range_find_if(policy_costs, is_empire);
             if (pc_it == policy_costs.end()) {
-                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find policy costs for empire " << to_string(empire_id);
+                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find policy costs for empire " << empire_id;
                 continue;
             }
 
             const auto pct_it = range_find_if(prod_costs, is_empire);
             if (pct_it == prod_costs.end()) {
-                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find production costs/times for empire " << to_string(empire_id);
+                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find production costs/times for empire " << empire_id;
                 continue;
             }
 
@@ -1179,7 +1179,7 @@ namespace {
             player_id_to_save_game_data_index.push_back({setup_data_player_id, index});
         } else {
             ErrorLogger() << "ServerApp::LoadMPGameInit couldn't find save game data for "
-                          << "human player with assigned empire id: " << to_string(psd.save_game_empire_id);
+                          << "human player with assigned empire id: " << psd.save_game_empire_id;
         }
     }
 
@@ -1230,7 +1230,7 @@ namespace {
 
         DebugLogger() << "ServerApp::LoadMPGameInit matched player named " << psd.player_name
                       << " to setup data player id " << player_id
-                      << " with setup data empire id " << to_string(psd.save_game_empire_id);
+                      << " with setup data empire id " << psd.save_game_empire_id;
 
         // determine and store save game data index for this player
         int index = VectorIndexForPlayerSaveGameDataForEmpireID(player_save_game_data, psd.save_game_empire_id);
@@ -1238,7 +1238,7 @@ namespace {
             player_id_to_save_game_data_index.push_back({player_id, index});
         } else {
             ErrorLogger() << "ServerApp::LoadMPGameInit couldn't find save game data for "
-                          << "human player with assigned empire id: " << to_string(psd.save_game_empire_id);
+                          << "human player with assigned empire id: " << psd.save_game_empire_id;
         }
     }
 }
@@ -1383,7 +1383,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             if (!empire->Eliminated())
                 AddEmpireData(std::move(psgd));
         } else {
-            ErrorLogger() << "ServerApp::LoadGameInit couldn't find empire with id " << to_string(psgd.empire_id)
+            ErrorLogger() << "ServerApp::LoadGameInit couldn't find empire with id " << psgd.empire_id
                           << " to add to turn processing";
         }
     }
@@ -1876,7 +1876,7 @@ namespace {
         DebugLogger() << "AI processes (" << ai_processes.size() << "):";
         for (const auto& proc_info : ai_processes | range_keys)
             DebugLogger() << " ... id: " << proc_info.player_id << " name: " << proc_info.player_name
-                          << " empire id: " << to_string(proc_info.empire_id) << " empire name: " << proc_info.empire_name;
+                          << " empire id: " << proc_info.empire_id << " empire name: " << proc_info.empire_name;
 
         // kill unneeded AI process based on ID
         const auto is_player_id = [player_id](const auto& key_proc) noexcept
@@ -1957,7 +1957,7 @@ EmpireID ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connecti
     const auto is_empire_id = [empire_id](const auto& pd) noexcept { return pd.empire_id == empire_id; };
     auto orders_it = range_find_if(m_player_data, is_empire_id);
     if (orders_it == m_player_data.end()) {
-        WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << to_string(empire_id)
+        WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << empire_id
                      << " for \"" << player_connection->PlayerName()
                      << "\" doesn't wait for orders";
         return ALL_EMPIRES;
@@ -1974,7 +1974,7 @@ EmpireID ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connecti
 
     // drop previous connection to that empire
     if (previous_player_id != Networking::INVALID_PLAYER_ID && previous_player_id != player_connection->PlayerID()) {
-        WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << to_string(empire_id)
+        WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << empire_id
                      << " previous player " << previous_player_id << " was kicked.";
 
         DropPlayerEmpireLink(previous_player_id);
@@ -1991,7 +1991,7 @@ EmpireID ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connecti
         }
     }
 
-    InfoLogger() << "ServerApp::AddPlayerIntoGame empire " << to_string(empire_id) << " connected to " << player_connection->PlayerID();
+    InfoLogger() << "ServerApp::AddPlayerIntoGame empire " << empire_id << " connected to " << player_connection->PlayerID();
 
     if (GetOptionsDB().Get<bool>("network.server.drop-empire-ready")) {
         // drop ready status
@@ -2103,7 +2103,7 @@ void ServerApp::UpdatePartialOrders(EmpireID empire_id, OrderSet added, const st
     const auto is_empire_id = [empire_id](const auto& pd) noexcept { return pd.empire_id == empire_id; };
     auto it = range_find_if(m_player_data, is_empire_id);
     if (it == m_player_data.end()) {
-        ErrorLogger() << "Server given partial orders for unknown empire id: " << to_string(empire_id);
+        ErrorLogger() << "Server given partial orders for unknown empire id: " << empire_id;
         return;
     }
     auto& orders = it->orders;
@@ -2126,20 +2126,20 @@ bool ServerApp::AllOrdersReceived() {
     for (const auto& psgd : m_player_data) {
         const auto empire = m_empires.GetEmpire(psgd.empire_id);
         if (!empire) {
-            ErrorLogger() << " ... invalid empire id in turn sequence: " << to_string(psgd.empire_id);
+            ErrorLogger() << " ... invalid empire id in turn sequence: " << psgd.empire_id;
             continue;
         } else if (empire->Eliminated()) {
-            ErrorLogger() << " ... eliminated empire in turn sequence: " << to_string(psgd.empire_id);
+            ErrorLogger() << " ... eliminated empire in turn sequence: " << psgd.empire_id;
             continue;
         } else if (!empire->Ready()) {
-            DebugLogger() << " ... not ready empire id: " << to_string(psgd.empire_id);
+            DebugLogger() << " ... not ready empire id: " << psgd.empire_id;
         } else {
-            DebugLogger() << " ... have orders from empire id: " << to_string(psgd.empire_id);
+            DebugLogger() << " ... have orders from empire id: " << psgd.empire_id;
             continue;
         }
 
         if (!Networking::is_ai(GetEmpireClientType(psgd.empire_id)) && m_turn_expired)
-            DebugLogger() << " ...... turn expired for empire id: " << to_string(psgd.empire_id);
+            DebugLogger() << " ...... turn expired for empire id: " << psgd.empire_id;
         else
             all_orders_received = false;
     }
@@ -2228,7 +2228,7 @@ namespace {
             static constexpr auto is_obstructive = [](const Fleet* fleet) noexcept -> bool
             { return fleet && fleet->Aggression() == FleetAggression::FLEET_OBSTRUCTIVE; };
 
-            DebugLogger(combat) << "CombatConditionsInSystem() for system (" << to_string(system_id) << ") " << system->Name();
+            DebugLogger(combat) << "CombatConditionsInSystem() for system (" << system_id << ") " << system->Name();
             DebugLogger(combat) << "   fleets here: " << [&context,&fleets]() {
                 std::string retval;
                 for (auto& f : fleets) {
@@ -2275,9 +2275,9 @@ namespace {
             for (const auto& ship : ships) {
                 if (INVALID_OBJECT_ID != ship->OrderedBombardPlanet() && ship->CanBombard(context.ContextUniverse())) {
                    if (std::find(planet_ids.begin(), planet_ids.end(), ship->OrderedBombardPlanet()) == planet_ids.end()) {
-                        ErrorLogger() << "Ship " << to_string(ship->ID()) << " ordered to bombard planet "
-                                      << to_string(ship->OrderedBombardPlanet())
-                                      << " which is not in system " << to_string(system_id);
+                        ErrorLogger() << "Ship " << ship->NameAndID() << " ordered to bombard planet "
+                                      << ship->OrderedBombardPlanet()
+                                      << " which is not in system " << system_id;
                         continue;
                     }
                     if (!empire_targets.contains(fleet->Owner())) {
@@ -2343,7 +2343,7 @@ namespace {
             return {}; // no such system
 
         TraceLogger(combat) << "\t** GetObjsVisibleToEmpire<" << typeid(FleetOrPlanet).name()
-                            << "> " << to_string(empire_id) << " at system " << system->Name();
+                            << "> " << empire_id << " at system " << system->NameAndID();
 
         // check visibility of object by empire/neutrals
         const auto is_visible_to_empire = [&context, &override_vis_ids, empire_id](const auto* obj) {
@@ -2421,7 +2421,8 @@ namespace {
             DebugLogger(combat) << "   Only one combatant present: no combat.";
             return false;
         }
-        DebugLogger(combat) << "   Empires with planets (or populated unowned) present:  " << to_string(empires_here);
+        DebugLogger(combat) << "   Empires with planets (or populated unowned) present:  "
+                            << to_string(empires_here);
         empires_here.insert(empires_here.end(),
                             empires_with_fleets_here.begin(), empires_with_fleets_here.end());
         Uniquify(empires_here);
@@ -2473,7 +2474,7 @@ namespace {
                     const auto& targets = it->second;
 
                     if (std::binary_search(targets.begin(), targets.end(), visible_planet->ID())) {
-                        ErrorLogger(combat) << "   bombarding fleet empire " << to_string(bombarding_empire_id)
+                        ErrorLogger(combat) << "   bombarding fleet empire " << bombarding_empire_id
                                             << " sees a target planet";
                         return true; // an aggressive empire can see a fleet owned by an empire it is at war with
                     }
@@ -2501,9 +2502,9 @@ namespace {
                 if (aggressive_empire_id != visible_planet_empire_id &&
                     at_war_with_empire_ids.contains(visible_planet_empire_id))
                 {
-                    DebugLogger(combat) << "   Aggressive fleet empire " << to_string(aggressive_empire_id)
-                                        << " sees at war target planet " << planet->Name()
-                                        << " (owner: " << to_string(visible_planet_empire_id) << ")";
+                    DebugLogger(combat) << "   Aggressive fleet empire " << aggressive_empire_id
+                                        << " sees at war target planet " << planet->NameAndID()
+                                        << " (owner: " << visible_planet_empire_id << ")";
                     return true;  // an aggressive empire can see a planet onwned by an empire it is at war with
                 }
             }
@@ -2520,12 +2521,12 @@ namespace {
 
             // what fleets can the aggressive empire see?
             const auto& overrides = overrides_for_empire(aggressive_empire_id);
-            DebugLogger(combat) << "   aggressive fleet empire " << to_string(aggressive_empire_id)
+            DebugLogger(combat) << "   aggressive fleet empire " << aggressive_empire_id
                                 << " vis overrides here: " << to_string(overrides);
 
             const auto aggressive_empire_visible_fleets =
                 GetObjsVisibleToEmpireOrNeutralsAtSystem<Fleet>(aggressive_empire_id, system_id, overrides, context);
-            DebugLogger(combat) << "   aggressive fleet empire " << to_string(aggressive_empire_id)
+            DebugLogger(combat) << "   aggressive fleet empire " << aggressive_empire_id
                                 << " can see fleets here: " << to_string(aggressive_empire_visible_fleets);
 
             const auto not_self_owned = [aggressive_empire_id](const UniverseObject* obj) noexcept
@@ -2538,9 +2539,9 @@ namespace {
             for (const auto* fleet : aggressive_empire_visible_fleets
                  | range_filter(not_self_owned) | range_filter(at_war_with))
             {
-                DebugLogger(combat) << "   aggressive fleet empire " << to_string(aggressive_empire_id)
-                                    << " sees at-war target fleet " << fleet->Name()
-                                    << " (" << to_string(fleet->ID()) << " of empire " << to_string(fleet->Owner()) << ")";
+                DebugLogger(combat) << "   aggressive fleet empire " << aggressive_empire_id
+                                    << " sees at-war target fleet " << fleet->NameAndID()
+                                    << " of empire " << fleet->Owner() << ")";
                 return true;  // an aggressive empire can see a fleet owned by an empire it is at war with
             }
         }
@@ -2622,7 +2623,7 @@ namespace {
             for (const auto& [empire_id, obj_ids] : combat_info.destroyed_object_knowers) {
                 for (auto object_id : obj_ids) {
                     //DebugLogger() << "Setting knowledge of destroyed object " << object_id
-                    //              << " for empire " << to_string(empire_id);
+                    //              << " for empire " << empire_id;
                     universe.SetEmpireKnowledgeOfDestroyedObject(object_id, empire_id);
 
                     // record if empire should be informed of potential fleet
@@ -2652,8 +2653,8 @@ namespace {
                     continue;   // fleet wasn't destroyed
                 // inform empires
                 for (EmpireID empire_id : fleet_empires.second) {
-                    //DebugLogger() << "Setting knowledge of destroyed object " << to_string(fleet_id)
-                    //                       << " for empire " << to_string(empire_id);
+                    //DebugLogger() << "Setting knowledge of destroyed object " << fleet_id
+                    //                       << " for empire " << empire_id;
                     universe.SetEmpireKnowledgeOfDestroyedObject(fleet_id, empire_id);
                 }
             }
@@ -2710,7 +2711,7 @@ namespace {
                 }
                 const auto* obj = combat_info.objects.getRaw(damaged_object_id);
                 if (!obj) {
-                    ErrorLogger() << "CreateCombatSitreps couldn't find damaged object with id: " << to_string(damaged_object_id);
+                    ErrorLogger() << "CreateCombatSitreps couldn't find damaged object with id: " << damaged_object_id;
                     continue;
                 }
 
@@ -2770,7 +2771,7 @@ namespace {
                     events_that_killed.push_back(fire_event);
                 }
             }
-            DebugLogger() << "Combat combat_info system: " << to_string(combat_info.system_id)
+            DebugLogger() << "Combat combat_info system: " << combat_info.system_id
                           << "  Total Kill Events: " << events_that_killed.size();
 
 
@@ -2797,11 +2798,10 @@ namespace {
                 const auto attacker_object_type = attacker->ObjectType();
 
                 DebugLogger() << "Attacker " << to_string(attacker_object_type)
-                              << " " << attacker->Name() << " (id: " << to_string(attacker->ID())
-                              << "  empire: " << to_string(attacker_empire_id)
-                              << ")  attacks " << target_ship->Name()
-                              << " (id: " << to_string(target_ship->ID())
-                              << "  empire: " << to_string(target_empire_id)
+                              << " " << attacker->NameAndID()
+                              << " (empire: " << attacker_empire_id
+                              << ")  attacks " << target_ship->NameAndID()
+                              << " (empire: " << target_empire_id
                               << "  species: " << target_ship->SpeciesName() << ")";
 
                 if (attacker_empire)
@@ -2842,12 +2842,12 @@ namespace {
 
         auto* ship = objects.getRaw<Ship>(ship_id);
         if (!ship) {
-            ErrorLogger() << "ColonizePlanet couldn't get ship with id " << to_string(ship_id);
+            ErrorLogger() << "ColonizePlanet couldn't get ship with id " << ship_id;
             return false;
         }
         auto* planet = objects.getRaw<Planet>(planet_id);
         if (!planet) {
-            ErrorLogger() << "ColonizePlanet couldn't get planet with id " << to_string(planet_id);
+            ErrorLogger() << "ColonizePlanet couldn't get planet with id " << planet_id;
             return false;
         }
 
@@ -2958,13 +2958,13 @@ namespace {
         for (const auto& [planet_id, empires_ships_colonizing] : planet_empire_colonization_ship_ids) {
             const auto* const planet = objects.getRaw<Planet>(planet_id);
             if (!planet) {
-                ErrorLogger() << "HandleColonization couldn't get planet with id " << to_string(planet_id);
+                ErrorLogger() << "HandleColonization couldn't get planet with id " << planet_id;
                 continue;
             }
             const auto system_id = planet->SystemID();
             const auto* const system = objects.getRaw<System>(system_id);
             if (!system) {
-                ErrorLogger() << "HandleColonization couldn't get system with id " << to_string(system_id);
+                ErrorLogger() << "HandleColonization couldn't get system with id " << system_id;
                 continue;
             }
 
@@ -2974,7 +2974,7 @@ namespace {
                 for (const auto& [empire_id, colonizing_ships] : empires_ships_colonizing) {
                     const auto empire = context.GetEmpire(empire_id);
                     if (!empire) {
-                        ErrorLogger() << "HandleColonization couldn't get empire with id " << to_string(empire_id);
+                        ErrorLogger() << "HandleColonization couldn't get empire with id " << empire_id;
                         continue;
                     }
 
@@ -3044,7 +3044,7 @@ namespace {
             // before actual colonization, which deletes the colony ship, store ship info for later use with sitrep generation
             auto* ship = objects.getRaw<Ship>(colonizing_ship_id);
             if (!ship)
-                ErrorLogger() << "HandleColonization couldn't get ship with id " << to_string(colonizing_ship_id);
+                ErrorLogger() << "HandleColonization couldn't get ship with id " << colonizing_ship_id;
             const auto& species_name = ship ? ship->SpeciesName() : "";
             float colonist_capacity = ship ? ship->ColonyCapacity(universe) : 0.0f;
 
@@ -3058,7 +3058,7 @@ namespace {
 
             // sitrep about colonization / outposting
             if (!empire) {
-                ErrorLogger() << "HandleColonization couldn't get empire with id " << to_string(colonizing_empire_id);
+                ErrorLogger() << "HandleColonization couldn't get empire with id " << colonizing_empire_id;
             } else {
                 if (species_name.empty() || colonist_capacity <= 0.0f)
                     empire->AddSitRepEntry(CreatePlanetOutpostedSitRep(planet_id, context.current_turn));
@@ -3108,9 +3108,8 @@ namespace {
             planet_empire_troops[ship->OrderedInvadePlanet()][ship->Owner()] += ship->TroopCapacity(universe);
 
             DebugLogger() << "HandleInvasion has accounted for " << ship->TroopCapacity(universe)
-                          << " troops to invade " << planet->Name()
-                          << " and is destroying ship " << to_string(ship->ID())
-                          << " named " << ship->Name();
+                          << " troops to invade " << planet->NameAndID()
+                          << " and is destroying ship " << ship->NameAndID();
         }
 
         static constexpr auto to_id = [](const auto& o) noexcept { return o->ID(); };
@@ -3162,7 +3161,7 @@ namespace {
 
             auto planet = objects.get<Planet>(planet_id);
             if (!planet) {
-                ErrorLogger() << "Ground combat couldn't get planet with id " << to_string(planet_id);
+                ErrorLogger() << "Ground combat couldn't get planet with id " << planet_id;
                 continue;
             }
             const auto planet_initial_owner_id = planet->Owner();
@@ -3206,9 +3205,9 @@ namespace {
                     continue;   // if troops all belong to planet owner, not a combat.
 
             } else {
-                DebugLogger() << "Ground combat troops on " << planet->Name() << " :";
+                DebugLogger() << "Ground combat troops on " << planet->NameAndID() << " :";
                 for (const auto& [empire_with_troops_id, empire_troop_level] : empires_troops)
-                    DebugLogger() << " ... empire: " << to_string(empire_with_troops_id) << " : " << empire_troop_level;
+                    DebugLogger() << " ... empire: " << empire_with_troops_id << " : " << empire_troop_level;
                 Planet::ResolveGroundCombat(empires_troops, empires.GetDiplomaticStatuses());
                 ground_combat_planet_ids.push_back(planet_id);
             }
@@ -3237,7 +3236,7 @@ namespace {
 
                     DebugLogger() << "Empire conquers planet";
                     for (auto& [empire_with_post_battle_troops_id, troop_count] : empires_troops)
-                        DebugLogger() << " empire: " << to_string(empire_with_post_battle_troops_id) << ": " << troop_count;
+                        DebugLogger() << " empire: " << empire_with_post_battle_troops_id << ": " << troop_count;
 
 
                 } else if (!planet->Unowned() && victor_id == ALL_EMPIRES) {
@@ -3245,7 +3244,7 @@ namespace {
                     planet->Conquer(ALL_EMPIRES, context);
                     DebugLogger() << "Independents conquer planet";
                     for (const auto& empire_troops : empires_troops)
-                        DebugLogger() << " empire: " << to_string(empire_troops.first) << ": " << empire_troops.second;
+                        DebugLogger() << " empire: " << empire_troops.first << ": " << empire_troops.second;
 
                     for (EmpireID empire_id : all_involved_empires) {
                         if (auto empire = empires.GetEmpire(empire_id))
@@ -3256,7 +3255,7 @@ namespace {
                     // defender held the planet
                     DebugLogger() << "Defender holds planet";
                     for (auto& [empire_with_post_battle_troops_id, troop_count] : empires_troops)
-                        DebugLogger() << " empire: " << to_string(empire_with_post_battle_troops_id) << ": " << troop_count;
+                        DebugLogger() << " empire: " << empire_with_post_battle_troops_id << ": " << troop_count;
                 }
 
                 // regardless of whether battle resulted in conquering, it did
@@ -3435,7 +3434,7 @@ namespace {
         });
 
         for (const auto* ship : scrapped_ships) {
-            DebugLogger() << "... ship: " << to_string(ship->ID()) << " ordered scrapped";
+            DebugLogger() << "... ship: " << ship->NameAndID() << " ordered scrapped";
             const auto ship_id = ship->ID();
             const auto fleet_id = ship->FleetID();
             const auto sys_id = ship->SystemID();
@@ -3750,7 +3749,7 @@ namespace {
         // fleets that are to be revealed to each empire
         std::map<EmpireID, std::vector<UniverseObjectID>> empires_blockaded_by_fleets;
         for (const auto& [fleet_and_owner, blockader_ids] : blockades_rng) {
-            DebugLogger(combat) << "fleet: " << to_string(fleet_and_owner.first) << " owner: " << to_string(fleet_and_owner.second)
+            DebugLogger(combat) << "fleet: " << fleet_and_owner.first << " owner: " << fleet_and_owner.second
                                 << " blockaders: " << to_string(blockader_ids);
             auto& revealed_ids = empires_blockaded_by_fleets[fleet_and_owner.second];
             revealed_ids.insert(revealed_ids.end(), blockader_ids.begin(), blockader_ids.end());
@@ -3759,8 +3758,7 @@ namespace {
         // at the same system are only counted once per blockading fleet
         for (auto& [empire_id, fleet_ids] : empires_blockaded_by_fleets) {
             Uniquify(fleet_ids);
-            DebugLogger(combat) << "empire id " << to_string(empire_id)
-                                << " is blockaded by fleets: " << to_string(fleet_ids);
+            DebugLogger(combat) << "empire id " << empire_id << " is blockaded by fleets: " << to_string(fleet_ids);
         }
 
         return std::pair{empires_blockaded_by_fleets, fleet_owner_and_blockading_fleets};
@@ -3805,8 +3803,7 @@ namespace {
             // intentionally excluding aggressive fleets
             for (const Fleet* fleet : fleets | range_filter(not_null) | range_filter(is_obstructive)) {
                 DebugLogger(combat) << "   finding ship to reveal for obstructive fleet: "
-                                    << fleet->Name() << " (" << to_string(fleet->ID())
-                                    << ") ship ids: " << to_string(fleet->ShipIDs());
+                                    << fleet->NameAndID() << " ship ids: " << to_string(fleet->ShipIDs());
 
                 // if there is already a blockade-capable visible ship, don't need to reveal anything
                 auto vis_ships_rng = fleet->ShipIDs()
@@ -3831,8 +3828,8 @@ namespace {
                     const auto& [ship, stealth] = *it;
                     static_assert(std::is_same_v<std::decay_t<decltype(ship)>, const Ship*>);
                     retval[empire_id].push_back(ship->ID());
-                    DebugLogger(combat) << "      picked lowest stealth not-visible blockade capable ship in fleet: "
-                                        << ship->Name() << " (id: " << to_string(ship->ID()) << " stealth: " << stealth << ")";
+                    DebugLogger(combat) << "      picked fleet's lowest stealth not-visible blockade capable ship: "
+                                        << ship->NameAndID() << " stealth: " << stealth << ")";
                 } else {
                     DebugLogger(combat) << "      no not-visible blockade capable ships in fleet!";
                 }
@@ -3870,8 +3867,7 @@ namespace {
         if (move_path.empty())
             return;
 
-        DebugLogger() << "Fleet " << fleet->Name() << " (" << to_string(fleet->ID())
-                      << ")  route:" << [&]()
+        DebugLogger() << "Fleet " << fleet->NameAndID() << "  route:" << [&]()
             {
                 std::string ss;
                 ss.reserve(fleet->TravelRoute().size() * 32); // guesstimate
@@ -3903,10 +3899,10 @@ namespace {
                        UniverseObjectID last_sys_id, const ScriptingContext& context)
     {
         const System* sys = context.ContextObjects().getRaw<const System>(last_sys_id);
-        DebugLogger() << "Truncated fleet " << fleet->Name() << " (" << to_string(fleet->ID())
-                      << ") route from: " << to_string(old_route)
+        DebugLogger() << "Truncated fleet " << fleet->NameAndID()
+                      << " route from: " << to_string(old_route)
                       << " to end at last reachable system: "
-                      << (sys ? sys->Name() : "(Unknown system)") << " (" << to_string(last_sys_id) << ")"
+                      << (sys ? sys->NameAndID() : "(Unknown system)")
                       << " :" << to_string(fleet->TravelRoute());
     }
 
@@ -4083,8 +4079,8 @@ namespace {
         for (auto& [fleet, path] : fleets_move_pathes | range_filter(in_system_and_moving)) {
             const auto fleet_sys_id = fleet->SystemID();
             if (!context.ContextObjects().getRaw<System>(fleet_sys_id)) {
-                ErrorLogger() << "Couldn't find system with id " << to_string(fleet_sys_id) << " that fleet "
-                              << fleet->Name() << " (" << to_string(fleet->ID()) << ") is supposedly in / departing";
+                ErrorLogger() << "Couldn't find system with id " << fleet_sys_id << " that fleet "
+                              << fleet->NameAndID() << " is supposedly in / departing";
                 continue;
             }
             fleet->SetArrivalStarlane(fleet_sys_id);
@@ -4120,7 +4116,7 @@ namespace {
 
         auto empire_blockading_fleets = GetBlockadingFleetsForEmpires(fleet_owner_and_blockading_fleets);
         for (const auto& [blockaded_empire_id, blockading_fleets] : empire_blockading_fleets) {
-            DebugLogger() << "FleetMovement blockading fleets for empire " << to_string(blockaded_empire_id)
+            DebugLogger() << "FleetMovement blockading fleets for empire " << blockaded_empire_id
                           << ": " << to_string(blockading_fleets);
         }
         return empire_blockading_fleets;
@@ -4209,7 +4205,7 @@ void ServerApp::PreCombatProcessTurns() {
 
     // execute orders
     for (auto& pd : m_player_data) {
-        DebugLogger() << "<<= Executing Orders for empire " << to_string(pd.empire_id) << " =>>";
+        DebugLogger() << "<<= Executing Orders for empire " << pd.empire_id << " =>>";
         pd.orders.ApplyOrders(m_context);
     }
 
@@ -4245,7 +4241,7 @@ void ServerApp::PreCombatProcessTurns() {
                                          m_cached_empire_production_costs_times.end(),
                                          [id{empire_id}](const auto& pct) { return pct.first == id; });
         if (pct_it == m_cached_empire_production_costs_times.end()) {
-            ErrorLogger() << "Couldn't find cached production costs/times in PreCombatProcessTurns for empire " << to_string(empire_id);
+            ErrorLogger() << "Couldn't find cached production costs/times in PreCombatProcessTurns for empire " << empire_id;
             continue;
         }
         empire->UpdateProductionQueue(m_context, pct_it->second);
@@ -4467,7 +4463,7 @@ void ServerApp::PostCombatProcessTurns() {
 
         const auto cached_tech_cost_it = m_cached_empire_research_costs_times.find(empire_id);
         if (cached_tech_cost_it == m_cached_empire_research_costs_times.end()) {
-            ErrorLogger() << "no cached research costs info for empire " << to_string(empire_id);
+            ErrorLogger() << "no cached research costs info for empire " << empire_id;
         } else {
             const auto& costs_times = cached_tech_cost_it->second;
             const auto new_techs = empire->CheckResearchProgress(m_context, costs_times);
@@ -4477,7 +4473,7 @@ void ServerApp::PostCombatProcessTurns() {
 
         const auto cached_prod_cost_it = m_cached_empire_production_costs_times.find(empire_id);
         if (cached_prod_cost_it == m_cached_empire_production_costs_times.end()) {
-            ErrorLogger() << "no cached production costs info for empire " << to_string(empire_id);
+            ErrorLogger() << "no cached production costs info for empire " << empire_id;
         } else {
             const auto& costs_times = cached_prod_cost_it->second;
             empire->CheckProductionProgress(m_context, costs_times);
@@ -4485,14 +4481,14 @@ void ServerApp::PostCombatProcessTurns() {
 
         //const auto cached_policy_cost_it = m_cached_empire_policy_adoption_costs.find(empire_id);
         //if (cached_policy_cost_it == m_cached_empire_policy_adoption_costs.end())
-        //    ErrorLogger() << "no cached policy costs info for empire " << to_string(empire_id);
+        //    ErrorLogger() << "no cached policy costs info for empire " << empire_id;
         //static CONSTEXPR_VEC const decltype(cached_policy_cost_it->second) EMPTY_POLICY_COSTS;
         //const auto& policy_costs = (cached_policy_cost_it == m_cached_empire_policy_adoption_costs.end()) ?
         //    EMPTY_POLICY_COSTS : cached_policy_cost_it->second;
 
         //const auto cached_annex_cost_it = m_cached_empire_annexation_costs.find(empire_id);
         //if (cached_annex_cost_it == m_cached_empire_annexation_costs.end())
-        //    ErrorLogger() << "no cached annex costs info for empire " << to_string(empire_id);
+        //    ErrorLogger() << "no cached annex costs info for empire " << empire_id;
         //static CONSTEXPR_VEC const decltype(cached_annex_cost_it->second) EMPTY_ANNEX_COSTS;
         //const auto& annex_costs = (cached_annex_cost_it == m_cached_empire_annexation_costs.end()) ?
         //    EMPTY_ANNEX_COSTS : cached_annex_cost_it->second;
@@ -4643,7 +4639,7 @@ void ServerApp::PostCombatProcessTurns() {
             if (it1->second != it2->second) {
                 WarnLogger() << "PostCombatProcessTurns constructed player info differs from server player info:\n" <<
                     it1->second.name << " ? " << it2->second.name << "\n" <<
-                    to_string(it1->second.empire_id) << " ? " << to_string(it2->second.empire_id) << "\n" <<
+                    it1->second.empire_id << " ? " << it2->second.empire_id << "\n" <<
                     it1->second.client_type << " ? " << it2->second.client_type << "\n" <<
                     it1->second.host << " ? " << it2->second.host;
             }
@@ -4692,7 +4688,7 @@ void ServerApp::CheckForEmpireElimination() {
             const int player_id = EmpirePlayerID(empire_id);
             const auto player = m_networking.GetPlayer(player_id);
             const auto& name = player ? player->PlayerName() : EMPTY_STRING;
-            DebugLogger() << "ServerApp::CheckForEmpireElimination empire #" << to_string(empire_id) << " " << empire->Name()
+            DebugLogger() << "ServerApp::CheckForEmpireElimination empire #" << empire_id << " " << empire->Name()
                           << " of player #" << player_id << " named " << name << " has been eliminated!";
 
             if (Networking::is_ai(player))

@@ -226,8 +226,8 @@ void Empire::serialize(Archive& ar, const unsigned int version)
 
 
     const auto encoding_empire = GlobalSerializationEncodingForEmpire();
-    TraceLogger() << "serializing empire " << to_string(m_id) << ": " << m_name
-                  << " for encoding empire: " << to_string(encoding_empire);
+    TraceLogger() << "serializing empire " << m_id << ": " << m_name
+                  << " for encoding empire: " << encoding_empire;
 
     if (Archive::is_loading::value && version < 11) {
         std::map<std::string, int> techs;
@@ -499,7 +499,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
 {
     using boost::serialization::make_nvp;
 
-    TraceLogger() << "Serializing EmpireManager encoding empire: " << to_string(GlobalSerializationEncodingForEmpire());
+    TraceLogger() << "Serializing EmpireManager encoding empire: " << GlobalSerializationEncodingForEmpire();
 
     if constexpr (Archive::is_loading::value)
         em.Clear();    // clean up any existing dynamically allocated contents before replacing containers with deserialized data
@@ -560,7 +560,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
         for (const auto& [e1, e2] : em.m_empire_diplomatic_statuses | range_keys) {
             if (!em.m_empire_map.contains(e1) || !em.m_empire_map.contains(e2)) {
                 to_erase.emplace_back(e1, e2);
-                ErrorLogger() << "Erased invalid diplomatic status between empires " << to_string(e1) << " and " << to_string(e2);
+                ErrorLogger() << "Erased invalid diplomatic status between empires " << e1 << " and " << e2;
             }
         }
         for (const auto& p : to_erase)
@@ -575,7 +575,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
                     dk, DiplomaticStatus::DIPLO_WAR).second;
                 if (inserted_missing_status)
                     ErrorLogger() << "Added missing diplomatic status (default WAR) between empires "
-                                  << to_string(e1_id) << " and " << to_string(e2_id);
+                                  << e1_id << " and " << e2_id;
             }
         }
     }
@@ -586,7 +586,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
         const auto template_mems = e->SitRepsSizeInMemory();
         const auto sum = std::transform_reduce(template_mems.begin(), template_mems.end(), std::size_t{0}, std::plus<>{},
                                                [](const auto& p) noexcept { return p.second; });
-        DebugLogger() << "  empire " << to_string(eid) << "  " << sum/1024 << " kB:";
+        DebugLogger() << "  empire " << eid << "  " << sum/1024 << " kB:";
 
         for (const auto& [templ, mems] : template_mems) {
             if (mems > 20000)

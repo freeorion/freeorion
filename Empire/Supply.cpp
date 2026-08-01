@@ -310,12 +310,12 @@ void SupplyManager::Update(const ScriptingContext& context) {
         empire_system_supply_ranges[empire_id] = empire->SystemSupplyRanges();
         empire_supply_unobstructed_systems[empire_id] = empire->SupplyUnobstructedSystems();
 
-        TraceLogger(supply) << "Empire " << to_string(empire_id) << " unobstructed systems: "
+        TraceLogger(supply) << "Empire " << empire_id << " unobstructed systems: "
                             << [&empire_supply_unobstructed_systems, empire_id{empire_id}]()
         {
             std::stringstream ss;
             for (auto system_id : empire_supply_unobstructed_systems[empire_id])
-                ss << to_string(system_id) << ", ";
+                ss << system_id << ", ";
             return ss.str();
         }();
     }
@@ -433,7 +433,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
         // pass over all empire-supplied systems, removing supply for all
         // but the empire with the highest supply range in each system
         for (const auto* sys : objects.findRaw<System>(systems_with_supply_in_them)) {
-            TraceLogger(supply) << "Determining top supply empire in system " << sys->Name() << " (" << to_string(sys->ID()) << ")";
+            TraceLogger(supply) << "Determining top supply empire in system " << sys->NameAndID() << "";
             // sort empires by range in this system
             std::map<float, std::set<EmpireID>> empire_ranges_here;
             for (auto& [empire_id, system_ranges] : empire_propagating_supply_ranges) {
@@ -479,7 +479,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
                 TraceLogger(supply) << " ... no empire has a range here";
 
             } else if (empire_ranges_here.size() == 1) {
-                TraceLogger(supply) << " ... only empire here: " << to_string(*empire_ranges_here.begin()->second.begin())
+                TraceLogger(supply) << " ... only empire here: " << *empire_ranges_here.begin()->second.begin()
                                     << " with range: " << empire_ranges_here.begin()->first;
 
             } else {
@@ -488,7 +488,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
                     for (auto& [empire_range, empire_ids] : empire_ranges_here) {
                         erss << empire_range << " : (";
                         for (const auto& eid : empire_ids)
-                            erss << to_string(eid) << " ";
+                            erss << eid << " ";
                         erss << ")   ";
                     }
                     return erss.str();
@@ -532,7 +532,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
                     top_range_empire_id = *(range_empire_it->second.begin());
                 }
             }
-            TraceLogger(supply) << " ... top ranged empire here: " << to_string(top_range_empire_id)
+            TraceLogger(supply) << " ... top ranged empire here: " << top_range_empire_id
                                 << " with range: " << range_empire_it->first;
 
 
@@ -545,7 +545,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
                 // remove from range entry...
                 empire_ranges.erase(sys->ID());
 
-                TraceLogger(supply) << "... removed empire " << to_string(empire_id) << " system " << to_string(sys->ID()) << " supply.";
+                TraceLogger(supply) << "... removed empire " << empire_id << " system " << sys->ID() << " supply.";
 
                 // Remove from unobstructed systems
                 empire_supply_unobstructed_systems[empire_id].erase(sys->ID());
@@ -577,8 +577,8 @@ void SupplyManager::Update(const ScriptingContext& context) {
             for (auto& [empire_id, system_ranges] : empire_propagating_supply_ranges) {
                 auto range_it = system_ranges.find(sys->ID());
                 if (range_it != system_ranges.end())
-                    TraceLogger(supply) << " ... after culling empires ranges at system " << to_string(sys->ID())
-                                        << " : " << to_string(empire_id) << " : " << range_it->second.first;
+                    TraceLogger(supply) << " ... after culling empires ranges at system " << sys->ID()
+                                        << " : " << empire_id << " : " << range_it->second.first;
             }
             //// END DEBUG
         }
@@ -595,7 +595,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
         // less supply in the next iteration (unless as much or more is already
         // there)
         for (const auto& [empire_id, prev_sys_ranges] : empire_propagating_supply_ranges) {
-            TraceLogger(supply) << ">-< Doing supply propagation for empire " << to_string(empire_id)
+            TraceLogger(supply) << ">-< Doing supply propagation for empire " << empire_id
                                 << " >-<  at spread range: " << range_to_spread;
             const auto& unobstructed_systems = empire_supply_unobstructed_systems[empire_id];
 
@@ -607,7 +607,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
 
             for (const auto& [system_id, range_and_dist] : prev_sys_ranges) {
                 const auto& [range, distance_to_supply_source] = range_and_dist;
-                TraceLogger(supply) << " ... for system " << to_string(system_id) << " with range: " << range;
+                TraceLogger(supply) << " ... for system " << system_id << " with range: " << range;
 
                 // get lanes starting in system with id system_id
                 const Empire::LaneEndpoints system_lane{system_id, system_id};
@@ -640,14 +640,14 @@ void SupplyManager::Update(const ScriptingContext& context) {
                     // is propagation to the adjacent system obstructed?
                     if (!unobstructed_systems.contains(lane_end_sys_id)) {
                         // propagation obstructed!
-                        TraceLogger(supply) << "Added obstructed traversal from " << to_string(system_id) << " to "
-                                            << to_string(lane_end_sys_id) << " due to not being on unobstructed systems";
+                        TraceLogger(supply) << "Added obstructed traversal from " << system_id << " to "
+                                            << lane_end_sys_id << " due to not being on unobstructed systems";
                         m_supply_starlane_obstructed_traversals[empire_id].emplace(system_id, lane_end_sys_id);
                         continue;
                     }
                     // propagation not obstructed.
-                    TraceLogger(supply) << "Propagation from " << to_string(system_id) << " to "
-                                        << to_string(lane_end_sys_id) << " is unobstructed";
+                    TraceLogger(supply) << "Propagation from " << system_id << " to "
+                                        << lane_end_sys_id << " is unobstructed";
 
                     // does another empire already have as much or more supply here from a previous iteration?
                     float other_empire_biggest_range = -10000.0f;   // arbitrary big numbeer
@@ -664,8 +664,8 @@ void SupplyManager::Update(const ScriptingContext& context) {
                     // if so, add a blocked traversal and continue
                     if (range_after_one_more_jump <= other_empire_biggest_range) {
                         m_supply_starlane_obstructed_traversals[empire_id].emplace(system_id, lane_end_sys_id);
-                        TraceLogger(supply) << "Added obstructed traversal from " << to_string(system_id)
-                                            << " to " << to_string(lane_end_sys_id)
+                        TraceLogger(supply) << "Added obstructed traversal from " << system_id
+                                            << " to " << lane_end_sys_id
                                             << " due to other empire biggest range being " << other_empire_biggest_range;
                         continue;
                     }
@@ -674,8 +674,9 @@ void SupplyManager::Update(const ScriptingContext& context) {
                     const float lane_length = DistanceBetweenObjects(system_id, lane_end_sys_id, objects);
                     const float distance_to_supply_source_after_next_lane = lane_length + distance_to_supply_source;
 
-                    TraceLogger(supply) << "Attempting to propagate into system: " << to_string(lane_end_sys_id) << " the new range: "
-                                        << range_after_one_more_jump << " and distance: " << distance_to_supply_source_after_next_lane;
+                    TraceLogger(supply) << "Attempting to propagate into system: " << lane_end_sys_id
+                                        << " the new range: " << range_after_one_more_jump
+                                        << " and distance: " << distance_to_supply_source_after_next_lane;
 
                     // if propagating supply would increase the range of the adjacent system,
                     // or decrease the distance to the adjacent system from a supply source...
@@ -701,15 +702,15 @@ void SupplyManager::Update(const ScriptingContext& context) {
                     }
                     // always record a traversal, so connectivity is calculated properly
                     m_supply_starlane_traversals[empire_id].emplace(system_id, lane_end_sys_id);
-                    TraceLogger(supply) << "Added traversal from " << to_string(system_id) << " to " << to_string(lane_end_sys_id);
+                    TraceLogger(supply) << "Added traversal from " << system_id << " to " << lane_end_sys_id;
 
                     // erase any previous obstructed traversal that just succeeded
                     if (m_supply_starlane_obstructed_traversals[empire_id].contains({system_id, lane_end_sys_id})) {
-                        //TraceLogger(supply) << "Removed obstructed traversal from " << to_string(system_id) << " to " << lane_end_sys_id;
+                        //TraceLogger(supply) << "Removed obstructed traversal from " << system_id << " to " << lane_end_sys_id;
                         m_supply_starlane_obstructed_traversals[empire_id].erase({system_id, lane_end_sys_id});
                     }
                     if (m_supply_starlane_obstructed_traversals[empire_id].contains({lane_end_sys_id, system_id})) {
-                        //TraceLogger(supply) << "Removed obstructed traversal from " << lane_end_sys_id << " to " << to_string(system_id);
+                        //TraceLogger(supply) << "Removed obstructed traversal from " << lane_end_sys_id << " to " << system_id;
                         m_supply_starlane_obstructed_traversals[empire_id].erase({lane_end_sys_id, system_id});
                     }
                 }
@@ -723,10 +724,10 @@ void SupplyManager::Update(const ScriptingContext& context) {
 
     TraceLogger(supply) << "SupplyManager::Update: after removing conflicts, empires can provide supply to the following system ids (and ranges in jumps):";
     for (const auto& [empire_id, supply_ranges] : empire_propagating_supply_ranges) {
-        TraceLogger(supply) << " ... empire " << to_string(empire_id) << ":  " << [&, rngs{supply_ranges}]() {
+        TraceLogger(supply) << " ... empire " << empire_id << ":  " << [&, rngs{supply_ranges}]() {
             std::stringstream ss;
             for (auto& [sys_id, jumps_distance] : rngs)
-                ss << to_string(sys_id) << " (" << jumps_distance.first << "),  ";
+                ss << sys_id << " (" << jumps_distance.first << "),  ";
             return ss.str();
         }();
 
@@ -754,7 +755,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
                 m_propagated_supply_distances[system_id];
         }
 
-        //TraceLogger(supply) << "For empire: " << to_string(empire_id) << " system supply distances: ";
+        //TraceLogger(supply) << "For empire: " << empire_id << " system supply distances: ";
         //for (auto& entry : m_empire_propagated_supply_distances[empire_id]) {
         //    TraceLogger(supply) << entry.first << " : " << entry.second;
         //}
@@ -762,14 +763,14 @@ void SupplyManager::Update(const ScriptingContext& context) {
 
 
     for (const auto& [empire_id, traversals] : m_supply_starlane_traversals) {
-        TraceLogger(supply) << "Empire " << to_string(empire_id) << " propagated supply traversals:";
+        TraceLogger(supply) << "Empire " << empire_id << " propagated supply traversals:";
         for (auto const& [a, b] : traversals)
-            TraceLogger(supply) << " ... " << to_string(a) << " to " << to_string(b);
+            TraceLogger(supply) << " ... " << a << " to " << b;
     }
     for (const auto& [empire_id, traversals] : m_supply_starlane_obstructed_traversals) {
-        TraceLogger(supply) << "Empire " << to_string(empire_id) << " obstructed supply traversals:";
+        TraceLogger(supply) << "Empire " << empire_id << " obstructed supply traversals:";
         for (auto const& [a, b] : traversals)
-            TraceLogger(supply) << " ... " << to_string(a) << " to " << to_string(b);
+            TraceLogger(supply) << " ... " << a << " to " << b;
     }
 
     auto ally_merged_supply_starlane_traversals{m_supply_starlane_traversals};
@@ -795,38 +796,38 @@ void SupplyManager::Update(const ScriptingContext& context) {
             // system A to system B and inner loop empire (the ally) has supply in
             // system B
             for (auto const& [sys_A, sys_B] : empire_obstructed_traversals) {
-                TraceLogger(supply) << "for empire " << to_string(supply_empire_id)
-                                    << " obstructed traversal from " << to_string(sys_A) << " - " << to_string(sys_B);
+                TraceLogger(supply) << "for empire " << supply_empire_id
+                                    << " obstructed traversal from " << sys_A << " - " << sys_B;
                 if (!ally_supplyable_systems.contains(sys_B))
                     continue;
-                TraceLogger(supply) << " ... supplied by ally " << to_string(ally_id);
+                TraceLogger(supply) << " ... supplied by ally " << ally_id;
                 if (ally_supplyable_systems.contains(sys_B)) {
-                    TraceLogger(supply) << " ... " << to_string(sys_A)
+                    TraceLogger(supply) << " ... " << sys_A
                                         << (supply_empire_baseline_unobstructed_systems.contains(sys_A) ? " un" : " ")
-                                        << "obstructed for empire " << to_string(supply_empire_id);
-                    TraceLogger(supply) << " ... " << to_string(sys_B)
+                                        << "obstructed for empire " << supply_empire_id;
+                    TraceLogger(supply) << " ... " << sys_B
                                         << (supply_empire_baseline_unobstructed_systems.contains(sys_B) ? " un" : " ")
-                                        << "obstructed for empire " << to_string(supply_empire_id);
+                                        << "obstructed for empire " << supply_empire_id;
                     if (supply_empire_baseline_unobstructed_systems.contains(sys_B) &&
                         supply_empire_baseline_unobstructed_systems.contains(sys_A))
                     {
-                        TraceLogger(supply) << " ... ... adding empire " << to_string(supply_empire_id)
-                                            << " traversals for " << to_string(sys_A) << " and " << to_string(sys_B);
+                        TraceLogger(supply) << " ... ... adding empire " << supply_empire_id
+                                            << " traversals for " << sys_A << " and " << sys_B;
                         empire_supply_traversals.emplace(sys_A, sys_B);
                         empire_supply_traversals.emplace(sys_B, sys_A);
                     }
 
-                    TraceLogger(supply) << " ... " << to_string(sys_A)
+                    TraceLogger(supply) << " ... " << sys_A
                                         << (ally_baseline_unobstructed_systems.contains(sys_A) ? " un" : " ")
-                                        << "obstructed for empire " << to_string(ally_id);
-                    TraceLogger(supply) << " ... " << to_string(sys_B)
+                                        << "obstructed for empire " << ally_id;
+                    TraceLogger(supply) << " ... " << sys_B
                                         << (ally_baseline_unobstructed_systems.contains(sys_B) ? " un" : " ")
-                                        << "obstructed for empire " << to_string(ally_id);
+                                        << "obstructed for empire " << ally_id;
                     if (ally_baseline_unobstructed_systems.contains(sys_B) &&
                         ally_baseline_unobstructed_systems.contains(sys_A))
                     {
-                        TraceLogger(supply) << " ... ... adding empire " << to_string(ally_id)
-                                            << " traversals for " << to_string(sys_A) << " and " << to_string(sys_B);
+                        TraceLogger(supply) << " ... ... adding empire " << ally_id
+                                            << " traversals for " << sys_A << " and " << sys_B;
                         ally_supply_traversals.emplace(sys_A, sys_B);
                         ally_supply_traversals.emplace(sys_B, sys_A);
                     }
@@ -843,30 +844,30 @@ void SupplyManager::Update(const ScriptingContext& context) {
             continue;
         const auto& empire_directly_supplied = m_empire_propagated_supply_ranges[supply_empire_id];
         const auto& empire_obstructed_traversals = m_supply_starlane_obstructed_traversals[supply_empire_id];
-        TraceLogger(supply) << " CHECK BORDERS of empire " << to_string(supply_empire_id);
+        TraceLogger(supply) << " CHECK BORDERS of empire " << supply_empire_id;
         for (auto const& [sys_A, sys_B] : empire_obstructed_traversals) {
             //TraceLogger(supply) << "(?empire " << supply_empire_id << "?) " << sys_A << " - " << sys_B << " (empire ?)";
             if (!empire_directly_supplied.contains(sys_A))
-                ErrorLogger(supply) << "Error: system " << to_string(sys_A) << " is NOT directly supplied by empire "
-                                    << to_string(supply_empire_id) << ", but it should";
+                ErrorLogger(supply) << "Error: system " << sys_A << " is NOT directly supplied by empire "
+                                    << supply_empire_id << ", but it should";
             // Find the supplier of B and find the intersection of allies between the B supplier and the A supplier
             for (const auto& [b_empire_id, b_empire] : empires) {
                 //TraceLogger(supply) << "Check if (empire " << b_empire_id << ") " << " is supplier of " << sys_B;
                 if (!m_empire_propagated_supply_ranges[b_empire_id].contains(sys_B))
                     continue;
-                TraceLogger(supply) << " ... empire " << to_string(supply_empire_id) << ") " << to_string(sys_A)
-                                    << " - " << to_string(sys_B) << " (empire " << to_string(b_empire_id) << ")";
+                TraceLogger(supply) << " ... empire " << supply_empire_id << ") " << sys_A
+                                    << " - " << sys_B << " (empire " << b_empire_id << ")";
                 // all allies of a_empire which are allies of b_empire may use this traversal
                 for (auto a_ally_id : allies_of_empire) {
-                    TraceLogger(supply) << " ... Check if (empire " << to_string(a_ally_id)
-                                        << ") is allied to supplier of " << to_string(sys_B) << " (empire " << to_string(b_empire_id) << ")";
+                    TraceLogger(supply) << " ... Check if (empire " << a_ally_id
+                                        << ") is allied to supplier of " << sys_B << " (empire " << b_empire_id << ")";
                     if (a_ally_id == b_empire_id)
                         continue;
                     if (empires.GetDiplomaticStatus(a_ally_id, b_empire_id) >= DiplomaticStatus::DIPLO_ALLIED) {
-                        TraceLogger(supply) << " ... ... Empire " << to_string(a_ally_id)
-                                            << " may use (empire " << to_string(supply_empire_id) << ")"
-                                            << to_string(sys_A) << " - " << to_string(sys_B)
-                                            << " as it is allied with " << to_string(b_empire_id);
+                        TraceLogger(supply) << " ... ... Empire " << a_ally_id
+                                            << " may use (empire " << supply_empire_id << ")"
+                                            << sys_A << " - " << sys_B
+                                            << " as it is allied with " << b_empire_id;
                         auto& a_ally_supply_traversals = ally_merged_supply_starlane_traversals[a_ally_id]; // output
                         a_ally_supply_traversals.emplace(sys_A, sys_B);
                         a_ally_supply_traversals.emplace(sys_B, sys_A);
@@ -875,13 +876,13 @@ void SupplyManager::Update(const ScriptingContext& context) {
                 break; // stop after finding the one supplier of B
             }
         }
-        TraceLogger(supply) << " DONE CHECK BORDERS of empire " << to_string(supply_empire_id);
+        TraceLogger(supply) << " DONE CHECK BORDERS of empire " << supply_empire_id;
     }
 
     for (const auto& [empire_id, traversals] : ally_merged_supply_starlane_traversals) {
-        TraceLogger(supply) << "Empire " << to_string(empire_id) << " supply traversals after ally connections:";
+        TraceLogger(supply) << "Empire " << empire_id << " supply traversals after ally connections:";
         for (auto const& [a, b] : traversals)
-            TraceLogger(supply) << " ... " << to_string(a) << " to " << to_string(b);
+            TraceLogger(supply) << " ... " << a << " to " << b;
     }
 
 
@@ -898,9 +899,9 @@ void SupplyManager::Update(const ScriptingContext& context) {
         }
     }
     for (const auto& [empire_id, supplyable] : ally_merged_fleet_supplyable_system_ids) {
-        TraceLogger(supply) << "Empire " << to_string(empire_id) << " supplyable systems after adding allies:";
+        TraceLogger(supply) << "Empire " << empire_id << " supplyable systems after adding allies:";
         for (auto const& a : supplyable)
-            TraceLogger(supply) << " ... " << to_string(a);
+            TraceLogger(supply) << " ... " << a;
     }
 
 
@@ -931,10 +932,10 @@ void SupplyManager::Update(const ScriptingContext& context) {
         something_changed = (initial != ally_merged_supply_starlane_traversals);
     }
     for (const auto& [empire_id, traversals] : ally_merged_supply_starlane_traversals) {
-        TraceLogger(supply) << "Empire " << to_string(empire_id) << " supply traversals after merging allies "
+        TraceLogger(supply) << "Empire " << empire_id << " supply traversals after merging allies "
                             << (50 - limit) << " times:";
         for (auto const& [a, b] : traversals)
-            TraceLogger(supply) << " ... " << to_string(a) << " to " << to_string(b);
+            TraceLogger(supply) << " ... " << a << " to " << b;
     }
 
 
@@ -961,12 +962,12 @@ void SupplyManager::Update(const ScriptingContext& context) {
         if (supply_groups_map.empty())
             continue;
 
-        TraceLogger(supply) << "Empire " << to_string(empire_id) << " supply groups map before merging:";
+        TraceLogger(supply) << "Empire " << empire_id << " supply groups map before merging:";
         for (auto const& [root_sys_id, other_sys_ids] : supply_groups_map) {
-            TraceLogger(supply) << " ... " << to_string(root_sys_id) << " to: " << [&]() {
+            TraceLogger(supply) << " ... " << root_sys_id << " to: " << [&]() {
                 std::stringstream other_ids;
                 for (auto const& r : other_sys_ids)
-                    other_ids << to_string(r) << ", ";
+                    other_ids << r << ", ";
                 return other_ids.str();
             }();
         }
@@ -1023,12 +1024,12 @@ void SupplyManager::Update(const ScriptingContext& context) {
     }
 
     for (const auto& [empire_id, group_sets] : m_resource_supply_groups) {
-        DebugLogger(supply) << "Connected supply groups for empire " << to_string(empire_id) << ":";
+        DebugLogger(supply) << "Connected supply groups for empire " << empire_id << ":";
         for (const auto& group_set : group_sets) {
             DebugLogger(supply) << " ... " << [&]() {
                 std::stringstream ss;
                 for (const auto& sys : group_set)
-                    ss << to_string(sys) << ", ";
+                    ss << sys << ", ";
                 return ss.str();
             }();
         }

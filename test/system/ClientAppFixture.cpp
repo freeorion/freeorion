@@ -224,7 +224,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
                                     save_state_string,       m_galaxy_setup_data);
         m_context.current_turn = m_current_turn;
 
-        InfoLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << to_string(m_empire_id);
+        InfoLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
 
         m_ai_empires.clear();
         auto ai_ids_rng = m_empires | range_keys |
@@ -249,7 +249,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         SetEmpireStatus(about_empire_id, status);
         if (status == Message::PlayerStatus::WAITING)
             m_ai_waiting.erase(about_empire_id);
-        BOOST_TEST_MESSAGE("Updated empire " << to_string(about_empire_id) << " status: " << to_string(status));
+        BOOST_TEST_MESSAGE("Updated empire " << about_empire_id << " status: " << to_string(status));
         return true;
     }
     case Message::MessageType::TURN_PARTIAL_UPDATE: {

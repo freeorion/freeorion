@@ -195,7 +195,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(UniverseObjectID system_id, int f
             if (const auto owner_empire = context.GetEmpire(*owner_empire_ids.begin()))
                 text_color = owner_empire->Color();
             else
-                DebugLogger() << "OwnerColoredSystemName couldn't get empire with id: " << to_string(*owner_empire_ids.begin());
+                DebugLogger() << "OwnerColoredSystemName couldn't get empire with id: " << *owner_empire_ids.begin();
         }
     } else if (has_neutrals) {
         text_color = ClientUI::TextColor();

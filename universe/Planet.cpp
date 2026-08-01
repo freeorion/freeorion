@@ -476,20 +476,20 @@ std::string Planet::CardinalSuffix(const ObjectMap& objects) const {
     std::string retval;
     // Early return for invalid ID
     if (ID() == INVALID_OBJECT_ID) {
-        WarnLogger() << "Planet " << Name() << " has invalid ID";
+        WarnLogger() << "Planet " << this->NameAndID() << " has invalid ID";
         return retval;
     }
 
     auto cur_system = objects.get<System>(SystemID());
     // Early return for no system
     if (!cur_system) {
-        ErrorLogger() << "Planet " << Name() << "(" << to_string(ID()) << ") not assigned to a system";
+        ErrorLogger() << "Planet " << this->NameAndID() << " is not assigned to a system";
         return retval;
     }
 
     // Early return for unknown orbit
     if (cur_system->OrbitOfPlanet(ID()) < 0) {
-        WarnLogger() << "Planet " << Name() << "(" << to_string(ID()) << ") " << "has no current orbit";
+        WarnLogger() << "Planet " << this->NameAndID() << " has no current orbit";
         retval.append(RomanNumber(1));
         return retval;
     }

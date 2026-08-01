@@ -233,11 +233,12 @@ using IDSet = boost::container::flat_set<UniverseObjectID>;
 
 class FO_COMMON_API UniverseObjectCXBase {
 public:
-    [[nodiscard]] virtual const std::string& Name() const noexcept { return EMPTY_STRING; }///< returns the name of this object; some valid objects will have no name
+    [[nodiscard]] virtual const std::string& Name() const noexcept { return EMPTY_STRING; }///< name of this object; some valid objects will have no name
+    [[nodiscard]] CONSTEXPR_STRING std::string NameAndID() const { return Name() + " (" + to_string(m_id) + ")"; }///< name and (ID of this object) as single string
 
     [[nodiscard]] constexpr UniverseObjectType ObjectType() const noexcept { return m_type; }
 
-    [[nodiscard]] constexpr auto            ID() const noexcept { return m_id; }    ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
+    [[nodiscard]] constexpr auto            ID() const noexcept { return m_id; }    ///< ID number of this object.  Each object in FreeOrion has a unique ID number.
     [[nodiscard]] constexpr double          X() const noexcept { return m_x; }      ///< the X-coordinate of this object
     [[nodiscard]] constexpr double          Y() const noexcept { return m_y; }      ///< the Y-coordinate of this object
     [[nodiscard]] constexpr auto            SystemID() const noexcept { return m_system_id; };  ///< ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system

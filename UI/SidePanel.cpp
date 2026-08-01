@@ -1154,7 +1154,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     const ScriptingContext& context = app.GetContext();
     auto* planet = context.ContextObjects().getRaw<const Planet>(m_planet_id);
     if (!planet) {
-        ErrorLogger() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << to_string(m_planet_id);
+        ErrorLogger() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << m_planet_id;
         return;
     }
 
@@ -1169,7 +1169,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     // need to check all empires for capitals
     for (const auto& [loop_empire_id, loop_empire] : context.Empires()) {
         if (!loop_empire) {
-            ErrorLogger() << "PlanetPanel::PlanetPanel got null empire pointer for id " << to_string(loop_empire_id);
+            ErrorLogger() << "PlanetPanel::PlanetPanel got null empire pointer for id " << loop_empire_id;
             continue;
         }
         if (loop_empire->CapitalID() == m_planet_id) {
@@ -1783,8 +1783,8 @@ namespace {
 
         retval.reserve(10); // guesstimate
         for (const auto* ship : o.allRaw<Ship>()) {
-            //ErrorLogger() << " Ship(" << to_string(ship->ID()) << ") "
-            //              << (ship->OrderedBombardPlanet() == target_planet_id?"":" not") <<" bombarding " << target_planet_id;
+            //ErrorLogger() << " Ship(" << ship->NameAndID() << ") "
+            //              << (ship->OrderedBombardPlanet() == target_planet_id?"":" not") << " bombarding " << target_planet_id;
             if (ship->OrderedBombardPlanet() == target_planet_id)
                 retval.push_back(ship);
         }
@@ -2360,8 +2360,8 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in, EmpireID empi
             }
             else {
                 visibility_info += "  " + UserString("PL_NEVER_SEEN");
-                ErrorLogger() << "Empire " << to_string(empire_id) << " knows about planet " << planet->Name() <<
-                                 " (id: " << to_string(planet->ID()) << ") without having seen it before!";
+                ErrorLogger() << "Empire " << empire_id << " knows about planet " << planet->NameAndID()
+                              << " without having seen it before!";
             }
 
             auto system = objects.get<const System>(planet->SystemID());
@@ -2794,7 +2794,7 @@ void SidePanel::PlanetPanel::ClickAnnex() {
     } else {
         const auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "No empire with id " << to_string(empire_id);
+            ErrorLogger() << "No empire with id " << empire_id;
             return;
         }
         const auto source = empire->Source(context.ContextObjects()).get();
@@ -2967,7 +2967,7 @@ void SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot(GG::DropDownList:
     const auto& context = GetApp().GetContext();
     const auto res = context.ContextObjects().getRaw<Planet>(m_planet_id);
     if (!res) {
-        ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged couldn't get planet with id " << to_string(m_planet_id);
+        ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged couldn't get planet with id " << m_planet_id;
         return;
     }
 
@@ -3232,7 +3232,7 @@ void SidePanel::PlanetPanelContainer::DoLayout() {
 }
 
 void SidePanel::PlanetPanelContainer::SelectPlanet(UniverseObjectID planet_id) {
-    //std::cout << "SidePanel::PlanetPanelContainer::SelectPlanet(" << to_string(planet_id) << ")" << std::endl;
+    //std::cout << "SidePanel::PlanetPanelContainer::SelectPlanet(" << planet_id << ")" << std::endl;
     if (planet_id != m_selected_planet_id && m_candidate_ids.contains(planet_id)) {
         m_selected_planet_id = planet_id;
         bool planet_id_match_found = false;
@@ -3718,7 +3718,7 @@ void SidePanel::RefreshInPreRender(GGHumanClientApp& app) {
     // connect state changed and insertion signals for planets and fleets in system
     auto* system = objects.getRaw<System>(s_system_id);
     if (!system) {
-        ErrorLogger() << "SidePanel::Refresh couldn't get system with id " << to_string(s_system_id);
+        ErrorLogger() << "SidePanel::Refresh couldn't get system with id " << s_system_id;
         return;
     }
 

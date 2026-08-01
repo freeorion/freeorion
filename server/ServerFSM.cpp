@@ -282,13 +282,13 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
                     // AI abnormally disconnected during a regular game
                     ErrorLogger(FSM) << "AI Player #" << id << ", named \""
                                      << player_connection->PlayerName() << "\" quit before empire #"
-                                     << to_string(empire->GetEmpireID()) << " "
+                                     << empire->GetEmpireID() << " "
                                      << empire->Name() << " of player "
                                      << empire->PlayerName() << " was eliminated.";
                 } else {
                     InfoLogger(FSM) << "AI Player #" << id << ", named \""
                                     << player_connection->PlayerName() << "\" killed after empire #"
-                                    << to_string(empire->GetEmpireID()) << " "
+                                    << empire->GetEmpireID() << " "
                                     << empire->Name() << " of player "
                                     << empire->PlayerName() << " was eliminated.";
                     // detach player from empire
@@ -338,7 +338,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
                 break;
             default:
                 ErrorLogger(FSM) << "Incorrect client type " << m_server.GetEmpireClientType(empire.first)
-                                 << " for empire #" << to_string(empire.first);
+                                 << " for empire #" << empire.first;
                 break;
             }
         }
@@ -1523,7 +1523,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                                     }
                                 }
                             } else {
-                                WarnLogger(FSM) << "Unknown empire #" << to_string(plr.save_game_empire_id);
+                                WarnLogger(FSM) << "Unknown empire #" << plr.save_game_empire_id;
                                 incorrect_empire = true;
                             }
                         }
@@ -1653,7 +1653,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                                 }
                             }
                         } else {
-                            WarnLogger(FSM) << "Unknown empire #" << to_string(j_player.second.save_game_empire_id);
+                            WarnLogger(FSM) << "Unknown empire #" << j_player.second.save_game_empire_id;
                             incorrect_empire = true;
                         }
                     }
@@ -3041,7 +3041,7 @@ sc::result PlayingGame::react(const AutoTurn& msg) {
     EmpireID empire_id = empire->GetEmpireID();
     if (empire->Eliminated()) {
         ErrorLogger(FSM) << "PlayingGame::react(AutoTurn&) received orders from player " << empire->PlayerName() << "(id: "
-                         << player_id << ") who controls empire " << to_string(empire_id)
+                         << player_id << ") who controls empire " << empire_id
                          << " but empire was eliminated";
         player_connection->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
         return discard_event();
@@ -3250,7 +3250,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
         EmpireID empire_id = empire->GetEmpireID();
         if (empire->Eliminated()) {
             ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnOrders&) received orders from player " << empire->PlayerName() << "(id: "
-                             << player_id << ") who controls empire " << to_string(empire_id)
+                             << player_id << ") who controls empire " << empire_id
                              << " but empire was eliminated";
             sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
             return discard_event();
@@ -3263,15 +3263,16 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
             }
             if (empire_id != order->GetEmpireID()) {
                 ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnOrders&) received orders from player " << empire->PlayerName()
-                                 << "(id: " << player_id << ") who controls empire " << to_string(empire_id)
-                                 << " but those orders were for empire " << to_string(order->GetEmpireID()) << ".  Orders being ignored.";
+                                 << "(id: " << player_id << ") who controls empire " << empire_id
+                                 << " but those orders were for empire " << order->GetEmpireID()
+                                 << ".  Orders being ignored.";
                 sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
                 return discard_event();
             }
         }
 
         DebugLogger(FSM) << "WaitingForTurnEnd.TurnOrders : Received orders from player " << player_id
-                         << " for empire " << to_string(empire_id) << " count of " << order_set.size();
+                         << " for empire " << empire_id << " count of " << order_set.size();
 
         server.AddEmpireData(PlayerSaveGameData(sender->PlayerName(), empire_id, std::move(order_set),
                                                 std::move(ui_data), std::move(save_state_string),
@@ -3354,7 +3355,7 @@ sc::result WaitingForTurnEnd::react(const TurnPartialOrders& msg) {
         EmpireID empire_id = empire->GetEmpireID();
         if (empire->Eliminated()) {
             ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) received orders from player " << empire->PlayerName()
-                             << " (id: " << player_id << ") who controls empire " << to_string(empire_id)
+                             << " (id: " << player_id << ") who controls empire " << empire_id
                              << " but empire was eliminated";
             sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
             return discard_event();
@@ -3366,8 +3367,8 @@ sc::result WaitingForTurnEnd::react(const TurnPartialOrders& msg) {
             } else if (empire_id != order->GetEmpireID()) {
                 ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) received orders from player "
                                  << empire->PlayerName() << "(id: "
-                                 << player_id << ") who controls empire " << to_string(empire_id)
-                                 << " but those orders were for empire " << to_string(order->GetEmpireID())
+                                 << player_id << ") who controls empire " << empire_id
+                                 << " but those orders were for empire " << order->GetEmpireID()
                                  << ".  Orders being ignored.";
                 sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
                 return discard_event();
@@ -3405,7 +3406,7 @@ sc::result WaitingForTurnEnd::react(const RevertOrders& msg) {
     const EmpireID empire_id = empire->GetEmpireID();
     if (empire->Eliminated()) {
         ErrorLogger(FSM) << "WaitingForTurnEnd::react(RevertOrders&) received orders from player " << empire->PlayerName() << "(id: "
-            << player_id << ") who controls empire " << to_string(empire_id) << " but empire was eliminated";
+            << player_id << ") who controls empire " << empire_id << " but empire was eliminated";
         sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
         return discard_event();
     }
@@ -3457,7 +3458,7 @@ sc::result WaitingForTurnEnd::react(const RevokeReadiness& msg) {
         const EmpireID empire_id = empire->GetEmpireID();
         if (empire->Eliminated()) {
             ErrorLogger(FSM) << "WaitingForTurnEnd::react(RevokeReadiness&) received orders from player " << empire->PlayerName() << "(id: "
-                             << player_id << ") who controls empire " << to_string(empire_id)
+                             << player_id << ") who controls empire " << empire_id
                              << " but empire was eliminated";
             sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
             return discard_event();
