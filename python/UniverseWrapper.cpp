@@ -451,8 +451,7 @@ namespace FreeOrionPython {
             .def("getVisibilityTurnsMap",       GetObjEmpireVisTurns,
                                                 py::return_value_policy<py::return_by_value>())
 
-            .def("getVisibility",               &Universe::GetObjectVisibilityByEmpire,
-                                                py::return_value_policy<py::return_by_value>())
+            .def("getVisibility",               +[](const Universe& u, int obj_id, int emp_id) { return u.GetObjectVisibilityByEmpire(UniverseObjectID{obj_id}, EmpireID{emp_id}); })
 
             // Indexed by stat name (string), contains a map indexed by empire id,
             // contains a map from turn number (int) to stat value (double).
@@ -469,13 +468,13 @@ namespace FreeOrionPython {
         // UniverseObject //
         ////////////////////
         py::class_<UniverseObject, boost::noncopyable>("universeObject", py::no_init)
-            .add_property("id",                 +[](const UniverseObject& o) noexcept { return Value(o.ID()); })
+            .add_property("id",                 +[](const UniverseObject& o) noexcept -> int { return Value(o.ID()); })
             .add_property("name",               make_function(&UniverseObject::Name, py::return_value_policy<py::copy_const_reference>()))
             .add_property("x",                  &UniverseObject::X)
             .add_property("y",                  &UniverseObject::Y)
-            .add_property("systemID",           +[](const UniverseObject& o) noexcept { return Value(o.SystemID()); })
+            .add_property("systemID",           +[](const UniverseObject& o) noexcept -> int { return Value(o.SystemID()); })
             .add_property("unowned",            &UniverseObject::Unowned)
-            .add_property("owner",              +[](const UniverseObject& o) noexcept { return Value(o.Owner()); })
+            .add_property("owner",              +[](const UniverseObject& o) noexcept -> int { return Value(o.Owner()); })
             .def("ownedBy",                     +[](const UniverseObject& o, int eid) { return o.OwnedBy(EmpireID{eid}); })
             .add_property("creationTurn",       &UniverseObject::CreationTurn)
             .add_property("ageInTurns",         +[](const UniverseObject& o) { return o.AgeInTurns(IApp::GetApp()->CurrentTurn()); })
@@ -484,8 +483,8 @@ namespace FreeOrionPython {
             .def("specialAddedOnTurn",          &UniverseObject::SpecialAddedOnTurn)
             .def("contains",                    +[](const UniverseObject& o, int oid) { return o.Contains(UniverseObjectID{oid}); })
             .def("containedBy",                 +[](const UniverseObject& o, int oid) { return o.ContainedBy(UniverseObjectID{oid}); })
-            .add_property("containedObjects",   +[](const UniverseObject& o) { return ToIntValueVec(o.ContainedObjectIDs()); })
-            .add_property("containerObject",    +[](const UniverseObject& o) { return Value(o.ContainerObjectID()); })
+            .add_property("containedObjects",   +[](const UniverseObject& o) -> std::vector<int> { return ToIntValueVec(o.ContainedObjectIDs()); })
+            .add_property("containerObject",    +[](const UniverseObject& o) -> int { return Value(o.ContainerObjectID()); })
             .def("currentMeterValue",           ObjectCurrentMeterValue,             py::return_value_policy<py::return_by_value>())
             .def("initialMeterValue",           ObjectInitialMeterValue,             py::return_value_policy<py::return_by_value>())
             .add_property("tags",               make_function(ObjectTagsAsStringVec, py::return_value_policy<py::return_by_value>()))
