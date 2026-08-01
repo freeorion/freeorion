@@ -346,8 +346,8 @@ namespace FreeOrionPython {
             .add_property("totalPolicySlots",       +[](const Empire& e) -> std::map<std::string, int> { return ViewVecToStringMap(e.TotalPolicySlots()); })
             .add_property("emptyPolicySlots",       +[](const Empire& e) -> std::map<std::string, int> { return ViewVecToStringMap(e.EmptyPolicySlots()); })
 
-            .def("canBuild",                        +[](const Empire& empire, BuildType build_type, const std::string& name, int location) -> bool { return empire.ProducibleItem(build_type, name, static_cast<UniverseObjectID>(location), IApp::GetApp()->GetContext()); })
-            .def("canBuild",                        +[](const Empire& empire, BuildType build_type, int design, int location) -> bool { return empire.ProducibleItem(build_type, design, static_cast<UniverseObjectID>(location), IApp::GetApp()->GetContext()); })
+            .def("canBuild",                        +[](const Empire& empire, BuildType build_type, const std::string& name, int location) -> bool { return empire.ProducibleItem(build_type, name, UniverseObjectID{location}, IApp::GetApp()->GetContext()); })
+            .def("canBuild",                        +[](const Empire& empire, BuildType build_type, int design, int location) -> bool { return empire.ProducibleItem(build_type, design, UniverseObjectID{location}, IApp::GetApp()->GetContext()); })
 
             .def("hasExploredSystem",               +[](const Empire& empire, int sys_id) -> bool { return empire.HasExploredSystem(UniverseObjectID{sys_id}); })
             .add_property("exploredSystemIDs",      +[](const Empire& empire) -> std::vector<int> { return ToIntVec(empire.ExploredSystems()); })
@@ -355,14 +355,14 @@ namespace FreeOrionPython {
             .add_property("eliminated",             &Empire::Eliminated)
             .add_property("won",                    &Empire::Won)
 
-            .add_property("productionPoints",       make_function(&Empire::ProductionPoints,        py::return_value_policy<py::return_by_value>()))
+            .add_property("productionPoints",       &Empire::ProductionPoints)
             .def("resourceStockpile",               &Empire::ResourceStockpile)
             .def("resourceProduction",              &Empire::ResourceOutput)
             .def("resourceAvailable",               &Empire::ResourceAvailable)
 
             .def("population",                      &Empire::Population)
 
-                .def("preservedLaneTravel",             +[](const Empire& empire, int sys_id_1, int sys_id_2) -> bool { return empire.PreservedLaneTravel(UniverseObjectID{sys_id_1}, UniverseObjectID{sys_id_2}); })
+            .def("preservedLaneTravel",             +[](const Empire& empire, int sys_id_1, int sys_id_2) -> bool { return empire.PreservedLaneTravel(UniverseObjectID{sys_id_1}, UniverseObjectID{sys_id_2}); })
 
             .add_property("fleetSupplyableSystemIDs",   +[](const Empire& empire) -> std::set<int> { return ToIntSet(IApp::GetApp()->GetSupplyManager().FleetSupplyableSystemIDs(empire.GetEmpireID())); })
             .add_property("supplyUnobstructedSystems",  +[](const Empire& empire) -> std::set<int> { return ToIntSet(empire.SupplyUnobstructedSystems()); })
