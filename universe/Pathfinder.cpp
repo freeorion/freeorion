@@ -580,17 +580,17 @@ namespace {
                 // look up objects in system
                 auto system1 = m_objects->getRaw<System>(sys_id_1);
                 if (!system1) {
-                    ErrorLogger() << "Invalid source system " << to_string(sys_id_1);
+                    ErrorLogger() << "Invalid source system " << sys_id_1;
                     return true;
                 }
                 auto system2 = m_objects->getRaw<System>(sys_id_2);
                 if (!system2) {
-                    ErrorLogger() << "Invalid target system " << to_string(sys_id_2);
+                    ErrorLogger() << "Invalid target system " << sys_id_2;
                     return true;
                 }
 
                 if (!system1->HasStarlaneTo(system2->ID())) {
-                    DebugLogger() << "No starlane from " << to_string(system1->ID()) << " to " << to_string(system2->ID());
+                    DebugLogger() << "No starlane from " << system1->NameAndID() << " to " << system2->NameAndID();
                     return false;
                 }
 
@@ -760,12 +760,12 @@ double Pathfinder::PathfinderImpl::LinearDistance(UniverseObjectID system1_id, U
 {
     const auto system1 = objects.getRaw<System>(system1_id);
     if (!system1) [[unlikely]] {
-        ErrorLogger() << "Universe::LinearDistance passed invalid system id: " << to_string(system1_id);
+        ErrorLogger() << "Universe::LinearDistance passed invalid system id: " << system1_id;
         throw std::out_of_range("system1_id invalid");
     }
     const auto system2 = objects.getRaw<System>(system2_id);
     if (!system2) [[unlikely]] {
-        ErrorLogger() << "Universe::LinearDistance passed invalid system id: " << to_string(system2_id);
+        ErrorLogger() << "Universe::LinearDistance passed invalid system id: " << system2_id;
         throw std::out_of_range("system2_id invalid");
     }
     const double x_dist = system2->X() - system1->X();
@@ -799,7 +799,7 @@ int16_t Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(UniverseObjectID 
 
     } catch (const std::out_of_range&) {
         ErrorLogger() << "PathfinderImpl::JumpDistanceBetweenSystems passed invalid system id(s): "
-                      << to_string(system1_id) << " & " << to_string(system2_id);
+                      << system1_id << " & " << system2_id;
         throw;
     }
 }
@@ -826,8 +826,8 @@ namespace {
 
         if (objects.getRaw<System>(obj->SystemID())) {
             if (trace_log) {
-                TraceLogger() << "GeneralizedLocation of " << obj->Name() << " (" << to_string(obj->ID())
-                              << ") is system id: " << to_string(obj->SystemID());
+                TraceLogger() << "GeneralizedLocation of " << obj->NameAndID()
+                              << " is system: " << obj->NameAndID();
             }
             return obj->SystemID();
         }
@@ -835,13 +835,13 @@ namespace {
         if (auto fleet = FleetFromObject(obj, objects)) {
             auto fleet_sys_pair = std::pair(fleet->PreviousSystemID(), fleet->NextSystemID());
             if (fleet_sys_pair.first == INVALID_OBJECT_ID || fleet_sys_pair.second == INVALID_OBJECT_ID) {
-                ErrorLogger() << "GeneralizedLocation of " << obj->Name() << " (" << to_string(obj->ID())
-                              << ") is between " << to_string(fleet_sys_pair.first) << " and " << to_string(fleet_sys_pair.second);
+                ErrorLogger() << "GeneralizedLocation of " << obj->NameAndID()
+                              << " is between " << fleet_sys_pair.first << " and " << fleet_sys_pair.second;
                 return nullptr;
             }
             if (trace_log) {
-                TraceLogger() << "GeneralizedLocation of " << obj->Name() << " (" << to_string(obj->ID())
-                              << ") is between " << to_string(fleet_sys_pair.first) << " and " << to_string(fleet_sys_pair.second);
+                TraceLogger() << "GeneralizedLocation of " << obj->NameAndID()
+                              << " is between " << fleet_sys_pair.first << " and " << fleet_sys_pair.second;
             }
             return fleet_sys_pair;
         }
@@ -853,7 +853,7 @@ namespace {
         if (obj->ID() == TEMPORARY_OBJECT_ID)
             return nullptr;
 
-        ErrorLogger() << "GeneralizedLocationType unable to locate " << obj->Name() << "(" << to_string(obj->ID()) << ")";
+        ErrorLogger() << "GeneralizedLocationType unable to locate " << obj->NameAndID();
         return nullptr;
     }
 
@@ -883,7 +883,7 @@ struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
             sjumps = pf.JumpDistanceBetweenSystems(sys_id1, sys_id2);
         } catch (const std::out_of_range&) {
             ErrorLogger() << "JumpsBetweenObjects caught out of range exception sys_id1 = "
-                          << to_string(sys_id1) << " sys_id2 = " << to_string(sys_id2);
+                          << sys_id1 << " sys_id2 = " << sys_id2;
             return INT_MAX;
         }
         int jumps = (sjumps == -1) ? INT_MAX : static_cast<int>(sjumps);
@@ -995,7 +995,7 @@ std::pair<std::vector<UniverseObjectID>, double> Pathfinder::PathfinderImpl::Sho
         if (graph_it == graph_views.end())
             graph_it = graph_views.find(empire_id);
         if (graph_it == graph_views.end()) {
-            ErrorLogger() << "PathfinderImpl::ShortestPath passed unknown empire id: " << to_string(empire_id);
+            ErrorLogger() << "PathfinderImpl::ShortestPath passed unknown empire id: " << empire_id;
             throw std::out_of_range("PathfinderImpl::ShortestPath passed unknown empire id");
         }
 
@@ -1003,7 +1003,7 @@ std::pair<std::vector<UniverseObjectID>, double> Pathfinder::PathfinderImpl::Sho
 
     } catch (const std::out_of_range&) {
         ErrorLogger() << "PathfinderImpl::ShortestPath passed invalid system id(s): "
-                      << to_string(system1_id) << " & " << to_string(system2_id);
+                      << system1_id << " & " << system2_id;
         return {{}, -1.0};
     }
 }
@@ -1028,7 +1028,7 @@ std::pair<std::vector<UniverseObjectID>, double> Pathfinder::PathfinderImpl::Sho
     try {
         return ShortestPathImpl(sys_pred_graph, system1_id, system2_id, m_system_id_to_graph_index);
     } catch (const std::out_of_range&) {
-        ErrorLogger() << "ShortestPath: Invalid system id(s): " << to_string(system1_id) << ", " << to_string(system2_id);
+        ErrorLogger() << "ShortestPath: Invalid system id(s): " << system1_id << ", " << system2_id;
         throw;
     }
 }
@@ -1065,8 +1065,8 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(UniverseObjectID object1
             dist = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
             system_one = next_sys;
         } else {
-            ErrorLogger() << "ShortestPathDistance couldn't get fleet " << to_string(fleet->ID())
-                          << " next system " << to_string(fleet->NextSystemID());
+            ErrorLogger() << "ShortestPathDistance couldn't get fleet " << fleet->NameAndID()
+                          << " next system " << fleet->NextSystemID();
             return -1.0;
         }
     }
@@ -1081,8 +1081,8 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(UniverseObjectID object1
             dist += std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
             system_two = next_sys;
         } else {
-            ErrorLogger() << "ShortestPathDistance couldn't get fleet " << to_string(fleet->ID())
-                          << " next system " << to_string(fleet->NextSystemID());
+            ErrorLogger() << "ShortestPathDistance couldn't get fleet " << fleet->NameAndID()
+                          << " next system " << fleet->NextSystemID();
             return -1.0;
         }
     }
@@ -1121,7 +1121,7 @@ std::pair<std::vector<UniverseObjectID>, int> Pathfinder::PathfinderImpl::LeastJ
                                       m_system_id_to_graph_index, max_jumps);
         } catch (const std::out_of_range&) {
             ErrorLogger() << "PathfinderImpl::LeastJumpsPath passed invalid system id(s): "
-                          << to_string(system1_id) << " & " << to_string(system2_id);
+                          << system1_id << " & " << system2_id;
             throw;
         }
     }
@@ -1131,7 +1131,7 @@ std::pair<std::vector<UniverseObjectID>, int> Pathfinder::PathfinderImpl::LeastJ
         return LeastJumpsPathImpl(empire_view_graph_it->second, system1_id, system2_id, m_system_id_to_graph_index, max_jumps);
     } catch (const std::out_of_range&) {
         ErrorLogger() << "PathfinderImpl::LeastJumpsPath passed invalid system id(s): "
-                      << to_string(system1_id) << " & " << to_string(system2_id);
+                      << system1_id << " & " << system2_id;
         throw;
     }
 }
@@ -1140,7 +1140,7 @@ bool Pathfinder::SystemsConnected(UniverseObjectID system1_id, UniverseObjectID 
 { return pimpl->SystemsConnected(system1_id, system2_id, empire_id); }
 
 bool Pathfinder::PathfinderImpl::SystemsConnected(UniverseObjectID system1_id, UniverseObjectID system2_id, EmpireID empire_id) const {
-    TraceLogger() << "SystemsConnected(" << to_string(system1_id) << ", " << to_string(system2_id) << ", " << to_string(empire_id) << ")";
+    TraceLogger() << "SystemsConnected(" << system1_id << ", " << system2_id << ", " << empire_id << ")";
     auto path = LeastJumpsPath(system1_id, system2_id, empire_id);
     TraceLogger() << "SystemsConnected returned path of size: " << path.first.size();
     bool retval = !path.first.empty();
@@ -1321,7 +1321,7 @@ struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
         try {
             index = pf.m_system_id_to_graph_index.at(other_id);
         } catch (const std::out_of_range&) {
-            ErrorLogger() << "Passed invalid system id: " << to_string(other_id);
+            ErrorLogger() << "Passed invalid system id: " << other_id;
             return false;
         }
         bool retval = (row[index] <= jumps);
@@ -1413,7 +1413,7 @@ bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     try {
         system_index = m_system_id_to_graph_index.at(system_id);
     } catch (const std::out_of_range&) {
-        ErrorLogger() << "Passed invalid system id: " << to_string(system_id);
+        ErrorLogger() << "Passed invalid system id: " << system_id;
         return false;
     }
 
@@ -1554,7 +1554,7 @@ void Pathfinder::PathfinderImpl::UpdateEmpireVisibilityFilteredSystemGraphs(
     for (const auto empire_id : empires.EmpireIDs()) {
         auto map_it = empire_object_maps.find(empire_id);
         if (map_it == empire_object_maps.end()) {
-            ErrorLogger() << "UpdateEmpireVisibilityFilteredSystemGraphs can't find object map for empire with id " << to_string(empire_id);
+            ErrorLogger() << "UpdateEmpireVisibilityFilteredSystemGraphs can't find object map for empire with id " << empire_id;
             continue;
         }
         const auto& emp_objs = map_it->second;

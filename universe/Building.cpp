@@ -115,8 +115,7 @@ std::size_t Building::SizeInMemory() const {
 std::string Building::Dump(uint8_t ntabs) const {
     std::stringstream os;
     os << UniverseObject::Dump(ntabs);
-    os << " building type: " << m_building_type
-       << " produced by empire id: " << to_string(m_produced_by_empire_id);
+    os << " building type: " << m_building_type << " produced by empire id: " << m_produced_by_empire_id;
     return os.str();
 }
 

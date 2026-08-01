@@ -578,7 +578,7 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
     // Write Header text
     const auto* system = objects.getRaw<System>(log->system_id);
     const std::string& sys_name = (system ? system->PublicName(client_empire_id, universe) : UserString("ERROR"));
-    DebugLogger(combat_log) << "Showing combat log #" << log_id << " at " << sys_name << " (" << to_string(log->system_id)
+    DebugLogger(combat_log) << "Showing combat log #" << log_id << " at " << sys_name << " (" << log->system_id
                             << ") with " << log->combat_events.size() << " events";
 
     AddRow(DecorateLinkText(str(FlexibleFormat(UserString("ENC_COMBAT_LOG_DESCRIPTION_STR"))

@@ -285,7 +285,7 @@ namespace {
 
         const auto* target_fleet = objects.getRaw<const Fleet>(fleet_id);
         if (!target_fleet) {
-            ErrorLogger() << "MergeFleetsIntoFleet couldn't get a fleet with id " << to_string(fleet_id);
+            ErrorLogger() << "MergeFleetsIntoFleet couldn't get a fleet with id " << fleet_id;
             return;
         }
 
@@ -1894,7 +1894,7 @@ public:
 
         const auto target_fleet_id = drop_target_fleet_row->FleetID();
         if (!context.ContextObjects().getRaw<const Fleet>(target_fleet_id)) {
-            ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get target fleet with id: " << to_string(target_fleet_id);
+            ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get target fleet with id: " << target_fleet_id;
             return;
         }
 
@@ -2331,7 +2331,7 @@ public:
 
             const auto fleet = objects.get<Fleet>(ship->FleetID());
             if (!fleet) {
-                ErrorLogger() << "ShipsListBox::DropsAcceptable couldn't get fleet with id " << to_string(ship->FleetID());
+                ErrorLogger() << "ShipsListBox::DropsAcceptable couldn't get fleet with id " << ship->FleetID();
                 continue;
             }
 
@@ -2487,7 +2487,7 @@ void FleetDetailPanel::SetFleet(UniverseObjectID fleet_id) {
     if (fleet && !fleet->Empty())
         m_fleet_connection = fleet->StateChangedSignal.connect([this]() { Refresh(); }, boost::signals2::at_front);
     else
-        ErrorLogger() << "FleetDetailPanel::SetFleet set to missing or empty fleet id: " << to_string(fleet_id);
+        ErrorLogger() << "FleetDetailPanel::SetFleet set to missing or empty fleet id: " << fleet_id;
 }
 
 void FleetDetailPanel::SelectShips(const std::set<UniverseObjectID>& ship_ids) {
@@ -2782,7 +2782,7 @@ FleetWnd::FleetWnd(const std::vector<UniverseObjectID>& fleet_ids, bool order_is
     // verify that the selected fleet id is valid.
     if (selected_fleet_id != INVALID_OBJECT_ID  &&  !m_fleet_ids.contains(selected_fleet_id))
     {
-        ErrorLogger() << "FleetWnd::FleetWnd couldn't find requested selected fleet with id " << to_string(selected_fleet_id);
+        ErrorLogger() << "FleetWnd::FleetWnd couldn't find requested selected fleet with id " << selected_fleet_id;
         selected_fleet_id = INVALID_OBJECT_ID;
     }
 
@@ -3280,7 +3280,7 @@ void FleetWnd::DeselectAllFleets() {
 
 void FleetWnd::SelectFleet(UniverseObjectID fleet_id, const ObjectMap& objects) {
     if (fleet_id == INVALID_OBJECT_ID || !(objects.getRaw<Fleet>(fleet_id))) {
-        ErrorLogger() << "FleetWnd::SelectFleet invalid id " << to_string(fleet_id);
+        ErrorLogger() << "FleetWnd::SelectFleet invalid id " << fleet_id;
         DeselectAllFleets();
         return;
     }

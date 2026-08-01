@@ -232,13 +232,13 @@ bool RenameOrder::Check(EmpireID empire, UniverseObjectID object, std::string ne
 
     // verify that empire specified in order owns specified object
     if (!obj->OwnedBy(empire)) {
-        ErrorLogger() << "RenameOrder::Check() : Object " << to_string(object) << " is"
-                      << " not owned by empire " << to_string(empire) << ".";
+        ErrorLogger() << "RenameOrder::Check() : Object " << object << " is"
+                      << " not owned by empire " << empire << ".";
         return false;
     }
 
     if (obj->Name() == new_name) {
-        ErrorLogger() << "RenameOrder::Check() : Object " << to_string(object)
+        ErrorLogger() << "RenameOrder::Check() : Object " << object
                       << " should renamed to the same name.";
         return false;
     }
@@ -305,7 +305,7 @@ bool NewFleetOrder::Check(EmpireID empire, const std::string& fleet_name, const 
                           FleetAggression, const ScriptingContext& context)
 {
     if (ship_ids.empty()) {
-        ErrorLogger() << "Empire " << to_string(empire) << " attempted to create a new fleet (" << fleet_name << ") without ships";
+        ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name << ") without ships";
         return false;
     }
 
@@ -319,7 +319,7 @@ bool NewFleetOrder::Check(EmpireID empire, const std::string& fleet_name, const 
     std::set<UniverseObjectID> arrival_starlane_ids;
     for (const auto* ship : context.ContextObjects().findRaw<Ship>(ship_ids)) {
         if (!ship) {
-            ErrorLogger() << "Empire " << to_string(empire) << " attempted to create a new fleet (" << fleet_name
+            ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name
                           << ") with an invalid ship";
             return false;
         }
@@ -333,7 +333,7 @@ bool NewFleetOrder::Check(EmpireID empire, const std::string& fleet_name, const 
         arrival_starlane_ids.insert(arr_lane);
     }
     if (arrival_starlane_ids.size() > 1) {
-        ErrorLogger()  << "Empire " << to_string(empire) << " attempted to create a new fleet with ships from multiple arrival starlanes";
+        ErrorLogger()  << "Empire " << empire << " attempted to create a new fleet with ships from multiple arrival starlanes";
         return false;
     }
 
@@ -341,13 +341,13 @@ bool NewFleetOrder::Check(EmpireID empire, const std::string& fleet_name, const 
     for (const auto* ship : context.ContextObjects().findRaw<Ship>(ship_ids)) {
         // verify that empire is not trying to take ships from somebody else's fleet
         if (!ship->OwnedBy(empire)) {
-            ErrorLogger() << "Empire " << to_string(empire) << " attempted to create a new fleet (" << fleet_name
-                          << ") with ships from another's (" << to_string(ship->Owner()) << ") fleet.";
+            ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name
+                          << ") with ships from another's (" << ship->Owner() << ") fleet.";
             return false;
         }
         if (ship->SystemID() == INVALID_OBJECT_ID) {
-            ErrorLogger() << "Empire " << to_string(empire) << " attempted to create a new fleet (" << fleet_name
-                          << ") with ship (" << to_string(ship->ID()) << ") not in a system";
+            ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name
+                          << ") with ship " << ship->NameAndID() << " not in a system";
             return false;
         }
 
@@ -355,22 +355,22 @@ bool NewFleetOrder::Check(EmpireID empire, const std::string& fleet_name, const 
             system_id = ship->SystemID();
 
         if (ship->SystemID() != system_id) {
-            ErrorLogger() << "Empire " << to_string(empire) << " attempted to make a new fleet (" << fleet_name
-                          << ") from ship (" << to_string(ship->ID()) << ") in the wrong system (" << to_string(ship->SystemID())
-                          << " not " << to_string(system_id) << ")";
+            ErrorLogger() << "Empire " << empire << " attempted to make a new fleet (" << fleet_name
+                          << ") from ship " << ship->NameAndID() << " in the wrong system (" << ship->SystemID()
+                          << " not " << system_id << ")";
             return false;
         }
     }
 
     if (system_id == INVALID_OBJECT_ID) {
-        ErrorLogger() << "Empire " << to_string(empire) << " attempted to create a new fleet (" << fleet_name
+        ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name
                       << ") outside a system";
         return false;
     }
     const auto* system = context.ContextObjects().getRaw<System>(system_id);
     if (!system) {
-        ErrorLogger() << "Empire " << to_string(empire) << " attempted to create a new fleet (" << fleet_name
-                      << ") in a nonexistant system (" << to_string(system_id) << ")";
+        ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name
+                      << ") in a nonexistant system (" << system_id << ")";
         return false;
     }
 
@@ -395,7 +395,7 @@ void NewFleetOrder::ExecuteImpl(ScriptingContext& context) const {
     const UniverseObjectID system_id = validated_ships[0]->SystemID();
     auto* system = o.getRaw<System>(system_id);
     if (!system) {
-        ErrorLogger() << "Unable to get system with id " << to_string(system_id);
+        ErrorLogger() << "Unable to get system with id " << system_id;
         return;
     }
 
@@ -495,8 +495,8 @@ FleetMoveOrder::FleetMoveOrder(EmpireID empire_id, UniverseObjectID fleet_id, Un
     auto short_path = context.ContextUniverse().GetPathfinder().ShortestPath(
         start_system, UniverseObjectID{m_dest_system}, GetEmpireID()).first;
     if (short_path.empty()) {
-        ErrorLogger() << "FleetMoveOrder generated empty shortest path between system " << to_string(start_system)
-                      << " and " << m_dest_system << " for empire " << to_string(GetEmpireID())
+        ErrorLogger() << "FleetMoveOrder generated empty shortest path between system " << start_system
+                      << " and " << m_dest_system << " for empire " << GetEmpireID()
                       << " with fleet " << m_fleet;
         return;
     }
@@ -504,7 +504,7 @@ FleetMoveOrder::FleetMoveOrder(EmpireID empire_id, UniverseObjectID fleet_id, Un
     // if in a system now, don't include it in the route
     if (short_path.front() == fleet->SystemID()) {
         DebugLogger() << "FleetMoveOrder removing fleet " << m_fleet
-                      << " current system location " << to_string(fleet->SystemID())
+                      << " current system location " << fleet->SystemID()
                       << " from shortest path to system " << m_dest_system;
         short_path.erase(short_path.begin()); // pop_front();
     }
@@ -524,13 +524,13 @@ bool FleetMoveOrder::Check(EmpireID empire_id, UniverseObjectID fleet_id,
 {
     const auto* fleet = context.ContextObjects().getRaw<Fleet>(fleet_id);
     if (!fleet) {
-        ErrorLogger() << "Empire with id " << to_string(empire_id) << " ordered fleet with id "
-                      << to_string(fleet_id) << " to move, but no such fleet exists";
+        ErrorLogger() << "Empire with id " << empire_id << " ordered fleet with id "
+                      << fleet_id << " to move, but no such fleet exists";
         return false;
     }
 
     if (!fleet->OwnedBy(empire_id) ) {
-        ErrorLogger() << "Empire with id " << to_string(empire_id) << " order to move but does not own fleet with id " << to_string(fleet_id);
+        ErrorLogger() << "Empire with id " << empire_id << " order to move but does not own fleet with id " << fleet_id;
         return false;
     }
 
@@ -538,8 +538,8 @@ bool FleetMoveOrder::Check(EmpireID empire_id, UniverseObjectID fleet_id,
         context.ContextUniverse().EmpireKnownObjects(empire_id) : context.ContextObjects()};
     const auto* dest_system = known_objs.getRaw<System>(dest_system_id);
     if (!dest_system) {
-        ErrorLogger() << "Empire with id " << to_string(empire_id) << " ordered fleet to move to system with id "
-                      << to_string(dest_system_id) << " but no such system is known to that empire";
+        ErrorLogger() << "Empire with id " << empire_id << " ordered fleet to move to system with id "
+                      << dest_system_id << " but no such system is known to that empire";
         return false;
     }
 
@@ -565,7 +565,7 @@ void FleetMoveOrder::ExecuteImpl(ScriptingContext& context) const {
         DebugLogger() << "FleetMoveOrder::ExecuteImpl appending initial" << [&]() {
             std::stringstream ss;
             for (auto waypoint : fleet_travel_route)
-                ss << " " << to_string(waypoint);
+                ss << " " << waypoint;
             return ss.str();
         }() << "  with" << [&]() {
             std::stringstream ss;
@@ -584,18 +584,18 @@ void FleetMoveOrder::ExecuteImpl(ScriptingContext& context) const {
 
     DebugLogger() << [&fleet, &fleet_travel_route]() {
         std::stringstream ss;
-        ss << "FleetMoveOrder::ExecuteImpl Setting route of fleet " << to_string(fleet->ID())
-           << " at system " << to_string(fleet->SystemID()) << " to: ";
+        ss << "FleetMoveOrder::ExecuteImpl Setting route of fleet " << fleet->NameAndID()
+           << " at system " << fleet->SystemID() << " to: ";
         if (fleet_travel_route.empty())
             return std::string("[empty route]");
         for (auto waypoint : fleet_travel_route)
-            ss << " " << to_string(waypoint);
+            ss << " " << waypoint;
         return ss.str();
     }();
 
     if (!fleet_travel_route.empty() && fleet_travel_route.front() == fleet->SystemID()) {
-        DebugLogger() << "FleetMoveOrder::ExecuteImpl given route that starts with fleet " << to_string(fleet->ID())
-                      << "'s current system (" << to_string(fleet_travel_route.front()) << "); removing it";
+        DebugLogger() << "FleetMoveOrder::ExecuteImpl given route that starts with fleet " << fleet->NameAndID()
+                      << "'s current system (" << fleet_travel_route.front() << "); removing it";
         fleet_travel_route.erase(fleet_travel_route.begin()); // pop_front();
     }
 
@@ -651,7 +651,7 @@ bool FleetTransferOrder::Check(EmpireID empire_id, UniverseObjectID dest_fleet_i
     }
     // check that destination fleet is owned by empire
     if (!fleet->OwnedBy(empire_id)) {
-        ErrorLogger() << "IssueFleetTransferOrder : passed fleet_id " << to_string(dest_fleet_id) << " of fleet not owned by player";
+        ErrorLogger() << "IssueFleetTransferOrder : passed fleet_id " << dest_fleet_id << " of fleet not owned by player";
         return false;
     }
 
@@ -702,11 +702,11 @@ bool FleetTransferOrder::Check(EmpireID empire_id, UniverseObjectID dest_fleet_i
                 new_fleet_arr_lane = fleet->SystemID();
 
             if (ship_old_fleet_arr_lane != new_fleet_arr_lane) {
-                ErrorLogger() << "IssueFleetTransferOrder : passed ship " << to_string(ship->ID())
-                              << " that is in a fleet " << to_string(original_fleet->ID())
-                              << " that has a different arrival starlane " << to_string(ship_old_fleet_arr_lane)
-                              << " than the destination fleet " << to_string(fleet->ID())
-                              << " with arrival starlane " << to_string(new_fleet_arr_lane);
+                ErrorLogger() << "IssueFleetTransferOrder : passed ship " << ship->NameAndID()
+                              << " that is in a fleet " << original_fleet->NameAndID()
+                              << " that has a different arrival starlane " << ship_old_fleet_arr_lane
+                              << " than the destination fleet " << fleet->NameAndID()
+                              << " with arrival starlane " << new_fleet_arr_lane;
                 invalid_ships = true;
                 break;
             }
@@ -785,18 +785,18 @@ bool AnnexOrder::Check(EmpireID empire_id, UniverseObjectID planet_id, const Scr
 
     const auto* planet = o.getRaw<const Planet>(planet_id);
     if (!planet) {
-        ErrorLogger() << "AnnexOrder couldn't get planet with id " << to_string(planet_id);
+        ErrorLogger() << "AnnexOrder couldn't get planet with id " << planet_id;
         return false;
     }
 
     if (empire_id == ALL_EMPIRES) {
-        ErrorLogger() << "AnnexOrder given non-empire empire id: " << to_string(empire_id);
+        ErrorLogger() << "AnnexOrder given non-empire empire id: " << empire_id;
         return false;
     }
 
     const auto& planet_species_name = planet->SpeciesName();
     if (planet_species_name.empty()) {
-        ErrorLogger() << "AnnexOrder given planet without a species: " << to_string(planet_id);
+        ErrorLogger() << "AnnexOrder given planet without a species: " << planet_id;
         return false;
     }
     const auto* planet_species = context.species.GetSpecies(planet_species_name);
@@ -871,20 +871,20 @@ bool ColonizeOrder::Check(EmpireID empire_id, UniverseObjectID ship_id,
     const SpeciesManager& sm = context.species;
 
     if (empire_id == ALL_EMPIRES) {
-        ErrorLogger() << "ColonizeOrder::Check() : empire " << to_string(empire_id) << " is not an empire";
+        ErrorLogger() << "ColonizeOrder::Check() : empire " << empire_id << " is not an empire";
         return false;
     }
 
     auto* ship = o.getRaw<Ship>(ship_id);
     if (!ship) {
-        ErrorLogger() << "ColonizeOrder::Check() : empire " << to_string(empire_id)
-                      << " passed an invalid ship_id: " << to_string(ship_id);
+        ErrorLogger() << "ColonizeOrder::Check() : empire " << empire_id
+                      << " passed an invalid ship_id: " << ship_id;
         return false;
     }
     auto* fleet = o.getRaw<Fleet>(ship->FleetID());
     if (!fleet) {
-        ErrorLogger() << "ColonizeOrder::Check() : empire " << to_string(empire_id)
-                      << " passed ship (" << to_string(ship_id) << ") with an invalid fleet_id: " << to_string(ship->FleetID());
+        ErrorLogger() << "ColonizeOrder::Check() : empire " << empire_id
+                      << " passed ship (" << ship_id << ") with an invalid fleet_id: " << ship->FleetID();
         return false;
     }
 
@@ -905,7 +905,7 @@ bool ColonizeOrder::Check(EmpireID empire_id, UniverseObjectID ship_id,
     const auto* planet = o.getRaw<Planet>(planet_id);
     float colonist_capacity = ship->ColonyCapacity(u);
     if (!planet) {
-        ErrorLogger() << "ColonizeOrder::Check() : couldn't get planet with id " << to_string(planet_id);
+        ErrorLogger() << "ColonizeOrder::Check() : couldn't get planet with id " << planet_id;
         return false;
     }
     if (planet->GetMeter(MeterType::METER_POPULATION)->Initial() > 0.0f) {
@@ -1019,7 +1019,7 @@ bool InvadeOrder::Check(EmpireID empire_id, UniverseObjectID ship_id,
     const ObjectMap& o = context.ContextObjects();
 
     if (empire_id == ALL_EMPIRES) {
-        ErrorLogger() << "InvadeOrder::Check() : empire " << to_string(empire_id) << " is not an empire";
+        ErrorLogger() << "InvadeOrder::Check() : empire " << empire_id << " is not an empire";
         return false;
     }
 
@@ -1054,7 +1054,7 @@ bool InvadeOrder::Check(EmpireID empire_id, UniverseObjectID ship_id,
 
     const auto* planet = o.getRaw<Planet>(UniverseObjectID{planet_id});
     if (!planet) {
-        ErrorLogger() << "InvadeOrder couldn't get planet with id " << to_string(planet_id);
+        ErrorLogger() << "InvadeOrder couldn't get planet with id " << planet_id;
         return false;
     }
 
@@ -1160,13 +1160,13 @@ bool BombardOrder::Check(EmpireID empire_id, UniverseObjectID ship_id, UniverseO
     const ObjectMap& objects = context.ContextObjects();
 
     if (empire_id == ALL_EMPIRES) {
-        ErrorLogger() << "BombardOrder::Check() : empire " << to_string(empire_id) << " is not an empire";
+        ErrorLogger() << "BombardOrder::Check() : empire " << empire_id << " is not an empire";
         return false;
     }
 
     auto* ship = objects.getRaw<Ship>(ship_id);
     if (!ship) {
-        ErrorLogger() << "BombardOrder::ExecuteImpl couldn't get ship with id " << to_string(ship_id);
+        ErrorLogger() << "BombardOrder::ExecuteImpl couldn't get ship with id " << ship_id;
         return false;
     }
     if (!ship->CanBombard(universe)) {
@@ -1180,7 +1180,7 @@ bool BombardOrder::Check(EmpireID empire_id, UniverseObjectID ship_id, UniverseO
 
     auto* planet = objects.getRaw<Planet>(planet_id);
     if (!planet) {
-        ErrorLogger() << "BombardOrder::ExecuteImpl couldn't get planet with id " << to_string(planet_id);
+        ErrorLogger() << "BombardOrder::ExecuteImpl couldn't get planet with id " << planet_id;
         return false;
     }
     if (planet->OwnedBy(empire_id)) {
@@ -1277,13 +1277,13 @@ bool StopBombardOrder::Check(EmpireID empire_id, UniverseObjectID ship_id, Unive
     const ObjectMap& objects = context.ContextObjects();
 
     if (empire_id == ALL_EMPIRES) {
-        ErrorLogger() << "StopBombardOrder::Check() : empire " << to_string(empire_id) << " is not an empire";
+        ErrorLogger() << "StopBombardOrder::Check() : empire " << empire_id << " is not an empire";
         return false;
     }
 
     const auto* ship = objects.getRaw<Ship>(ship_id);
     if (!ship) {
-        ErrorLogger() << "StopBombardOrder::ExecuteImpl couldn't get ship with id " << to_string(ship_id);
+        ErrorLogger() << "StopBombardOrder::ExecuteImpl couldn't get ship with id " << ship_id;
         return false;
     }
     if (!ship->CanBombard(universe)) {
@@ -1297,7 +1297,7 @@ bool StopBombardOrder::Check(EmpireID empire_id, UniverseObjectID ship_id, Unive
 
     const auto* planet = objects.getRaw<Planet>(planet_id);
     if (!planet)
-        WarnLogger() << "StopBombardOrder::ExecuteImpl couldn't get planet with id " << to_string(planet_id);
+        WarnLogger() << "StopBombardOrder::ExecuteImpl couldn't get planet with id " << planet_id;
 
     if (planet->OwnedBy(empire_id))
         WarnLogger() << "StopBombardOrder::ExecuteImpl given planet that is already owned by the order-issuing empire";
@@ -1323,8 +1323,8 @@ bool StopBombardOrder::Check(EmpireID empire_id, UniverseObjectID ship_id, Unive
         //return false;
     }
     if (bombarded_planet_id != planet_id) {
-        ErrorLogger() << "StopBombardOrder::ExecuteImpl to stop bombardment of planet " << to_string(planet_id)
-                      << " was given id of ship which is ordered to bombard different planet " << to_string(bombarded_planet_id)
+        ErrorLogger() << "StopBombardOrder::ExecuteImpl to stop bombardment of planet " << planet_id
+                      << " was given id of ship which is ordered to bombard different planet " << bombarded_planet_id
                       << ". Proceed anyway";
         //return false;
     }
@@ -1369,7 +1369,7 @@ bool StopBombardOrder::UndoImpl(ScriptingContext& context) const {
     }
     auto const bombarding_planet_id = ship->OrderedBombardPlanet();
     if (Value(bombarding_planet_id) != m_planet && bombarding_planet_id != INVALID_OBJECT_ID)
-        WarnLogger() << "StopBombardOrder::UndoImpl ship is already bombarding planet " << to_string(bombarding_planet_id);
+        WarnLogger() << "StopBombardOrder::UndoImpl ship is already bombarding planet " << bombarding_planet_id;
 
     planet->SetIsAboutToBeBombarded(true);
     ship->SetBombardPlanet(UniverseObjectID{m_planet});
@@ -1398,19 +1398,19 @@ bool ChangeFocusOrder::Check(EmpireID empire_id, UniverseObjectID planet_id, con
     auto planet = context.ContextObjects().getRaw<Planet>(planet_id);
 
     if (!planet) {
-        ErrorLogger() << "Invalid planet id " << to_string(planet_id) << " specified in change planet focus order.";
+        ErrorLogger() << "Invalid planet id " << planet_id << " specified in change planet focus order.";
         return false;
     }
 
     if (!planet->OwnedBy(empire_id)) {
-        ErrorLogger() << "Empire " << to_string(empire_id)
-                      << " attempted to issue change planet focus to another's planet: " << to_string(planet_id);
+        ErrorLogger() << "Empire " << empire_id
+                      << " attempted to issue change planet focus to another's planet: " << planet_id;
         return false;
     }
 
     if (!planet->FocusAvailable(focus, context)) {
         ErrorLogger() << "IssueChangeFocusOrder : invalid focus (" << focus
-                      << ") for specified for planet " << to_string(planet_id) << " and empire " << to_string(empire_id);
+                      << ") for specified for planet " << planet_id << " and empire " << empire_id;
         // TODO: further clarify why invalid? get species and check that it has the focus, and then
         //       if the location condition fails?
         return false;
@@ -1845,7 +1845,7 @@ bool ShipDesignOrder::CheckRemember(EmpireID empire_id, int existing_design_id_t
 
     // check if empire is already remembering the design
     if (empire->ShipDesignKept(existing_design_id_to_remember)) {
-        ErrorLogger() << "Empire " << to_string(empire_id)
+        ErrorLogger() << "Empire " << empire_id
                       << " tried to remember a ShipDesign id = " << existing_design_id_to_remember
                       << " that was already being remembered";
         return false;
@@ -1854,7 +1854,7 @@ bool ShipDesignOrder::CheckRemember(EmpireID empire_id, int existing_design_id_t
     // check if the empire can see any objects that have this design (thus enabling it to be copied)
     auto& empire_known_design_ids = context.ContextUniverse().EmpireKnownShipDesignIDs(empire_id);
     if (!empire_known_design_ids.contains(existing_design_id_to_remember)) {
-        ErrorLogger() << "Empire " << to_string(empire_id)
+        ErrorLogger() << "Empire " << empire_id
                       << " tried to remember a ShipDesign id = " << existing_design_id_to_remember
                       << " that this empire hasn't seen";
         return false;
@@ -1872,7 +1872,7 @@ bool ShipDesignOrder::CheckErase(EmpireID empire_id, int design_id_to_erase, boo
 
     // player is ordering empire to forget about a particular design
     if (!empire->ShipDesignKept(design_id_to_erase)) {
-        ErrorLogger() << "Empire " << to_string(empire_id) << " tried to remove a ShipDesign id = " << design_id_to_erase
+        ErrorLogger() << "Empire " << empire_id << " tried to remove a ShipDesign id = " << design_id_to_erase
                       << " that the empire wasn't remembering";
         return false;
     }
@@ -1908,7 +1908,7 @@ bool ShipDesignOrder::CheckRename(EmpireID empire_id, int existing_design_id, co
     // check if a design with this ID exists
     auto existing = universe.GetShipDesign(existing_design_id);
     if (!existing) {
-        ErrorLogger() << "Empire " << to_string(empire_id)
+        ErrorLogger() << "Empire " << empire_id
                       << " tried to rename a ShipDesign with an id, " << existing_design_id
                       << " that does not exist";
         return false;
@@ -1918,20 +1918,20 @@ bool ShipDesignOrder::CheckRename(EmpireID empire_id, int existing_design_id, co
     const auto& empire_known_design_ids = universe.EmpireKnownShipDesignIDs(empire_id);
     auto design_it = empire_known_design_ids.find(existing_design_id);
     if (design_it == empire_known_design_ids.end()) {
-        ErrorLogger() << "Empire " << to_string(empire_id)
+        ErrorLogger() << "Empire " << empire_id
                       << " tried to rename/redescribe a ShipDesign id = " << existing_design_id
                       << " that this empire hasn't seen";
         return false;
     }
     const ShipDesign* design = universe.GetShipDesign(*design_it);
     if (!design) {
-        ErrorLogger() << "Empire " << to_string(empire_id)
+        ErrorLogger() << "Empire " << empire_id
                       << " tried to rename/redescribe a ShipDesign id = " << existing_design_id
                       << " that doesn't exist (but this empire has seen it)!";
         return false;
     }
     if (design->DesignedByEmpire() != empire_id) {
-        ErrorLogger() << "Empire " << to_string(empire_id)
+        ErrorLogger() << "Empire " << empire_id
                       << " tried to rename/redescribe a ShipDesign id = " << existing_design_id
                       << " that isn't owned by this empire!";
         return false;
@@ -2170,7 +2170,7 @@ void ForgetOrder::ExecuteImpl(ScriptingContext& context) const {
     GetValidatedEmpire(context);
     EmpireID empire_id = GetEmpireID();
 
-    DebugLogger() << "ForgetOrder::ExecuteImpl empire: " << to_string(empire_id)
+    DebugLogger() << "ForgetOrder::ExecuteImpl empire: " << empire_id
                   << " for object: " << m_object_id;
 
     context.ContextUniverse().ForgetKnownObject(empire_id, UniverseObjectID{m_object_id});

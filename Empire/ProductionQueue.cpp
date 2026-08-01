@@ -131,7 +131,7 @@ namespace {
                                 const std::map<boost::container::flat_set<UniverseObjectID>, float>& allocated_stockpile_pp,
                                 const ScriptingContext& context)
     {
-        TraceLogger() << "CalculateNewStockpile for empire " << to_string(empire_id);
+        TraceLogger() << "CalculateNewStockpile for empire " << empire_id;
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "CalculateStockpileContribution() passed null empire.  doing nothing.";
@@ -264,7 +264,7 @@ namespace {
                     return time_cost_it->second;
                 } else {
                     ErrorLogger() << "item: " << q_elem.item.name
-                                  << "  somehow failed time cost lookup for location " << to_string(location_id);
+                                  << "  somehow failed time cost lookup for location " << location_id;
                     return decltype(time_cost_it->second){1e6, 1};
                 }
             }(queue_element);

@@ -71,7 +71,7 @@ namespace {
     {
         int player_id = AIClientApp::GetApp()->EmpirePlayerID(empire_id);
         if (Networking::INVALID_PLAYER_ID == player_id)
-            DebugLogger() << "AIWrapper::EmpirePlayerID(" << to_string(empire_id) << ") - passed an invalid empire_id";
+            DebugLogger() << "AIWrapper::EmpirePlayerID(" << empire_id << ") - passed an invalid empire_id";
         return player_id;
     }
 
@@ -188,7 +188,7 @@ namespace {
         const EmpireID empire_id = AIClientApp::GetApp()->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "UpdateResourcePools : couldn't get empire with id " << to_string(empire_id);
+            ErrorLogger() << "UpdateResourcePools : couldn't get empire with id " << empire_id;
             return;
         }
         empire->UpdateResourcePools(context,
@@ -203,7 +203,7 @@ namespace {
         EmpireID empire_id = AIClientApp::GetApp()->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "UpdateResearchQueue : couldn't get empire with id " << to_string(empire_id);
+            ErrorLogger() << "UpdateResearchQueue : couldn't get empire with id " << empire_id;
             return;
         }
         empire->UpdateResearchQueue(context, empire->TechCostsTimes(context));
@@ -214,7 +214,7 @@ namespace {
         const EmpireID empire_id = AIClientApp::GetApp()->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "UpdateProductionQueue : couldn't get empire with id " << to_string(empire_id);
+            ErrorLogger() << "UpdateProductionQueue : couldn't get empire with id " << empire_id;
             return;
         }
         empire->UpdateProductionQueue(context, empire->ProductionCostsTimes(context));
@@ -312,7 +312,7 @@ namespace {
         auto empire = context.GetEmpire(empire_id);
 
         if (!empire) {
-            ErrorLogger() << "IssueAdoptPolicyOrder : couldn't get empire with id " << to_string(empire_id);
+            ErrorLogger() << "IssueAdoptPolicyOrder : couldn't get empire with id " << empire_id;
             return 0;
         }
         if (empire->PolicyAdopted(policy_name)) {
@@ -333,7 +333,7 @@ namespace {
         auto empire = context.GetEmpire(empire_id);
 
         if (!empire) {
-            ErrorLogger() << "IssueDeadoptPolicyOrder : couldn't get empire with id " << to_string(empire_id);
+            ErrorLogger() << "IssueDeadoptPolicyOrder : couldn't get empire with id " << empire_id;
             return 0;
         }
         if (!empire->PolicyAdopted(policy_name)) {
@@ -352,7 +352,7 @@ namespace {
         EmpireID empire_id = AIClientApp::GetApp()->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "IsProducibleBuilding : couldn't get empire with id " << to_string(empire_id);
+            ErrorLogger() << "IsProducibleBuilding : couldn't get empire with id " << empire_id;
             return false;
         }
         return empire->ProducibleItem(BuildType::BT_BUILDING, item_name, location_id, context);
@@ -364,7 +364,7 @@ namespace {
         EmpireID empire_id = AIClientApp::GetApp()->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "IsEnqueuableBuilding : couldn't get empire with id " << to_string(empire_id);
+            ErrorLogger() << "IsEnqueuableBuilding : couldn't get empire with id " << empire_id;
             return false;
         }
         return empire->EnqueuableItem(BuildType::BT_BUILDING, item_name, UniverseObjectID{location_id}, context);
@@ -378,7 +378,7 @@ namespace {
 
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "IssueEnqueueBuildingProductionOrder : couldn't get empire with id " << to_string(empire_id);
+            ErrorLogger() << "IssueEnqueueBuildingProductionOrder : couldn't get empire with id " << empire_id;
             return 0;
         }
 
@@ -404,7 +404,7 @@ namespace {
         const EmpireID empire_id = AIClientApp::GetApp()->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "IsEnqueuableShip : couldn't get empire with id " << to_string(empire_id);
+            ErrorLogger() << "IsEnqueuableShip : couldn't get empire with id " << empire_id;
             return false;
         }
         // as of this writing, ships don't have a distinction between producible and enqueuable
@@ -420,7 +420,7 @@ namespace {
 
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "IssueEnqueueShipProductionOrder : couldn't get empire with id " << to_string(empire_id);
+            ErrorLogger() << "IssueEnqueueShipProductionOrder : couldn't get empire with id " << empire_id;
             return 0;
         }
 
@@ -447,7 +447,7 @@ namespace {
         EmpireID empire_id = app->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "IssueChangeProductionQuantityOrder : couldn't get empire with id " << to_string(empire_id);
+            ErrorLogger() << "IssueChangeProductionQuantityOrder : couldn't get empire with id " << empire_id;
             return 0;
         }
 
@@ -484,7 +484,7 @@ namespace {
         EmpireID empire_id = app->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "IssueRequeueProductionOrder : couldn't get empire with id " << to_string(empire_id);
+            ErrorLogger() << "IssueRequeueProductionOrder : couldn't get empire with id " << empire_id;
             return 0;
         }
 
@@ -524,7 +524,7 @@ namespace {
         EmpireID empire_id = app->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "IssueDequeueProductionOrder : couldn't get empire with id " << to_string(empire_id);
+            ErrorLogger() << "IssueDequeueProductionOrder : couldn't get empire with id " << empire_id;
             return 0;
         }
 
@@ -552,7 +552,7 @@ namespace {
         EmpireID empire_id = app->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "IssuePauseProductionOrder : couldn't get empire with id " << to_string(empire_id);
+            ErrorLogger() << "IssuePauseProductionOrder : couldn't get empire with id " << empire_id;
             return 0;
         }
 
@@ -580,7 +580,7 @@ namespace {
         EmpireID empire_id = app->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "IssueAllowStockpileProductionOrder : couldn't get empire with id " << to_string(empire_id);
+            ErrorLogger() << "IssueAllowStockpileProductionOrder : couldn't get empire with id " << empire_id;
             return 0;
         }
 

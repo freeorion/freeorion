@@ -44,7 +44,7 @@ void PopulationPanel::CompleteConstruction() {
 
     auto planet = objects.get<Planet>(m_popcenter_id);
     if (!planet) {
-        ErrorLogger() << "Attempted to construct a PopulationPanel with an object id that is not a planet: " << to_string(m_popcenter_id);
+        ErrorLogger() << "Attempted to construct a PopulationPanel with an object id that is not a planet: " << m_popcenter_id;
         return;
     }
     const auto& species_name = planet->SpeciesName();

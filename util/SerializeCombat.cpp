@@ -1256,7 +1256,7 @@ void serialize(Archive& ar, CombatLog& obj, const unsigned int version)
 
     if (obj.combat_events.size() > 1)
         TraceLogger() << "CombatLog::serialize turn " << obj.turn << "  combat at "
-                      << to_string(obj.system_id) << "  combat events size: " << obj.combat_events.size();
+                      << obj.system_id << "  combat events size: " << obj.combat_events.size();
     try {
         ar  & make_nvp("combat_events", obj.combat_events);
     } catch (const std::exception& e) {

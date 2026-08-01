@@ -940,7 +940,7 @@ float SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, Empi
     const auto emp_it = emp_map.find(empire_id);
     if (emp_it == emp_map.end())
         return 0.0f;
-    TraceLogger() << "SpeciesEmpireOpinion " << species_name << ", " << to_string(empire_id)
+    TraceLogger() << "SpeciesEmpireOpinion " << species_name << ", " << empire_id
                   << ": " << emp_it->second.first.Dump().data() << " / " << emp_it->second.second.Dump().data();
     const auto& meter = target ? emp_it->second.second : emp_it->second.first;
     return current ? meter.Current() : meter.Initial();

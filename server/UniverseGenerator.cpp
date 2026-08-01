@@ -537,10 +537,8 @@ namespace {
                 double lane_length2 = vectX*vectX + vectY*vectY;
                 if (lane_length2 > max_lane_length2) {
                     // lane is too long!  mark it to be removed
-                    TraceLogger() << "CullTooLongLanes wants to remove lane of length "
-                                  << std::sqrt(lane_length2)
-                                  << " between systems with ids: "
-                                  << to_string(cur_sys_id) << " and " << to_string(dest_sys_id);
+                    TraceLogger() << "CullTooLongLanes wants to remove lane of length " << std::sqrt(lane_length2)
+                                  << " between systems with ids: " << cur_sys_id << " and " << dest_sys_id;
                     lanes_to_remove.emplace(lane_length2, lane);
                 }
             }
@@ -575,13 +573,13 @@ namespace {
                 system_lanes[lane.first].insert(lane.second);
                 system_lanes[lane.second].insert(lane.first);
                 TraceLogger() << "CullTooLongLanes can't remove lane between systems with ids: "
-                              << to_string(lane.first) << " and " << to_string(lane.second)
+                              << lane.first << " and " << lane.second
                               << " because they would then be disconnected (more than "
                               << systems.size() << " jumps apart)";
             } else {
                 removable_lanes++;
                 TraceLogger() << "CullTooLongLanes removing lane between systems with ids: "
-                              << to_string(lane.first) << " and " << to_string(lane.second);
+                              << lane.first << " and " << lane.second;
             }
         }
 
@@ -757,14 +755,15 @@ bool SetEmpireHomeworld(Empire* empire, UniverseObjectID planet_id, std::string 
     if (!home_system)
         return false;
 
-    DebugLogger() << "SetEmpireHomeworld: setting system " << to_string(home_system->ID())
-                  << " (planet " << to_string(home_planet->ID()) << ") to be home system for empire " << to_string(empire->GetEmpireID());
+    DebugLogger() << "SetEmpireHomeworld: setting system " << home_system->NameAndID()
+                  << " (planet " << home_planet->NameAndID()
+                  << ") to be home system for empire " << empire->GetEmpireID();
 
     // get species, check if it exists
     auto species = context.species.GetSpecies(species_name);
     if (!species) {
         ErrorLogger() << "SetEmpireHomeworld: couldn't get species \""
-                      << species_name << "\" to set with homeworld id " << to_string(home_planet->ID());
+                      << species_name << "\" to set with homeworld id " << home_planet->ID();
         return false;
     }
 
@@ -807,7 +806,7 @@ void InitEmpires(const std::map<EmpireID, PlayerSetupData>& player_setup_data, E
         // use map key for empire ID so that the calling code can get the
         // correct empire for each player in player_setup_data
         if (empire_id == ALL_EMPIRES)
-            ErrorLogger() << "InitEmpires empire id (" << to_string(empire_id) << ") is invalid";
+            ErrorLogger() << "InitEmpires empire id (" << empire_id << ") is invalid";
 
         const auto& player_name =   psd.player_name;
         auto        empire_colour = psd.empire_color;
@@ -838,7 +837,7 @@ void InitEmpires(const std::map<EmpireID, PlayerSetupData>& player_setup_data, E
         // set generic default empire name
         std::string empire_name = UserString("EMPIRE") + to_string(empire_id);
 
-        DebugLogger() << "Universe::InitEmpires creating new empire" << " with ID: " << to_string(empire_id)
+        DebugLogger() << "Universe::InitEmpires creating new empire" << " with ID: " << empire_id
                       << " for player: " << player_name << " in team: " << psd.starting_team;
 
         // create new Empire object through empire manager

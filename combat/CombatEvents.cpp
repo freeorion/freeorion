@@ -270,15 +270,15 @@ std::string InitialStealthEvent::DebugString(const ScriptingContext& context) co
 }
 
 std::string InitialStealthEvent::CombatLogDescription(EmpireID viewing_empire_id, const ScriptingContext& context) const {
-    DebugLogger() << "CombatLogDescription for InitialStealthEvent viewing empire empire: " << to_string(viewing_empire_id);
+    DebugLogger() << "CombatLogDescription for InitialStealthEvent viewing empire empire: " << viewing_empire_id;
 
     std::string desc;
 
     for (auto& [detector_empire_id, visible_objects] : empire_object_visibility) {
-        DebugLogger() << "CombatLogDescription for InitialStealthEvent for detector empire: " << to_string(detector_empire_id);
+        DebugLogger() << "CombatLogDescription for InitialStealthEvent for detector empire: " << detector_empire_id;
 
         if (visible_objects.empty()) {
-            DebugLogger() << " ... no object info recorded for detector empire: " << to_string(detector_empire_id);
+            DebugLogger() << " ... no object info recorded for detector empire: " << detector_empire_id;
             continue;
         }
 
@@ -286,8 +286,8 @@ std::string InitialStealthEvent::CombatLogDescription(EmpireID viewing_empire_id
         std::vector<std::string> cloaked_attackers;
         for (auto& [object_id, object_vis] : visible_objects) {
             const auto obj = context.ContextObjects().getRaw(object_id);
-            const auto& name = obj ? obj->Name() : UserString("UNKNOWN");
-            DebugLogger() << " ... object: " << name << " (" << to_string(object_id) << ") has vis: " << object_vis;
+            const auto name = obj ? obj->NameAndID() : (UserString("UNKNOWN") + " (" + to_string(object_id) + ")");
+            DebugLogger() << " ... object: " << name << " has vis: " << object_vis;
             if (object_vis > Visibility::VIS_NO_VISIBILITY)
                 continue;
 
@@ -322,7 +322,7 @@ std::string InitialStealthEvent::CombatLogDescription(EmpireID viewing_empire_id
 std::string StealthChangeEvent::StealthChangeEventDetail::DebugString(const ScriptingContext& context) const {
     std::stringstream ss;
     ss << "StealthChangeDetailEvent " << (is_fighter_launch ? " observer: " : " target: ")
-       << to_string(target_observer_empire_id) << " "
+       << target_observer_empire_id << " "
        << FighterOrPublicNameLink(ALL_EMPIRES, attacker_id, attacker_empire_id, context)
        << " -> " << visibility << " ";
     return ss.str();
@@ -397,8 +397,8 @@ std::vector<const CombatEvent*> StealthChangeEvent::SubEvents(EmpireID) const {
 //////////////////////////////////////////
 std::string WeaponFireEvent::DebugString(const ScriptingContext&) const {
     std::stringstream ss;
-    ss << to_string(attacker_id) << " -> " << to_string(target_id) << " : " << weapon_name << " "
-       << power << " - " << shield << " = " << damage << "   attacker owner: " << to_string(attacker_owner_id);
+    ss << attacker_id << " -> " << target_id << " : " << weapon_name << " "
+       << power << " - " << shield << " = " << damage << "   attacker owner: " << attacker_owner_id;
     return ss.str();
 }
 
@@ -573,8 +573,8 @@ std::string FightersAttackFightersEvent::DebugString(const ScriptingContext&) co
     std::stringstream ss;
     ss << "FightersAttackFightersEvent: ";
     for (auto& [index, event]: events) {
-        ss << event << " repeated fighters from empire " << to_string(index.first)
-           << " attacking fighters from empire " << to_string(index.second) << ", ";
+        ss << event << " repeated fighters from empire " << index.first
+           << " attacking fighters from empire " << index.second << ", ";
     }
     return ss.str();
 }
@@ -635,9 +635,9 @@ std::string FightersAttackFightersEvent::CombatLogDescription(EmpireID viewing_e
 //////////////////////////////////////////
 std::string FighterLaunchEvent::DebugString(const ScriptingContext&) const {
     std::stringstream ss;
-    ss << "launch from object " << to_string(launched_from_id)
+    ss << "launch from object " << launched_from_id
        << " of " << number_launched
-       << " fighter(s) of empire " << to_string(fighter_owner_empire_id);
+       << " fighter(s) of empire " << fighter_owner_empire_id;
     return ss.str();
 }
 
@@ -753,7 +753,7 @@ std::string FightersDestroyedEvent::DebugString(const ScriptingContext&) const {
     std::stringstream ss;
     ss << "FightersDestroyedEvent: ";
     for (auto& [empire_id, count] : events)
-        ss << count << " repeated fighters from empire " << to_string(empire_id) << " destroyed.";
+        ss << count << " repeated fighters from empire " << empire_id << " destroyed.";
     return ss.str();
 }
 
@@ -812,7 +812,7 @@ std::string FightersDestroyedEvent::CombatLogDescription(EmpireID viewing_empire
 //////////////////////////////////////////
 std::string WeaponsPlatformEvent::DebugString(const ScriptingContext& context) const {
     std::stringstream desc;
-    desc << "WeaponsPlatformEvent attacker_id = " << to_string(attacker_id) << " attacker_owner = " << to_string(attacker_owner_id);
+    desc << "WeaponsPlatformEvent attacker_id = " << attacker_id << " attacker_owner = " << attacker_owner_id;
     for (auto& event_vec : events | range_values) {
         for (const auto& attack : event_vec)
             desc << "\n" << attack.DebugString(context);

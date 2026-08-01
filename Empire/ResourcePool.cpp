@@ -59,7 +59,7 @@ float ResourcePool::GroupOutput(UniverseObjectID object_id) const {
     if (it != m_connected_object_groups_resource_output.end())
         return it->second;
 
-    //DebugLogger() << "ResourcePool::GroupOutput passed unknown object id: " << to_string(object_id);
+    //DebugLogger() << "ResourcePool::GroupOutput passed unknown object id: " << object_id;
     return 0.0f;
 }
 
@@ -77,7 +77,7 @@ float ResourcePool::GroupTargetOutput(UniverseObjectID object_id) const {
         return it->second;
 
     // default return case:
-    DebugLogger() << "ResourcePool::GroupTargetOutput passed unknown object id: " << to_string(object_id);
+    DebugLogger() << "ResourcePool::GroupTargetOutput passed unknown object id: " << object_id;
     return 0.0f;
 }
 
@@ -88,7 +88,7 @@ float ResourcePool::TotalAvailable() const {
 }
 
 float ResourcePool::GroupAvailable(UniverseObjectID object_id) const {
-    TraceLogger() << "ResourcePool::GroupAvailable(" << to_string(object_id) << ")";
+    TraceLogger() << "ResourcePool::GroupAvailable(" << object_id << ")";
     // available is production in this group
     return GroupOutput(object_id);
 }

@@ -292,8 +292,8 @@ namespace {
         auto prev = context.ContextObjects().get(lane_start_sys_id);
         auto next = context.ContextObjects().get(lane_end_sys_id);
         if (!next || !prev) {
-            ErrorLogger() << "ScreenPosOnStarlane couldn't find next system " << to_string(lane_start_sys_id)
-                          << " or prev system " << to_string(lane_end_sys_id);
+            ErrorLogger() << "ScreenPosOnStarlane couldn't find next system " << lane_start_sys_id
+                          << " or prev system " << lane_end_sys_id;
             return boost::none;
         }
 
@@ -965,11 +965,11 @@ MapWnd::MovementLineData::MovementLineData(const std::vector<MovePathNode>& path
         auto end_xy =   ScreenPosOnStarlane(node.x,      node.y,      prev_sys_id, next_sys_id, lane_endpoints, context);
 
         if (!start_xy) {
-            ErrorLogger() << "System " << to_string(prev_sys_id) << " has invalid screen coordinates.";
+            ErrorLogger() << "System " << prev_sys_id << " has invalid screen coordinates.";
             continue;
         }
         if (!end_xy) {
-            ErrorLogger() << "System " << to_string(next_sys_id) << " has invalid screen coordinates.";
+            ErrorLogger() << "System " << next_sys_id << " has invalid screen coordinates.";
             continue;
         }
 
@@ -3187,7 +3187,7 @@ void MapWnd::InitSystemRenderingBuffers(const ObjectMap& objects) {
     for (const auto& [system_id, icon] : m_system_icons) {
         auto* system = objects.getRaw<const System>(system_id);
         if (!system) {
-            ErrorLogger() << "MapWnd::InitSystemRenderingBuffers couldn't get system with id " << to_string(system_id);
+            ErrorLogger() << "MapWnd::InitSystemRenderingBuffers couldn't get system with id " << system_id;
             continue;
         }
 
@@ -3598,7 +3598,7 @@ namespace {
                 if (!planet)
                     continue;
 
-                //DebugLogger() << "Empire " << to_string(empire_id) << "; Planet (" << object_id << ") is named " << planet->Name();
+                //DebugLogger() << "Empire " << empire_id << "; Planet (" << object_id << ") is named " << planet->Name();
 
                 const auto system_id = planet->SystemID();
                 auto* system = objects.getRaw<System>(system_id);
@@ -3608,8 +3608,8 @@ namespace {
                 res_pool_systems[available_pp_group.first].insert(system_id);
             }
             // this_pool += ")";
-            //DebugLogger() << "Empire " << to_string(empire_id) << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << available_pp_group.second << " PP available";
-            //DebugLogger() << "Empire " << to_string(empire_id) << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << allocated_pp[available_pp_group.first] << " PP allocated";
+            //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << available_pp_group.second << " PP available";
+            //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << allocated_pp[available_pp_group.first] << " PP allocated";
         }
 
 
@@ -3688,7 +3688,7 @@ namespace {
 
             auto start_system = o.getRaw<System>(system_id);
             if (!start_system) {
-                ErrorLogger() << "GetFullLanesToRender couldn't get system with id " << to_string(system_id);
+                ErrorLogger() << "GetFullLanesToRender couldn't get system with id " << system_id;
                 continue;
             }
 
@@ -3774,7 +3774,7 @@ namespace {
 
             const auto* const start_system = context.ContextObjects().getRaw<System>(system_id);
             if (!start_system) {
-                ErrorLogger() << "GetFullLanesToRender couldn't get system with id " << to_string(system_id);
+                ErrorLogger() << "GetFullLanesToRender couldn't get system with id " << system_id;
                 continue;
             }
 
@@ -3844,7 +3844,7 @@ namespace {
 
             auto start_system = context.ContextObjects().get<System>(system_id);
             if (!start_system) {
-                ErrorLogger() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << to_string(system_id);
+                ErrorLogger() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << system_id;
                 continue;
             }
 
@@ -3912,7 +3912,7 @@ namespace {
 
             auto start_system = objects.getRaw<System>(system_id);
             if (!start_system) {
-                ErrorLogger() << "GetFullLanesToRender couldn't get system with id " << to_string(system_id);
+                ErrorLogger() << "GetFullLanesToRender couldn't get system with id " << system_id;
                 continue;
             }
 
@@ -4131,7 +4131,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
             continue;
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "InitVisibilityRadiiRenderingBuffers couldn't find empire with id: " << to_string(empire_id);
+            ErrorLogger() << "InitVisibilityRadiiRenderingBuffers couldn't find empire with id: " << empire_id;
             continue;
         }
 
@@ -4456,7 +4456,7 @@ void MapWnd::SelectSystem(UniverseObjectID system_id, ScriptingContext& context)
     } else if (const auto* system = std::as_const(context).ContextObjects().getRaw<System>(system_id)) {
         SelectSystem(system, context);
     } else {
-        ErrorLogger() << "MapWnd::SelectSystem couldn't find system with id " << to_string(system_id) << " so is selected no system instead";
+        ErrorLogger() << "MapWnd::SelectSystem couldn't find system with id " << system_id << " so is selected no system instead";
         SelectSystem(nullptr, context);
     }
 }
@@ -4594,7 +4594,7 @@ void MapWnd::SetFleetMovementLine(UniverseObjectID fleet_id) {
 
     auto fleet = context.ContextObjects().get<Fleet>(fleet_id);
     if (!fleet) {
-        ErrorLogger() << "MapWnd::SetFleetMovementLine was passed invalid fleet id " << to_string(fleet_id);
+        ErrorLogger() << "MapWnd::SetFleetMovementLine was passed invalid fleet id " << fleet_id;
         return;
     }
     //std::cout << "creating fleet movement line for fleet at (" << fleet->X() << ", " << fleet->Y() << ")" << std::endl;
@@ -4613,20 +4613,20 @@ void MapWnd::SetFleetMovementLine(UniverseObjectID fleet_id) {
     auto path = fleet->MovePath(route, true, context);
     auto route_it = route.begin();
     if (!route.empty() && (++route_it) != route.end()) {
-        //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << to_string(fleet_id) << " checking for blockade at system " << route.front() <<
+        //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id << " checking for blockade at system " << route.front() <<
         //    " with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
         if (fleet->SystemID() == route.front() &&
             fleet->BlockadedAtSystem(route.front(), *route_it, context))
         {
             //adjust ETAs if necessary
             //if (!route.empty() && fleet->SystemID()==route.front() && (++(path.begin()))->post_blockade) {
-            //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << to_string(fleet_id)<<" blockaded at system "<< route.front() <<
+            //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() <<
             //    " with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
             if (route_it != route.end() && !( (*route_it == fleet->ArrivalStarlane())  ||
                 (empire && empire->PreservedLaneTravel(fleet->SystemID(), *route_it)) ) )
             {
                 for (MovePathNode& node : path) {
-                    //DebugLogger() <<   "MapWnd::SetFleetMovementLine fleet id " << to_string(fleet_id) <<" node obj " << node.object_id <<
+                    //DebugLogger() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id <<" node obj " << node.object_id <<
                     //                            ", node lane end " << node.lane_end_id << ", is post-blockade (" << node.post_blockade << ")";
                     if (node.eta >= 250)
                         node.eta = Fleet::ETA_NEVER;
@@ -4634,7 +4634,7 @@ void MapWnd::SetFleetMovementLine(UniverseObjectID fleet_id) {
                         node.eta++;
                 }
             } else {
-                //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << to_string(fleet_id) << " slips through second block check";
+                //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id << " slips through second block check";
             }
         }
     }
@@ -4651,7 +4651,7 @@ void MapWnd::SetProjectedFleetMovementLine(UniverseObjectID fleet_id, const std:
     // ensure passed fleet exists
     auto fleet = context.ContextObjects().get<Fleet>(fleet_id);
     if (!fleet) {
-        ErrorLogger() << "MapWnd::SetProjectedFleetMovementLine was passed invalid fleet id " << to_string(fleet_id);
+        ErrorLogger() << "MapWnd::SetProjectedFleetMovementLine was passed invalid fleet id " << fleet_id;
         return;
     }
 
@@ -4677,13 +4677,13 @@ void MapWnd::SetProjectedFleetMovementLine(UniverseObjectID fleet_id, const std:
         {
             //adjust ETAs if necessary
             //if (!route.empty() && fleet->SystemID()==route.front() && (++(path.begin()))->post_blockade) {
-            //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << to_string(fleet_id) <<" blockaded at system "<< route.front() <<
+            //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id <<" blockaded at system "<< route.front() <<
             //" with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
             if (route_it != travel_route.end() && !((*route_it == fleet->ArrivalStarlane()) ||
                 (empire && empire->PreservedLaneTravel(fleet->SystemID(), *route_it))))
             {
                 for (MovePathNode& node : path) {
-                    //DebugLogger() <<   "MapWnd::SetFleetMovementLine fleet id " << to_string(fleet_id) << " node obj " << node.object_id <<
+                    //DebugLogger() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id << " node obj " << node.object_id <<
                     //                            ", node lane end " << node.lane_end_id << ", is post-blockade (" << node.post_blockade << ")";
                     if (node.eta >= 250)
                         node.eta = Fleet::ETA_NEVER;
@@ -4767,7 +4767,7 @@ void MapWnd::DoSystemIconsLayout(const ObjectMap& objects) {
     for (const auto& [sys_id, system_icon] : m_system_icons) {
         auto system = objects.get<System>(sys_id);
         if (!system) {
-            ErrorLogger() << "MapWnd::DoSystemIconsLayout couldn't get system with id " << to_string(sys_id);
+            ErrorLogger() << "MapWnd::DoSystemIconsLayout couldn't get system with id " << sys_id;
             continue;
         }
 
@@ -4786,7 +4786,7 @@ void MapWnd::DoFieldIconsLayout(const ObjectMap& objects) {
     {
         auto field = objects.get<Field>(field_icon->FieldID());
         if (!field) {
-            ErrorLogger() << "MapWnd::DoFieldIconsLayout couldn't get field with id " << to_string(field_icon->FieldID());
+            ErrorLogger() << "MapWnd::DoFieldIconsLayout couldn't get field with id " << field_icon->FieldID();
         } else {
             double RADIUS = zoom_factor * field->GetMeter(MeterType::METER_SIZE)->Initial();    // Field's MeterType::METER_SIZE gives the radius of the field
 
@@ -4802,7 +4802,7 @@ void MapWnd::DoFleetButtonsLayout(const ObjectMap& objects) {
         // calculate system icon position
         const auto system = objects.get<System>(sys_id);
         if (!system) {
-            ErrorLogger() << "MapWnd::DoFleetButtonsLayout couldn't find system with id " << to_string(sys_id);
+            ErrorLogger() << "MapWnd::DoFleetButtonsLayout couldn't find system with id " << sys_id;
             return;
         }
 
@@ -4937,7 +4937,7 @@ namespace {
         {
             if (auto system = objects.get<System>(fleet->SystemID()))
                 return system;
-            ErrorLogger() << "Couldn't get system with id " << to_string(fleet->SystemID())
+            ErrorLogger() << "Couldn't get system with id " << fleet->SystemID()
                           << " of a departing fleet named " << fleet->Name();
         }
         return nullptr;
@@ -4952,7 +4952,7 @@ namespace {
             auto system = objects.get<System>(fleet->SystemID());
             if (system)
                 return system;
-            ErrorLogger() << "Couldn't get system with id " << to_string(fleet->SystemID())
+            ErrorLogger() << "Couldn't get system with id " << fleet->SystemID()
                           << " of a stationary fleet named " << fleet->Name();
         }
         return nullptr;
@@ -5066,11 +5066,11 @@ void MapWnd::DeferredRefreshFleetButtons() {
             offroad_fleets[{{fleet->X(), fleet->Y()}, fleet->Owner()}].push_back(fleet->ID());
 
         } else {
-            ErrorLogger() << "Fleet "<< fleet->Name() <<"(" << to_string(fleet->ID())
-                          << ") is not stationary, departing from a system or in transit."
-                          << " final dest id is " << to_string(fleet->FinalDestinationID())
+            ErrorLogger() << "Fleet "<< fleet->NameAndID() 
+                          << " is not stationary, departing from a system or in transit."
+                          << " final dest id is " << fleet->FinalDestinationID()
                           << " travel routes is of length = " << fleet->TravelRoute().size()
-                          << " system id is " << to_string(fleet->SystemID())
+                          << " system id is " << fleet->SystemID()
                           << " location is (" << fleet->X() << "," << fleet->Y() << ")";
         }
     }
@@ -5565,7 +5565,7 @@ std::vector<UniverseObjectID> MapWnd::FleetIDsOfFleetButtonsOverlapping(
     const auto fleet = objects.get<Fleet>(fleet_id);
     if (!fleet) {
         ErrorLogger() << "MapWnd::FleetIDsOfFleetButtonsOverlapping: Fleet id "
-                      << to_string(fleet_id) << " does not exist.";
+                      << fleet_id << " does not exist.";
         return {};
     }
 
@@ -5575,7 +5575,7 @@ std::vector<UniverseObjectID> MapWnd::FleetIDsOfFleetButtonsOverlapping(
         const int basic_vis_last_turn = context.ContextUniverse().GetObjectVisibilityTurnByEmpire(
             fleet_id, empire_id, Visibility::VIS_BASIC_VISIBILITY);
 
-        ErrorLogger() << "Couldn't find a FleetButton for fleet " << to_string(fleet_id)
+        ErrorLogger() << "Couldn't find a FleetButton for fleet " << fleet_id
                       << " with last basic vis turn " << basic_vis_last_turn;
         return {};
     }
@@ -5916,7 +5916,7 @@ void MapWnd::RefreshFleetButtonSelectionIndicators() {
 
 void MapWnd::UniverseObjectDeleted(const std::shared_ptr<const UniverseObject>& obj) {
     if (obj)
-        DebugLogger() << "MapWnd::UniverseObjectDeleted: " << to_string(obj->ID());
+        DebugLogger() << "MapWnd::UniverseObjectDeleted: " << obj->ID();
     else
         DebugLogger() << "MapWnd::UniverseObjectDeleted: NO OBJECT";
     if (obj && obj->ObjectType() == UniverseObjectType::OBJ_FLEET)
@@ -7024,7 +7024,7 @@ bool MapWnd::ZoomToHomeSystem() {
             return false;
         CenterOnObject(*object);
         SelectSystem(object->SystemID(), context);
-        InfoLogger() << "Zoomed to capital system " << to_string(object->SystemID());
+        InfoLogger() << "Zoomed to capital system " << object->SystemID();
     }
 
     return true;
@@ -7436,21 +7436,21 @@ namespace {
         auto [route_length, route_ids] = GetShortestRoute(fleet->Owner(), fleet->SystemID(), destination->ID(), context);
 
         if (route_length <= 0.0) {
-            TraceLogger() << "No suitable route from system " << to_string(fleet->SystemID()) << " to " << to_string(destination->ID())
+            TraceLogger() << "No suitable route from system " << fleet->SystemID() << " to " << destination->NameAndID()
                           << " (" << route_ids.size() << ">" << route_length << ")";
             return {};
         }
 
         if (!FleetRouteInRange(fleet, route_ids, context)) {
-            TraceLogger() << "Fleet " << to_string(fleet->ID())
-                          << " has no ETA for route to " << to_string(route_ids.back());
+            TraceLogger() << "Fleet " << fleet->NameAndID()
+                          << " has no ETA for route to " << route_ids.back();
             return {};
         }
 
         // decrease priority of system if previously viewed but not yet explored
         if (!destination->Name().empty()) {
             route_length *= GetOptionsDB().Get<float>("ui.fleet.explore.system.known.multiplier");
-            TraceLogger() << "Deferred priority for system " << destination->Name() << " (" << to_string(destination->ID()) << ")";
+            TraceLogger() << "Deferred priority for system " << destination->NameAndID();
         }
 
         return std::pair{route_length, std::pair{fleet->ID(), std::move(route_ids)}};
@@ -7493,7 +7493,7 @@ namespace {
 
             auto route_jumps = JumpsForRoute(shortest_route.second);
             if (max_jumps > -1 && route_jumps > max_jumps) {
-                TraceLogger() << "Rejecting route to " << to_string(*shortest_route.second.rbegin())
+                TraceLogger() << "Rejecting route to " << *shortest_route.second.rbegin()
                               << " jumps " << std::to_string(route_jumps) << " exceed max " << std::to_string(max_jumps);
                 continue;
             }
@@ -7504,7 +7504,7 @@ namespace {
             }
 
             if (retval.first <= 0.0 || shortest_route.first < retval.first) {
-                TraceLogger() << "Setting " << to_string(*shortest_route.second.rbegin()) << " as shortest route";
+                TraceLogger() << "Setting " << *shortest_route.second.rbegin() << " as shortest route";
                 retval = std::move(shortest_route);
             }
         }
@@ -7531,7 +7531,7 @@ namespace {
         int max_jumps = std::trunc(fleet->Fuel(objects));
         if (max_jumps < 1) {
             TraceLogger() << "Not enough fuel " << std::to_string(max_jumps)
-                          << " to move fleet " << to_string(fleet->ID());
+                          << " to move fleet " << fleet->NameAndID();
             return false;
         }
 
@@ -7543,7 +7543,7 @@ namespace {
 
         if (total_jumps > max_jumps) {
             TraceLogger() << "Not enough fuel " << std::to_string(max_jumps)
-                          << " for fleet " << to_string(fleet->ID())
+                          << " for fleet " << fleet->NameAndID()
                           << " to resupply after destination " << std::to_string(total_jumps);
             return false;
         }
@@ -7559,7 +7559,7 @@ namespace {
         }
         auto empire = context.GetEmpire(fleet->Owner());
         if (!empire) {
-            ErrorLogger() << "Invalid empire for id " << to_string(fleet->Owner());
+            ErrorLogger() << "Invalid empire for id " << fleet->Owner();
             return {};
         }
 
@@ -7582,7 +7582,7 @@ namespace {
         auto route = ExploringFleetResupplyRoute(fleet, context);
         // Attempt move order if route is not empty and fleet has enough fuel to reach it
         if (route.second.empty()) {
-            TraceLogger() << "Empty route for resupply of exploring fleet " << to_string(fleet->ID());
+            TraceLogger() << "Empty route for resupply of exploring fleet " << fleet->NameAndID();
             return false;
         }
 
@@ -7592,17 +7592,17 @@ namespace {
             GetApp().Orders().IssueOrder<FleetMoveOrder>(
                 context, fleet->Owner(), fleet->ID(), *route.second.crbegin(), false);
         } else {
-            TraceLogger() << "Not enough fuel for fleet " << to_string(fleet->ID())
-                          << " to resupply at system " << to_string(*route.second.crbegin());
+            TraceLogger() << "Not enough fuel for fleet " << fleet->NameAndID()
+                          << " to resupply at system " << *route.second.crbegin();
             return false;
         }
 
         if (fleet->FinalDestinationID() == *route.second.crbegin()) {
-            TraceLogger() << "Sending fleet " << to_string(fleet->ID())
-                          << " to refuel at system " << to_string(*route.second.crbegin());
+            TraceLogger() << "Sending fleet " << fleet->NameAndID()
+                          << " to refuel at system " << *route.second.crbegin();
             return true;
         } else {
-            TraceLogger() << "Fleet move order failed fleet:" << to_string(fleet->ID()) << " route:"
+            TraceLogger() << "Fleet move order failed fleet: " << fleet->NameAndID() << " route:"
                           << [&route]() {
                                  std::string retval;
                                  for (auto node : route.second)
@@ -7621,18 +7621,18 @@ namespace {
             return false;
         }
         if (!FleetRouteInRange(fleet, route, context)) {
-            TraceLogger() << "Fleet " << to_string(fleet->ID()) << " has no eta for route to " << to_string(route.back());
+            TraceLogger() << "Fleet " << fleet->NameAndID() << " has no eta for route to " << route.back();
             return false;
         }
 
         GetApp().Orders().IssueOrder<FleetMoveOrder>( // TODO: pass in app
             context, fleet->Owner(), fleet->ID(), route.back(), false);
         if (fleet->FinalDestinationID() == route.back()) {
-            TraceLogger() << "Sending fleet " << to_string(fleet->ID()) << " to explore system " << to_string(route.back());
+            TraceLogger() << "Sending fleet " << fleet->NameAndID() << " to explore system " << route.back();
             return true;
         }
 
-        TraceLogger() << "Fleet move order failed fleet:" << to_string(fleet->ID()) << " dest:" << to_string(route.back());
+        TraceLogger() << "Fleet move order failed fleet:" << fleet->NameAndID() << " dest:" << route.back();
         return false;
     }
 
@@ -7658,25 +7658,25 @@ namespace {
         }
 
         if (systems_being_explored.contains(route.back())) {
-            TraceLogger() << "System " << to_string(route.back()) << " already being explored";
+            TraceLogger() << "System " << route.back() << " already being explored";
             return;
         }
 
         auto fleet_id = fleet_route.first;
         auto idle_fleet_it = idle_fleets.find(fleet_id);
         if (idle_fleet_it == idle_fleets.end()) { // fleet no longer idle
-            TraceLogger() << "Fleet " << to_string(fleet_id) << " not idle";
+            TraceLogger() << "Fleet " << fleet_id << " not idle";
             return;
         }
         auto fleet = objects.getRaw<Fleet>(fleet_id);
         if (!fleet) {
-            ErrorLogger() << "No valid fleet with id " << to_string(fleet_id);
+            ErrorLogger() << "No valid fleet with id " << fleet_id;
             idle_fleets.erase(idle_fleet_it);
             return;
         }
 
         if (std::trunc(fleet->Fuel(objects)) < 1) {  // wait for fuel
-            TraceLogger() << "Not enough fuel to move fleet " << to_string(fleet->ID());
+            TraceLogger() << "Not enough fuel to move fleet " << fleet->NameAndID();
             return;
         }
 
@@ -7688,7 +7688,7 @@ namespace {
                 idle_fleets.erase(idle_fleet_it);
                 return;
             }
-            TraceLogger() << "Fleet " << to_string(fleet->ID()) << " can not reach resupply";
+            TraceLogger() << "Fleet " << fleet->NameAndID() << " can not reach resupply";
         }
 
         if (IssueFleetExploreOrder(fleet, route, context)) {
@@ -7783,7 +7783,7 @@ void MapWnd::DispatchFleetsExploring(ScriptingContext& context, EmpireID empire_
 
             auto fleet = objects.getRaw<Fleet>(fleet_id);
             if (!fleet) {
-                WarnLogger() << "Invalid fleet " << to_string(fleet_id);
+                WarnLogger() << "Invalid fleet " << fleet_id;
                 continue;
             }
             if (fleet->Fuel(objects) < 1.0f)
@@ -7823,8 +7823,8 @@ void MapWnd::DispatchFleetsExploring(ScriptingContext& context, EmpireID empire_
         if (dest_id == dest_sys_id)
             continue;
 
-        WarnLogger() << "Non idle exploring fleet " << to_string(fleet_id) << " has differing destination:"
-                     << to_string(fleet->FinalDestinationID()) << " expected:" << to_string(dest_sys_id);
+        WarnLogger() << "Non idle exploring fleet " << fleet->NameAndID() << " has differing destination: "
+                     << dest_id << " than expected: " << dest_sys_id;
 
         idle_fleets.insert(fleet_id);
         // systems_being_explored.erase(system_fleet_it);

@@ -139,12 +139,12 @@ namespace {
 
         const auto next_system = objects.getRaw<System>(new_next_system);
         if (!next_system) {
-            ErrorLogger(effects) << "UpdateFleetRoute couldn't get new next system with id: " << to_string(new_next_system);
+            ErrorLogger(effects) << "UpdateFleetRoute couldn't get new next system with id: " << new_next_system;
             return;
         }
 
         if (new_previous_system != INVALID_OBJECT_ID && !objects.getRaw<System>(new_previous_system))
-            ErrorLogger(effects) << "UpdateFleetRoute couldn't get new previous system with id: " << to_string(new_previous_system);
+            ErrorLogger(effects) << "UpdateFleetRoute couldn't get new previous system with id: " << new_previous_system;
 
         fleet->SetNextAndPreviousSystems(new_next_system, new_previous_system);
 
@@ -990,7 +990,7 @@ namespace {
     Meter* GetEmpireMeter(ScriptingContext& context, EmpireID empire_id, const std::string& meter) {
         const auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger(effects) << "SetEmpireMeter::Execute unable to find empire with id " << to_string(empire_id);
+            ErrorLogger(effects) << "SetEmpireMeter::Execute unable to find empire with id " << empire_id;
             return nullptr;
         } else if (Meter* m = empire->GetMeter(meter)) {
             return m;
@@ -1012,7 +1012,7 @@ void SetEmpireMeter::Execute(ScriptingContext& context) const {
     const EmpireID empire_id{m_empire_id->Eval(context)};
     auto* meter = GetEmpireMeter(context, empire_id, m_meter);
     if (!meter) {
-        ErrorLogger(effects) << "SetEmpireMeter::Execute found no empire " << to_string(empire_id) << " meter named " << m_meter;
+        ErrorLogger(effects) << "SetEmpireMeter::Execute found no empire " << empire_id << " meter named " << m_meter;
         return;
     }
     if (m_value->TargetInvariant()) {
@@ -1115,7 +1115,7 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
     const EmpireID empire_id{m_empire_id->Eval(context)};
     auto* meter = GetEmpireMeter(context, empire_id, m_meter);
     if (!meter) {
-        ErrorLogger() << "SetEmpireMeter couldn't get empire id " << to_string(empire_id) << " meter " << m_meter;
+        ErrorLogger() << "SetEmpireMeter couldn't get empire id " << empire_id << " meter " << m_meter;
         return;
     }
 
@@ -1226,7 +1226,7 @@ void SetEmpireStockpile::Execute(ScriptingContext& context) const {
 
     auto empire = context.GetEmpire(empire_id);
     if (!empire) {
-        DebugLogger(effects) << "SetEmpireStockpile::Execute couldn't find an empire with id " << to_string(empire_id);
+        DebugLogger(effects) << "SetEmpireStockpile::Execute couldn't find an empire with id " << empire_id;
         return;
     }
 
@@ -2118,7 +2118,7 @@ void CreateShip::Execute(ScriptingContext& context) const {
         if (empire_id != ALL_EMPIRES) {
             empire = context.GetEmpire(empire_id);
             if (!empire) {
-                ErrorLogger(effects) << "CreateShip::Execute couldn't get empire with id " << to_string(empire_id);
+                ErrorLogger(effects) << "CreateShip::Execute couldn't get empire with id " << empire_id;
                 return;
             }
         }
@@ -3789,7 +3789,7 @@ void GiveEmpireContent::Execute(ScriptingContext& context) const {
         break;
     }
     default: {
-        ErrorLogger(effects) << "GiveEmpireContent::Execute given invalid unlockable item type: " << to_string(m_unlock_type);
+        ErrorLogger(effects) << "GiveEmpireContent::Execute given invalid unlockable item type: " << m_unlock_type;
     }
     }
 }

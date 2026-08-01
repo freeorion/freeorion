@@ -196,7 +196,7 @@ void MultiMeterStatusBar::Update(const ObjectMap& objects) {
 
     auto obj = objects.get(m_object_id);
     if (!obj) {
-        ErrorLogger() << "MultiMeterStatusBar::Update couldn't get object with id  " << to_string(m_object_id);
+        ErrorLogger() << "MultiMeterStatusBar::Update couldn't get object with id  " << m_object_id;
         return;
     }
 
