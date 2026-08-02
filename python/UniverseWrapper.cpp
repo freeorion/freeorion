@@ -399,7 +399,7 @@ namespace FreeOrionPython {
             .add_property("shipIDs",            make_function(ObjectIDs<Ship>,          py::return_value_policy<py::return_by_value>()))
             .add_property("buildingIDs",        make_function(ObjectIDs<Building>,      py::return_value_policy<py::return_by_value>()))
             .def("destroyedObjectIDs",          +[](const Universe& u, int id) -> std::set<int> {
-                                                    const auto& ekdoi{u.EmpireKnownDestroyedObjectIDs(static_cast<EmpireID>(id))};
+                                                    const auto& ekdoi{u.EmpireKnownDestroyedObjectIDs(EmpireID{id})};
                                                     std::set<int> retval;
                                                     for (auto obj_id : ekdoi)
                                                         retval.insert(Value(obj_id));

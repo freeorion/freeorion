@@ -927,6 +927,8 @@ BOOST_PYTHON_MODULE(_conditions) {
                                                     { return insert_sorted_number_of_(args, kw, sm); }));
     }
 
+    DebugLogger() << "conditions module init!";
+
     py::def("HasSpecies", boost::python::raw_function(insert_has_species_));
     py::def("IsField", boost::python::raw_function(insert_is_field_));
     py::scope().attr("CanColonize") = make_wrapped<Condition::CanColonize>();
