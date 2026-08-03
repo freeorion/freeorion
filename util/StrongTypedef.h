@@ -83,6 +83,6 @@ struct std::hash<ST>
     { return std::hash<ST::UnderlyingType>::operator()(x.Value()); }
 };
 
-std::ostream& operator<<(std::ostream& os, strong_id_typedef auto t) { return os << Value(t); }
+std::ostream& operator<<(std::ostream& os, strong_id_typedef auto t) { return os << static_cast<int>(Value(t)); }
 
 #endif
