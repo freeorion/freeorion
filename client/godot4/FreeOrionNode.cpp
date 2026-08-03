@@ -8,7 +8,8 @@
 #include "../../util/Version.h"
 
 void FreeOrionNode::_bind_methods() {
-
+    godot::ClassDB::bind_method(godot::D_METHOD("get_version"), &FreeOrionNode::get_version);
+    godot::ClassDB::bind_method(godot::D_METHOD("get_user_data_dir"), &FreeOrionNode::get_user_data_dir);
 }
 
 FreeOrionNode::FreeOrionNode() {
@@ -27,3 +28,9 @@ FreeOrionNode::FreeOrionNode() {
 
 FreeOrionNode::~FreeOrionNode()
 { }
+
+godot::String FreeOrionNode::get_version() const
+{ return godot::String(FreeOrionVersionString().c_str()); }
+
+godot::String FreeOrionNode::get_user_data_dir() const
+{ return godot::String(GetUserDataDir().native().c_str()); }
