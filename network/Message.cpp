@@ -459,9 +459,9 @@ Message TurnUpdateMessage(EmpireID empire_id, int current_turn,
         } else {
             freeorion_xml_oarchive oa(zos);
             GlobalSerializationEncodingForEmpire() = empire_id;
-            oa << BOOST_SERIALIZATION_NVP(current_turn)
-               << BOOST_SERIALIZATION_NVP(empires)
-               << BOOST_SERIALIZATION_NVP(species);
+            oa << BOOST_SERIALIZATION_NVP(current_turn);
+            oa << BOOST_SERIALIZATION_NVP(empires);
+            oa << BOOST_SERIALIZATION_NVP(species);
             SerializeIncompleteLogs(oa, combat_logs, 1);
             oa << BOOST_SERIALIZATION_NVP(supply);
             Serialize(oa, universe);
@@ -1122,9 +1122,12 @@ void ExtractTurnUpdateMessageData(std::string text, EmpireID empire_id, int& cur
 
             freeorion_bin_iarchive ia(zis);
             GlobalSerializationEncodingForEmpire() = empire_id;
-            ia >> BOOST_SERIALIZATION_NVP(current_turn)
-               >> BOOST_SERIALIZATION_NVP(empires)
-               >> BOOST_SERIALIZATION_NVP(species);
+            DebugLogger() << "set encoding empire to: " << empire_id;
+            ia >> BOOST_SERIALIZATION_NVP(current_turn);
+            DebugLogger() << "got current turn: " << current_turn;
+            ia >> BOOST_SERIALIZATION_NVP(empires);
+            DebugLogger() << "extracted empires: " << empires.Dump();
+            ia >> BOOST_SERIALIZATION_NVP(species);
             SerializeIncompleteLogs(ia, combat_logs, 1);
             ia >> BOOST_SERIALIZATION_NVP(supply);
             Deserialize(ia, universe);
@@ -1138,9 +1141,9 @@ void ExtractTurnUpdateMessageData(std::string text, EmpireID empire_id, int& cur
 
             freeorion_xml_iarchive ia(zis);
             GlobalSerializationEncodingForEmpire() = empire_id;
-            ia >> BOOST_SERIALIZATION_NVP(current_turn)
-               >> BOOST_SERIALIZATION_NVP(empires)
-               >> BOOST_SERIALIZATION_NVP(species);
+            ia >> BOOST_SERIALIZATION_NVP(current_turn);
+            ia >> BOOST_SERIALIZATION_NVP(empires);
+            ia >> BOOST_SERIALIZATION_NVP(species);
             SerializeIncompleteLogs(ia, combat_logs, 1);
             ia >> BOOST_SERIALIZATION_NVP(supply);
             Deserialize(ia, universe);
