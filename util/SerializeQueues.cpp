@@ -3,6 +3,7 @@
 #include "../Empire/InfluenceQueue.h"
 #include "../Empire/ProductionQueue.h"
 #include "../Empire/ResearchQueue.h"
+#include "../util/Logger.h"
 
 #include "Serialize.ipp"
 #include <boost/lexical_cast.hpp>
@@ -13,11 +14,11 @@
 template <typename Archive>
 void ResearchQueue::Element::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(name)
-        & BOOST_SERIALIZATION_NVP(empire_id)
-        & BOOST_SERIALIZATION_NVP(allocated_rp)
-        & BOOST_SERIALIZATION_NVP(turns_left)
-        & BOOST_SERIALIZATION_NVP(paused);
+    ar  & BOOST_SERIALIZATION_NVP(name);
+    ar  & BOOST_SERIALIZATION_NVP(empire_id);
+    ar  & BOOST_SERIALIZATION_NVP(allocated_rp);
+    ar  & BOOST_SERIALIZATION_NVP(turns_left);
+    ar  & BOOST_SERIALIZATION_NVP(paused);
 }
 
 template void ResearchQueue::Element::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
@@ -28,10 +29,10 @@ template void ResearchQueue::Element::serialize<freeorion_xml_iarchive>(freeorio
 template <typename Archive>
 void ResearchQueue::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_queue)
-        & BOOST_SERIALIZATION_NVP(m_projects_in_progress)
-        & BOOST_SERIALIZATION_NVP(m_total_RPs_spent)
-        & BOOST_SERIALIZATION_NVP(m_empire_id);
+    ar  & BOOST_SERIALIZATION_NVP(m_queue);
+    ar  & BOOST_SERIALIZATION_NVP(m_projects_in_progress);
+    ar  & BOOST_SERIALIZATION_NVP(m_total_RPs_spent);
+    ar  & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template void ResearchQueue::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
@@ -42,9 +43,9 @@ template void ResearchQueue::serialize<freeorion_xml_iarchive>(freeorion_xml_iar
 template <typename Archive>
 void ProductionQueue::ProductionItem::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(build_type)
-        & BOOST_SERIALIZATION_NVP(name)
-        & BOOST_SERIALIZATION_NVP(design_id);
+    ar  & BOOST_SERIALIZATION_NVP(build_type);
+    ar  & BOOST_SERIALIZATION_NVP(name);
+    ar  & BOOST_SERIALIZATION_NVP(design_id);
 }
 
 template void ProductionQueue::ProductionItem::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
@@ -55,21 +56,21 @@ template void ProductionQueue::ProductionItem::serialize<freeorion_xml_iarchive>
 template <typename Archive>
 void ProductionQueue::Element::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(item)
-        & BOOST_SERIALIZATION_NVP(empire_id)
-        & BOOST_SERIALIZATION_NVP(ordered)
-        & BOOST_SERIALIZATION_NVP(remaining)
-        & BOOST_SERIALIZATION_NVP(blocksize)
-        & BOOST_SERIALIZATION_NVP(location)
-        & BOOST_SERIALIZATION_NVP(allocated_pp)
-        & BOOST_SERIALIZATION_NVP(progress)
-        & BOOST_SERIALIZATION_NVP(progress_memory)
-        & BOOST_SERIALIZATION_NVP(blocksize_memory)
-        & BOOST_SERIALIZATION_NVP(turns_left_to_next_item)
-        & BOOST_SERIALIZATION_NVP(turns_left_to_completion)
-        & BOOST_SERIALIZATION_NVP(rally_point_id)
-        & BOOST_SERIALIZATION_NVP(paused)
-        & BOOST_SERIALIZATION_NVP(allowed_imperial_stockpile_use);
+    ar  & BOOST_SERIALIZATION_NVP(item);
+    ar  & BOOST_SERIALIZATION_NVP(empire_id);
+    ar  & BOOST_SERIALIZATION_NVP(ordered);
+    ar  & BOOST_SERIALIZATION_NVP(remaining);
+    ar  & BOOST_SERIALIZATION_NVP(blocksize);
+    ar  & BOOST_SERIALIZATION_NVP(location);
+    ar  & BOOST_SERIALIZATION_NVP(allocated_pp);
+    ar  & BOOST_SERIALIZATION_NVP(progress);
+    ar  & BOOST_SERIALIZATION_NVP(progress_memory);
+    ar  & BOOST_SERIALIZATION_NVP(blocksize_memory);
+    ar  & BOOST_SERIALIZATION_NVP(turns_left_to_next_item);
+    ar  & BOOST_SERIALIZATION_NVP(turns_left_to_completion);
+    ar  & BOOST_SERIALIZATION_NVP(rally_point_id);
+    ar  & BOOST_SERIALIZATION_NVP(paused);
+    ar  & BOOST_SERIALIZATION_NVP(allowed_imperial_stockpile_use);
 
     if (Archive::is_loading::value && version < 3) {
         to_be_removed = false;
@@ -108,7 +109,7 @@ template void ProductionQueue::Element::serialize<freeorion_bin_iarchive>(freeor
 template void ProductionQueue::Element::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void ProductionQueue::Element::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
-BOOST_CLASS_VERSION(ProductionQueue, 1)
+
 
 namespace {
     constexpr auto to_uid = [](const auto& i) noexcept { return UniverseObjectID{i}; };
@@ -147,11 +148,13 @@ namespace {
     }
 }
 
+static_assert(boost::serialization::version<ProductionQueue>::value > 0);
+
 template <typename Archive>
 void ProductionQueue::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_queue)
-        & BOOST_SERIALIZATION_NVP(m_projects_in_progress);
+    ar  & BOOST_SERIALIZATION_NVP(m_queue);
+    ar  & BOOST_SERIALIZATION_NVP(m_projects_in_progress);
 
     if (Archive::is_loading::value && version < 1) {
         std::map<std::set<int>, float> temp;
@@ -176,8 +179,8 @@ void ProductionQueue::serialize(Archive& ar, const unsigned int version)
         if (Archive::is_loading::value)
             m_object_group_allocated_stockpile_pp = ToIDFlatSetFloatMap(scratch);
     }
-    ar  & BOOST_SERIALIZATION_NVP(m_expected_new_stockpile_amount)
-        & BOOST_SERIALIZATION_NVP(m_empire_id);
+    ar  & BOOST_SERIALIZATION_NVP(m_expected_new_stockpile_amount);
+    ar  & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template void ProductionQueue::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
@@ -188,10 +191,10 @@ template void ProductionQueue::serialize<freeorion_xml_iarchive>(freeorion_xml_i
 template <typename Archive>
 void InfluenceQueue::Element::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(name)
-        & BOOST_SERIALIZATION_NVP(empire_id)
-        & BOOST_SERIALIZATION_NVP(allocated_ip)
-        & BOOST_SERIALIZATION_NVP(paused);
+    ar  & BOOST_SERIALIZATION_NVP(name);
+    ar  & BOOST_SERIALIZATION_NVP(empire_id);
+    ar  & BOOST_SERIALIZATION_NVP(allocated_ip);
+    ar  & BOOST_SERIALIZATION_NVP(paused);
 }
 
 template void InfluenceQueue::Element::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
@@ -202,10 +205,10 @@ template void InfluenceQueue::Element::serialize<freeorion_xml_iarchive>(freeori
 template <typename Archive>
 void InfluenceQueue::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_queue)
-        & BOOST_SERIALIZATION_NVP(m_projects_in_progress)
-        & BOOST_SERIALIZATION_NVP(m_total_IPs_spent)
-        & BOOST_SERIALIZATION_NVP(m_empire_id);
+    ar  & BOOST_SERIALIZATION_NVP(m_queue);
+    ar  & BOOST_SERIALIZATION_NVP(m_projects_in_progress);
+    ar  & BOOST_SERIALIZATION_NVP(m_total_IPs_spent);
+    ar  & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template void InfluenceQueue::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);

@@ -244,5 +244,6 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+BOOST_CLASS_VERSION(ProductionQueue, 1)
 
 #endif
