@@ -1,9 +1,7 @@
 #ifndef _StrongTypedef_h_
 #define _StrongTypedef_h_
 
-#include <concepts>
 #include <cstdint>
-#include <functional>
 #include <limits>
 #include <string>
 #include <type_traits>
@@ -29,7 +27,7 @@ public:
     [[nodiscard]] constexpr StrongIDTypedef() noexcept = default;
     [[nodiscard]] constexpr explicit StrongIDTypedef(UnderlyingType utv) noexcept : value(utv) {}
 
-    template <std::integral T>
+    template <typename T> requires std::is_integral_v<T>
     [[nodiscard]] constexpr explicit StrongIDTypedef(T v) noexcept :
         value((std::cmp_greater_equal(v, MIN) && std::cmp_less_equal(v, MAX)) ?
               static_cast<UnderlyingType>(v) : invalid_value)
