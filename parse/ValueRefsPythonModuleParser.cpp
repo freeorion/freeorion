@@ -686,6 +686,33 @@ namespace {
             throw std::runtime_error(std::string("Not implemented ") + __func__);
         }
     }
+
+    value_ref_wrapper<int> insert_ship_parts_owned_(const py::tuple& args, const py::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> empire;
+        if (kw.has_key("empire")) {
+            empire = pyobject_to_vref<int>(kw["empire"]);
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
+        if (kw.has_key("name")) {
+            name = pyobject_to_vref<std::string>(kw["name"]);
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<int>> class_;
+        if (kw.has_key("class_")) {
+            auto ship_part_class = py::extract<enum_wrapper<ShipPartClass>>(kw["class_"])().value;
+            class_ = std::make_unique<ValueRef::Constant<int>>(static_cast<int>(ship_part_class));
+        }
+
+        return value_ref_wrapper<int>(std::make_shared<ValueRef::ComplexVariable<int>>(
+            "ShipPartsOwned",
+            std::move(empire),
+            std::move(class_),
+            nullptr,
+            std::move(name),
+            nullptr
+        ));
+    }
 }
 
 BOOST_PYTHON_MODULE(_value_refs) {
@@ -710,6 +737,8 @@ BOOST_PYTHON_MODULE(_value_refs) {
 
     const auto f_insert_part_of_class_in_ship_design_ = [](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_complex_i1_s1("PartOfClassInShipDesign", args, kw, "design", "name"); };
     boost::python::def("PartOfClassInShipDesign", boost::python::raw_function(f_insert_part_of_class_in_ship_design_));
+
+    py::def("ShipPartsOwned", py::raw_function(insert_ship_parts_owned_));
 
     // free_variable_name : Double
     for (const char* variable : {"UniverseCentreX",
