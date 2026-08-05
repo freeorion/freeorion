@@ -78,7 +78,7 @@ template<strong_id_typedef ST>
 struct std::hash<ST>
 {
     constexpr size_t operator()(ST x) const noexcept
-    { return std::hash<typename ST::UnderlyingType>::operator()(x.Value()); }
+    { return std::hash<typename ST::UnderlyingType>{}(x.Value()); }
 };
 
 std::ostream& operator<<(std::ostream& os, strong_id_typedef auto t) { return os << static_cast<int>(Value(t)); }
