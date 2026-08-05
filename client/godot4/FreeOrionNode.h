@@ -10,6 +10,9 @@ public:
     ~FreeOrionNode();
 protected:
 	static void _bind_methods();
+private:
+    godot::String get_version() const;
+    godot::String get_user_data_dir() const;
 };
 
 #endif
