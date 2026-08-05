@@ -234,7 +234,7 @@ using IDSet = boost::container::flat_set<UniverseObjectID>;
 class FO_COMMON_API UniverseObjectCXBase {
 public:
     [[nodiscard]] virtual const std::string& Name() const noexcept { return EMPTY_STRING; }///< name of this object; some valid objects will have no name
-    [[nodiscard]] CONSTEXPR_STRING std::string NameAndID() const { return Name() + " (" + to_string(m_id) + ")"; }///< name and (ID of this object) as single string
+    [[nodiscard]] std::string                NameAndID() const { return Name() + " (" + to_string(m_id) + ")"; }///< name and (ID of this object) as single string
 
     [[nodiscard]] constexpr UniverseObjectType ObjectType() const noexcept { return m_type; }
 
