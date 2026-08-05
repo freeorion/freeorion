@@ -13,7 +13,7 @@
 
 #ifndef _GG_Base_h_
 #define _GG_Base_h_
-
+// edit to force CI
 
 #include <functional>
 #include <memory>
