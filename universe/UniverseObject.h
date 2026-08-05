@@ -17,7 +17,7 @@
 #include "../util/Enum.h"
 #include "../util/Export.h"
 
-
+// edit to force CI
 class System;
 class SitRepEntry;
 class EmpireManager;
