@@ -279,7 +279,7 @@ namespace std {
         static constexpr size_t prime = 1099511628211ull;
     public:
         // based on MSVC STL hash using the FNV-1a algorithm
-        static constexpr std::size_t operator()(const GG::Clr& clr) noexcept {
+        constexpr std::size_t operator()(const GG::Clr& clr) const noexcept {
             std::size_t retval = offset;
             retval ^= static_cast<std::size_t>(clr.r);
             retval *= prime;
