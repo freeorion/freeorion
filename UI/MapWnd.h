@@ -57,7 +57,7 @@ struct LaneEndpoints {
 namespace hash_detail {
     template <typename V>
     inline static std::size_t combine(std::size_t hash_val, const V& val) noexcept {
-        hash_val ^= std::hash<V>::operator()(val) + 0x9e3779b9 + (hash_val<<6) + (hash_val>>2);
+        hash_val ^= std::hash<V>{}(val) + 0x9e3779b9 + (hash_val<<6) + (hash_val>>2);
         return hash_val;
     }
 }
