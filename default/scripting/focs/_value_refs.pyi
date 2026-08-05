@@ -20,8 +20,10 @@ from focs._types import (
     _PlanetSize,
     _PlanetType,
     _Resource,
+    _ShipPartClass,
     _SpeciesValue,
     _StarType,
+    _StringParam,
     _ValueParam,
     _ValuePlaceholder,
     _Visibility,
@@ -146,3 +148,4 @@ GalaxyPlanetDensity: _FloatParam = ...
 UsedInDesignID: _DesignID = ...
 
 def StaticCast(type_: type[_T], value: _FloatParam) -> _T: ...
+def ShipPartsOwned(empire: _EmpireId, name: _StringParam, class_: _ShipPartClass) -> _Int: ...
