@@ -27,10 +27,9 @@ public:
     [[nodiscard]] constexpr StrongIDTypedef() noexcept = default;
     [[nodiscard]] constexpr explicit StrongIDTypedef(UnderlyingType utv) noexcept : value(utv) {}
 
-    template <typename T> requires std::is_integral_v<T>
+    template <typename T> requires std::is_integral_v<T> && std::is_signed_v<T>
     [[nodiscard]] constexpr explicit StrongIDTypedef(T v) noexcept :
-        value((std::cmp_greater_equal(v, MIN) && std::cmp_less_equal(v, MAX)) ?
-              static_cast<UnderlyingType>(v) : invalid_value)
+        value(((v >= MIN) && (v <= MAX)) ? static_cast<UnderlyingType>(v) : invalid_value)
     {}
 
     [[nodiscard]] static consteval StrongIDTypedef Default() noexcept { return StrongIDTypedef{DEF}; }
