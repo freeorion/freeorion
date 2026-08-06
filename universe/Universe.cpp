@@ -2586,7 +2586,7 @@ namespace {
 
         const auto is_known_destroyed = [&known_destroyed_object_ids](auto obj_id) { return known_destroyed_object_ids.contains(obj_id); };
 
-        object_ids.erase(std::remove_if(object_ids.begin(), object_ids.end(), is_known_destroyed), object_ids.end());
+        std::erase_if(object_ids, is_known_destroyed);
     }
 
     /** sets visibility of field objects for empires based on input locations
