@@ -11,6 +11,7 @@ from focs._types import (
     _PlanetType,
     _Resource,
     _ShipPartClass,
+    _ShipSlotType,
     _StarType,
     _Visibility,
 )
@@ -112,3 +113,7 @@ IndustryClass = _ShipPartClass()
 ResearchClass = _ShipPartClass()
 InfluenceClass = _ShipPartClass()
 ProductionLocationClass = _ShipPartClass()
+
+External = _ShipSlotType()
+Internal = _ShipSlotType()
+Core = _ShipSlotType()

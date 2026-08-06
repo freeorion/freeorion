@@ -7,6 +7,7 @@
 #include "../universe/BuildingType.h"
 #include "../universe/Enums.h"
 #include "../universe/Planet.h"
+#include "../universe/ShipHull.h"
 #include "../universe/ShipPart.h"
 #include "../universe/Species.h"
 #include "../universe/System.h"
@@ -178,5 +179,14 @@ BOOST_PYTHON_MODULE(_enums) {
             {"DestroyOnCapture", CaptureResult::CR_DESTROY}})
     {
         py::scope().attr(capt.first) = enum_wrapper<CaptureResult>(capt.second);
+    }
+
+    // ship_slot_enum_grammar
+    for (const auto& shsl : std::initializer_list<std::pair<const char*, ShipSlotType>>{
+            {"External", ShipSlotType::SL_EXTERNAL},
+            {"Internal", ShipSlotType::SL_INTERNAL},
+            {"Core",     ShipSlotType::SL_CORE}})
+    {
+        py::scope().attr(shsl.first) = enum_wrapper<ShipSlotType>(shsl.second);
     }
 }
