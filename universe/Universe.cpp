@@ -341,17 +341,11 @@ Universe::IDSet Universe::EmpireVisibleObjectIDs(EmpireID empire_id, const Empir
     };
 
     auto ids_rng = m_objects.allWithIDs() | range_keys | range_filter(is_visible_to_an_empire);
-    Universe::IDSet retval;
 #if BOOST_VERSION > 107800
-    retval.reserve(m_objects.size());
-    retval.insert(boost::container::ordered_unique_range, ids_rng.begin(), ids_rng.end());
+    return {boost::container::ordered_unique_range, ids_rng.begin(), ids_rng.end()};
 #else
-    Empire::IntSet::sequence_type scratch;
-    scratch.reserve(m_objects.size());
-    range_copy(ids_rng, std::back_inserter(scratch));
-    retval.adopt_sequence(boost::container::ordered_unique_range, std::move(scratch));
+    return ids_rng | range_to<Empire::IDSet>();
 #endif
-    return retval;
 }
 
 UniverseObjectID Universe::HighestDestroyedObjectID() const {
