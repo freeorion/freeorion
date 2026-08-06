@@ -13,6 +13,7 @@
 #include <string>
 #include <boost/container/flat_set.hpp>
 #include <boost/serialization/access.hpp>
+#include <boost/serialization/version.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
