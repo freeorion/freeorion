@@ -1344,17 +1344,14 @@ Empire::LaneSet Empire::KnownStarlanes(const Universe& universe) const {
     scratch.reserve(objects.size<System>()*10); // guesstimate
 
     const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->GetEmpireID());
-    const auto not_known_destroyed = [&known_destroyed_objects](const auto& obj) {
-        if constexpr (std::is_integral_v<std::decay_t<decltype(obj)>> ||
-                      requires { { Value(obj) } -> std::integral; })
-            return !known_destroyed_objects.contains(obj);
-        else
-            return !known_destroyed_objects.contains(obj.first);
-    };
+    const auto not_known_destroyed_id = [&known_destroyed_objects](UniverseObjectID id)
+    { return !known_destroyed_objects.contains(id); };
+    const auto not_known_destroyed_id_obj = [&not_known_destroyed_id](const auto& id_obj)
+    { return not_known_destroyed_id(id_obj.first); };
 
     // collect lanes starting and ending at not destroyed systems
-    for (const auto& [start_id, sys] : objects.allWithIDs<System>() | range_filter(not_known_destroyed)) {
-        for (const auto end_id : sys->Starlanes() | range_filter(not_known_destroyed)) {
+    for (const auto& [start_id, sys] : objects.allWithIDs<System>() | range_filter(not_known_destroyed_id_obj)) {
+        for (const auto end_id : sys->Starlanes() | range_filter(not_known_destroyed_id)) {
             scratch.emplace_back(start_id, end_id);
             scratch.emplace_back(end_id, start_id);
         }
@@ -1417,15 +1414,15 @@ float Empire::Population() const
 namespace {
     template <typename X>
         requires (std::is_arithmetic_v<X> || std::is_enum_v<X>)
-    constexpr std::size_t SizeOfContents(const X&)
+    constexpr std::size_t SizeOfContents(const X&) noexcept
     { return 0u; }
 
     template <typename X>
-        requires (requires(X x) { { Value(x) } -> std::integral; })
-    constexpr std::size_t SizeOfContents(const X&)
+        requires requires(X x) { { Value(x) } -> std::integral; }
+    constexpr std::size_t SizeOfContents(const X&) noexcept
     { return 0u; }
 
-    CONSTEXPR_STRING std::size_t SizeOfContents(const std::string& s) {
+    CONSTEXPR_STRING std::size_t SizeOfContents(const std::string& s) noexcept {
         CONSTEXPR_STRING const std::size_t SSO_CAP = std::string{}.capacity();
         if (s.capacity() <= SSO_CAP)
             return 0;
