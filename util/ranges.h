@@ -8,6 +8,10 @@
 # define USING_STD_RANGES 0
 #endif
 
+#include <map>
+#include <set>
+#include <vector>
+
 #if (USING_STD_RANGES)
 # include <algorithm>
 # include <ranges>
@@ -101,8 +105,6 @@ inline auto operator|(std::span<T, N> r, const RangeTransformT& tform) {
     using it_t = std::decay_t<decltype(begin_it)>;
     return boost::iterator_range<it_t>(begin_it, end_it) | boost::adaptors::transformed(tform.func);
 }
-
-
 # endif
 
 
