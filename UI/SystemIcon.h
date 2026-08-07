@@ -6,6 +6,8 @@
 
 #include <boost/signals2/signal.hpp>
 
+#include "../universe/ConstantsFwd.h"
+
 
 class FleetButton;
 class RotatingGraphic;
@@ -17,7 +19,7 @@ class RotatingGraphic;
   * SidePanel. */
 class OwnerColoredSystemName : public GG::Control {
 public:
-    OwnerColoredSystemName(int system_id, int font_size, bool blank_unexplored_and_none);
+    OwnerColoredSystemName(UniverseObjectID system_id, int font_size, bool blank_unexplored_and_none);
 
     void CompleteConstruction() override;
     void Render() override;
@@ -33,23 +35,24 @@ private:
 class SystemIcon : public GG::Control {
 public:
     /** Construct from a universe ID at specified size and position. */
-    SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id);
+    SystemIcon(GG::X x, GG::Y y, GG::X w, UniverseObjectID system_id);
     void CompleteConstruction() override;
 
     /** Checks to see if point lies inside in-system fleet buttons before
         checking parent InWindow method. */
     bool InWindow(GG::Pt pt) const override;
 
-    int SystemID() const;                           //!< returns ID of system this icon represents
+    /** Returns ID of system this icon represents. */
+    UniverseObjectID SystemID() const noexcept { return m_system_id; }
 
     /** Returns the solid star disc texture. */
-    const std::shared_ptr<GG::Texture>& DiscTexture() const;
+    const auto& DiscTexture() const noexcept { return m_disc_texture; }
 
     /** Returns the transparent star halo texture. */
-    const std::shared_ptr<GG::Texture>& HaloTexture() const;
+    const auto& HaloTexture() const noexcept { return m_halo_texture; }
 
     /** Returns the alternate texture shown when icon very small. */
-    const std::shared_ptr<GG::Texture>& TinyTexture() const;
+    const auto& TinyTexture() const noexcept { return m_tiny_texture; }
 
     GG::Pt NthFleetButtonUpperLeft(unsigned int button_number, bool moving) const; //!< returns upper left point of moving or stationary fleetbutton number \a button_number
     int    EnclosingCircleDiameter() const;        //!< returns diameter of circle enclosing icon around which other icons can be placed and within which the mouse is over the icon
@@ -77,12 +80,12 @@ public:
     void ShowName();                     //!< enables the system name text
     void HideName();                     //!< disables the system name text
 
-    mutable boost::signals2::signal<void (int, GG::Flags< GG::ModKey > mod_keys)> MouseEnteringSignal;
-    mutable boost::signals2::signal<void (int)> MouseLeavingSignal;
-    mutable boost::signals2::signal<void (int)> LeftClickedSignal;
-    mutable boost::signals2::signal<void (int, GG::Flags< GG::ModKey > mod_keys)> RightClickedSignal;
-    mutable boost::signals2::signal<void (int)> LeftDoubleClickedSignal;
-    mutable boost::signals2::signal<void (int)> RightDoubleClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID, GG::Flags< GG::ModKey > mod_keys)> MouseEnteringSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> MouseLeavingSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> LeftClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID, GG::Flags< GG::ModKey > mod_keys)> RightClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> LeftDoubleClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> RightDoubleClickedSignal;
 
 private:
     void PositionSystemName(int pts);
@@ -92,7 +95,7 @@ private:
     std::shared_ptr<GG::Texture> m_tiny_texture;    //!< Alternate texture shown when icon very small
     std::shared_ptr<GG::Texture> m_overlay_texture; //!< Extra texture drawn over / behind system
 
-    int                                 m_system_id = -1;                   //!< the System associated with this SystemIcon
+    UniverseObjectID                    m_system_id = INVALID_OBJECT_ID;    //!< the System associated with this SystemIcon
     double                              m_overlay_size = 1.0;               //!< size of extra texture in universe units
     std::shared_ptr<GG::StaticGraphic>  m_tiny_graphic;                     //!< non-scaled texture shown when zoomed far enough out;
     std::shared_ptr<RotatingGraphic>    m_selection_indicator;              //!< shown to indicate system is selected in sidepanel

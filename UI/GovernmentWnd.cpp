@@ -89,7 +89,7 @@ namespace {
         /** Given the GUI's displayed availabilities as stored in this
             AvailabilityManager, return the displayed state of the \p policy.
             Return none if the \p policy should not be displayed. */
-        bool PolicyDisplayed(const Policy& policy, int empire_id = GetApp().EmpireID()) const;
+        bool PolicyDisplayed(const Policy& policy, EmpireID empire_id = GetApp().GetEmpireID()) const;
 
     private:
         // A tuple of the toogle state of the 3-tuple of coupled
@@ -121,7 +121,7 @@ namespace {
     void AvailabilityManager::ToggleAvailability(const Availability type)
     { SetAvailability(type, !GetAvailability(type)); }
 
-    bool AvailabilityManager::PolicyDisplayed(const Policy& policy, int empire_id) const {
+    bool AvailabilityManager::PolicyDisplayed(const Policy& policy, EmpireID empire_id) const {
         const auto [show_adopted, show_adoptable, show_unaffordable, show_restricted, show_locked] = m_availabilities;
 
         const ScriptingContext& context = GetApp().GetContext();
@@ -164,7 +164,7 @@ namespace {
 
         const auto& app = GetApp();
         const ScriptingContext& context = app.GetContext();
-        const int empire_id = app.EmpireID();
+        const EmpireID empire_id = app.GetEmpireID();
 
         std::string main_text;
         main_text += UserString(policy->Category()) + " - ";
@@ -292,7 +292,7 @@ void PolicyControl::CompleteConstruction() {
         return;
     auto& app = GetApp();
     auto& ui = app.GetUI();
-    const int empire_id = app.EmpireID();
+    const EmpireID empire_id = app.GetEmpireID();
     const auto& context = app.GetContext();
     const auto& name = UserString(m_policy->Name());
     const auto cost = static_cast<int>(m_policy->AdoptionCost(empire_id, context));
@@ -500,7 +500,7 @@ void PoliciesListBox::Populate() {
     const GG::X TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
     const int MAX_COLUMNS = std::max(1, TOTAL_WIDTH / (slot_size.x + PAD));
 
-    const int empire_id = GetApp().EmpireID();
+    const EmpireID empire_id = GetApp().GetEmpireID();
     const Empire* empire = GetEmpire(empire_id);  // may be nullptr
 
     m_empire_policies_changed_signal_connection.disconnect();
@@ -994,7 +994,7 @@ void PolicySlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptab
     auto& app = GetApp();
     const auto& context = app.GetContext();
 
-    auto empire = context.GetEmpire(app.EmpireID());
+    auto empire = context.GetEmpire(app.GetEmpireID());
     if (!empire)
         return;
 
@@ -1269,7 +1269,7 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
 
     auto& app = GetApp();
     ScriptingContext& context = app.GetContext();
-    const int empire_id = app.EmpireID();
+    const EmpireID empire_id = app.GetEmpireID();
 
     auto empire = std::as_const(context).GetEmpire(empire_id);  // may be nullptr
     if (!empire) {
@@ -1337,7 +1337,7 @@ void GovernmentWnd::MainPanel::PostChangeBigUpdate() {
     auto& app = GetApp();
     auto& context = app.GetContext();
 
-    const int empire_id = app.EmpireID();
+    const EmpireID empire_id = app.GetEmpireID();
     auto empire = context.GetEmpire(empire_id);  // may be nullptr
     if (!empire) {
         ErrorLogger() << "GovernmentWnd::MainPanel::SetPolicy has no empire to set policies for";
@@ -1383,7 +1383,7 @@ int GovernmentWnd::MainPanel::FindEmptySlotForPolicy(const Policy* policy) const
         return -1;
 
     const auto& app = GetApp();
-    const auto empire = app.GetContext().GetEmpire(app.EmpireID());
+    const auto empire = app.GetContext().GetEmpire(app.GetEmpireID());
 
     // reject unavailable and already-adopted policies
     if (!empire || !empire->PolicyAvailable(policy->Name())
@@ -1406,7 +1406,7 @@ void GovernmentWnd::MainPanel::RevertPolicies() {
     auto& app = GetApp();
     ScriptingContext& context = app.GetContext();
 
-    const int empire_id = app.EmpireID();
+    const EmpireID empire_id = app.GetEmpireID();
     auto empire = context.GetEmpire(empire_id);  // may be nullptr
     if (!empire) {
         ErrorLogger() << "GovernmentWnd::MainPanel::RevertPolicies has no empire to revert policies for";
@@ -1449,7 +1449,7 @@ void GovernmentWnd::MainPanel::Populate() {
     const ScriptingContext& context = app.GetContext();
 
     // loop over policy slots the empire's government has, add slot controls
-    const auto empire = context.GetEmpire(app.EmpireID());
+    const auto empire = context.GetEmpire(app.GetEmpireID());
     if (!empire)
         return;
 

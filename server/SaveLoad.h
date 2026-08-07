@@ -5,6 +5,8 @@
 #include <map>
 #include <string>
 
+#include "../universe/ConstantsFwd.h"
+
 class CombatLogManager;
 class EmpireManager;
 class SpeciesManager;
@@ -16,7 +18,7 @@ struct SaveGameEmpireData;
 struct ServerSaveGameData;
 
 /** Prepared empire data for save game or lobby. */
-std::map<int, SaveGameEmpireData> CompileSaveGameEmpireData(const EmpireManager& empires);
+std::map<EmpireID, SaveGameEmpireData> CompileSaveGameEmpireData(const EmpireManager& empires);
 
 /** Saves the provided data to savefile \a filename. */
 int SaveGame(const std::string& filename,
@@ -50,7 +52,7 @@ void LoadPlayerSaveHeaderData(const std::string& filename,
   * a saved game: player name, empire name, and empire colour (and empire id).
   * Also loads galaxy setup data to show it in lobby window. */
 void LoadEmpireSaveGameData(const std::string& filename,
-                            std::map<int, SaveGameEmpireData>& empire_save_game_data,
+                            std::map<EmpireID, SaveGameEmpireData>& empire_save_game_data,
                             std::vector<PlayerSaveHeaderData>& player_save_header_data,
                             GalaxySetupData& galaxy_setup_data,
                             int &current_turn);

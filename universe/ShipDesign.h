@@ -18,18 +18,30 @@ struct ScriptingContext;
     converted to a ShipDesign. */
 struct FO_COMMON_API ParsedShipDesign {
     ParsedShipDesign(std::string&& name, std::string&& description,
-                     int designed_on_turn, int designed_by_empire,
+                     int designed_on_turn, EmpireID designed_by_empire,
                      std::string&& hull, std::vector<std::string>&& parts,
                      std::string&& icon, std::string&& model,
                      bool name_desc_in_stringtable = false, bool monster = false,
-                     boost::uuids::uuid uuid = boost::uuids::nil_uuid());
+                     boost::uuids::uuid uuid = boost::uuids::nil_uuid()) :
+        m_name(std::move(name)),
+        m_description(std::move(description)),
+        m_uuid(std::move(uuid)),
+        m_designed_on_turn(designed_on_turn),
+        m_designed_by_empire(designed_by_empire),
+        m_hull(std::move(hull)),
+        m_parts(std::move(parts)),
+        m_icon(std::move(icon)),
+        m_3D_model(std::move(model)),
+        m_is_monster(monster),
+        m_name_desc_in_stringtable(name_desc_in_stringtable)
+    {}
 
     std::string                 m_name;
     std::string                 m_description;
     boost::uuids::uuid          m_uuid = boost::uuids::nil_uuid();
 
     int                         m_designed_on_turn = INVALID_GAME_TURN;
-    int                         m_designed_by_empire = ALL_EMPIRES;
+    EmpireID                    m_designed_by_empire = ALL_EMPIRES;
 
     std::string                 m_hull;
     std::vector<std::string>    m_parts;
@@ -70,7 +82,7 @@ public:
     */
     ShipDesign(const boost::optional<std::invalid_argument>& should_throw,
                std::string name, std::string description,
-               int designed_on_turn, int designed_by_empire, std::string hull,
+               int designed_on_turn, EmpireID designed_by_empire, std::string hull,
                std::vector<std::string> parts,
                std::string icon, std::string model,
                bool name_desc_in_stringtable = false, Monster monster = Monster::NOTMONSTER,
@@ -102,13 +114,13 @@ public:
     [[nodiscard]] const std::string& Description(bool stringtable_lookup = true) const;
     void SetDescription(const std::string& description);
 
-    [[nodiscard]] int DesignedOnTurn() const noexcept   { return m_designed_on_turn; };    ///< returns turn on which design was created
-    [[nodiscard]] int DesignedByEmpire() const noexcept { return m_designed_by_empire; };  ///< returns id of empire that created this design
+    [[nodiscard]] int DesignedOnTurn() const noexcept    { return m_designed_on_turn; };    ///< returns turn on which design was created
+    [[nodiscard]] auto DesignedByEmpire() const noexcept { return m_designed_by_empire; };  ///< returns id of empire that created this design
 
     [[nodiscard]] bool  ProductionCostTimeLocationInvariant() const;          ///< returns true if the production cost and time are invariant (does not depend on) the location
-    [[nodiscard]] float ProductionCost(int empire_id, int location_id, const ScriptingContext& context) const; ///< returns the total cost to build a ship of this design
-    [[nodiscard]] float PerTurnCost(int empire_id, int location_id, const ScriptingContext& context) const;    ///< returns the maximum per-turn number of production points that can be spent on building a ship of this design
-    [[nodiscard]] int   ProductionTime(int empire_id, int location_id, const ScriptingContext& context) const; ///< returns the time in turns it takes to build a ship of this design
+    [[nodiscard]] float ProductionCost(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const; ///< returns the total cost to build a ship of this design
+    [[nodiscard]] float PerTurnCost(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const;    ///< returns the maximum per-turn number of production points that can be spent on building a ship of this design
+    [[nodiscard]] int   ProductionTime(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const; ///< returns the time in turns it takes to build a ship of this design
     [[nodiscard]] bool  Producible() const noexcept { return m_producible; }  ///< returns whether this design is producible by players and appears on the production screen list
 
     [[nodiscard]] float Speed() const noexcept          { return m_speed; }                 ///< returns design speed along starlanes
@@ -168,9 +180,10 @@ public:
       * clients and server. */
     [[nodiscard]] uint32_t GetCheckSum() const;
 
-    [[nodiscard]] bool ProductionLocation(int empire_id, int location_id, const ScriptingContext& context) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id
+    [[nodiscard]] bool ProductionLocation(EmpireID empire_id, UniverseObjectID location_id,
+                                          const ScriptingContext& context) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id
 
-    void SetID(int id);                                                  ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
+    void SetID(int id) noexcept { m_id = id; }                                      ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
     void SetUUID(boost::uuids::uuid uuid) { m_uuid = uuid; }
     void Rename(std::string name) noexcept { m_name = std::move(name); } ///< renames this design to \a name
     void SetMonster(bool is_monster) noexcept { m_is_monster = is_monster; }
@@ -205,7 +218,7 @@ private:
     boost::uuids::uuid       m_uuid = boost::uuids::nil_uuid();
 
     int                      m_designed_on_turn = INVALID_GAME_TURN;
-    int                      m_designed_by_empire = ALL_EMPIRES;
+    EmpireID                 m_designed_by_empire = ALL_EMPIRES;
 
     std::string              m_hull;
     std::vector<std::string> m_parts;

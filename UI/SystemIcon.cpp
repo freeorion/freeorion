@@ -36,7 +36,7 @@ namespace {
 
     /// Adds color tags to name_o according to the empires in owner_empire_ids
     std::string ColorNameByOwners(const std::string& name_o,
-                                  std::set<int>& owner_empire_ids,
+                                  std::set<EmpireID>& owner_empire_ids,
                                   const EmpireManager& empires)
     {
         if (owner_empire_ids.size() < 1) {
@@ -60,14 +60,14 @@ namespace {
             std::string retval;
             int start = 0;
 
-            for (int empire_id : owner_empire_ids) {
+            for (EmpireID empire_id : owner_empire_ids) {
                 int current_length = piece_length;
                 if (extra > 0) { // Use left over letters as long as we have them
                     ++current_length;
                     --extra;
                 }
                 // Now we convert a piece of the name back into utf8 and wrap it in tags.
-                std::string  piece;
+                std::string piece;
                 utf8::utf32to8(name.begin() + start, name.begin() + start + current_length, std::back_inserter(piece));
 
                 GG::Clr empire_clr = ClientUI::TextColor();
@@ -88,7 +88,7 @@ namespace {
 ////////////////////////////////////////////////
 // OwnerColoredSystemName
 ////////////////////////////////////////////////
-OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
+OwnerColoredSystemName::OwnerColoredSystemName(UniverseObjectID system_id, int font_size,
                                                bool blank_unexplored_and_none) :
     Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS)
 {
@@ -97,7 +97,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
     // Consider extending GG::Font to do similar.
 
     auto& app = GetApp();
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     const auto& context = app.GetContext();
     const EmpireManager& empire_manager = context.Empires();
     const Universe& universe = context.ContextUniverse();
@@ -122,11 +122,11 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
     bool capital = false, homeworld = false, has_shipyard = false,
          has_neutrals = false, has_player_planet = false;
 
-    std::set<int> owner_empire_ids;
+    std::set<EmpireID> owner_empire_ids;
     auto system_planets = objects.find<const Planet>(system->PlanetIDs());
 
     for (auto& planet : system_planets) {
-        int planet_id = planet->ID();
+        const auto planet_id = planet->ID();
 
         if (known_destroyed_object_ids.contains(planet_id))
             continue;
@@ -202,7 +202,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
     }
 
     if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
-        wrapped_system_name = wrapped_system_name + " (" + std::to_string(system_id) + ")";
+        wrapped_system_name = wrapped_system_name + " (" + to_string(system_id) + ")";
 
     m_text = GG::Wnd::Create<GG::TextControl>(
         GG::X0, GG::Y0, GG::X1, GG::Y1,
@@ -239,7 +239,7 @@ void OwnerColoredSystemName::SizeMove(GG::Pt ul, GG::Pt lr) {
 ////////////////////////////////////////////////
 // SystemIcon
 ////////////////////////////////////////////////
-SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
+SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, UniverseObjectID system_id) :
     GG::Control(x, y, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_system_id(system_id)
 {}
@@ -252,13 +252,13 @@ void SystemIcon::CompleteConstruction() {
         StarType star_type = system->GetStarType();
         m_disc_texture = ui.GetModuloTexture(ClientUI::ArtDir() / "stars",
                                              ClientUI::StarTypeFilePrefix(star_type),
-                                             m_system_id);
+                                             Value(m_system_id));
         m_halo_texture = ui.GetModuloTexture(ClientUI::ArtDir() / "stars",
                                              ClientUI::HaloStarTypeFilePrefix(star_type),
-                                             m_system_id);
+                                             Value(m_system_id));
         m_tiny_texture = ui.GetModuloTexture(ClientUI::ArtDir() / "stars",
                                              std::string("tiny_").append(ClientUI::StarTypeFilePrefix(star_type)),
-                                             m_system_id);
+                                             Value(m_system_id));
     } else {
         m_disc_texture = ui.GetTexture(ClientUI::ArtDir() / "misc" / "missing.png");
         m_halo_texture = m_disc_texture;
@@ -311,18 +311,6 @@ void SystemIcon::CompleteConstruction() {
 
     Refresh();
 }
-
-int SystemIcon::SystemID() const
-{ return m_system_id; }
-
-const std::shared_ptr<GG::Texture>& SystemIcon::DiscTexture() const
-{ return m_disc_texture; }
-
-const std::shared_ptr<GG::Texture>& SystemIcon::HaloTexture() const
-{ return m_halo_texture; }
-
-const std::shared_ptr<GG::Texture>& SystemIcon::TinyTexture() const
-{ return m_tiny_texture; }
 
 GG::Pt SystemIcon::NthFleetButtonUpperLeft(unsigned int button_number, bool moving) const {
     if (button_number < 1) {
@@ -569,7 +557,7 @@ void SystemIcon::MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
                                               (Width() < m_tiny_mouseover_indicator->Width());
     // indicate mouseover
     if (m_mouseover_indicator && !USE_TINY_MOUSEOVER_INDICATOR) {
-        int client_empire_id = GetApp().EmpireID();
+        auto client_empire_id = GetApp().GetEmpireID();
         Empire* this_empire = GetEmpire(client_empire_id);
         bool explored = !this_empire || (this_empire && this_empire->HasExploredSystem(m_system_id)) ||
                 !m_mouseover_unexplored_indicator;

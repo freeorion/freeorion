@@ -23,22 +23,22 @@ public:
     void CompleteConstruction() override;
     ~SidePanel();
 
-    bool InWindow(GG::Pt pt) const override;
+    [[nodiscard]] bool InWindow(GG::Pt pt) const override;
 
-    GG::Pt ClientUpperLeft() const noexcept override;
+    [[nodiscard]] GG::Pt ClientUpperLeft() const noexcept override;
 
     /** Returns the id of the system shown in the SidePanels, or
       * INVALID_OBJECT_ID if no system is shown */
-    static int SystemID() noexcept { return s_system_id; }
+    [[nodiscard]] static UniverseObjectID SystemID() noexcept { return s_system_id; }
 
     /** Returns the id of the currently-selected planet, or
       * INVALID_OBJECT_ID if no planet is selected */
-    int SelectedPlanetID() const noexcept { return (m_selection_enabled ? s_planet_id : INVALID_OBJECT_ID); }
+    [[nodiscard]] UniverseObjectID SelectedPlanetID() const noexcept { return (m_selection_enabled ? s_planet_id : INVALID_OBJECT_ID); }
 
 
     /** Returns whether this SidePanel contains an object with the indicated
       * \a object_id that can be selected within the SidePanel. */
-    bool PlanetSelectable(int planet_id, const ObjectMap& objects) const;
+    [[nodiscard]] bool PlanetSelectable(UniverseObjectID planet_id, const ObjectMap& objects) const;
 
     void PreRender() override;
 
@@ -56,10 +56,10 @@ public:
     /** Selects the planet with id \a planet_id within the current system, if
       * such a planet exists.  All SidePanels' selected planets are set, if
       * those panels have planet selection enabled. */
-    static void SelectPlanet(int planet_id, const ObjectMap& objects);
+    static void SelectPlanet(UniverseObjectID planet_id, const ObjectMap& objects);
 
     /** Sets the system currently being viewed in all side panels */
-    static void SetSystem(int system_id, const ObjectMap& objects);
+    static void SetSystem(UniverseObjectID system_id, const ObjectMap& objects);
 
     /** Enables, or disables if \a enable is false, selection of planet panels
       * within this SidePanel.  Panels that can be selected are those which
@@ -73,24 +73,24 @@ public:
 
     /** emitted when a rotating planet in the side panel is clicked by the
       * user */
-    static boost::signals2::signal<void (int)>    PlanetSelectedSignal;
+    static boost::signals2::signal<void (UniverseObjectID)>    PlanetSelectedSignal;
 
     /** emitted when something in the sidepanel wants to change the selected
       * system, including the droplist or back/forward arrows */
-    static boost::signals2::signal<void (int)>    SystemSelectedSignal;
+    static boost::signals2::signal<void (UniverseObjectID)>    SystemSelectedSignal;
 
     /** emitted when a planet's resourcecenter has changed, including when
       * focus is changed */
     static boost::signals2::signal<void ()>       ResourceCenterChangedSignal;
 
     /** emitted when a planet is left double clicked*/
-    static boost::signals2::signal<void (int)>    PlanetDoubleClickedSignal;
+    static boost::signals2::signal<void (UniverseObjectID)>    PlanetDoubleClickedSignal;
 
     /** emitted when a planet is right clicked */
-    static boost::signals2::signal<void (int)>    PlanetRightClickedSignal;
+    static boost::signals2::signal<void (UniverseObjectID)>    PlanetRightClickedSignal;
 
     /** emitted when a building is right clicked */
-    static boost::signals2::signal<void (int)>    BuildingRightClickedSignal;
+    static boost::signals2::signal<void (UniverseObjectID)>    BuildingRightClickedSignal;
 
 protected:
     void InitBuffers() override;
@@ -100,7 +100,7 @@ private:
 
     void DoLayout();
 
-    void UpdateImpl(ScriptingContext& context, int empire_id); ///< updates contents quickly.  to be used when meters or other objects' data changes
+    void UpdateImpl(ScriptingContext& context, EmpireID empire_id); ///< updates contents quickly.  to be used when meters or other objects' data changes
 
     /** Fully refreshes sidepanel and contents, recreating all contents from
       * stored system id.  All SidePanels are refreshed. */
@@ -119,13 +119,13 @@ private:
     void PrevButtonClicked();            ///< responds to user clicking next system button
     void NextButtonClicked();            ///< responts to user clicking previous system button
     /** Respond to the user clicking a planet by selecting it if selection is enabled.*/
-    void PlanetClickedSlot(int planet_id, const ObjectMap& objects) const;
+    void PlanetClickedSlot(UniverseObjectID planet_id, const ObjectMap& objects) const;
 
     /** Responds to insertion fleets into system during a turn.  may update colonize buttons. */
-    static void FleetsInserted(std::vector<int> fleets, const ObjectMap& objects);
+    static void FleetsInserted(std::vector<UniverseObjectID> fleets, const ObjectMap& objects);
 
     /** Responds to removal fleets from system during a turn.  may update colonize buttons. */
-    static void FleetsRemoved(std::vector<int> fleets);
+    static void FleetsRemoved(std::vector<UniverseObjectID> fleets);
 
     class SystemNameDropDownList;
     std::shared_ptr<SystemNameDropDownList>     m_system_name;
@@ -146,15 +146,15 @@ private:
     static bool s_needs_update;
     static bool s_needs_refresh;
 
-    static int  s_system_id;
+    static UniverseObjectID  s_system_id;
 
     /** The id of the currently-selected planet, or INVALID_OBJECT_ID if no planet is selected. */
-    static int  s_planet_id;
+    static UniverseObjectID  s_planet_id;
 
     static std::set<std::weak_ptr<SidePanel>, std::owner_less<std::weak_ptr<SidePanel>>> s_side_panels;
 
     static std::set<boost::signals2::scoped_connection>      s_system_connections;
-    static std::map<int, boost::signals2::scoped_connection> s_fleet_state_change_signals;
+    static std::map<UniverseObjectID, boost::signals2::scoped_connection> s_fleet_state_change_signals;
 };
 
 #endif

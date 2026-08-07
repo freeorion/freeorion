@@ -295,7 +295,7 @@ public:
       * id \a empire_id or 0.0 if there is no such opinion yet recorded.
       * iff \a target is true, then the target meter is returned, otherwise the active meter is returned.
       * iff \a current is true, then the current meter value is returned, otherwise the initial meter is returned. */
-    [[nodiscard]] float SpeciesEmpireOpinion(const std::string& species_name, int empire_id,
+    [[nodiscard]] float SpeciesEmpireOpinion(const std::string& species_name, EmpireID empire_id,
                                              bool target, bool current) const;
 
     /** returns a map from species name to a map from other species names to the
@@ -326,12 +326,12 @@ public:
     void SetSpeciesSpeciesOpinion(const std::string& opinionated_species,
                                   const std::string& rated_species, float opinion, bool target);
     void SetSpeciesEmpireOpinion(const std::string& opinionated_species,
-                                 int empire_id, float opinion, bool target);
+                                 EmpireID empire_id, float opinion, bool target);
     void ResetSpeciesOpinions(bool active, bool target);
     void BackPropagateOpinions();
 
-    void AddSpeciesHomeworld(std::string species, int homeworld_id);
-    void RemoveSpeciesHomeworld(const std::string& species, int homeworld_id);
+    void AddSpeciesHomeworld(std::string species, UniverseObjectID homeworld_id);
+    void RemoveSpeciesHomeworld(const std::string& species, UniverseObjectID homeworld_id);
     void ClearSpeciesHomeworlds();
 
     [[nodiscard]] const auto& SpeciesShipsDestroyed() const noexcept { return m_species_species_ships_destroyed; }
@@ -344,10 +344,6 @@ public:
     void SetSpeciesTypes(PendingT&& future);
 
 private:
-    /** sets the homeworld ids of species in this SpeciesManager to those
-      * specified in \a species_homeworld_ids */
-    void SetSpeciesHomeworlds(std::map<std::string, std::set<int>>&& species_homeworld_ids);
-
     /** Assigns any m_pending_types to m_species. */
     void CheckPendingSpeciesTypes() const;
 
@@ -361,8 +357,8 @@ private:
     template <typename V>
     using flat_set = boost::container::flat_set<V, std::less<>>;
 
-    flat_map<std::string, flat_set<int>>                                  m_species_homeworlds;
-    flat_map<std::string, flat_map<int, std::pair<Meter, Meter>>>         m_species_empire_opinions;
+    flat_map<std::string, flat_set<UniverseObjectID>>                     m_species_homeworlds;
+    flat_map<std::string, flat_map<EmpireID, std::pair<Meter, Meter>>>    m_species_empire_opinions;
     flat_map<std::string, flat_map<std::string, std::pair<Meter, Meter>>> m_species_species_opinions;
     flat_map<std::string, flat_map<std::string, int>>                     m_species_species_ships_destroyed;
 

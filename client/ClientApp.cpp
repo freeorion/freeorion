@@ -18,20 +18,20 @@ ClientApp::ClientApp() :
 int ClientApp::PlayerID() const noexcept
 { return m_networking->PlayerID(); }
 
-Empire* ClientApp::GetEmpire(int empire_id)
+Empire* ClientApp::GetEmpire(EmpireID empire_id)
 { return m_empires.GetEmpire(empire_id).get(); }
 
-const Empire* ClientApp::GetEmpire(int empire_id) const
+const Empire* ClientApp::GetEmpire(EmpireID empire_id) const
 { return m_empires.GetEmpire(empire_id).get(); }
 
-int ClientApp::EmpirePlayerID(int empire_id) const noexcept {
+int ClientApp::EmpirePlayerID(EmpireID empire_id) const noexcept {
     for (const auto& [id, info] : m_player_info)
         if (info.empire_id == empire_id)
             return id;
     return Networking::INVALID_PLAYER_ID;
 }
 
-Networking::ClientType ClientApp::GetEmpireClientType(int empire_id) const
+Networking::ClientType ClientApp::GetEmpireClientType(EmpireID empire_id) const
 { return GetPlayerClientType(ClientApp::EmpirePlayerID(empire_id)); }
 
 Networking::ClientType ClientApp::GetPlayerClientType(int player_id) const {
@@ -46,7 +46,7 @@ Networking::ClientType ClientApp::GetPlayerClientType(int player_id) const {
 Networking::ClientType ClientApp::GetClientType() const
 { return GetPlayerClientType(m_networking->PlayerID()); }
 
-void ClientApp::SetEmpireStatus(int empire_id, Message::PlayerStatus status) {
+void ClientApp::SetEmpireStatus(EmpireID empire_id, Message::PlayerStatus status) {
     if (auto empire = m_empires.GetEmpire(empire_id))
         empire->SetReady(status == Message::PlayerStatus::WAITING);
 }

@@ -243,7 +243,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         BOOST_TEST_MESSAGE("...ignored message...");
         return true; // ignore
     case Message::MessageType::PLAYER_STATUS: {
-        int about_empire_id = ALL_EMPIRES;
+        EmpireID about_empire_id = ALL_EMPIRES;
         Message::PlayerStatus status = Message::PlayerStatus::WAITING;
         ExtractPlayerStatusMessageData(msg, status, about_empire_id);
         SetEmpireStatus(about_empire_id, status);

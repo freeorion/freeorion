@@ -81,10 +81,10 @@ public:
 
     [[nodiscard]] std::string  Dump(uint8_t ntabs = 0) const override;
 
-    [[nodiscard]] int                  ContainerObjectID() const noexcept override { return this->SystemID(); }
-    [[nodiscard]] std::span<const int> ContainedObjectIDs() const override { return ToSpan(m_buildings); }
-    [[nodiscard]] bool                 Contains(int object_id) const override;
-    [[nodiscard]] bool                 ContainedBy(int object_id) const noexcept override;
+    [[nodiscard]] UniverseObjectID                  ContainerObjectID() const noexcept override { return this->SystemID(); }
+    [[nodiscard]] std::span<const UniverseObjectID> ContainedObjectIDs() const override { return ToSpan(m_buildings); }
+    [[nodiscard]] bool                              Contains(UniverseObjectID object_id) const override;
+    [[nodiscard]] bool                              ContainedBy(UniverseObjectID object_id) const noexcept override;
 
     [[nodiscard]] const auto&                   Focus() const noexcept { return m_focus; }
     [[nodiscard]] int                           TurnsSinceFocusChange(int current_turn) const noexcept;
@@ -101,7 +101,7 @@ public:
     [[nodiscard]] PlanetSize          Size() const noexcept            { return m_size; }
     [[nodiscard]] int                 HabitableSize() const;
 
-    [[nodiscard]] bool                HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
+    [[nodiscard]] bool                HostileToEmpire(EmpireID empire_id, const EmpireManager& empires) const override;
 
     [[nodiscard]] PlanetEnvironment   EnvironmentForSpecies(const SpeciesManager& sm,
                                                             std::string_view species_name = "") const;
@@ -134,30 +134,30 @@ public:
     [[nodiscard]] bool IsAboutToBeColonized() const noexcept        { return m_is_about_to_be_colonized; }
     [[nodiscard]] bool IsAboutToBeInvaded() const noexcept          { return m_is_about_to_be_invaded; }
     [[nodiscard]] bool IsAboutToBeBombarded() const noexcept        { return m_is_about_to_be_bombarded; }
-    [[nodiscard]] int OrderedAnnexedByEmpire() const noexcept       { return m_ordered_annexed_by_empire_id; }
-    [[nodiscard]] int LastAnnexedByEmpire() const noexcept          { return m_last_annexed_by_empire_id; }
-    [[nodiscard]] double AnnexationCost(int empire_id, const ScriptingContext& context) const;
-    [[nodiscard]] int OrderedGivenToEmpire() const noexcept         { return m_ordered_given_to_empire_id; }
+    [[nodiscard]] auto OrderedAnnexedByEmpire() const noexcept      { return m_ordered_annexed_by_empire_id; }
+    [[nodiscard]] auto LastAnnexedByEmpire() const noexcept         { return m_last_annexed_by_empire_id; }
+    [[nodiscard]] double AnnexationCost(EmpireID empire_id, const ScriptingContext& context) const;
+    [[nodiscard]] auto OrderedGivenToEmpire() const noexcept        { return m_ordered_given_to_empire_id; }
     [[nodiscard]] int LastTurnAttackedByShip() const noexcept       { return m_last_turn_attacked_by_ship; }
     [[nodiscard]] int LastTurnColonized() const noexcept            { return m_turn_last_colonized; }
     [[nodiscard]] int TurnsSinceColonization(int current_turn) const noexcept;
-    [[nodiscard]] int LastColonizedByEmpire() const                 { return m_last_colonized_by_empire_id; }
+    [[nodiscard]] auto LastColonizedByEmpire() const                { return m_last_colonized_by_empire_id; }
     [[nodiscard]] int LastTurnConquered() const noexcept            { return m_turn_last_conquered; }
     [[nodiscard]] int TurnsSinceLastConquered(int current_turn) const noexcept;
-    [[nodiscard]] int OwnerBeforeLastConquered() const noexcept     { return m_owner_before_last_conquered; }
-    [[nodiscard]] int LastInvadedByEmpire() const noexcept          { return m_last_invaded_by_empire_id; }
+    [[nodiscard]] auto OwnerBeforeLastConquered() const noexcept    { return m_owner_before_last_conquered; }
+    [[nodiscard]] auto LastInvadedByEmpire() const noexcept         { return m_last_invaded_by_empire_id; }
     [[nodiscard]] int LastTurnAnnexed() const noexcept              { return m_turn_last_annexed; }
     [[nodiscard]] int TurnsSinceLastAnnexed(int current_turn) const noexcept;
 
     [[nodiscard]] const auto& SurfaceTexture() const noexcept       { return m_surface_texture; }
     [[nodiscard]] std::string CardinalSuffix(const ObjectMap& objects) const; ///< returns a roman number representing this planets orbit in relation to other planets
 
-    [[nodiscard]] std::map<int, double> EmpireGroundCombatForces() const;
+    [[nodiscard]] std::map<EmpireID, double> EmpireGroundCombatForces() const;
 
     [[nodiscard]] std::size_t           SizeInMemory() const override;
 
-    void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;
-    void Copy(const Planet& copied_planet, const Universe& universe, int empire_id = ALL_EMPIRES);
+    void Copy(const UniverseObject& copied_object, const Universe& universe, EmpireID empire_id = ALL_EMPIRES) override;
+    void Copy(const Planet& copied_planet, const Universe& universe, EmpireID empire_id = ALL_EMPIRES);
 
     void Reset(ObjectMap& objects);
 
@@ -175,26 +175,26 @@ public:
     void SetRotationalPeriod(float days);   ///< sets the rotational period of this planet
     void SetHighAxialTilt();                ///< randomly generates a new, high axial tilt
 
-    void AddBuilding(int building_id);      ///< adds the building to the planet
-    bool RemoveBuilding(int building_id);   ///< removes the building from the planet; returns false if no such building was found
+    void AddBuilding(UniverseObjectID building_id);              ///< adds the building to the planet
+    bool RemoveBuilding(UniverseObjectID building_id);           ///< removes the building from the planet; returns false if no such building was found
 
-    void Conquer(int conquerer, ScriptingContext& context); ///< Called during combat when a planet changes hands
-    bool Colonize(int empire_id, std::string species_name,  ///< Called during colonization handling to do the actual colonizing
+    void Conquer(EmpireID conquerer, ScriptingContext& context); ///< Called during combat when a planet changes hands
+    bool Colonize(EmpireID empire_id, std::string species_name,  ///< Called during colonization handling to do the actual colonizing
                   double population, ScriptingContext& context);
-    void SetIsAboutToBeColonized(bool b);   ///< Called during colonization when a planet is about to be colonized
-    void ResetIsAboutToBeColonized();       ///< Called after colonization, to reset the number of prospective colonizers to 0
-    void SetLastColonizedByEmpire(int id);  ///< Records the empire (or no empire) that most recently colonized this planet.
-    void SetTurnLastColonized(int turn);    ///< Sets the last turn this planet was colonized
-    void SetIsAboutToBeInvaded(bool b);     ///< Marks planet as being invaded or not, depending on whether \a b is true or false
-    void SetLastInvadedByEmpire(int id);    ///< Records the empire (or no empire) that most recently invaded a planet.
-    void ResetIsAboutToBeInvaded();         ///< Marks planet as not being invaded
-    void SetIsOrderAnnexedByEmpire(int empire_id);
+    void SetIsAboutToBeColonized(bool b);       ///< Called during colonization when a planet is about to be colonized
+    void ResetIsAboutToBeColonized();           ///< Called after colonization, to reset the number of prospective colonizers to 0
+    void SetLastColonizedByEmpire(EmpireID id); ///< Records the empire (or no empire) that most recently colonized this planet.
+    void SetTurnLastColonized(int turn);        ///< Sets the last turn this planet was colonized
+    void SetIsAboutToBeInvaded(bool b);         ///< Marks planet as being invaded or not, depending on whether \a b is true or false
+    void SetLastInvadedByEmpire(EmpireID id);   ///< Records the empire (or no empire) that most recently invaded a planet.
+    void ResetIsAboutToBeInvaded();             ///< Marks planet as not being invaded
+    void SetIsOrderAnnexedByEmpire(EmpireID empire_id);
     void ResetBeingAnnxed();
-    void SetLastAnnexedByEmpire(int id);    ///< Records the empire (or no empire) that most recently annexed this planet.
-    void SetIsAboutToBeBombarded(bool b);   ///< Marks planet as being bombarded or not, depending on whether \a b is true or false
-    void ResetIsAboutToBeBombarded();       ///< Marks planet as not being bombarded
-    void SetGiveToEmpire(int empire_id);    ///< Marks planet to be given to empire
-    void ClearGiveToEmpire();               ///< Marks planet not to be given to any empire
+    void SetLastAnnexedByEmpire(EmpireID id);   ///< Records the empire (or no empire) that most recently annexed this planet.
+    void SetIsAboutToBeBombarded(bool b);       ///< Marks planet as being bombarded or not, depending on whether \a b is true or false
+    void ResetIsAboutToBeBombarded();           ///< Marks planet as not being bombarded
+    void SetGiveToEmpire(EmpireID empire_id);   ///< Marks planet to be given to empire
+    void ClearGiveToEmpire();                   ///< Marks planet not to be given to any empire
 
     void SetLastTurnAttackedByShip(int turn) noexcept;///< Sets the last turn this planet was attacked by a ship
     void SetLastTurnAnnexed(int turn) noexcept;
@@ -205,7 +205,7 @@ public:
 
     /** Given initial set of ground forces on planet, determine ground forces on
       * planet after a turn of ground combat. */
-    static void ResolveGroundCombat(std::map<int, double>& empires_troops,
+    static void ResolveGroundCombat(std::map<EmpireID, double>& empires_troops,
                                     const DiploStatusMap& diplo_statuses);
 
     /** Create planet from @p type and @p size. */
@@ -213,7 +213,7 @@ public:
     Planet() : UniverseObject(UniverseObjectType::OBJ_PLANET) { AddMeters(planet_meter_types); }
 
     /** returns new copy of this Planet. */
-    [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
+    [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, EmpireID empire_id = ALL_EMPIRES) const override;
 
     mutable boost::signals2::signal<void ()> ResourceCenterChangedSignal;
 
@@ -261,20 +261,20 @@ private:
 
     IDSet       m_buildings;
 
-    int         m_last_annexed_by_empire_id = ALL_EMPIRES;
-    int         m_owner_before_last_conquered = ALL_EMPIRES;
-    int         m_last_invaded_by_empire_id = ALL_EMPIRES;
-    int         m_last_colonized_by_empire_id = ALL_EMPIRES;
+    EmpireID    m_last_annexed_by_empire_id = ALL_EMPIRES;
+    EmpireID    m_owner_before_last_conquered = ALL_EMPIRES;
+    EmpireID    m_last_invaded_by_empire_id = ALL_EMPIRES;
+    EmpireID    m_last_colonized_by_empire_id = ALL_EMPIRES;
 
     int         m_turn_last_annexed = INVALID_GAME_TURN;
     int         m_turn_last_colonized = INVALID_GAME_TURN;
     int         m_turn_last_conquered = INVALID_GAME_TURN;
-    int         m_ordered_given_to_empire_id = ALL_EMPIRES;
+    EmpireID    m_ordered_given_to_empire_id = ALL_EMPIRES;
     int         m_last_turn_attacked_by_ship = -1;
 
     std::string m_surface_texture;  // intentionally not serialized; set by local effects
 
-    int         m_ordered_annexed_by_empire_id = ALL_EMPIRES;
+    EmpireID    m_ordered_annexed_by_empire_id = ALL_EMPIRES;
 
     bool        m_is_about_to_be_colonized = false;
     bool        m_is_about_to_be_invaded = false;

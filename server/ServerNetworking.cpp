@@ -210,7 +210,7 @@ void PlayerConnection::Start() {
 void PlayerConnection::SendMessage(const Message& message)
 { SendMessage(message, ALL_EMPIRES, INVALID_GAME_TURN); }
 
-void PlayerConnection::SendMessage(const Message& message, int empire_id, int turn) {
+void PlayerConnection::SendMessage(const Message& message, EmpireID empire_id, int turn) {
     if (!m_valid) {
         ErrorLogger(network) << "PlayerConnection::SendMessage can't send message when not transmit connected";
         MessageSentSignal(false, empire_id, turn);
@@ -497,7 +497,7 @@ void PlayerConnection::AsyncReadMessage() {
                                         boost::asio::placeholders::bytes_transferred));
 }
 
-void PlayerConnection::SendMessageImpl(PlayerConnectionPtr self, Message message, int empire_id, int turn) {
+void PlayerConnection::SendMessageImpl(PlayerConnectionPtr self, Message message, EmpireID empire_id, int turn) {
     const bool start_write = self->m_outgoing_messages.empty();
     self->m_outgoing_messages.emplace(std::move(message), empire_id, turn);
     if (start_write)
@@ -531,7 +531,7 @@ void PlayerConnection::AsyncWriteMessage() {
 void PlayerConnection::HandleMessageWrite(PlayerConnectionPtr self,
                                           boost::system::error_code error,
                                           std::size_t bytes_transferred,
-                                          int empire_id, int turn)
+                                          EmpireID empire_id, int turn)
 {
     if (error) {
         self->m_valid = false;

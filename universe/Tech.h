@@ -78,9 +78,9 @@ public:
     [[nodiscard]] const auto& ShortDescription() const noexcept { return m_short_description; }
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const;
     [[nodiscard]] const auto& Category() const noexcept         { return m_category; }
-    [[nodiscard]] float       ResearchCost(int empire_id, const ScriptingContext& context) const;
-    [[nodiscard]] float       PerTurnCost(int empire_id, const ScriptingContext& context) const;
-    [[nodiscard]] int         ResearchTime(int empire_id, const ScriptingContext& context) const;
+    [[nodiscard]] float       ResearchCost(EmpireID empire_id, const ScriptingContext& context) const;
+    [[nodiscard]] float       PerTurnCost(EmpireID empire_id, const ScriptingContext& context) const;
+    [[nodiscard]] int         ResearchTime(EmpireID empire_id, const ScriptingContext& context) const;
     [[nodiscard]] bool        Researchable() const noexcept     { return m_researchable; }
 
     [[nodiscard]] const auto& Tags() const noexcept { return m_tags; }
@@ -172,7 +172,7 @@ public:
 
     /** returns the cheapest researchable tech */
     [[nodiscard]] const Tech* CheapestNextTech(
-        const std::vector<std::string_view>& researched_techs, int empire_id, const ScriptingContext& context);
+        const std::vector<std::string_view>& researched_techs, EmpireID empire_id, const ScriptingContext& context);
 
     [[nodiscard]] TechContainer::size_type size() const;
     [[nodiscard]] iterator begin() const;
@@ -181,7 +181,7 @@ public:
     /** Returns names of indicated tech's prerequisites, and all prereqs of
       * those techs, etc. recursively. */
     [[nodiscard]] std::vector<std::string> RecursivePrereqs(
-        std::string_view tech_name, int empire_id, const ScriptingContext& context) const;
+        std::string_view tech_name, EmpireID empire_id, const ScriptingContext& context) const;
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for

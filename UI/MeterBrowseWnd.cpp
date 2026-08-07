@@ -79,11 +79,11 @@ namespace {
     { return FighterBrowseLabelWidth() + MeterBrowseQtyWidth() + MeterBrowseValueWidth() + (EDGE_PAD * 4); }
 }
 
-MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type) :
+MeterBrowseWnd::MeterBrowseWnd(UniverseObjectID object_id, MeterType primary_meter_type) :
     MeterBrowseWnd(object_id, primary_meter_type, MeterType::INVALID_METER_TYPE)
 {}
 
-MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type,
+MeterBrowseWnd::MeterBrowseWnd(UniverseObjectID object_id, MeterType primary_meter_type,
                                MeterType secondary_meter_type) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, MeterBrowseLabelWidth() + MeterBrowseValueWidth(), GG::Y1),
     m_primary_meter_type(primary_meter_type),
@@ -129,7 +129,7 @@ void MeterBrowseWnd::Initialize(const ScriptingContext& context) {
 
     auto obj = context.ContextObjects().get(m_object_id);
     if (!obj) {
-        ErrorLogger() << "MeterBrowseWnd::Initialize couldn't get object with id  " << m_object_id;
+        ErrorLogger() << "MeterBrowseWnd::Initialize couldn't get object with id " << m_object_id;
         return;
     }
     auto& ui = GetApp().GetUI();
@@ -234,7 +234,7 @@ void MeterBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
 namespace {
     /** Return the vector of accounting information from \p obj_id of \p meter_type.*/
     boost::optional<const std::vector<Effect::AccountingInfo>&> GetAccountingInfo(
-        int obj_id, const MeterType& meter_type, const ScriptingContext& context)
+        UniverseObjectID obj_id, const MeterType& meter_type, const ScriptingContext& context)
     {
         // get object and meter, aborting if not valid
         auto obj = context.ContextObjects().get(obj_id);
@@ -487,7 +487,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top, const ScriptingCont
     }
 }
 
-ShipDamageBrowseWnd::ShipDamageBrowseWnd(int object_id, MeterType primary_meter_type) :
+ShipDamageBrowseWnd::ShipDamageBrowseWnd(UniverseObjectID object_id, MeterType primary_meter_type) :
     MeterBrowseWnd(object_id, primary_meter_type)
 {}
 
@@ -659,7 +659,7 @@ namespace {
     };
 }
 
-ShipFightersBrowseWnd::ShipFightersBrowseWnd(int object_id, MeterType primary_meter_type, bool show_all_bouts ) :
+ShipFightersBrowseWnd::ShipFightersBrowseWnd(UniverseObjectID object_id, MeterType primary_meter_type, bool show_all_bouts ) :
     MeterBrowseWnd(object_id, primary_meter_type),
     m_show_all_bouts(show_all_bouts)
 {}
@@ -812,7 +812,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top, const Script
                 hangar_part.first = part_name;
                 combat_targets = part->CombatTargets();
             } else if (hangar_part.first != part_name) {
-                ErrorLogger() << "Ship " << ship->ID() << "contains different hangar parts: "
+                ErrorLogger() << "Ship " << ship->NameAndID() << " contains different hangar parts: "
                               << hangar_part.first << ", " << part_name;
             }
             // set the current and total fighter capacity

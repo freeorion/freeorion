@@ -28,14 +28,14 @@ struct FO_COMMON_API InfluenceQueue {
     /** The type of a single element in the Influence queue. */
     struct FO_COMMON_API Element {
         CONSTEXPR_STRING Element() = default;
-        CONSTEXPR_STRING Element(int empire_id_, std::string name_, bool paused_ = false) :
+        CONSTEXPR_STRING Element(EmpireID empire_id_, std::string name_, bool paused_ = false) :
             name(std::move(name_)),
             empire_id(empire_id_),
             paused(paused_)
         {}
 
         std::string     name;                       ///< name of influence project
-        int             empire_id = ALL_EMPIRES;
+        EmpireID        empire_id = ALL_EMPIRES;
         float           allocated_ip = 0.0f;        ///< IP allocated to this InfluenceQueue Element by Empire Influence update
         bool            paused = false;
 
@@ -52,7 +52,7 @@ struct FO_COMMON_API InfluenceQueue {
     using const_iterator = QueueType::const_iterator;
 
     InfluenceQueue() = default;
-    explicit InfluenceQueue(int empire_id) :
+    explicit InfluenceQueue(EmpireID empire_id) :
         m_empire_id(empire_id)
     {}
 
@@ -60,7 +60,7 @@ struct FO_COMMON_API InfluenceQueue {
 
     [[nodiscard]] int   ProjectsInProgress() const noexcept { return m_projects_in_progress; }
     [[nodiscard]] float TotalIPsSpent() const noexcept { return m_total_IPs_spent; };
-    [[nodiscard]] int   EmpireID() const noexcept { return m_empire_id; }
+    [[nodiscard]] auto  GetEmpireID() const noexcept { return m_empire_id; }
 
     /** Returns amount of stockpile IP allocated to Influence queue elements. */
     [[nodiscard]] float AllocatedStockpileIP() const noexcept;
@@ -87,7 +87,7 @@ struct FO_COMMON_API InfluenceQueue {
       * empire->CheckInfluenceProgress() will actually spend PP, remove items from queue and create them
       * in the universe. */
     void Update(const ScriptingContext& context,
-                const std::vector<std::pair<int, double>>& annex_costs,
+                const std::vector<std::pair<UniverseObjectID, double>>& annex_costs,
                 const std::vector<std::pair<std::string_view, double>>& policy_costs);
 
 
@@ -110,7 +110,7 @@ private:
     int         m_projects_in_progress = 0;
     float       m_total_IPs_spent = 0.0f;
     float       m_expected_new_stockpile_amount = 0.0f;
-    int         m_empire_id = ALL_EMPIRES;
+    ::EmpireID  m_empire_id = ALL_EMPIRES;
 
     friend class boost::serialization::access;
     template <typename Archive>

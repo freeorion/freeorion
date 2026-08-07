@@ -49,9 +49,8 @@ namespace Effect {
     class EffectsGroup;
 
     using TargetSet = std::vector<UniverseObject*>;
-    /** Effect accounting information for all meters of all objects that are
-      * acted on by effects. */
-    using AccountingMap = std::unordered_map<int, boost::container::flat_map<MeterType, std::vector<AccountingInfo>>>;
+    /** Effect accounting information for all meters of all objects that are acted on by effects. */
+    using AccountingMap = std::unordered_map<UniverseObjectID, boost::container::flat_map<MeterType, std::vector<AccountingInfo>>>;
 
     /** Description of cause of an effect: the general cause type, and the
       * specific cause.  eg. Building and a particular BuildingType. */
@@ -90,12 +89,12 @@ namespace Effect {
     /** Combination of an EffectsGroup and the id of a source object. */
     struct SourcedEffectsGroup {
         constexpr SourcedEffectsGroup() = default;
-        constexpr SourcedEffectsGroup(int source_object_id_, const EffectsGroup* effects_group_) noexcept :
+        constexpr SourcedEffectsGroup(UniverseObjectID source_object_id_, const EffectsGroup* effects_group_) noexcept :
             source_object_id(source_object_id_),
             effects_group(effects_group_)
         {}
         constexpr auto operator<=>(const SourcedEffectsGroup&) const noexcept = default;
-        int source_object_id = INVALID_OBJECT_ID;
+        UniverseObjectID source_object_id = INVALID_OBJECT_ID;
         const EffectsGroup* effects_group = nullptr;
     };
 
@@ -152,9 +151,9 @@ namespace Effect {
     /** Accounting information about what the causes are and changes produced
       * by effects groups acting on meters of objects. */
     struct FO_COMMON_API AccountingInfo : public EffectCause {
-        AccountingInfo() = default;
+        CONSTEXPR_STRING AccountingInfo() noexcept = default;
 
-        AccountingInfo(float meter_change_, float running_meter_total_)
+        CONSTEXPR_STRING AccountingInfo(float meter_change_, float running_meter_total_)
             noexcept(noexcept(EffectCause{EffectsCauseType::ECT_UNKNOWN_CAUSE})) :
             EffectCause(EffectsCauseType::ECT_UNKNOWN_CAUSE),
             source_id(INVALID_OBJECT_ID),
@@ -162,8 +161,8 @@ namespace Effect {
             running_meter_total(running_meter_total_)
         {}
 
-        AccountingInfo(int source_id_, EffectsCauseType cause_type_, float meter_change_,
-                       float running_meter_total_)
+        CONSTEXPR_STRING AccountingInfo(UniverseObjectID source_id_, EffectsCauseType cause_type_,
+                       float meter_change_, float running_meter_total_)
             noexcept(noexcept(EffectCause{std::declval<EffectsCauseType>()})) :
             EffectCause(cause_type_),
             source_id(source_id_),
@@ -172,8 +171,8 @@ namespace Effect {
         {}
 
         template <typename S1, typename S2 = const char*>
-        AccountingInfo(int source_id_, EffectsCauseType cause_type_, float meter_change_,
-                       float running_meter_total_, S1&& specific_cause_, S2&& custom_label_ = "")
+        CONSTEXPR_STRING AccountingInfo(UniverseObjectID source_id_, EffectsCauseType cause_type_, float meter_change_,
+                                        float running_meter_total_, S1&& specific_cause_, S2&& custom_label_ = "")
             noexcept(noexcept(EffectCause{std::declval<EffectsCauseType>(), std::declval<S1>(), std::declval<S2>()})) :
             EffectCause(cause_type_, std::forward<S1>(specific_cause_), std::forward<S2>(custom_label_)),
             source_id(source_id_),
@@ -183,9 +182,9 @@ namespace Effect {
 
         [[nodiscard]] bool operator==(const AccountingInfo& rhs) const noexcept;
 
-        int     source_id = INVALID_OBJECT_ID;  ///< source object of effect
-        float   meter_change = 0.0f;            ///< net change on meter due to this effect, as best known by client's empire
-        float   running_meter_total = 0.0f;     ///< meter total as of this effect.
+        UniverseObjectID source_id = INVALID_OBJECT_ID;  ///< source object of effect
+        float            meter_change = 0.0f;            ///< net change on meter due to this effect, as best known by client's empire
+        float            running_meter_total = 0.0f;     ///< meter total as of this effect.
     };
 
     /** Contains one or more Effects, a Condition which indicates the objects in

@@ -14,7 +14,7 @@ class StatisticIcon;
 /** Shows population with meter bars */
 class PopulationPanel : public AccordionPanel {
 public:
-    PopulationPanel(GG::X w, int object_id);
+    PopulationPanel(GG::X w, UniverseObjectID object_id);
     void CompleteConstruction() override;
 
     auto PopCenterID() const noexcept { return m_popcenter_id; }
@@ -38,7 +38,7 @@ private:
     void ExpandCollapseButtonPressed();
 
     /** object id for the PopulationCenter that this panel displays */
-    int m_popcenter_id = INVALID_OBJECT_ID;
+    UniverseObjectID m_popcenter_id = INVALID_OBJECT_ID;
 
     /** Icons for the associated meter type. */
     std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>> m_meter_stats;
@@ -49,7 +49,7 @@ private:
     std::shared_ptr<MultiMeterStatusBar> m_multi_meter_status_bar;
 
     /** map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false) */
-    static std::map<int, bool> s_expanded_map;
+    static std::map<UniverseObjectID, bool> s_expanded_map;
 };
 
 #endif

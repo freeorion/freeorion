@@ -17,13 +17,13 @@ class UniverseObject;
 
 // Data on what happened on single object in the combat
 struct ParticipantSummary {
-    int     object_id = INVALID_OBJECT_ID;
-    int     empire_id = ALL_EMPIRES;
-    float   current_health = 0.0f;
-    float   max_health = 0.0f;
+    UniverseObjectID object_id = INVALID_OBJECT_ID;
+    EmpireID         empire_id = ALL_EMPIRES;
+    float            current_health = 0.0f;
+    float            max_health = 0.0f;
 
     ParticipantSummary() = default;
-    ParticipantSummary(int object_id_, int empire_id_, const CombatParticipantState& state);
+    ParticipantSummary(UniverseObjectID object_id_, EmpireID empire_id_, const CombatParticipantState& state);
 };
 
 // A summary of what happened to a side in the combat (an empire or neutral)
@@ -44,13 +44,13 @@ public:
     float           max_current_health = 0.0f;
 
     CombatSummary() = default;
-    CombatSummary(int empire_id);
+    explicit CombatSummary(EmpireID empire_id);
 
     GG::Clr         SideColor() const;
     std::string     SideName() const;
     unsigned int    DestroyedUnits() const;
-    void            AddUnit(int unit_id, const CombatParticipantState& state);  // Adds a summary of a unit to the summary of its side and aggregates its data.
-    void            Sort();                                                     // Sorts the units of this side in some sensible fashion
+    void            AddUnit(UniverseObjectID unit_id, const CombatParticipantState& state); // Adds a summary of a unit to the summary of its side and aggregates its data.
+    void            Sort(); // Sorts the units of this side in some sensible fashion
 };
 
 

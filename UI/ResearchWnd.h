@@ -17,14 +17,14 @@ public:
     ResearchWnd(GG::X w, GG::Y h, bool initially_hidden = true);
     void CompleteConstruction() override;
 
-    int  ShownEmpireID() const { return m_empire_shown_id; };
-    bool PediaVisible();
+    [[nodiscard]] auto ShownEmpireID() const { return m_empire_shown_id; };
+    [[nodiscard]] bool PediaVisible();
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void Render() override;
 
-    void SetEmpireShown(int empire_id, const ScriptingContext& context);
+    void SetEmpireShown(EmpireID empire_id, const ScriptingContext& context);
 
     void Refresh(const ScriptingContext& context);
     void Reset(const ScriptingContext& context);
@@ -60,7 +60,7 @@ private:
     std::shared_ptr<ResearchQueueWnd>   m_queue_wnd;
     std::shared_ptr<TechTreeWnd>        m_tech_tree_wnd;
     boost::signals2::scoped_connection  m_empire_connection;
-    int                                 m_empire_shown_id = ALL_EMPIRES;
+    EmpireID                            m_empire_shown_id = ALL_EMPIRES;
     bool                                m_enabled = false;
     std::atomic<bool>                   m_refresh_needed = false;
 };

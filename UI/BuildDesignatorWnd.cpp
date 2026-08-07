@@ -102,7 +102,7 @@ namespace {
     class ProductionItemPanel : public GG::Control {
     public:
         ProductionItemPanel(GG::X w, GG::Y h, const ProductionQueue::ProductionItem& item,
-                            int empire_id, int location_id) :
+                            EmpireID empire_id, UniverseObjectID location_id) :
             Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
             m_item(item),
             m_empire_id(empire_id),
@@ -180,7 +180,7 @@ namespace {
                     name_text = design->Name(true);
                     texture = ClientUI::ShipDesignIcon(*design);
                 } else {
-                    texture = ClientUI::ShipDesignIcon(INVALID_OBJECT_ID, context.ContextUniverse());
+                    texture = ClientUI::ShipDesignIcon(INVALID_DESIGN_ID, context.ContextUniverse());
                 }
                 break;
             }
@@ -238,8 +238,8 @@ namespace {
 
         bool                                    m_initialized = false;
         const ProductionQueue::ProductionItem   m_item;
-        int                                     m_empire_id = ALL_EMPIRES;
-        int                                     m_location_id = INVALID_OBJECT_ID;
+        EmpireID                                m_empire_id = ALL_EMPIRES;
+        UniverseObjectID                        m_location_id = INVALID_OBJECT_ID;
         std::shared_ptr<GG::StaticGraphic>      m_icon;
         std::shared_ptr<GG::Label>              m_name;
         //std::shared_ptr<GG::Label>              m_cost;
@@ -247,8 +247,8 @@ namespace {
         std::shared_ptr<GG::Label>              m_desc;
     };
 
-    std::string EnqueueAndLocationConditionDescription(const std::string& building_name, int candidate_object_id,
-                                                       int empire_id, bool only_failed_conditions)
+    std::string EnqueueAndLocationConditionDescription(const std::string& building_name, UniverseObjectID candidate_object_id,
+                                                       EmpireID empire_id, bool only_failed_conditions)
     {
         std::vector<const Condition::Condition*> enqueue_conditions;
         enqueue_conditions.reserve(3);
@@ -272,8 +272,8 @@ namespace {
             return ConditionDescription(enqueue_conditions, source_context, candidate);
     }
 
-    std::string LocationConditionDescription(int ship_design_id, int candidate_object_id,
-                                             int empire_id, bool only_failed_conditions)
+    std::string LocationConditionDescription(int ship_design_id, UniverseObjectID candidate_object_id,
+                                             EmpireID empire_id, bool only_failed_conditions)
     {
 #if defined(__GNUC__) && (__GNUC__ < 13)
         // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
@@ -314,7 +314,7 @@ namespace {
     class ProductionItemRowBrowseWnd : public GG::BrowseInfoWnd {
     public:
         ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
-                                   int candidate_object_id, int empire_id) :
+                                   UniverseObjectID candidate_object_id, EmpireID empire_id) :
             GG::BrowseInfoWnd(GG::X0, GG::Y0, ICON_BROWSE_TEXT_WIDTH + ICON_BROWSE_ICON_WIDTH, GG::Y1),
             m_item(std::move(item)),
             m_candidate_object_id(candidate_object_id),
@@ -407,7 +407,7 @@ namespace {
             auto obj = context.ContextObjects().getRaw(m_candidate_object_id);
             std::string candidate_name = obj ? obj->Name() : "";
             if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
-                candidate_name += " (" + std::to_string(m_candidate_object_id) + ")";
+                candidate_name += " (" + to_string(m_candidate_object_id) + ")";
             return std::pair{obj, std::move(candidate_name)};
         }
 
@@ -594,8 +594,8 @@ namespace {
         std::shared_ptr<GG::Label>             m_title_text_label;
         std::shared_ptr<GG::Label>             m_main_text_label;
         const ProductionQueue::ProductionItem& m_item;
-        const int                              m_candidate_object_id = INVALID_OBJECT_ID;
-        const int                              m_empire_id = ALL_EMPIRES;
+        const UniverseObjectID                 m_candidate_object_id = INVALID_OBJECT_ID;
+        const EmpireID                         m_empire_id = ALL_EMPIRES;
     };
 
 
@@ -605,7 +605,7 @@ namespace {
     class ProductionItemRow : public GG::ListBox::Row {
     public:
         ProductionItemRow(GG::X w, GG::Y h, const ProductionQueue::ProductionItem& item,
-                          int empire_id, int location_id) :
+                          EmpireID empire_id, UniverseObjectID location_id) :
             GG::ListBox::Row(w, h),
             m_item(item)
         {
@@ -707,11 +707,11 @@ public:
     /** Sets build location for this selector, which may be used to filter
       * items in the list or enable / disable them at some point in the
       * future. */
-    void SetBuildLocation(int location_id, bool refresh_list = true);
+    void SetBuildLocation(UniverseObjectID location_id, bool refresh_list = true);
 
     /** Sets id of empire (or ALL_EMPIRES) for which to show items in this
       * BuildSelector. */
-    void SetEmpireID(int empire_id = ALL_EMPIRES, bool refresh_list = true);
+    void SetEmpireID(EmpireID empire_id = ALL_EMPIRES, bool refresh_list = true);
 
     /** Clear and refill list of buildable items, according to current
       * filter settings. */
@@ -763,8 +763,8 @@ private:
     std::pair<bool, bool>                                   m_availabilities_shown; //!< .first -> available items; .second -> unavailable items
     std::shared_ptr<BuildableItemsListBox>                  m_buildable_items;
     GG::Pt                                                  m_original_ul;
-    int                                                     m_production_location;
-    int                                                     m_empire_id;
+    UniverseObjectID                                        m_production_location;
+    EmpireID                                                m_empire_id;
     mutable boost::signals2::scoped_connection              m_empire_ship_designs_changed_connection;
 
     friend class BuildDesignatorWnd;        // so BuildDesignatorWnd can access buttons
@@ -866,7 +866,7 @@ void BuildDesignatorWnd::BuildSelector::SizeMove(GG::Pt ul, GG::Pt lr) {
         DoLayout();
 }
 
-void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id, bool refresh_list) {
+void BuildDesignatorWnd::BuildSelector::SetBuildLocation(UniverseObjectID location_id, bool refresh_list) {
     if (m_production_location != location_id) {
         m_production_location = location_id;
         if (refresh_list)
@@ -874,7 +874,7 @@ void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id, bool r
     }
 }
 
-void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id, bool refresh_list) {
+void BuildDesignatorWnd::BuildSelector::SetEmpireID(EmpireID empire_id, bool refresh_list) {
     if (empire_id == m_empire_id)
         return;
 
@@ -1250,8 +1250,8 @@ void BuildDesignatorWnd::CompleteConstruction() {
     m_build_selector->ShowPediaSignal.connect([this]() { ShowPedia(); });
 
     m_build_selector->RequestBuildItemSignal.connect(
-        [this](ProductionQueue::ProductionItem item, int num, int pos)
-        { BuildItemRequested(std::move(item), num, pos); });
+        [this](ProductionQueue::ProductionItem item, int num, int queue_pos)
+        { BuildItemRequested(std::move(item), num, queue_pos); });
 
     SidePanel::PlanetSelectedSignal.connect(PlanetSelectedSignal);
     SidePanel::SystemSelectedSignal.connect(SystemSelectedSignal);
@@ -1294,7 +1294,7 @@ bool BuildDesignatorWnd::InWindow(GG::Pt pt) const noexcept
 bool BuildDesignatorWnd::InClient(GG::Pt pt) const noexcept
 { return m_enc_detail_panel->InClient(pt) || m_build_selector->InClient(pt) || m_side_panel->InClient(pt); }
 
-int BuildDesignatorWnd::SelectedPlanetID() const noexcept
+UniverseObjectID BuildDesignatorWnd::SelectedPlanetID() const noexcept
 { return m_side_panel->SelectedPlanetID(); }
 
 void BuildDesignatorWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
@@ -1313,7 +1313,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
     auto& app = GetApp();
     auto& context = app.GetContext();
     const auto& objects = context.ContextObjects();
-    const int empire_id = app.EmpireID();
+    const auto empire_id = app.GetEmpireID();
 
     auto empire = std::as_const(context).GetEmpire(empire_id);
     if (!empire) {
@@ -1323,10 +1323,10 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
 
     const auto& queue = empire->GetProductionQueue();
     if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
-        const int location_id = queue[queue_idx].location;
+        const auto location_id = queue[queue_idx].location;
         if (auto build_location = objects.get(location_id)) {
             // centre map on system of build location
-            const int system_id = build_location->SystemID();
+            const auto system_id = build_location->SystemID();
             if (auto map = app.GetUI().GetMapWnd(ClientUI::ConstructFlag::NEVER)) {
                 map->CenterOnObject(system_id, objects);
                 if (open) {
@@ -1341,7 +1341,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
 void BuildDesignatorWnd::SetBuild(int queue_idx) {
     auto& app = GetApp();
     const auto& context = app.GetContext();
-    const int empire_id = app.EmpireID();
+    const EmpireID empire_id = app.GetEmpireID();
     const auto empire = context.GetEmpire(empire_id);
 
     if (!empire) {
@@ -1369,7 +1369,7 @@ void BuildDesignatorWnd::SetBuild(int queue_idx) {
     m_enc_detail_panel->Refresh();
 }
 
-void BuildDesignatorWnd::SelectSystem(int system_id, const ObjectMap& objects) {
+void BuildDesignatorWnd::SelectSystem(UniverseObjectID system_id, const ObjectMap& objects) {
     if (system_id == SidePanel::SystemID()) {
         // don't need to do anything.  already showing the requested system.
         return;
@@ -1382,7 +1382,7 @@ void BuildDesignatorWnd::SelectSystem(int system_id, const ObjectMap& objects) {
     }
 }
 
-void BuildDesignatorWnd::SelectPlanet(int planet_id, const ObjectMap& objects) {
+void BuildDesignatorWnd::SelectPlanet(UniverseObjectID planet_id, const ObjectMap& objects) {
     SidePanel::SelectPlanet(planet_id, objects);
     if (planet_id != INVALID_OBJECT_ID)
         m_system_default_planets[SidePanel::SystemID()] = planet_id;
@@ -1390,7 +1390,7 @@ void BuildDesignatorWnd::SelectPlanet(int planet_id, const ObjectMap& objects) {
 }
 
 void BuildDesignatorWnd::Refresh() {
-    m_build_selector->SetEmpireID(GetApp().EmpireID(), false);
+    m_build_selector->SetEmpireID(GetApp().GetEmpireID(), false);
     Update();
 }
 
@@ -1528,7 +1528,7 @@ void BuildDesignatorWnd::ShowBuildingTypeInEncyclopedia(std::string building_typ
 void BuildDesignatorWnd::ShowShipDesignInEncyclopedia(int design_id)
 { m_enc_detail_panel->SetDesign(design_id); }
 
-void BuildDesignatorWnd::ShowPlanetInEncyclopedia(int planet_id)
+void BuildDesignatorWnd::ShowPlanetInEncyclopedia(UniverseObjectID planet_id)
 { m_enc_detail_panel->SetPlanet(planet_id); }
 
 void BuildDesignatorWnd::ShowTechInEncyclopedia(std::string tech_name)
@@ -1543,7 +1543,7 @@ void BuildDesignatorWnd::ShowShipPartInEncyclopedia(std::string part_name)
 void BuildDesignatorWnd::ShowSpeciesInEncyclopedia(std::string species_name)
 { m_enc_detail_panel->SetSpecies(std::move(species_name)); }
 
-void BuildDesignatorWnd::ShowEmpireInEncyclopedia(int empire_id)
+void BuildDesignatorWnd::ShowEmpireInEncyclopedia(EmpireID empire_id)
 { m_enc_detail_panel->SetEmpire(empire_id); }
 
 void BuildDesignatorWnd::ShowSpecialInEncyclopedia(std::string special_name)
@@ -1577,22 +1577,22 @@ void BuildDesignatorWnd::TogglePedia() {
 bool BuildDesignatorWnd::PediaVisible()
 { return m_enc_detail_panel->Visible(); }
 
-int BuildDesignatorWnd::BuildLocation() const
+UniverseObjectID BuildDesignatorWnd::BuildLocation() const
 { return m_side_panel->SelectedPlanetID(); }
 
-void BuildDesignatorWnd::BuildItemRequested(ProductionQueue::ProductionItem item, int num_to_build, int pos) {
+void BuildDesignatorWnd::BuildItemRequested(ProductionQueue::ProductionItem item, int num_to_build, int queue_pos) {
     const auto& app = GetApp();
     const auto& context = app.GetContext();
-    auto empire = context.GetEmpire(app.EmpireID());
+    auto empire = context.GetEmpire(app.GetEmpireID());
     if (empire && empire->EnqueuableItem(item, BuildLocation(), context))
-        AddBuildToQueueSignal(std::move(item), num_to_build, BuildLocation(), pos);
+        AddBuildToQueueSignal(std::move(item), num_to_build, BuildLocation(), queue_pos);
 }
 
 void BuildDesignatorWnd::BuildQuantityChanged(int queue_idx, int quantity)
 { BuildQuantityChangedSignal(queue_idx, quantity); }
 
 void BuildDesignatorWnd::SelectDefaultPlanet(const ObjectMap& objects) {
-    int system_id = SidePanel::SystemID();
+    const auto system_id = SidePanel::SystemID();
     if (system_id == INVALID_OBJECT_ID) {
         this->SelectPlanet(INVALID_OBJECT_ID, objects);
         return;
@@ -1603,7 +1603,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet(const ObjectMap& objects) {
     // unless that planet can't be selected or doesn't exist in this system
     auto it = m_system_default_planets.find(system_id);
     if (it != m_system_default_planets.end()) {
-        int planet_id = it->second;
+        const auto planet_id = it->second;
         if (m_side_panel->PlanetSelectable(planet_id, objects)) {
             this->SelectPlanet(it->second, objects);
             return;
@@ -1630,12 +1630,12 @@ void BuildDesignatorWnd::SelectDefaultPlanet(const ObjectMap& objects) {
     }
 
 
-    //bool found_planet = false;                              // was a suitable planet found?
-    int best_planet_id = INVALID_OBJECT_ID; // id of selected planet
-    double best_planet_pop = -99999.9;                      // arbitrary negative number, so any planet's pop will be better
+    //bool found_planet = false;               // was a suitable planet found?
+    auto best_planet_id = INVALID_OBJECT_ID; // id of selected planet
+    double best_planet_pop = -99999.9;       // arbitrary negative number, so any planet's pop will be better
 
     for (auto& planet : planets) {
-        int planet_id = planet->ID();
+        const auto planet_id = planet->ID();
         if (!m_side_panel->PlanetSelectable(planet_id, objects))
             continue;
 

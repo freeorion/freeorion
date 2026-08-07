@@ -63,7 +63,7 @@ const InfluenceQueue::Element& InfluenceQueue::operator[](int i) const
 { return operator[](static_cast<std::size_t>(i)); }
 
 void InfluenceQueue::Update(const ScriptingContext& context,
-                            const std::vector<std::pair<int, double>>& annex_costs,
+                            const std::vector<std::pair<UniverseObjectID, double>>& annex_costs,
                             const std::vector<std::pair<std::string_view, double>>& policy_costs)
 {
     auto empire = context.GetEmpire(m_empire_id);

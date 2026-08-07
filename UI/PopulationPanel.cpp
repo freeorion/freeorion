@@ -26,7 +26,7 @@ namespace {
     }
 }
 
-PopulationPanel::PopulationPanel(GG::X w, int object_id) :
+PopulationPanel::PopulationPanel(GG::X w, UniverseObjectID object_id) :
     AccordionPanel(w, GG::Y(ClientUI::Pts()*2)),
     m_popcenter_id(object_id)
 {}
@@ -213,4 +213,4 @@ void PopulationPanel::DoLayout() {
     SetCollapsed(!s_expanded_map[m_popcenter_id]);
 }
 
-std::map<int, bool> PopulationPanel::s_expanded_map;
+std::map<UniverseObjectID, bool> PopulationPanel::s_expanded_map;

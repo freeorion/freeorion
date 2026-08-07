@@ -29,16 +29,14 @@ public:
     void HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id, bool prefixed = false);
     void HandleGameStatusUpdate(const std::string& text);
     void HandleLogMessage(const std::string& text);
-    void HandleDiplomaticStatusChange(int empire1_id, int empire2_id);
+    void HandleDiplomaticStatusChange(EmpireID empire1_id, EmpireID empire2_id);
     void Clear();
     void OpenForInput();
     void SetChatText(std::string chat_text);
 
-    /** emitted when the edit gains focus.  Keyboard accelerators elsewhere
-        should be disabled */
+    /** emitted when the edit gains focus.  Keyboard accelerators elsewhere should be disabled */
     mutable boost::signals2::signal<void ()> TypingSignal;
-    /** emitted when the edit loses focus.  not necessary when a message
-        is sent */
+    /** emitted when the edit loses focus.  not necessary when a message is sent */
     mutable boost::signals2::signal<void ()> DoneTypingSignal;
     mutable boost::signals2::signal<void ()> ClosingSignal;
 

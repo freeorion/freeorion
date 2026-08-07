@@ -52,7 +52,7 @@ namespace {
             | range_transform(to_addr) | range_to_vec;
     }
 
-    const Tech* Cheapest(const std::vector<const Tech*>& next_techs, int empire_id,
+    const Tech* Cheapest(const std::vector<const Tech*>& next_techs, EmpireID empire_id,
                          const ScriptingContext& context)
     {
         if (next_techs.empty())
@@ -365,7 +365,7 @@ std::string Tech::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-float Tech::ResearchCost(int empire_id, const ScriptingContext& context) const {
+float Tech::ResearchCost(EmpireID empire_id, const ScriptingContext& context) const {
     static constexpr auto ARBITRARY_LARGE_COST = 999999.9f;
 
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_TECH_RESEARCH") || !m_research_cost) {
@@ -392,10 +392,10 @@ float Tech::ResearchCost(int empire_id, const ScriptingContext& context) const {
     }
 }
 
-float Tech::PerTurnCost(int empire_id, const ScriptingContext& context) const
+float Tech::PerTurnCost(EmpireID empire_id, const ScriptingContext& context) const
 { return ResearchCost(empire_id, context) / std::max(1, ResearchTime(empire_id, context)); }
 
-int Tech::ResearchTime(int empire_id, const ScriptingContext& context) const {
+int Tech::ResearchTime(EmpireID empire_id, const ScriptingContext& context) const {
     static constexpr auto ARBITRARY_LARGE_TURNS = 9999;
 
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_TECH_RESEARCH") || !m_research_turns) {
@@ -481,7 +481,7 @@ std::vector<const Tech*> TechManager::AllNextTechs(const std::vector<std::string
 }
 
 const Tech* TechManager::CheapestNextTech(const std::vector<std::string_view>& researched_techs,
-                                          int empire_id, const ScriptingContext& context)
+                                          EmpireID empire_id, const ScriptingContext& context)
 {
     CheckPendingTechs();
     return Cheapest(NextTechs(researched_techs, m_techs), empire_id, context);
@@ -683,7 +683,7 @@ void TechManager::AllChildren(const Tech* tech, std::map<std::string, std::strin
     }
 }
 
-std::vector<std::string> TechManager::RecursivePrereqs(std::string_view tech_name, int empire_id,
+std::vector<std::string> TechManager::RecursivePrereqs(std::string_view tech_name, EmpireID empire_id,
                                                        const ScriptingContext& context) const
 {
     const Tech* initial_tech = this->GetTech(tech_name);

@@ -69,7 +69,7 @@ namespace {
 
     auto EmpirePlayerID(int empire_id) -> int
     {
-        int player_id = AIClientApp::GetApp()->EmpirePlayerID(empire_id);
+        int player_id = AIClientApp::GetApp()->EmpirePlayerID(EmpireID{empire_id});
         if (Networking::INVALID_PLAYER_ID == player_id)
             DebugLogger() << "AIWrapper::EmpirePlayerID(" << empire_id << ") - passed an invalid empire_id";
         return player_id;
@@ -109,8 +109,8 @@ namespace {
         const auto& players = AIClientApp::GetApp()->Players();
         auto it = players.find(player_id);
         if (it == players.end())
-            return ALL_EMPIRES; // default invalid value
-        return it->second.empire_id;
+            return Value(ALL_EMPIRES); // default invalid value
+        return Value(it->second.empire_id);
     }
 
     /** @brief Return all empire identifiers that are in game
@@ -120,12 +120,11 @@ namespace {
     auto AllEmpireIDs() -> std::vector<int>
     {
         const auto& players = AIClientApp::GetApp()->Players();
-        auto rng = players | range_transform([](const auto& id_pi) { return id_pi.second.empire_id; })
-            | range_filter([](int empire_id) { return empire_id != ALL_EMPIRES; });
-        std::vector<int> retval;
-        retval.reserve(players.size());
-        range_copy(rng, std::back_inserter(retval));
-        return retval;
+        return players
+            | range_transform([](const auto& id_pi) { return id_pi.second.empire_id; })
+            | range_filter([](EmpireID empire_id) noexcept { return empire_id != ALL_EMPIRES; })
+            | range_transform([](auto eid) noexcept -> int { return Value(eid); })
+            | range_to_vec;
     }
 
     void InitMeterEstimatesAndDiscrepancies() {
@@ -157,7 +156,7 @@ namespace {
             // have a condition that causes them to only act on planets the
             // player owns (so as to not improve enemy planets if a player
             // reseraches a tech that should only benefit him/herself).
-            const auto empire_id = AIClientApp::GetApp()->EmpireID();
+            const auto empire_id = AIClientApp::GetApp()->GetEmpireID();
 
             // get all planets the player knows about that aren't yet colonized
             // (aren't owned by anyone).  Add this the current player's
@@ -186,7 +185,7 @@ namespace {
 
     void UpdateResourcePools() {
         ScriptingContext& context = IApp::GetApp()->GetContext();
-        const int empire_id = AIClientApp::GetApp()->EmpireID();
+        const EmpireID empire_id = AIClientApp::GetApp()->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "UpdateResourcePools : couldn't get empire with id " << empire_id;
@@ -201,7 +200,7 @@ namespace {
 
     void UpdateResearchQueue() {
         ScriptingContext& context = IApp::GetApp()->GetContext();
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        EmpireID empire_id = AIClientApp::GetApp()->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "UpdateResearchQueue : couldn't get empire with id " << empire_id;
@@ -212,7 +211,7 @@ namespace {
 
     void UpdateProductionQueue() {
         ScriptingContext& context = IApp::GetApp()->GetContext();
-        const int empire_id = AIClientApp::GetApp()->EmpireID();
+        const EmpireID empire_id = AIClientApp::GetApp()->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "UpdateProductionQueue : couldn't get empire with id " << empire_id;
@@ -235,34 +234,34 @@ namespace {
         auto* app = ClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
 
-        if (!OrderType::Check(app->EmpireID(), args..., context))
+        if (!OrderType::Check(app->GetEmpireID(), args..., context))
             return 0;
 
-        app->Orders().IssueOrder<OrderType>(context, app->EmpireID(), std::forward<Args>(args)...);
+        app->Orders().IssueOrder<OrderType>(context, app->GetEmpireID(), std::forward<Args>(args)...);
 
         return 1;
     }
 
     auto IssueNewFleetOrder(const std::string& fleet_name, int ship_id) -> int
     {
-        std::vector<int> ship_ids{ship_id};
+        const std::vector<UniverseObjectID> ship_ids{UniverseObjectID{ship_id}};
         auto app = ClientApp::GetApp();
         ScriptingContext& context = IApp::GetApp()->GetContext();
 
-        if (!NewFleetOrder::Check(app->EmpireID(), fleet_name, ship_ids,
+        if (!NewFleetOrder::Check(app->GetEmpireID(), fleet_name, ship_ids,
                                   FleetAggression::FLEET_OBSTRUCTIVE, context))
-        { return INVALID_OBJECT_ID; }
+        { return Value(INVALID_OBJECT_ID); }
 
         const auto order = app->Orders().IssueOrder<NewFleetOrder>(
-            context, app->EmpireID(), fleet_name, ship_ids, FleetAggression::FLEET_OBSTRUCTIVE);
+            context, app->GetEmpireID(), fleet_name, ship_ids, FleetAggression::FLEET_OBSTRUCTIVE);
 
-        return order ? order->FleetID() : INVALID_OBJECT_ID;
+        return Value(order ? order->FleetID() : INVALID_OBJECT_ID);
     }
 
     auto IssueFleetTransferOrder(int ship_id, int new_fleet_id) -> int
     {
-        std::vector<int> ship_ids{ship_id};
-        return Issue<FleetTransferOrder>(new_fleet_id, ship_ids);
+        std::vector<UniverseObjectID> ship_ids{UniverseObjectID{ship_id}};
+        return Issue<FleetTransferOrder>(UniverseObjectID{new_fleet_id}, ship_ids);
     }
 
     auto IssueEnqueueTechOrder(const std::string& tech_name, int position) -> int
@@ -274,7 +273,7 @@ namespace {
         }
 
         auto* app = AIClientApp::GetApp();
-        app->Orders().IssueOrder<ResearchQueueOrder>(app->GetContext(), app->EmpireID(), tech_name, position);
+        app->Orders().IssueOrder<ResearchQueueOrder>(app->GetContext(), app->GetEmpireID(), tech_name, position);
 
         return 1;
     }
@@ -288,7 +287,7 @@ namespace {
         }
 
         auto* app = AIClientApp::GetApp();
-        app->Orders().IssueOrder<ResearchQueueOrder>(app->GetContext(), app->EmpireID(), tech_name);
+        app->Orders().IssueOrder<ResearchQueueOrder>(app->GetContext(), app->GetEmpireID(), tech_name);
 
         return 1;
     }
@@ -309,7 +308,7 @@ namespace {
 
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
 
         if (!empire) {
@@ -330,7 +329,7 @@ namespace {
     {
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
 
         if (!empire) {
@@ -347,10 +346,10 @@ namespace {
         return 1;
     }
 
-    auto IsProducibleBuilding(const std::string& item_name, int location_id) -> bool
+    auto IsProducibleBuilding(const std::string& item_name, UniverseObjectID location_id) -> bool
     {
         ScriptingContext& context = IApp::GetApp()->GetContext();
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        EmpireID empire_id = AIClientApp::GetApp()->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IsProducibleBuilding : couldn't get empire with id " << empire_id;
@@ -362,20 +361,20 @@ namespace {
     auto IsEnqueuableBuilding(const std::string& item_name, int location_id) -> bool
     {
         ScriptingContext& context = IApp::GetApp()->GetContext();
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        EmpireID empire_id = AIClientApp::GetApp()->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IsEnqueuableBuilding : couldn't get empire with id " << empire_id;
             return false;
         }
-        return empire->EnqueuableItem(BuildType::BT_BUILDING, item_name, location_id, context);
+        return empire->EnqueuableItem(BuildType::BT_BUILDING, item_name, UniverseObjectID{location_id}, context);
     }
 
     auto IssueEnqueueBuildingProductionOrder(const std::string& item_name, int location_id) -> int
     {
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->GetEmpireID();
 
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
@@ -383,7 +382,7 @@ namespace {
             return 0;
         }
 
-        if (!empire->EnqueuableItem(BuildType::BT_BUILDING, item_name, location_id, context)) {
+        if (!empire->EnqueuableItem(BuildType::BT_BUILDING, item_name, UniverseObjectID{location_id}, context)) {
             ErrorLogger() << "IssueEnqueueBuildingProductionOrder : specified item_name and location_id that don't indicate an item that can be enqueued at that location";
             return 0;
         }
@@ -391,9 +390,10 @@ namespace {
         app->Orders().IssueOrder<ProductionQueueOrder>(
             context,
             ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
-            empire_id,
+            EmpireID{empire_id},
             ProductionQueue::ProductionItem(BuildType::BT_BUILDING, item_name),
-            1, location_id);
+            1,
+            UniverseObjectID{location_id});
 
         return 1;
     }
@@ -401,14 +401,14 @@ namespace {
     auto IsEnqueuableShip(int design_id, int location_id) -> bool
     {
         const ScriptingContext& context = IApp::GetApp()->GetContext();
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        const EmpireID empire_id = AIClientApp::GetApp()->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IsEnqueuableShip : couldn't get empire with id " << empire_id;
             return false;
         }
         // as of this writing, ships don't have a distinction between producible and enqueuable
-        return empire->ProducibleItem(BuildType::BT_SHIP, design_id, location_id, context);
+        return empire->ProducibleItem(BuildType::BT_SHIP, design_id, UniverseObjectID{location_id}, context);
     }
 
     auto IssueEnqueueShipProductionOrder(int design_id, int location_id) -> int
@@ -416,7 +416,7 @@ namespace {
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
         const Universe& universe{context.ContextUniverse()};
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->GetEmpireID();
 
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
@@ -424,7 +424,7 @@ namespace {
             return 0;
         }
 
-        if (!empire->ProducibleItem(BuildType::BT_SHIP, design_id, location_id, context)) {
+        if (!empire->ProducibleItem(BuildType::BT_SHIP, design_id, UniverseObjectID{location_id}, context)) {
             ErrorLogger() << "IssueEnqueueShipProductionOrder : specified design_id and location_id that don't indicate a design that can be built at that location";
             return 0;
         }
@@ -434,7 +434,8 @@ namespace {
             ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
             empire_id,
             ProductionQueue::ProductionItem(BuildType::BT_SHIP, design_id, universe),
-            1, location_id);
+            1,
+            UniverseObjectID{location_id});
 
         return 1;
     }
@@ -443,7 +444,7 @@ namespace {
     {
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssueChangeProductionQuantityOrder : couldn't get empire with id " << empire_id;
@@ -480,7 +481,7 @@ namespace {
 
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssueRequeueProductionOrder : couldn't get empire with id " << empire_id;
@@ -520,7 +521,7 @@ namespace {
     {
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssueDequeueProductionOrder : couldn't get empire with id " << empire_id;
@@ -548,7 +549,7 @@ namespace {
     {
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssuePauseProductionOrder : couldn't get empire with id " << empire_id;
@@ -576,7 +577,7 @@ namespace {
     {
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->GetEmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssueAllowStockpileProductionOrder : couldn't get empire with id " << empire_id;
@@ -618,7 +619,7 @@ namespace {
 
         auto* app = AIClientApp::GetApp();
         ScriptingContext& context = app->GetContext();
-        int empire_id = app->EmpireID();
+        EmpireID empire_id = app->GetEmpireID();
         const auto uuid = boost::uuids::random_generator()();
 
         // create design from stuff chosen in UI
@@ -696,24 +697,24 @@ namespace FreeOrionPython {
         py::def("playerIsHost",             PlayerIsHost,                   "Returns True (boolean) if the player with the indicated playerID (int) is the host player for the game and false (boolean) otherwise.");
 
         py::def("empireID",
-                +[]() -> int { return AIClientApp::GetApp()->EmpireID(); },
+                +[]() -> int { return Value(AIClientApp::GetApp()->GetEmpireID()); },
                 "Returns the empire ID (int) of this AI player's empire.");
 
         py::def("playerEmpireID",           PlayerEmpireID,                 "Returns the empire ID (int) of the player with the specified player ID (int).");
         py::def("allEmpireIDs",             AllEmpireIDs,                   py::return_value_policy<py::return_by_value>(), "Returns an object (intVec) that contains the empire IDs of all empires in the game.");
 
         py::def("getEmpire",
-                +[]() -> const Empire* { return AIClientApp::GetApp()->GetEmpire(AIClientApp::GetApp()->EmpireID()); },
+                +[]() -> const Empire* { return AIClientApp::GetApp()->GetEmpire(AIClientApp::GetApp()->GetEmpireID()); },
                 py::return_value_policy<py::reference_existing_object>(),
                 "Returns the empire object (Empire) of this AI player");
 
         py::def("getEmpire",
-                +[](int empire_id) -> const Empire* { return AIClientApp::GetApp()->GetEmpire(empire_id); },
+                +[](int empire_id) -> const Empire* { return AIClientApp::GetApp()->GetEmpire(EmpireID{empire_id}); },
                 py::return_value_policy<py::reference_existing_object>(),
                 "Returns the empire object (Empire) with the specified empire ID (int)");
 
         py::def("getDiplomaticStatus",
-                +[](int empire_id1, int empire_id2) -> const DiplomaticStatus { return AIClientApp::GetApp()->Empires().GetDiplomaticStatus(empire_id1, empire_id2); },
+                +[](int empire_id1, int empire_id2) -> const DiplomaticStatus { return AIClientApp::GetApp()->Empires().GetDiplomaticStatus(EmpireID{empire_id1}, EmpireID{empire_id2}); },
                 "Returns the diplomatic status between two empires");
 
         py::def("getUniverse",
@@ -764,21 +765,21 @@ namespace FreeOrionPython {
                 "at the production location.");
 
         py::def("issueFleetMoveOrder",
-                +[](int fleet_id, int destination_id) -> int { return Issue<FleetMoveOrder>(fleet_id, destination_id, false); },
+                +[](int fleet_id, int destination_id) -> int { return Issue<FleetMoveOrder>(UniverseObjectID{fleet_id}, UniverseObjectID{destination_id}, false); },
                 "Orders the fleet with indicated fleetID (int) to move to the"
                 " system with the indicated destinationID (int). Returns 1 (int)"
                 " on success or 0 (int) on failure due to not finding the"
                 " indicated fleet or system.");
 
         py::def("appendFleetMoveOrder",
-                +[](int fleet_id, int destination_id) -> int { return Issue<FleetMoveOrder>(fleet_id, destination_id, true); },
+                +[](int fleet_id, int destination_id) -> int { return Issue<FleetMoveOrder>(UniverseObjectID{fleet_id}, UniverseObjectID{destination_id}, true); },
                 "Orders the fleet with indicated fleetID (int) to append the"
                 " system with the indicated destinationID (int) to its possibly"
                 " already enqueued route. Returns 1 (int) on success or 0 (int)"
                 " on failure due to not finding the indicated fleet or system.");
 
         py::def("issueRenameOrder",
-                +[](int object_id, const std::string& new_name) -> int { return Issue<RenameOrder>(object_id, new_name); },
+                +[](int object_id, const std::string& new_name) -> int { return Issue<RenameOrder>(UniverseObjectID{object_id}, new_name); },
                 "Orders the renaming of the object with indicated objectID (int)"
                 " to the new indicated name (string). Returns 1 (int) on success"
                 " or 0 (int) on failure due to this AI player not being able to"
@@ -786,7 +787,7 @@ namespace FreeOrionPython {
                 " and which must be a fleet, ship or planet).");
 
         py::def("issueScrapOrder",
-                +[](int object_id) -> int { return Issue<ScrapOrder>(object_id); },
+                +[](int object_id) -> int { return Issue<ScrapOrder>(UniverseObjectID{object_id}); },
                 "Orders the ship or building with the indicated objectID (int)"
                 " to be scrapped. Returns 1 (int) on success or 0 (int) on"
                 " failure due to not finding a ship or building with the"
@@ -797,7 +798,7 @@ namespace FreeOrionPython {
         py::def("issueFleetTransferOrder",              IssueFleetTransferOrder, "Orders the ship with ID shipID (int) to be transferred to the fleet with ID newFleetID. Returns 1 (int) on success, or 0 (int) on failure due to not finding the fleet or ship, or the client's empire not owning either, or the two not being in the same system (or either not being in a system) or the ship already being in the fleet.");
 
         py::def("issueColonizeOrder",
-                +[](int ship_id, int planet_id) -> int { return Issue<ColonizeOrder>(ship_id, planet_id); },
+                +[](int ship_id, int planet_id) -> int { return Issue<ColonizeOrder>(UniverseObjectID{ship_id}, UniverseObjectID{planet_id}); },
                 "Orders the ship with ID shipID (int) to colonize the planet"
                 " with ID planetID (int). Returns 1 (int) on success or 0 (int)"
                 " on failure due to not finding the indicated ship or planet,"
@@ -806,19 +807,19 @@ namespace FreeOrionPython {
                 " being in the same system.");
 
         py::def("issueInvadeOrder",
-                +[](int ship_id, int planet_id) -> int { return Issue<InvadeOrder>(ship_id, planet_id); });
+                +[](int ship_id, int planet_id) -> int { return Issue<InvadeOrder>(UniverseObjectID{ship_id}, UniverseObjectID{planet_id}); });
 
         py::def("issueBombardOrder",
-                +[](int ship_id, int planet_id) -> int { return Issue<BombardOrder>(ship_id, planet_id); });
+                +[](int ship_id, int planet_id) -> int { return Issue<BombardOrder>(UniverseObjectID{ship_id}, UniverseObjectID{planet_id}); });
 
         py::def("issueAggressionOrder",
-                +[](int object_id, bool aggressive) -> int { return Issue<AggressiveOrder>(object_id, aggressive ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_DEFENSIVE); });
+                +[](int object_id, bool aggressive) -> int { return Issue<AggressiveOrder>(UniverseObjectID{object_id}, aggressive ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_DEFENSIVE); });
 
         py::def("issueGiveObjectToEmpireOrder",
-                +[](int object_id, int recipient_id) -> int { return Issue<GiveObjectToEmpireOrder>(object_id, recipient_id); });
+                +[](int object_id, int recipient_id) -> int { return Issue<GiveObjectToEmpireOrder>(UniverseObjectID{object_id}, EmpireID{recipient_id}); });
 
         py::def("issueChangeFocusOrder",
-                +[](int planet_id, const std::string& focus) -> int { return Issue<ChangeFocusOrder>(planet_id, focus); },
+                +[](int planet_id, const std::string& focus) -> int { return Issue<ChangeFocusOrder>(UniverseObjectID{planet_id}, focus); },
                 "Orders the planet with ID planetID (int) to use focus setting"
                 " focus (string). Returns 1 (int) on success or 0 (int) on"
                 " failure if the planet can't be found or isn't owned by this"

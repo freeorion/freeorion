@@ -14,7 +14,7 @@ namespace {
       * object \a obj. */
     double ObjectResourceConsumption(std::shared_ptr<const UniverseObject> obj,
                                      ResourceType resource_type,
-                                     int empire_id = ALL_EMPIRES)
+                                     EmpireID empire_id = ALL_EMPIRES)
     {
         if (!obj) {
             ErrorLogger() << "ObjectResourceConsumption passed a null object";
@@ -88,7 +88,7 @@ namespace {
 }
 
 SystemResourceSummaryBrowseWnd::SystemResourceSummaryBrowseWnd(ResourceType resource_type,
-                                                               int system_id, int empire_id) :
+                                                               UniverseObjectID system_id, EmpireID empire_id) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, LabelWidth() + ValueWidth(), GG::Y1),
     m_resource_type(resource_type),
     m_system_id(system_id),

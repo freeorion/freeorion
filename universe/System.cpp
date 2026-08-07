@@ -42,7 +42,7 @@ System::System(StarType star, std::string name, double x, double y, int current_
     m_orbits.assign(SYSTEM_ORBITS, INVALID_OBJECT_ID);
 }
 
-std::shared_ptr<UniverseObject> System::Clone(const Universe& universe, int empire_id) const {
+std::shared_ptr<UniverseObject> System::Clone(const Universe& universe, EmpireID empire_id) const {
     const Visibility vis = empire_id == ALL_EMPIRES ?
         Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
@@ -54,7 +54,7 @@ std::shared_ptr<UniverseObject> System::Clone(const Universe& universe, int empi
     return retval;
 }
 
-void System::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
+void System::Copy(const UniverseObject& copied_object, const Universe& universe, EmpireID empire_id) {
     if (std::addressof(copied_object) == this)
         return;
     if (copied_object.ObjectType() != UniverseObjectType::OBJ_SYSTEM) {
@@ -65,11 +65,11 @@ void System::Copy(const UniverseObject& copied_object, const Universe& universe,
     Copy(static_cast<const System&>(copied_object), universe, empire_id);
 }
 
-void System::Copy(const System& copied_system, const Universe& universe, int empire_id) {
+void System::Copy(const System& copied_system, const Universe& universe, EmpireID empire_id) {
     if (std::addressof(copied_system) == this)
         return;
 
-    const int copied_object_id = copied_system.ID();
+    const auto copied_object_id = copied_system.ID();
     const Visibility vis = empire_id == ALL_EMPIRES ?
         Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
     const auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
@@ -86,38 +86,38 @@ void System::Copy(const System& copied_system, const Universe& universe, int emp
         m_orbits.clear();
         m_orbits.assign(orbits_size, INVALID_OBJECT_ID);
         for (std::size_t o = 0u; o < copied_system.m_orbits.size(); ++o) {
-            int planet_id = copied_system.m_orbits[o];
+            const auto planet_id = copied_system.m_orbits[o];
             if (m_objects.contains(planet_id))
                 m_orbits[o] = planet_id;
         }
 
         // copy visible contained object per-type info
         m_planets.clear();
-        for (int planet_id : copied_system.m_planets) {
+        for (auto planet_id : copied_system.m_planets) {
             if (m_objects.contains(planet_id))
                 m_planets.insert(planet_id);
         }
 
         m_buildings.clear();
-        for (int building_id : copied_system.m_buildings) {
+        for (auto building_id : copied_system.m_buildings) {
             if (m_objects.contains(building_id))
                 m_buildings.insert(building_id);
         }
 
         m_fleets.clear();
-        for (int fleet_id : copied_system.m_fleets) {
+        for (auto fleet_id : copied_system.m_fleets) {
             if (m_objects.contains(fleet_id))
                 m_fleets.insert(fleet_id);
         }
 
         m_ships.clear();
-        for (int ship_id : copied_system.m_ships) {
+        for (auto ship_id : copied_system.m_ships) {
             if (m_objects.contains(ship_id))
                 m_ships.insert(ship_id);
         }
 
         m_fields.clear();
-        for (int field_id : copied_system.m_fields) {
+        for (auto field_id : copied_system.m_fields) {
             if (m_objects.contains(field_id))
                 m_fields.insert(field_id);
         }
@@ -158,7 +158,7 @@ std::string System::Dump(uint8_t ntabs) const {
         int orbit_index = first_orbit;
         for (auto it = m_orbits.begin(); it != m_orbits.end();) {
             retval.append("[").append(std::to_string(orbit_index)).append("]")
-                  .append(std::to_string(*it));
+                  .append(to_string(*it));
             ++it;
             if (it != m_orbits.end())
                 retval.append(", ");
@@ -168,22 +168,22 @@ std::string System::Dump(uint8_t ntabs) const {
 
     retval.append("  starlanes: ");
     for (auto it = m_starlanes.begin(); it != m_starlanes.end();) {
-        const int lane_end_id = *it;
+        const auto lane_end_id = *it;
         ++it;
-        retval.append(std::to_string(lane_end_id)).append(it == m_starlanes.end() ? "" : ", ");
+        retval.append(to_string(lane_end_id)).append(it == m_starlanes.end() ? "" : ", ");
     }
 
     retval.append("  objects: ");
     for (auto it = m_objects.begin(); it != m_objects.end();) {
-        int obj_id = *it;
+        const auto obj_id = *it;
         ++it;
         if (obj_id != INVALID_OBJECT_ID)
-            retval.append(std::to_string(obj_id)).append(it == m_objects.end() ? "" : ", ");
+            retval.append(to_string(obj_id)).append(it == m_objects.end() ? "" : ", ");
     }
     return retval;
 }
 
-std::string System::ApparentName(int empire_id, const Universe& u, bool blank_unexplored_and_none) const {
+std::string System::ApparentName(EmpireID empire_id, const Universe& u, bool blank_unexplored_and_none) const {
     const ObjectMap& o = u.Objects();
 
     if (empire_id == ALL_EMPIRES)
@@ -234,7 +234,7 @@ StarType System::NextYoungerStarType() const noexcept {
     return StarType(int(m_star) - 1);   // STAR_BLUE <- STAR_WHITE <- STAR_YELLOW <- STAR_ORANGE <- STAR_RED
 }
 
-bool System::HasStarlaneTo(int id) const
+bool System::HasStarlaneTo(UniverseObjectID id) const
 { return m_starlanes.contains(id); }
 
 std::size_t System::SizeInMemory() const {
@@ -273,7 +273,7 @@ void System::Insert(UniverseObject* obj, int orbit, int current_turn, const Obje
     if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
         if (orbit == NO_ORBIT) {
             bool already_in_orbit = false;
-            for (int planet_id : m_orbits) {
+            for (const auto planet_id : m_orbits) {
                 if (planet_id == obj->ID()) {
                     already_in_orbit = true;
                     break;
@@ -307,16 +307,15 @@ void System::Insert(UniverseObject* obj, int orbit, int current_turn, const Obje
                 m_orbits[orbit] = obj->ID();
 
             } else {  // Log as an error, if no current orbit attempt to assign to a free orbit
-                ErrorLogger() << "System::Insert() Planet " << obj->ID()
+                ErrorLogger() << "System::Insert() Planet " << obj->NameAndID()
                               << " requested orbit " << orbit
-                              << " in system " << ID()
-                              << ", which is occupied by" << m_orbits[orbit];
+                              << " in system " << this->NameAndID()
+                              << ", which is occupied by " << m_orbits[orbit];
                 const auto& free_orbits = FreeOrbits();
                 if (!free_orbits.empty() && OrbitOfPlanet(obj->ID()) == NO_ORBIT) {
                     int new_orbit = *(free_orbits.begin());
                     m_orbits[new_orbit] = obj->ID();
-                    DebugLogger() << "System::Insert() Planet " << obj->ID()
-                                  << " assigned to orbit " << new_orbit;
+                    DebugLogger() << "System::Insert() Planet " << obj->NameAndID() << " assigned to orbit " << new_orbit;
                 }
             }
         }
@@ -356,7 +355,7 @@ void System::Insert(UniverseObject* obj, int orbit, int current_turn, const Obje
     StateChangedSignal();
 }
 
-void System::Remove(int id) {
+void System::Remove(UniverseObjectID id) {
     if (id == INVALID_OBJECT_ID)
         return;
 
@@ -371,7 +370,7 @@ void System::Remove(int id) {
     it = m_planets.find(id);
     if (it != m_planets.end()) {
         m_planets.erase(it);
-        for (int& planet_id : m_orbits)
+        for (auto& planet_id : m_orbits)
             if (planet_id == id)
                 planet_id = INVALID_OBJECT_ID;
     }
@@ -382,7 +381,7 @@ void System::Remove(int id) {
     m_objects.erase(id);
 
     if (removed_fleet)
-        FleetsRemovedSignal(std::vector<int>{id});
+        FleetsRemovedSignal(std::vector<UniverseObjectID>{id});
     StateChangedSignal();
 }
 
@@ -393,15 +392,15 @@ void System::SetStarType(StarType type) {
     StateChangedSignal();
 }
 
-void System::AddStarlane(int id) {
+void System::AddStarlane(UniverseObjectID id) {
     const auto added = m_starlanes.insert(id).second;
     if (added) {
         StateChangedSignal();
-        TraceLogger() << "Added starlane from system " << this->Name() << " (" << this->ID() << ") system " << id;
+        TraceLogger() << "Added starlane from system: " << this->NameAndID() << " to system: " << id;
     }
 }
 
-bool System::RemoveStarlane(int id) {
+bool System::RemoveStarlane(UniverseObjectID id) {
     const auto erased_count = m_starlanes.erase(id);
     if (erased_count > 0)
         StateChangedSignal();
@@ -426,13 +425,13 @@ bool System::OrbitOccupied(int orbit) const {
     return m_orbits[orbit] != INVALID_OBJECT_ID;
 }
 
-int System::PlanetInOrbit(int orbit) const {
+UniverseObjectID System::PlanetInOrbit(int orbit) const {
     if (orbit < first_orbit || orbit >= static_cast<int>(m_orbits.size()))
         return INVALID_OBJECT_ID;
     return m_orbits[orbit];
 }
 
-int System::OrbitOfPlanet(int object_id) const {
+int System::OrbitOfPlanet(UniverseObjectID object_id) const {
     if (object_id == INVALID_OBJECT_ID)
         return NO_ORBIT;
     for (int o = first_orbit; o < static_cast<int>(m_orbits.size()); ++o)
@@ -449,7 +448,7 @@ std::set<int> System::FreeOrbits() const { // TODO: return something better
     return retval;
 }
 
-System::IDSet System::VisibleStarlanes(int empire_id, const Universe& universe) const {
+System::IDSet System::VisibleStarlanes(EmpireID empire_id, const Universe& universe) const {
     if (empire_id == ALL_EMPIRES)
         return m_starlanes;
 
@@ -485,7 +484,8 @@ System::IDSet System::VisibleStarlanes(int empire_id, const Universe& universe) 
 
     // get moving fleets owned by empire
     auto is_owned_moving_fleet = [empire_id](const Fleet* fleet) {
-        return fleet->FinalDestinationID() != INVALID_OBJECT_ID &&
+        return fleet &&
+            fleet->FinalDestinationID() != INVALID_OBJECT_ID &&
             fleet->SystemID() == INVALID_OBJECT_ID &&
             fleet->OwnedBy(empire_id);
     };
@@ -497,13 +497,13 @@ System::IDSet System::VisibleStarlanes(int empire_id, const Universe& universe) 
             continue;
         }
 
-        int prev_sys_id = fleet->PreviousSystemID();
-        int next_sys_id = fleet->NextSystemID();
+        const auto prev_sys_id = fleet->PreviousSystemID();
+        const auto next_sys_id = fleet->NextSystemID();
 
         // see if previous or next system is this system, and if so, is other
         // system on lane along which ship is moving one of this system's
         // starlanes or wormholes?
-        int other_lane_end_sys_id = INVALID_OBJECT_ID;
+        UniverseObjectID other_lane_end_sys_id = INVALID_OBJECT_ID;
 
         if (prev_sys_id == this->ID())
             other_lane_end_sys_id = next_sys_id;

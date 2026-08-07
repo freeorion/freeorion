@@ -16,7 +16,7 @@ class ObjectMap;
 /** Shows resource meters with meter-bars */
 class ResourcePanel : public AccordionPanel {
 public:
-    ResourcePanel(GG::X w, int object_id);
+    ResourcePanel(GG::X w, UniverseObjectID object_id);
     void CompleteConstruction() override;
 
     auto ResourceCenterID() const noexcept { return m_rescenter_id; }
@@ -40,7 +40,7 @@ private:
     void ExpandCollapseButtonPressed();
 
     /** object id for the planet that this panel displays */
-    int m_rescenter_id = INVALID_OBJECT_ID;
+    UniverseObjectID m_rescenter_id = INVALID_OBJECT_ID;
 
     /** Icons for the associated meter type. */
     std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>> m_meter_stats;
@@ -51,7 +51,7 @@ private:
     std::shared_ptr<MultiMeterStatusBar> m_multi_meter_status_bar;
 
     /** map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false) */
-    static std::map<int, bool> s_expanded_map;
+    static std::map<UniverseObjectID, bool> s_expanded_map;
 };
 
 #endif

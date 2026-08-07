@@ -42,10 +42,10 @@ public:
 
     static void InitLogging();
 
-    [[nodiscard]] int SelectedSystemID() const override;
-    [[nodiscard]] int SelectedPlanetID() const override;
-    [[nodiscard]] int SelectedFleetID() const override;
-    [[nodiscard]] int SelectedShipID() const override;
+    [[nodiscard]] UniverseObjectID SelectedSystemID() const override;
+    [[nodiscard]] UniverseObjectID SelectedPlanetID() const override;
+    [[nodiscard]] UniverseObjectID SelectedFleetID() const override;
+    [[nodiscard]] UniverseObjectID SelectedShipID() const override;
 
     int EffectsProcessingThreads() const override;
     bool SinglePlayerGame() const;  ///< returns true iff this game is a single-player game

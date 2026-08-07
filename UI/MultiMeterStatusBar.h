@@ -5,6 +5,7 @@
 #include <GG/Wnd.h>
 
 #include "../universe/EnumsFwd.h"
+#include "../universe/ConstantsFwd.h"
 
 class ObjectMap;
 
@@ -12,7 +13,7 @@ class ObjectMap;
   * or pairs of meters, using horizontal indicators. */
 class MultiMeterStatusBar : public GG::Wnd {
 public:
-    MultiMeterStatusBar(GG::X w, int object_id, std::vector<std::pair<MeterType, MeterType>> meter_types);
+    MultiMeterStatusBar(GG::X w, UniverseObjectID object_id, std::vector<std::pair<MeterType, MeterType>> meter_types);
 
     void Render() override;
 
@@ -28,7 +29,7 @@ private:
     std::vector<float>                              m_projected_values; // projected current value of .first MeterTypes for the start of next turn
     std::vector<float>                              m_target_max_values;// current values of the .second MeterTypes in m_meter_types
 
-    int                                             m_object_id;
+    UniverseObjectID                                m_object_id;
 
     std::vector<GG::Clr>                            m_bar_colours;
 };

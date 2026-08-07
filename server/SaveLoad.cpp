@@ -41,7 +41,7 @@ namespace fs = std::filesystem;
 namespace {
     void CompileSaveGamePreviewData(const ServerSaveGameData& server_save_game_data,
                                     const std::vector<PlayerSaveGameData>& player_save_game_data,
-                                    const std::map<int, SaveGameEmpireData>& empire_save_game_data,
+                                    const std::map<EmpireID, SaveGameEmpireData>& empire_save_game_data,
                                     SaveGamePreviewData& preview)
     {
         // First compile the non-player related data
@@ -81,8 +81,8 @@ namespace {
     constexpr const std::string_view BINARY_MARKER("binary");
 }
 
-std::map<int, SaveGameEmpireData> CompileSaveGameEmpireData(const EmpireManager& empires) {
-    std::map<int, SaveGameEmpireData> retval;
+std::map<EmpireID, SaveGameEmpireData> CompileSaveGameEmpireData(const EmpireManager& empires) {
+    std::map<EmpireID, SaveGameEmpireData> retval;
     for (const auto& [empire_id, empire] : empires) {
         retval.emplace(std::piecewise_construct,
                        std::forward_as_tuple(empire_id),
@@ -596,7 +596,7 @@ void LoadPlayerSaveHeaderData(const std::string& filename, std::vector<PlayerSav
 }
 
 void LoadEmpireSaveGameData(const std::string& filename,
-                            std::map<int, SaveGameEmpireData>& empire_save_game_data,
+                            std::map<EmpireID, SaveGameEmpireData>& empire_save_game_data,
                             std::vector<PlayerSaveHeaderData>& player_save_header_data,
                             GalaxySetupData& galaxy_setup_data,
                             int& current_turn)

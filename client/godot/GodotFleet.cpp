@@ -43,8 +43,8 @@ void GodotFleet::set_spatial(godot::Spatial* spatial) {
     m_spatial = spatial;
     if (m_spatial != nullptr) {
         if (!is_stationary()) {
-            int prev_id = m_impl->PreviousSystemID();
-            int next_id = m_impl->NextSystemID();
+            auto prev_id = m_impl->PreviousSystemID();
+            auto next_id = m_impl->NextSystemID();
             auto prev = Objects().get<System>(prev_id);
             auto next = Objects().get<System>(next_id);
             if (prev && next) {
@@ -66,7 +66,7 @@ godot::Vector3 GodotFleet::get_pos() const
 { return godot::Vector3(m_impl->X(), 0, m_impl->Y()); }
 
 int GodotFleet::get_id() const
-{ return m_impl->ID(); }
+{ return Value(m_impl->ID()); }
 
 godot::String GodotFleet::get_name() const
 { return godot::String(m_impl->Name().c_str()); }

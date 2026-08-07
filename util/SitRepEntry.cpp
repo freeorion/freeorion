@@ -79,35 +79,35 @@ namespace {
     }
 }
 
-SitRepEntry CreateShipBuiltSitRep(int ship_id, int system_id, int shipdesign_id, int current_turn) {
-    auto params = Enveculate({{std::pair(VarText::SYSTEM_ID_TAG, system_id),
-                               std::pair(VarText::SHIP_ID_TAG, ship_id),
+SitRepEntry CreateShipBuiltSitRep(UniverseObjectID ship_id, UniverseObjectID system_id, int shipdesign_id, int current_turn) {
+    auto params = Enveculate({{std::pair(VarText::SYSTEM_ID_TAG, Value(system_id)),
+                               std::pair(VarText::SHIP_ID_TAG, Value(ship_id)),
                                std::pair(VarText::DESIGN_ID_TAG, shipdesign_id)}});
     return SitRepEntry(UserStringNop("SITREP_SHIP_BUILT"), current_turn + 1, "icons/sitrep/ship_produced.png",
                        UserStringNop("SITREP_SHIP_BUILT_LABEL"), true,
                        std::move(params));
 }
 
-SitRepEntry CreateShipBlockBuiltSitRep(int system_id, int shipdesign_id, int number, int current_turn) {
+SitRepEntry CreateShipBlockBuiltSitRep(UniverseObjectID system_id, int shipdesign_id, int number, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_SHIP_BATCH_BUILT"),
         current_turn + 1,
         "icons/sitrep/ship_produced.png",
         UserStringNop("SITREP_SHIP_BATCH_BUILT_LABEL"), true);
-    sitrep.AddVariable(VarText::SYSTEM_ID_TAG, std::to_string(system_id));
+    sitrep.AddVariable(VarText::SYSTEM_ID_TAG, to_string(system_id));
     sitrep.AddVariable(VarText::DESIGN_ID_TAG, std::to_string(shipdesign_id));
     sitrep.AddVariable(VarText::RAW_TEXT_TAG,  std::to_string(number));
     return sitrep;
 }
 
-SitRepEntry CreateBuildingBuiltSitRep(int building_id, int planet_id, int current_turn) {
+SitRepEntry CreateBuildingBuiltSitRep(UniverseObjectID building_id, UniverseObjectID planet_id, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_BUILDING_BUILT"),
         current_turn + 1,
         "icons/sitrep/building_produced.png",
         UserStringNop("SITREP_BUILDING_BUILT_LABEL"), true);
-    sitrep.AddVariable(VarText::PLANET_ID_TAG,   std::to_string(planet_id));
-    sitrep.AddVariable(VarText::BUILDING_ID_TAG, std::to_string(building_id));
+    sitrep.AddVariable(VarText::PLANET_ID_TAG,   to_string(planet_id));
+    sitrep.AddVariable(VarText::BUILDING_ID_TAG, to_string(building_id));
     return sitrep;
 }
 
@@ -161,7 +161,7 @@ SitRepEntry CreateShipPartUnlockedSitRep(std::string ship_part_name, int current
     return sitrep;
 }
 
-SitRepEntry CreateCombatSitRep(int system_id, int log_id, int enemy_id, int current_turn) {
+SitRepEntry CreateCombatSitRep(UniverseObjectID system_id, int log_id, EmpireID enemy_id, int current_turn) {
     std::string template_string = (enemy_id == ALL_EMPIRES)
         ? UserStringNop("SITREP_COMBAT_SYSTEM")
         : UserStringNop("SITREP_COMBAT_SYSTEM_ENEMY");
@@ -171,13 +171,13 @@ SitRepEntry CreateCombatSitRep(int system_id, int log_id, int enemy_id, int curr
     SitRepEntry sitrep(
         std::move(template_string), current_turn + 1,
         "icons/sitrep/combat.png", std::move(label_string), true);
-    sitrep.AddVariable(VarText::SYSTEM_ID_TAG, std::to_string(system_id));
+    sitrep.AddVariable(VarText::SYSTEM_ID_TAG, to_string(system_id));
     sitrep.AddVariable(VarText::COMBAT_ID_TAG, std::to_string(log_id));
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, std::to_string(enemy_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, to_string(enemy_id));
     return sitrep;
 }
 
-SitRepEntry CreateGroundCombatSitRep(int planet_id, int enemy_id, int current_turn) {
+SitRepEntry CreateGroundCombatSitRep(UniverseObjectID planet_id, EmpireID enemy_id, int current_turn) {
     std::string template_string = (enemy_id == ALL_EMPIRES)
         ? UserStringNop("SITREP_GROUND_BATTLE")
         : UserStringNop("SITREP_GROUND_BATTLE_ENEMY");
@@ -187,61 +187,61 @@ SitRepEntry CreateGroundCombatSitRep(int planet_id, int enemy_id, int current_tu
     SitRepEntry sitrep(
         std::move(template_string), current_turn + 1,
         "icons/sitrep/ground_combat.png", std::move(label_string), true);
-    sitrep.AddVariable(VarText::PLANET_ID_TAG, std::to_string(planet_id));
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, std::to_string(enemy_id));
+    sitrep.AddVariable(VarText::PLANET_ID_TAG, to_string(planet_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, to_string(enemy_id));
     return sitrep;
 }
 
-SitRepEntry CreatePlanetCapturedSitRep(int planet_id, int empire_id, int current_turn) {
+SitRepEntry CreatePlanetCapturedSitRep(UniverseObjectID planet_id, EmpireID empire_id, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_CAPTURED"),
         current_turn + 1,
         "icons/sitrep/planet_captured.png",
         UserStringNop("SITREP_PLANET_CAPTURED_LABEL"), true);
-    sitrep.AddVariable(VarText::PLANET_ID_TAG, std::to_string(planet_id));
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, std::to_string(empire_id));
+    sitrep.AddVariable(VarText::PLANET_ID_TAG, to_string(planet_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, to_string(empire_id));
     return sitrep;
 }
 
-SitRepEntry CreatePlanetRebelledSitRep(int planet_id, int empire_id, int current_turn) {
+SitRepEntry CreatePlanetRebelledSitRep(UniverseObjectID planet_id, EmpireID empire_id, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_CAPTURED_NEUTRALS"),
         current_turn + 1,
         "icons/sitrep/planet_captured.png",
         UserStringNop("SITREP_PLANET_CAPTURED_NEUTRALS_LABEL"), true);
-    sitrep.AddVariable(VarText::PLANET_ID_TAG, std::to_string(planet_id));
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, std::to_string(empire_id));
+    sitrep.AddVariable(VarText::PLANET_ID_TAG, to_string(planet_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, to_string(empire_id));
     return sitrep;
 }
 
 namespace {
-    SitRepEntry GenericCombatDamagedObjectSitrep(int combat_system_id, int current_turn) {
+    SitRepEntry GenericCombatDamagedObjectSitrep(UniverseObjectID combat_system_id, int current_turn) {
         SitRepEntry sitrep(
             UserStringNop("SITREP_OBJECT_DAMAGED_AT_SYSTEM"),
             current_turn + 1,
             "icons/sitrep/combat_damage.png",
             UserStringNop("SITREP_OBJECT_DAMAGED_AT_SYSTEM_LABEL"), true);
-        sitrep.AddVariable(VarText::SYSTEM_ID_TAG, std::to_string(combat_system_id));
+        sitrep.AddVariable(VarText::SYSTEM_ID_TAG, to_string(combat_system_id));
         return sitrep;
     }
 
-    SitRepEntry GenericCombatDestroyedObjectSitrep(int combat_system_id, int current_turn) {
+    SitRepEntry GenericCombatDestroyedObjectSitrep(UniverseObjectID combat_system_id, int current_turn) {
         SitRepEntry sitrep(
             UserStringNop("SITREP_OBJECT_DESTROYED_AT_SYSTEM"),
             current_turn + 1,
             "icons/sitrep/combat_destroyed.png",
             UserStringNop("SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL"), true);
-        sitrep.AddVariable(VarText::SYSTEM_ID_TAG, std::to_string(combat_system_id));
+        sitrep.AddVariable(VarText::SYSTEM_ID_TAG, to_string(combat_system_id));
         return sitrep;
     }
 }
 
-SitRepEntry CreateCombatDamagedObjectSitRep(const UniverseObject* obj, int combat_system_id,
-                                            int empire_id, int current_turn)
+SitRepEntry CreateCombatDamagedObjectSitRep(const UniverseObject* obj, UniverseObjectID combat_system_id,
+                                            EmpireID empire_id, int current_turn)
 {
     if (!obj)
         return GenericCombatDamagedObjectSitrep(combat_system_id, current_turn);
-    const int object_id = obj->ID();
+    const auto object_id = obj->ID();
 
     SitRepEntry sitrep;
 
@@ -258,7 +258,7 @@ SitRepEntry CreateCombatDamagedObjectSitRep(const UniverseObject* obj, int comba
                 current_turn + 1,
                 "icons/sitrep/combat_damage.png",
                 UserStringNop("SITREP_SHIP_DAMAGED_AT_SYSTEM_LABEL"), true);
-        sitrep.AddVariable(VarText::SHIP_ID_TAG,   std::to_string(object_id));
+        sitrep.AddVariable(VarText::SHIP_ID_TAG,   to_string(object_id));
         sitrep.AddVariable(VarText::DESIGN_ID_TAG, std::to_string(ship->DesignID()));
 
     } else if (auto planet = dynamic_cast<const Planet*>(obj)) {
@@ -274,26 +274,26 @@ SitRepEntry CreateCombatDamagedObjectSitRep(const UniverseObject* obj, int comba
                 current_turn + 1,
                 "icons/sitrep/colony_bombarded.png",
                 UserStringNop("SITREP_PLANET_ATTACKED_AT_SYSTEM_LABEL"), true);
-        sitrep.AddVariable(VarText::PLANET_ID_TAG, std::to_string(object_id));
+        sitrep.AddVariable(VarText::PLANET_ID_TAG, to_string(object_id));
 
     } else {
         sitrep = GenericCombatDestroyedObjectSitrep(combat_system_id, current_turn);
     }
 
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, std::to_string(obj->Owner()));
-    sitrep.AddVariable(VarText::SYSTEM_ID_TAG, std::to_string(combat_system_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, to_string(obj->Owner()));
+    sitrep.AddVariable(VarText::SYSTEM_ID_TAG, to_string(combat_system_id));
 
     return sitrep;
 }
 
-SitRepEntry CreateCombatDestroyedObjectSitRep(const UniverseObject* obj, int combat_system_id,
-                                              int empire_id, int current_turn)
+SitRepEntry CreateCombatDestroyedObjectSitRep(const UniverseObject* obj, UniverseObjectID combat_system_id,
+                                              EmpireID empire_id, int current_turn)
 {
     if (!obj) {
         DebugLogger() << "CreateCombatDestroyedObjectSitRep: passed null object";
         return GenericCombatDestroyedObjectSitrep(combat_system_id, current_turn);
     }
-    const int object_id = obj->ID();
+    const auto object_id = obj->ID();
 
     SitRepEntry sitrep;
 
@@ -318,7 +318,7 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(const UniverseObject* obj, int com
                 current_turn + 1,
                 "icons/sitrep/combat_destroyed.png",
                 UserStringNop("SITREP_SHIP_DESTROYED_AT_SYSTEM_LABEL"), true);
-        sitrep.AddVariable(VarText::SHIP_ID_TAG,   std::to_string(object_id));
+        sitrep.AddVariable(VarText::SHIP_ID_TAG,   to_string(object_id));
         sitrep.AddVariable(VarText::DESIGN_ID_TAG, std::to_string(ship->DesignID()));
         break;
     }
@@ -336,7 +336,7 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(const UniverseObject* obj, int com
                 current_turn + 1,
                 "icons/sitrep/combat_destroyed.png",
                 UserStringNop("SITREP_FLEET_DESTROYED_AT_SYSTEM_LABEL"), true);
-        sitrep.AddVariable(VarText::FLEET_ID_TAG, std::to_string(object_id));
+        sitrep.AddVariable(VarText::FLEET_ID_TAG, to_string(object_id));
         break;
     }
     case UniverseObjectType::OBJ_PLANET: {
@@ -353,7 +353,7 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(const UniverseObject* obj, int com
                 current_turn + 1,
                 "icons/sitrep/combat_destroyed.png",
                 UserStringNop("SITREP_PLANET_DESTROYED_AT_SYSTEM_LABEL"), true);
-        sitrep.AddVariable(VarText::PLANET_ID_TAG, std::to_string(object_id));
+        sitrep.AddVariable(VarText::PLANET_ID_TAG, to_string(object_id));
         break;
     }
     case UniverseObjectType::OBJ_BUILDING: {
@@ -370,31 +370,33 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(const UniverseObject* obj, int com
                 current_turn + 1,
                 "icons/sitrep/combat_destroyed.png",
                 UserStringNop("SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL"), true);
-        sitrep.AddVariable(VarText::BUILDING_ID_TAG, std::to_string(object_id));
-        sitrep.AddVariable(VarText::PLANET_ID_TAG,   std::to_string(building->PlanetID()));
+        sitrep.AddVariable(VarText::BUILDING_ID_TAG, to_string(object_id));
+        sitrep.AddVariable(VarText::PLANET_ID_TAG,   to_string(building->PlanetID()));
         break;
     }
     default:
         sitrep = GenericCombatDestroyedObjectSitrep(combat_system_id, current_turn);
     }
 
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, std::to_string(obj->Owner()));
-    sitrep.AddVariable(VarText::SYSTEM_ID_TAG, std::to_string(combat_system_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, to_string(obj->Owner()));
+    sitrep.AddVariable(VarText::SYSTEM_ID_TAG, to_string(combat_system_id));
 
     return sitrep;
 }
 
-SitRepEntry CreatePlanetDepopulatedSitRep(int planet_id, int current_turn) {
+SitRepEntry CreatePlanetDepopulatedSitRep(UniverseObjectID planet_id, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_DEPOPULATED"),
         current_turn + 1,
         "icons/sitrep/colony_destroyed.png",
         UserStringNop("SITREP_PLANET_DEPOPULATED_LABEL"), true);
-    sitrep.AddVariable(VarText::PLANET_ID_TAG,     std::to_string(planet_id));
+    sitrep.AddVariable(VarText::PLANET_ID_TAG,     to_string(planet_id));
     return sitrep;
 }
 
-SitRepEntry CreatePlanetAnnexedSitRep(int planet_id, int original_owner_id, int annexer_empire_id, int current_turn) {
+SitRepEntry CreatePlanetAnnexedSitRep(UniverseObjectID planet_id, EmpireID original_owner_id,
+                                      EmpireID annexer_empire_id, int current_turn)
+{
     static constexpr std::string_view neutral_annex_txt = UserStringNop("SITREP_PLANET_ANNEXED");
     static constexpr std::string_view other_empire_annex_txt = UserStringNop("SITREP_PLANET_ANNEXED_FROM_OTHER_EMPIRE");
     static constexpr std::string_view neutral_annex_label = UserStringNop("SITREP_PLANET_ANNEXED_LABEL");
@@ -403,61 +405,61 @@ SitRepEntry CreatePlanetAnnexedSitRep(int planet_id, int original_owner_id, int 
     const auto msg = (original_owner_id == ALL_EMPIRES) ? neutral_annex_txt : other_empire_annex_txt;
     const auto label = (original_owner_id == ALL_EMPIRES) ? neutral_annex_label : other_empire_annex_label;
     SitRepEntry sitrep{msg.data(), current_turn + 1, "icons/sitrep/annexed.png", label.data(), true};
-    sitrep.AddVariable(VarText::PLANET_ID_TAG,  std::to_string(planet_id));
-    sitrep.AddVariable("annexer",               std::to_string(annexer_empire_id));
+    sitrep.AddVariable(VarText::PLANET_ID_TAG,  to_string(planet_id));
+    sitrep.AddVariable("annexer",               to_string(annexer_empire_id));
     if (original_owner_id != ALL_EMPIRES)
-        sitrep.AddVariable("original",          std::to_string(original_owner_id));
+        sitrep.AddVariable("original",          to_string(original_owner_id));
     return sitrep;
 }
 
-SitRepEntry CreatePlanetColonizedSitRep(int planet_id, std::string species, int current_turn) {
+SitRepEntry CreatePlanetColonizedSitRep(UniverseObjectID planet_id, std::string species, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_COLONIZED"),
         current_turn + 1,
         "icons/sitrep/planet_colonized.png",
         UserStringNop("SITREP_PLANET_COLONIZED_LABEL"), true);
-    sitrep.AddVariable(VarText::PLANET_ID_TAG,  std::to_string(planet_id));
+    sitrep.AddVariable(VarText::PLANET_ID_TAG,  to_string(planet_id));
     sitrep.AddVariable(VarText::SPECIES_TAG,    std::move(species));
     return sitrep;
 }
 
-SitRepEntry CreatePlanetOutpostedSitRep(int planet_id, int current_turn) {
+SitRepEntry CreatePlanetOutpostedSitRep(UniverseObjectID planet_id, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_OUTPOSTED"),
         current_turn + 1,
         "icons/sitrep/planet_colonized.png",
         UserStringNop("SITREP_PLANET_OUTPOSTED_LABEL"), true);
-    sitrep.AddVariable(VarText::PLANET_ID_TAG,     std::to_string(planet_id));
+    sitrep.AddVariable(VarText::PLANET_ID_TAG,     to_string(planet_id));
     return sitrep;
 }
 
-SitRepEntry CreatePlanetEstablishFailedSitRep(int planet_id, int ship_id, int current_turn) {
+SitRepEntry CreatePlanetEstablishFailedSitRep(UniverseObjectID planet_id, UniverseObjectID ship_id, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_ESTABLISH_FAILED"),
         current_turn + 1,
         "icons/sitrep/planet_colonized.png",
         UserStringNop("SITREP_PLANET_ESTABLISH_FAILED_LABEL"), true);
-    sitrep.AddVariable(VarText::PLANET_ID_TAG,     std::to_string(planet_id));
-    sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
+    sitrep.AddVariable(VarText::PLANET_ID_TAG,     to_string(planet_id));
+    sitrep.AddVariable(VarText::SHIP_ID_TAG,       to_string(ship_id));
     return sitrep;
 }
 
-SitRepEntry CreatePlanetEstablishFailedVisibleOtherSitRep(int planet_id, int ship_id, int other_empire_id,
-                                                          int current_turn)
+SitRepEntry CreatePlanetEstablishFailedVisibleOtherSitRep(UniverseObjectID planet_id, UniverseObjectID ship_id,
+                                                          EmpireID other_empire_id, int current_turn)
 {
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_ESTABLISH_FAILED_VISIBLE_OTHER"),
         current_turn + 1,
         "icons/sitrep/planet_colonized.png",
         UserStringNop("SITREP_PLANET_ESTABLISH_FAILED_VISIBLE_OTHER_LABEL"), true);
-    sitrep.AddVariable(VarText::PLANET_ID_TAG,     std::to_string(planet_id));
-    sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     std::to_string(other_empire_id));
+    sitrep.AddVariable(VarText::PLANET_ID_TAG,     to_string(planet_id));
+    sitrep.AddVariable(VarText::SHIP_ID_TAG,       to_string(ship_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     to_string(other_empire_id));
     return sitrep;
 }
 
-SitRepEntry CreatePlanetEstablishFailedArmedSitRep(int planet_id, int ship_id, int other_empire_id,
-                                                   int current_turn)
+SitRepEntry CreatePlanetEstablishFailedArmedSitRep(UniverseObjectID planet_id, UniverseObjectID ship_id,
+                                                   EmpireID other_empire_id, int current_turn)
 {
     if (other_empire_id == ALL_EMPIRES) {
         SitRepEntry sitrep(
@@ -465,8 +467,8 @@ SitRepEntry CreatePlanetEstablishFailedArmedSitRep(int planet_id, int ship_id, i
             current_turn + 1,
             "icons/sitrep/planet_colonized.png",
             UserStringNop("SITREP_PLANET_ESTABLISH_FAILED_ARMED_NEUTRAL_LABEL"), true);
-        sitrep.AddVariable(VarText::PLANET_ID_TAG,     std::to_string(planet_id));
-        sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
+        sitrep.AddVariable(VarText::PLANET_ID_TAG,     to_string(planet_id));
+        sitrep.AddVariable(VarText::SHIP_ID_TAG,       to_string(ship_id));
         return sitrep;
 
     } else {
@@ -475,37 +477,37 @@ SitRepEntry CreatePlanetEstablishFailedArmedSitRep(int planet_id, int ship_id, i
             current_turn + 1,
             "icons/sitrep/planet_colonized.png",
             UserStringNop("SITREP_PLANET_ESTABLISH_FAILED_ARMED_LABEL"), true);
-        sitrep.AddVariable(VarText::PLANET_ID_TAG,     std::to_string(planet_id));
-        sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
-        sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     std::to_string(other_empire_id));
+        sitrep.AddVariable(VarText::PLANET_ID_TAG,     to_string(planet_id));
+        sitrep.AddVariable(VarText::SHIP_ID_TAG,       to_string(ship_id));
+        sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     to_string(other_empire_id));
         return sitrep;
     }
 }
 
-SitRepEntry CreatePlanetGiftedSitRep(int planet_id, int empire_id, int current_turn) {
+SitRepEntry CreatePlanetGiftedSitRep(UniverseObjectID planet_id, EmpireID empire_id, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_GIFTED"),
         current_turn + 1,
         "icons/sitrep/gift.png",
         UserStringNop("SITREP_PLANET_GIFTED_LABEL"), true);
-    sitrep.AddVariable(VarText::PLANET_ID_TAG,  std::to_string(planet_id));
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,  std::to_string(empire_id));
+    sitrep.AddVariable(VarText::PLANET_ID_TAG,  to_string(planet_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,  to_string(empire_id));
     return sitrep;
 }
 
-SitRepEntry CreateFleetGiftedSitRep(int fleet_id, int empire_id, int current_turn) {
+SitRepEntry CreateFleetGiftedSitRep(UniverseObjectID fleet_id, EmpireID empire_id, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_FLEET_GIFTED"),
         current_turn + 1,
         "icons/sitrep/gift.png",
         UserStringNop("SITREP_FLEET_GIFTED_LABEL"), true);
-    sitrep.AddVariable(VarText::FLEET_ID_TAG,   std::to_string(fleet_id));
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,  std::to_string(empire_id));
+    sitrep.AddVariable(VarText::FLEET_ID_TAG,   to_string(fleet_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,  to_string(empire_id));
     return sitrep;
 }
 
-SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, int recipient_empire_id,
-                                                  const ScriptingContext& context)
+SitRepEntry CreateFleetArrivedAtDestinationSitRep(UniverseObjectID system_id, UniverseObjectID fleet_id,
+                                                  EmpireID recipient_empire_id, const ScriptingContext& context)
 {
     const ObjectMap& o = context.ContextObjects();
     const Universe& u = context.ContextUniverse();
@@ -534,8 +536,8 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
             context.current_turn + 1,
             "icons/sitrep/fleet_arrived.png",
             UserStringNop("SITREP_FLEET_ARRIVED_AT_SYSTEM_LABEL"), true);
-        sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  std::to_string(system_id));
-        sitrep.AddVariable(VarText::FLEET_ID_TAG,   std::to_string(fleet_id));
+        sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  to_string(system_id));
+        sitrep.AddVariable(VarText::FLEET_ID_TAG,   to_string(fleet_id));
         return sitrep;
 
     } else if (fleet->Unowned() && fleet->HasMonsters(u)) {
@@ -545,10 +547,10 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
                 context.current_turn + 1,
                 "icons/sitrep/fleet_arrived.png",
                 UserStringNop("SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION_LABEL"), true);
-            sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     std::to_string(system_id));
-            sitrep.AddVariable(VarText::FLEET_ID_TAG,      std::to_string(fleet_id));
-            int ship_id = *fleet->ShipIDs().begin();
-            sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
+            sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     to_string(system_id));
+            sitrep.AddVariable(VarText::FLEET_ID_TAG,      to_string(fleet_id));
+            const auto ship_id = *fleet->ShipIDs().begin();
+            sitrep.AddVariable(VarText::SHIP_ID_TAG,       to_string(ship_id));
             if (auto ship = o.get<Ship>(ship_id))
                 sitrep.AddVariable(VarText::DESIGN_ID_TAG, std::to_string(ship->DesignID()));
             return sitrep;
@@ -558,8 +560,8 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
                 context.current_turn + 1,
                 "icons/sitrep/fleet_arrived.png",
                 UserStringNop("SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION_LABEL"), true);
-            sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  std::to_string(system_id));
-            sitrep.AddVariable(VarText::FLEET_ID_TAG,   std::to_string(fleet_id));
+            sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  to_string(system_id));
+            sitrep.AddVariable(VarText::FLEET_ID_TAG,   to_string(fleet_id));
             sitrep.AddVariable(VarText::RAW_TEXT_TAG,   std::to_string(fleet->NumShips()));
             return sitrep;
         }
@@ -570,8 +572,8 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
             context.current_turn + 1,
             "icons/sitrep/fleet_arrived.png",
             UserStringNop("SITREP_FLEET_ARRIVED_AT_DESTINATION_LABEL"), true);
-        sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  std::to_string(system_id));
-        sitrep.AddVariable(VarText::FLEET_ID_TAG,   std::to_string(fleet_id));
+        sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  to_string(system_id));
+        sitrep.AddVariable(VarText::FLEET_ID_TAG,   to_string(fleet_id));
         sitrep.AddVariable(VarText::RAW_TEXT_TAG,   std::to_string(fleet->NumShips()));
         return sitrep;
 
@@ -582,11 +584,11 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
                 context.current_turn + 1,
                 "icons/sitrep/fleet_arrived.png",
                 UserStringNop("SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION_LABEL"), true);
-            sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     std::to_string(system_id));
-            sitrep.AddVariable(VarText::FLEET_ID_TAG,      std::to_string(fleet_id));
-            sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     std::to_string(fleet->Owner()));
-            const int ship_id = *fleet->ShipIDs().begin();
-            sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
+            sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     to_string(system_id));
+            sitrep.AddVariable(VarText::FLEET_ID_TAG,      to_string(fleet_id));
+            sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     to_string(fleet->Owner()));
+            const auto ship_id = *fleet->ShipIDs().begin();
+            sitrep.AddVariable(VarText::SHIP_ID_TAG,       to_string(ship_id));
             if (auto ship = o.get<Ship>(ship_id))
                 sitrep.AddVariable(VarText::DESIGN_ID_TAG, std::to_string(ship->DesignID()));
             return sitrep;
@@ -596,9 +598,9 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
                 context.current_turn + 1,
                 "icons/sitrep/fleet_arrived.png",
                 UserStringNop("SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION_LABEL"), true);
-            sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  std::to_string(system_id));
-            sitrep.AddVariable(VarText::FLEET_ID_TAG,   std::to_string(fleet_id));
-            sitrep.AddVariable(VarText::EMPIRE_ID_TAG,  std::to_string(fleet->Owner()));
+            sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  to_string(system_id));
+            sitrep.AddVariable(VarText::FLEET_ID_TAG,   to_string(fleet_id));
+            sitrep.AddVariable(VarText::EMPIRE_ID_TAG,  to_string(fleet->Owner()));
             sitrep.AddVariable(VarText::RAW_TEXT_TAG,   std::to_string(fleet->NumShips()));
             return sitrep;
         }
@@ -609,12 +611,12 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
             context.current_turn + 1,
             "icons/sitrep/fleet_arrived.png",
             UserStringNop("SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION_LABEL"), true);
-        sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     std::to_string(system_id));
-        sitrep.AddVariable(VarText::FLEET_ID_TAG,      std::to_string(fleet_id));
-        sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     std::to_string(fleet->Owner()));
-        const int ship_id = *fleet->ShipIDs().begin();
-        sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
-        if (auto ship = o.getRaw<Ship>(ship_id))
+        sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     to_string(system_id));
+        sitrep.AddVariable(VarText::FLEET_ID_TAG,      to_string(fleet_id));
+        sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     to_string(fleet->Owner()));
+        const auto ship_id = fleet->ShipIDs().empty() ? INVALID_OBJECT_ID : *fleet->ShipIDs().begin();
+        sitrep.AddVariable(VarText::SHIP_ID_TAG,       to_string(ship_id));
+        if (auto ship = o.get<Ship>(ship_id))
             sitrep.AddVariable(VarText::DESIGN_ID_TAG, std::to_string(ship->DesignID()));
         return sitrep;
 
@@ -624,16 +626,17 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
             context.current_turn + 1,
             "icons/sitrep/fleet_arrived.png",
             UserStringNop("SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL"), true);
-        sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  std::to_string(system_id));
-        sitrep.AddVariable(VarText::FLEET_ID_TAG,   std::to_string(fleet_id));
-        sitrep.AddVariable(VarText::EMPIRE_ID_TAG,  std::to_string(fleet->Owner()));
+        sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  to_string(system_id));
+        sitrep.AddVariable(VarText::FLEET_ID_TAG,   to_string(fleet_id));
+        sitrep.AddVariable(VarText::EMPIRE_ID_TAG,  to_string(fleet->Owner()));
         sitrep.AddVariable(VarText::RAW_TEXT_TAG,   std::to_string(fleet->NumShips()));
         return sitrep;
     }
 }
 
-SitRepEntry CreateFleetBlockadedSitRep(int system_id, int blockaded_fleet_id, int blockaded_empire_id,
-                                       int blockading_empire_id, const ScriptingContext& context)
+SitRepEntry CreateFleetBlockadedSitRep(UniverseObjectID system_id, UniverseObjectID blockaded_fleet_id,
+                                       EmpireID blockaded_empire_id, EmpireID blockading_empire_id,
+                                       const ScriptingContext& context)
 {
     const auto template_label = (blockaded_empire_id != ALL_EMPIRES) ?
         std::pair{UserStringNop("SITREP_FLEET_BLOCKADED"), UserStringNop("SITREP_FLEET_BLOCKADED_LABEL")} :
@@ -645,42 +648,42 @@ SitRepEntry CreateFleetBlockadedSitRep(int system_id, int blockaded_fleet_id, in
         "icons/sitrep/blockade.png",
         template_label.second,
         true);
-    sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  std::to_string(system_id));
-    sitrep.AddVariable(VarText::FLEET_ID_TAG,   std::to_string(blockaded_fleet_id));
-    sitrep.AddVariable("blockaded",             std::to_string(blockaded_empire_id));
+    sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  to_string(system_id));
+    sitrep.AddVariable(VarText::FLEET_ID_TAG,   to_string(blockaded_fleet_id));
+    sitrep.AddVariable("blockaded",             to_string(blockaded_empire_id));
     //if (blockading_empire_id != ALL_EMPIRES)
-        sitrep.AddVariable("blockader",        std::to_string(blockading_empire_id));
+        sitrep.AddVariable("blockader",         to_string(blockading_empire_id));
     return sitrep;
 }
 
-SitRepEntry CreateFleetBlockadedSitRep(int system_id, int blockaded_fleet_id,
-                                       int blockaded_empire_id, const ScriptingContext& context)
+SitRepEntry CreateFleetBlockadedSitRep(UniverseObjectID system_id, UniverseObjectID blockaded_fleet_id,
+                                       EmpireID blockaded_empire_id, const ScriptingContext& context)
 {
     SitRepEntry sitrep(
         UserStringNop("SITREP_FLEET_BLOCKADED_NO_EMPIRE"),
         context.current_turn + 1,
         "icons/sitrep/blockade.png",
         UserStringNop("SITREP_FLEET_BLOCKADED_NO_EMPIRE_LABEL"), true);
-    sitrep.AddVariable(VarText::SYSTEM_ID_TAG, std::to_string(system_id));
-    sitrep.AddVariable(VarText::FLEET_ID_TAG,  std::to_string(blockaded_fleet_id));
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, std::to_string(blockaded_empire_id));
+    sitrep.AddVariable(VarText::SYSTEM_ID_TAG, to_string(system_id));
+    sitrep.AddVariable(VarText::FLEET_ID_TAG,  to_string(blockaded_fleet_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, to_string(blockaded_empire_id));
     return sitrep;
 }
 
-SitRepEntry CreateEmpireEliminatedSitRep(int empire_id, int current_turn) {
+SitRepEntry CreateEmpireEliminatedSitRep(EmpireID empire_id, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_EMPIRE_ELIMINATED"),
         current_turn + 1,
         "icons/sitrep/empire_eliminated.png",
         UserStringNop("SITREP_EMPIRE_ELIMINATED_LABEL"), true);
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, std::to_string(empire_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, to_string(empire_id));
     return sitrep;
 }
 
-SitRepEntry CreateVictorySitRep(std::string reason_string, int empire_id, int current_turn) {
+SitRepEntry CreateVictorySitRep(std::string reason_string, EmpireID empire_id, int current_turn) {
     SitRepEntry sitrep(std::move(reason_string), current_turn + 1,
                        "icons/sitrep/victory.png", UserStringNop("SITREP_VICTORY_LABEL"), true);
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, std::to_string(empire_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, to_string(empire_id));
     return sitrep;
 }
 

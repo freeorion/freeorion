@@ -14,18 +14,15 @@ namespace {
     DeclareThreadSafeLogger(IDallocator);
 }
 
-IDAllocator::IDAllocator(const int server_id,
-                         const std::vector<int>& client_ids,
-                         const ID_t invalid_id,
-                         const ID_t temp_id,
-                         const ID_t highest_pre_allocated_id) :
+IDAllocator::IDAllocator(const int server_id, const std::vector<int>& client_ids,
+                         const ID_t invalid_id, const ID_t temp_id, const ID_t highest_pre_allocated_id) :
     m_invalid_id(invalid_id),
     m_temp_id(temp_id),
     m_stride(client_ids.size() + 1),
     m_zero(std::max({m_invalid_id + 1, m_temp_id + 1, highest_pre_allocated_id + 1})),
     m_server_id(server_id),
-    m_empire_id(server_id),
-    m_offset_to_empire_id(client_ids.size() + 1, server_id),
+    m_empire_id(static_cast<EmpireID>(server_id)),
+    m_offset_to_empire_id(client_ids.size() + 1, m_empire_id),
     m_warn_threshold(std::numeric_limits<int>::max() - 1000 * m_stride),
     m_exhausted_threshold(std::numeric_limits<int>::max() - 10 * m_stride),
     m_random_generator()
@@ -39,12 +36,13 @@ IDAllocator::IDAllocator(const int server_id,
     auto ii = m_zero;
 
     // Assign the server to the first offset
-    m_offset_to_empire_id[(ii - m_zero) % m_stride] = m_server_id;
-    m_empire_id_to_next_assigned_object_id.emplace(m_server_id, ii);
+    m_offset_to_empire_id[(ii - m_zero) % m_stride] = m_empire_id;
+    m_empire_id_to_next_assigned_object_id.emplace(m_empire_id, ii);
     ++ii;
 
-    for (const auto empire_id : client_ids) {
-        if (empire_id == m_server_id)
+    for (const auto client_id : client_ids) {
+        const EmpireID empire_id{static_cast<EmpireID>(client_id)};
+        if (Value(empire_id) == m_server_id)
             continue;
         AssigningEmpireForID(ii) = empire_id;
         m_empire_id_to_next_assigned_object_id.emplace(empire_id, ii);
@@ -52,10 +50,10 @@ IDAllocator::IDAllocator(const int server_id,
     }
 }
 
-int IDAllocator::NewID(const Universe& universe) {
+IDAllocator::ID_t IDAllocator::NewID(const Universe& universe) {
     // increment next id for this client until next id is not an already-used id
-    IncrementNextAssignedId(m_empire_id, universe.Objects().HighestObjectID());
-    IncrementNextAssignedId(m_empire_id, universe.HighestDestroyedObjectID());
+    IncrementNextAssignedId(m_empire_id, Value(universe.Objects().HighestObjectID()));
+    IncrementNextAssignedId(m_empire_id, Value(universe.HighestDestroyedObjectID()));
 
     // Find the next id for this client in the table.
     auto it = m_empire_id_to_next_assigned_object_id.find(m_empire_id);
@@ -70,7 +68,7 @@ int IDAllocator::NewID(const Universe& universe) {
     auto apparent_assigning_empire = AssigningEmpireForID(retval);
     if (apparent_assigning_empire != m_empire_id)
         ErrorLogger() << "m_empire_id " << m_empire_id << " does not match apparent assigning id "
-                      << apparent_assigning_empire << " for id = " << retval << " m_zero = " << m_zero
+                      << to_string(apparent_assigning_empire) << " for id = " << retval << " m_zero = " << m_zero
                       << " stride = " << m_stride;
 
     // Increment the next id if not exhausted
@@ -89,9 +87,7 @@ int IDAllocator::NewID(const Universe& universe) {
     return retval;
 }
 
-std::pair<bool, bool> IDAllocator::IsIDValidAndUnused(const ID_t checked_id,
-                                                      const int checked_empire_id)
-{
+std::pair<bool, bool> IDAllocator::IsIDValidAndUnused(const ID_t checked_id, const EmpireID checked_empire_id) {
     static constexpr std::pair<bool, bool> hard_fail = {false, false};
     static constexpr std::pair<bool, bool> complete_success = {true, true};
     // allow legacy loading and order processing
@@ -117,7 +113,7 @@ std::pair<bool, bool> IDAllocator::IsIDValidAndUnused(const ID_t checked_id,
     }
 
     // On the server all ids are valid. On the client only the client id is valid.
-    bool is_valid_id = (m_empire_id == m_server_id) || (m_empire_id == checked_empire_id);
+    bool is_valid_id = (Value(m_empire_id) == m_server_id) || (m_empire_id == checked_empire_id);
     if (!is_valid_id)
         return hard_fail;
 
@@ -134,17 +130,17 @@ std::pair<bool, bool> IDAllocator::IsIDValidAndUnused(const ID_t checked_id,
 
     // Check that the checked_id has the correct modulus again allowing for legacy games with
     // incorrect id.
-    bool is_correct_modulus = (AssigningEmpireForID(checked_id) == checked_empire_id);
+    const bool is_correct_modulus = (AssigningEmpireForID(checked_id) == checked_empire_id);
     if (!is_correct_modulus)
         return legacy_success;
 
-    if (checked_empire_id != m_server_id)
+    if (Value(checked_empire_id) != m_server_id)
         TraceLogger(IDallocator) << "Allocated object id = " << checked_id
                                  << " is valid for empire = " << checked_empire_id;
     return complete_success;
 }
 
-bool IDAllocator::UpdateIDAndCheckIfOwned(const ID_t checked_id) {
+bool IDAllocator::UpdateIDAndCheckIfOwned(ID_t checked_id) {
     auto valid = IsIDValidAndUnused(checked_id, m_empire_id);
 
     // Hard failure
@@ -152,7 +148,7 @@ bool IDAllocator::UpdateIDAndCheckIfOwned(const ID_t checked_id) {
         return false;
 
     // If not on the server then ignore any legacy failures and return the check.
-    if (m_empire_id != m_server_id)
+    if (Value(m_empire_id) != m_server_id)
         return valid.first;
 
     // On the server
@@ -163,10 +159,12 @@ bool IDAllocator::UpdateIDAndCheckIfOwned(const ID_t checked_id) {
     return true;
 }
 
-IDAllocator::ID_t& IDAllocator::AssigningEmpireForID(ID_t id)
-{ return m_offset_to_empire_id[(id - m_zero) % m_stride]; }
+EmpireID& IDAllocator::AssigningEmpireForID(ID_t id) {
+    std::size_t idx = static_cast<std::size_t>(id - m_zero) % static_cast<std::size_t>(m_stride);
+    return m_offset_to_empire_id[idx];
+}
 
-void IDAllocator::IncrementNextAssignedId(const int assigning_empire, const int checked_id) {
+void IDAllocator::IncrementNextAssignedId(const EmpireID assigning_empire, const int checked_id) {
     auto empire_and_next_id_it = m_empire_id_to_next_assigned_object_id.find(assigning_empire);
     if (empire_and_next_id_it == m_empire_id_to_next_assigned_object_id.end())
         return;
@@ -195,7 +193,7 @@ void IDAllocator::ObfuscateBeforeSerialization() {
            a client. */
 
     // Ignore on clients.
-    if (m_empire_id != m_server_id)
+    if (Value(m_empire_id) != m_server_id)
         return;
 
     TraceLogger(IDallocator) << "Before obfuscation " << StateString();
@@ -245,12 +243,12 @@ void IDAllocator::ObfuscateBeforeSerialization() {
                 << "While obfuscating id allocation empire " << assigning_empire
                 << "is missing from the table m_offset_to_empire_id: "
                 << "[(offset, empire id), " << [this]() {
-                std::stringstream ss;
-                std::size_t offset = 0;
-                for (auto& empire_id : m_offset_to_empire_id)
-                    ss << " (" << offset++ << ", " << empire_id << "), ";
-                return ss.str();
-            }() << "]"
+                    std::stringstream ss;
+                    std::size_t offset = 0;
+                    for (auto empire_id : m_offset_to_empire_id)
+                        ss << " (" << offset++ << ", " << empire_id << "), ";
+                    return ss.str();
+                }() << "]"
                 << " Empire " << assigning_empire
                 << " may not be able to create new designs or objects.";
         }
@@ -282,7 +280,7 @@ std::string IDAllocator::StateString() const {
 }
 
 template <typename Archive>
-void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, int empire_id) {
+void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, EmpireID empire_id) {
     DebugLogger(IDallocator) << (Archive::is_loading::value ? "Deserialize " : "Serialize ")
                              << "IDAllocator()  server id = "
                              << m_server_id << " empire id = " << empire_id;
@@ -297,32 +295,52 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, in
         & BOOST_SERIALIZATION_NVP(m_exhausted_threshold);
 
     if constexpr (Archive::is_loading::value) {
-        // Always load whatever is there.
-        ar  & BOOST_SERIALIZATION_NVP(m_empire_id)
-            & BOOST_SERIALIZATION_NVP(m_empire_id_to_next_assigned_object_id)
-            & BOOST_SERIALIZATION_NVP(m_offset_to_empire_id);
+        ar  & BOOST_SERIALIZATION_NVP(m_empire_id);
+
+        // Always load whatever ID info was saved / sent, ignoring what is expected for \a empire_id and 
+
+        {
+            std::unordered_map<int, IDAllocator::ID_t> eid_to_naoi;
+            ar  & boost::serialization::make_nvp("m_empire_id_to_next_assigned_object_id", eid_to_naoi);
+            m_empire_id_to_next_assigned_object_id.clear();
+            for (const auto& [eid, oid] : eid_to_naoi)
+                m_empire_id_to_next_assigned_object_id.emplace(EmpireID{eid}, oid);
+        }
+        {
+            std::vector<int> offset_to_eid;
+            ar  & boost::serialization::make_nvp("m_offset_to_empire_id", offset_to_eid);
+            static constexpr auto to_eid = [](const auto& oeid) noexcept { return EmpireID{oeid}; };
+            m_offset_to_empire_id = offset_to_eid | range_transform(to_eid) | range_to_vec;
+        }
 
         DebugLogger(IDallocator) << "Deserialized [" << [this]() {
             std::stringstream ss;
-            for (auto& empire_and_next_id : m_empire_id_to_next_assigned_object_id) {
-                ss << "empire = " << empire_and_next_id.first << " next id = " << empire_and_next_id.second << ", ";
-            }
+            for (const auto& [next_empire_id, next_id] : m_empire_id_to_next_assigned_object_id)
+                ss << "empire = " << next_empire_id << " next id = " << next_id << ", ";
             return ss.str();
         }() << "]";
 
-    } else {
-
-        if (m_empire_id != empire_id && m_empire_id != m_server_id)
+    } else { // is saving
+        if (m_empire_id != empire_id && Value(m_empire_id) != m_server_id)
             ErrorLogger() << "An empire with id = " << m_empire_id << " which is not the server "
                           << "is attempting to serialize the IDAllocator for a different empire " << empire_id;
 
         // If the target empire is the server, provide the full map.
-        if (empire_id == m_server_id) {
-            ar  & BOOST_SERIALIZATION_NVP(m_empire_id)
-                & BOOST_SERIALIZATION_NVP(m_empire_id_to_next_assigned_object_id)
-                & BOOST_SERIALIZATION_NVP(m_offset_to_empire_id);
+        if (Value(empire_id) == m_server_id) {
+            ar  & BOOST_SERIALIZATION_NVP(m_empire_id);
+            {
+                std::unordered_map<int, int> eid_to_naoi;
+                for (const auto& [eid, naoi] : m_empire_id_to_next_assigned_object_id)
+                    eid_to_naoi.emplace(Value(eid), static_cast<int>(naoi));
+                ar  & boost::serialization::make_nvp("m_empire_id_to_next_assigned_object_id", eid_to_naoi);
+            }
+            {
+                static constexpr auto to_value = [](const auto& oeid) noexcept { return Value(oeid); };
+                auto offset_to_eid = m_offset_to_empire_id | range_transform(to_value) | range_to_vec;
+                ar  & boost::serialization::make_nvp("m_offset_to_empire_id", offset_to_eid);
+            }
         } else {
-            ar  & boost::serialization::make_nvp(BOOST_PP_STRINGIZE(m_empire_id), empire_id);
+            ar  & BOOST_SERIALIZATION_NVP(empire_id);
 
             // Filter the map for empires so they only have their own actual next id and no
             // information about other clients.
@@ -334,26 +352,26 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, in
                 ErrorLogger() << "Attempt to serialize allocator for an empire_id "
                               << empire_id << " not in id manager table.";
             } else {
-                temp_empire_id_to_object_id.insert(*it);
-                temp_offset_to_empire_id[(it->second - m_zero) % m_stride] = empire_id;
+                temp_empire_id_to_object_id.emplace(Value(it->first), it->second);
+                std::size_t idx = static_cast<std::size_t>(it->second - m_zero) % static_cast<std::size_t>(m_stride);
+                temp_offset_to_empire_id[idx] = Value(empire_id);
             }
 
-            ar & boost::serialization::make_nvp(BOOST_PP_STRINGIZE(m_empire_id_to_next_assigned_object_id), temp_empire_id_to_object_id);
-            ar & boost::serialization::make_nvp(BOOST_PP_STRINGIZE(m_offset_to_empire_id), temp_offset_to_empire_id);
+            ar & boost::serialization::make_nvp("m_empire_id_to_next_assigned_object_id", temp_empire_id_to_object_id);
+            ar & boost::serialization::make_nvp("m_offset_to_empire_id", temp_offset_to_empire_id);
 
             DebugLogger(IDallocator) << "Serialized [" << [&temp_empire_id_to_object_id]() {
                 std::stringstream ss;
-                for (auto& empire_and_next_id : temp_empire_id_to_object_id) {
-                    ss << "empire = " << empire_and_next_id.first << " next id = " << empire_and_next_id.second << ", ";
-                }
+                for (const auto& [next_empire_id, next_id] : temp_empire_id_to_object_id)
+                    ss << "empire = " << next_empire_id << " next id = " << next_id << ", ";
                 return ss.str();
             }() << "]";
         }
     }
 }
 
-template void IDAllocator::SerializeForEmpire<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version, const int empire_id);
-template void IDAllocator::SerializeForEmpire<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version, const int empire_id);
-template void IDAllocator::SerializeForEmpire<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version, const int empire_id);
-template void IDAllocator::SerializeForEmpire<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version, const int empire_id);
+template void IDAllocator::SerializeForEmpire<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version, const EmpireID empire_id);
+template void IDAllocator::SerializeForEmpire<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version, const EmpireID empire_id);
+template void IDAllocator::SerializeForEmpire<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version, const EmpireID empire_id);
+template void IDAllocator::SerializeForEmpire<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version, const EmpireID empire_id);
 

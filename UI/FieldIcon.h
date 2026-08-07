@@ -6,6 +6,7 @@
 
 #include <boost/signals2/signal.hpp>
 
+#include "../universe/ConstantsFwd.h"
 
 /** A control that allows interaction with a field. This class allows user
   * interaction with fields on the galaxy map.  It contains the graphic to
@@ -13,17 +14,17 @@
     associated with it. */
 class FieldIcon final : public GG::Control {
 public:
-    FieldIcon(int field_id);
+    explicit FieldIcon(UniverseObjectID field_id);
     ~FieldIcon() = default;
     void CompleteConstruction() override;
 
     /** Checks to see if point lies inside in-system fleet buttons before
         checking parent InWindow method. */
-    bool InWindow(GG::Pt pt) const noexcept override;
-    int  FieldID() const noexcept { return m_field_id; }
+    [[nodiscard]] bool InWindow(GG::Pt pt) const noexcept override;
+    [[nodiscard]] UniverseObjectID  FieldID() const noexcept { return m_field_id; }
 
     /** Returns the field texture. */
-    const auto& FieldTexture() const noexcept { return m_texture; }
+    [[nodiscard]] const auto& FieldTexture() const noexcept { return m_texture; }
 
     void LButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys) override;
@@ -40,15 +41,15 @@ public:
     void Refresh();
     void SetSelected(bool selected = true);   //!< shows/hides the selection indicator over this field
 
-    mutable boost::signals2::signal<void (int)> MouseEnteringSignal;
-    mutable boost::signals2::signal<void (int)> MouseLeavingSignal;
-    mutable boost::signals2::signal<void (int)> LeftClickedSignal;
-    mutable boost::signals2::signal<void (int)> RightClickedSignal;
-    mutable boost::signals2::signal<void (int)> LeftDoubleClickedSignal;
-    mutable boost::signals2::signal<void (int)> RightDoubleClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> MouseEnteringSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> MouseLeavingSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> LeftClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> RightClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> LeftDoubleClickedSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> RightDoubleClickedSignal;
 
 private:
-    int                                 m_field_id;             //!< the Field associated with this FieldIcon
+    UniverseObjectID                    m_field_id;             //!< the Field associated with this FieldIcon
     std::shared_ptr<GG::Texture>        m_texture;
     std::shared_ptr<GG::DynamicGraphic> m_selection_indicator;  //!< shown to indicate system is selected in sidepanel;
     std::shared_ptr<GG::StaticGraphic>  m_mouseover_indicator;  //!< shown when the mouse cursor is over the system;

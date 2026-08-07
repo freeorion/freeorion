@@ -21,6 +21,13 @@
 #include <iterator>
 #include <numeric>
 
+#if !defined(CONSTEXPR_FROM_CHARS)
+# if defined(__cpp_lib_constexpr_charconv)
+#  define CONSTEXPR_FROM_CHARS constexpr
+# else
+#  define CONSTEXPR_FROM_CHARS
+# endif
+#endif
 
 namespace {
     constexpr int sitrep_row_margin(1);
@@ -54,33 +61,51 @@ namespace {
             snoozed_sitreps[turn].insert(sitrep_text);
     }
 
+    // wrapper for converting string to integer
+    [[nodiscard]] CONSTEXPR_FROM_CHARS int ToInt(std::string_view sv, int default_result = -1)
+        noexcept(noexcept(std::from_chars("", "", std::declval<int&>())))
+    {
+        int retval = default_result;
+        std::from_chars(sv.data(), sv.data() + sv.size(), retval);
+        return retval;
+    }
+
+    [[nodiscard]] CONSTEXPR_FROM_CHARS UniverseObjectID ToInt(std::string_view sv, UniverseObjectID default_result)
+        noexcept(noexcept(ToInt("", -1)))
+    { return UniverseObjectID{ToInt(sv, Value(default_result))}; }
+
+    [[nodiscard]] CONSTEXPR_FROM_CHARS EmpireID ToInt(std::string_view sv, EmpireID default_result)
+        noexcept(noexcept(ToInt("", -1)))
+    { return EmpireID{ToInt(sv, Value(default_result))}; }
+
     void HandleLinkClick(const std::string& link_type, const std::string& data) {
         auto& app = GetApp();
         auto& context = app.GetContext();
         auto& universe = context.ContextUniverse();
-        auto client_empire_id = app.EmpireID();
+        auto client_empire_id = app.GetEmpireID();
         auto& ui = app.GetUI();
-        const auto data_int = [&data]() { return boost::lexical_cast<int>(data); };
+
+        const auto data_int = [&data](auto invalid_result) { return ToInt(data, invalid_result); };
 
         try {
             if (link_type == VarText::PLANET_ID_TAG) {
-                ui.ZoomToPlanet(data_int(), context);
+                ui.ZoomToPlanet(data_int(INVALID_OBJECT_ID), context);
             } else if (link_type == VarText::SYSTEM_ID_TAG) {
-                ui.ZoomToSystem(data_int(), context);
+                ui.ZoomToSystem(data_int(INVALID_OBJECT_ID), context);
             } else if (link_type == VarText::FLEET_ID_TAG) {
-                ui.ZoomToFleet(data_int(), context, client_empire_id);
+                ui.ZoomToFleet(data_int(INVALID_OBJECT_ID), context, client_empire_id);
             } else if (link_type == VarText::SHIP_ID_TAG) {
-                ui.ZoomToShip(data_int(), context, client_empire_id);
+                ui.ZoomToShip(data_int(INVALID_OBJECT_ID), context, client_empire_id);
             } else if (link_type == VarText::BUILDING_ID_TAG) {
-                ui.ZoomToBuilding(data_int(), context);
+                ui.ZoomToBuilding(data_int(INVALID_OBJECT_ID), context);
 
             } else if (link_type == VarText::COMBAT_ID_TAG) {
-                ui.ZoomToCombatLog(data_int());
+                ui.ZoomToCombatLog(data_int(-1));
 
             } else if (link_type == VarText::EMPIRE_ID_TAG) {
-                ui.ZoomToEmpire(data_int());
+                ui.ZoomToEmpire(data_int(ALL_EMPIRES));
             } else if (link_type == VarText::DESIGN_ID_TAG) {
-                ui.ZoomToShipDesign(data_int());
+                ui.ZoomToShipDesign(data_int(INVALID_DESIGN_ID));
             } else if (link_type == VarText::PREDEFINED_DESIGN_TAG) {
                 if (const ShipDesign* design = universe.GetGenericShipDesign(data))
                     ui.ZoomToShipDesign(design->ID());
@@ -106,8 +131,9 @@ namespace {
             } else if (link_type == TextLinker::BROWSE_PATH_TAG) {
                 app.BrowsePath(FilenameToPath(data));
             }
-        } catch (const boost::bad_lexical_cast&) {
-            ErrorLogger() << "SitrepPanel.cpp HandleLinkClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
+        } catch (const std::exception& e) {
+            ErrorLogger() << "SitrepPanel.cpp HandleLinkClick caught exception for link type: "
+                          << link_type << " and data: " << data << ": " << e.what();
         }
     }
 
@@ -576,7 +602,7 @@ void SitRepPanel::CloseClicked()
 { ClosingSignal(); }
 
 void SitRepPanel::PrevClicked() {
-    const Empire* empire = GetEmpire(GetApp().EmpireID());
+    const Empire* empire = GetEmpire(GetApp().GetEmpireID());
     if (!empire)
         return; // TODO: for all empires?
     ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(empire->SitReps(), m_showing_turn, empire->SitRepFixedInfos(),
@@ -584,7 +610,7 @@ void SitRepPanel::PrevClicked() {
 }
 
 void SitRepPanel::NextClicked() {
-    const Empire* empire = GetEmpire(GetApp().EmpireID());
+    const Empire* empire = GetEmpire(GetApp().GetEmpireID());
     if (!empire)
         return; // TODO: for all empires?
     ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(empire->SitReps(), m_showing_turn, empire->SitRepFixedInfos(),
@@ -592,7 +618,7 @@ void SitRepPanel::NextClicked() {
 }
 
 void SitRepPanel::LastClicked() {
-    const Empire* empire = GetEmpire(GetApp().EmpireID());
+    const Empire* empire = GetEmpire(GetApp().GetEmpireID());
     if (!empire)
         return; // TODO: for all empires?
     ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(empire->SitReps(), GetApp().CurrentTurn() + 1,
@@ -786,7 +812,7 @@ void SitRepPanel::Update() {
     const auto& app = GetApp();
     const auto& context = app.GetContext();
 
-    const auto empire = context.GetEmpire(app.EmpireID());
+    const auto empire = context.GetEmpire(app.GetEmpireID());
     if (!empire)
         return;
     const auto& sitreps = empire->SitReps();
@@ -934,7 +960,7 @@ void SitRepPanel::SetHiddenSitRepLabels(const std::set<std::string>& labels) {
 
 bool SitRepPanel::HasVisibleSitrepsOnTurn(const ClientApp& app, int turn) const {
     const auto& context = app.GetContext();
-    const auto empire = context.GetEmpire(app.EmpireID());
+    const auto empire = context.GetEmpire(app.GetEmpireID());
     if (!empire)
         return false;
 
@@ -979,7 +1005,7 @@ bool SitRepPanel::HasVisibleSitrepsOnTurn(const ClientApp& app, int turn) const 
 std::size_t SitRepPanel::NumVisibleSitrepsThisTurn() const {
     const auto& app = GetApp();
     const auto& context = app.GetContext();
-    const auto empire = context.GetEmpire(app.EmpireID());
+    const auto empire = context.GetEmpire(app.GetEmpireID());
     if (!empire)
         return 0; // TODO: for all empires?
     const auto current_turn = app.CurrentTurn();

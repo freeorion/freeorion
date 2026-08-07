@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////
 // FieldIcon
 ////////////////////////////////////////////////
-FieldIcon::FieldIcon(int field_id) :
+FieldIcon::FieldIcon(UniverseObjectID field_id) :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1),
     m_field_id(field_id)
 {}
