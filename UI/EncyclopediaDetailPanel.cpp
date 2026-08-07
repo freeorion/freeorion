@@ -3087,7 +3087,7 @@ namespace {
         }
 
         universe.Delete(temp->ID());
-        universe.DeleteShipDesign(TEMPORARY_OBJECT_ID);
+        universe.DeleteShipDesign(incomplete_design->ID());
     }
 
     void RefreshDetailPanelObjectTag(       const std::string&/* item_type*/, const std::string& item_name,
@@ -3482,9 +3482,11 @@ namespace {
 
         general_type = UserString("SP_PLANET_SUITABILITY");
 
-        auto& context = GetApp().GetContext();
+        auto& app = GetApp();
+        auto& context = app.GetContext();
         auto& objects = context.ContextObjects();
         auto& universe = context.ContextUniverse();
+        const auto client_empire_id = app.EmpireID();
 
         int planet_id = ToInt(item_name, INVALID_OBJECT_ID);
         auto planet = objects.get<Planet>(planet_id); // non-const so it can be test modified to check results for various species
@@ -3503,7 +3505,7 @@ namespace {
         }
 
         try {
-            name = planet->PublicName(planet_id, universe);
+            name = planet->PublicName(client_empire_id, universe);
 
             const auto species_names = ReportedSpeciesForPlanet(*planet);
             const auto target_population_species = SpeciesEnvByTargetPop(planet, species_names);
@@ -3523,7 +3525,7 @@ namespace {
                 if (target_pop > 0) {
                     if (!positive_header_placed) {
                         auto pos_header = str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_POSITIVE_HEADER"))
-                                              % planet->PublicName(planet_id, universe));
+                                              % planet->PublicName(client_empire_id, universe));
                         TraceLogger() << "Suitability report positive header \"" << pos_header << "\"";
                         detailed_description.append(pos_header);
                         positive_header_placed = true;
@@ -3542,7 +3544,7 @@ namespace {
                             detailed_description += "\n\n";
 
                         auto neg_header = str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_NEGATIVE_HEADER"))
-                                              % planet->PublicName(planet_id, universe));
+                                              % planet->PublicName(client_empire_id, universe));
                         TraceLogger() << "Suitability report regative header \"" << neg_header << "\"";
                         detailed_description.append(neg_header);
                         negative_header_placed = true;
