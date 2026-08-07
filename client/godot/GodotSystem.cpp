@@ -47,7 +47,7 @@ godot::Vector3 GodotSystem::get_pos() const
 { return godot::Vector3(m_impl->X(), 0, m_impl->Y()); }
 
 int GodotSystem::get_id() const
-{ return m_impl->ID(); }
+{ return Value(m_impl->ID()); }
 
 godot::String GodotSystem::get_name() const
 { return godot::String(m_impl->Name().c_str()); }
