@@ -108,8 +108,6 @@ template void ProductionQueue::Element::serialize<freeorion_bin_iarchive>(freeor
 template void ProductionQueue::Element::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void ProductionQueue::Element::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
-BOOST_CLASS_VERSION(ProductionQueue, 1)
-
 namespace {
     auto Convert(const std::map<std::set<int>, float>& in) {
         std::map<boost::container::flat_set<int>, float> retval;

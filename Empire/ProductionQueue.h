@@ -8,11 +8,9 @@
 
 #include <deque>
 #include <map>
-#include <memory>
-#include <set>
 #include <string>
 #include <boost/container/flat_set.hpp>
-#include <boost/serialization/access.hpp>
+#include <boost/serialization/version.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
@@ -244,5 +242,6 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+BOOST_CLASS_VERSION(ProductionQueue, 1)
 
 #endif
