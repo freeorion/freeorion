@@ -231,7 +231,7 @@ void FreeOrionNode::HandleMessage(Message&& msg) {
             Message::PlayerStatus status;
             EmpireID about_empire_id;
             ExtractPlayerStatusMessageData(msg, status, about_empire_id);
-            emit_signal("empire_status", static_cast<int>(status), about_empire_id);
+            emit_signal("empire_status", static_cast<int>(status), static_cast<int>(Value(about_empire_id)));
             break;
         }
         case Message::MessageType::HOST_SP_GAME: {
