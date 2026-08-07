@@ -1417,8 +1417,12 @@ namespace {
     constexpr std::size_t SizeOfContents(const X&) noexcept
     { return 0u; }
 
+    // <concepts> library not fully implemented in all compilers
+    template <class T>
+    concept integral = std::is_integral_v<T>;
+
     template <typename X>
-        requires requires(X x) { { Value(x) } -> std::integral; }
+        requires requires(X x) { { Value(x) } -> integral; }
     constexpr std::size_t SizeOfContents(const X&) noexcept
     { return 0u; }
 
