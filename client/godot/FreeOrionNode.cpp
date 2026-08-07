@@ -229,7 +229,7 @@ void FreeOrionNode::HandleMessage(Message&& msg) {
         }
         case Message::MessageType::PLAYER_STATUS: {
             Message::PlayerStatus status;
-            int about_empire_id;
+            EmpireID about_empire_id;
             ExtractPlayerStatusMessageData(msg, status, about_empire_id);
             emit_signal("empire_status", static_cast<int>(status), about_empire_id);
             break;
@@ -253,7 +253,7 @@ void FreeOrionNode::HandleMessage(Message&& msg) {
             std::string save_state_string; // ignored - used by AI but not by human client
             OrderSet orders;
             bool single_player_game = false;
-            int empire_id = ALL_EMPIRES;
+            EmpireID empire_id = ALL_EMPIRES;
             int current_turn = INVALID_GAME_TURN;
             m_app->Orders().Reset();
             try {
