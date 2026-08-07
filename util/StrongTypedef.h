@@ -1,6 +1,7 @@
 #ifndef _StrongTypedef_h_
 #define _StrongTypedef_h_
 
+#include <compare>
 #include <cstdint>
 #include <limits>
 #include <ostream>
