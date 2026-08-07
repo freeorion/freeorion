@@ -66,7 +66,7 @@ godot::Vector3 GodotFleet::get_pos() const
 { return godot::Vector3(m_impl->X(), 0, m_impl->Y()); }
 
 int GodotFleet::get_id() const
-{ return m_impl->ID(); }
+{ return Value(m_impl->ID()); }
 
 godot::String GodotFleet::get_name() const
 { return godot::String(m_impl->Name().c_str()); }
