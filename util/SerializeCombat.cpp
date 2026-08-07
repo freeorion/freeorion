@@ -208,7 +208,7 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Simulta
 
 
 namespace {
-    template <typename Archive, typename ContainerT> requires std::is_same_v<ContainerT::value_type, int>
+    template <typename Archive, typename ContainerT> requires std::is_same_v<typename ContainerT::value_type, int>
     void Serialize(Archive& ar, ContainerT& container, const char* tag, bool old_non_string_format)
     {
         if constexpr (Archive::is_loading::value) {
