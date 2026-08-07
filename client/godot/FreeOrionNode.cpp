@@ -420,7 +420,7 @@ void FreeOrionNode::auth_response(godot::String player_name, godot::String passw
 godot::Dictionary FreeOrionNode::get_systems() const {
     godot::Dictionary systems;
     for (const auto& sys : Objects().all<System>()) {
-        systems[sys->ID()] = GodotSystem::Wrap(sys);
+        systems[Value(sys->ID())] = GodotSystem::Wrap(sys);
     }
     return systems;
 }
@@ -428,7 +428,7 @@ godot::Dictionary FreeOrionNode::get_systems() const {
 godot::Dictionary FreeOrionNode::get_fleets() const {
     godot::Dictionary fleets;
     for (const auto& fleet : Objects().all<Fleet>()) {
-        fleets[fleet->ID()] = GodotFleet::Wrap(fleet);
+        fleets[Value(fleet->ID())] = GodotFleet::Wrap(fleet);
     }
     return fleets;
 }
