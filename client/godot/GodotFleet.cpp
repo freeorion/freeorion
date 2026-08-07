@@ -43,8 +43,8 @@ void GodotFleet::set_spatial(godot::Spatial* spatial) {
     m_spatial = spatial;
     if (m_spatial != nullptr) {
         if (!is_stationary()) {
-            int prev_id = m_impl->PreviousSystemID();
-            int next_id = m_impl->NextSystemID();
+            auto prev_id = m_impl->PreviousSystemID();
+            auto next_id = m_impl->NextSystemID();
             auto prev = Objects().get<System>(prev_id);
             auto next = Objects().get<System>(next_id);
             if (prev && next) {

@@ -54,7 +54,7 @@ godot::String GodotSystem::get_name() const
 
 godot::Dictionary GodotSystem::get_starlanes_wormholes() const {
     godot::Dictionary starlanes;
-    for (const int sys : m_impl->Starlanes())
-        starlanes[sys] = false; // TODO: probably switch to just returning the set/vec of ints. this is fallback to when StarlanesWormholes() returned a map<int,bool>
+    for (const auto sys : m_impl->Starlanes())
+        starlanes[Value(sys)] = false; // TODO: probably switch to just returning the set/vec of ints. this is fallback to when StarlanesWormholes() returned a map<int,bool>
     return starlanes;
 }
