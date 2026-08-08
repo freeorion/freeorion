@@ -3,6 +3,7 @@
 #include "parse/Parse.h"
 #include "parse/PythonParser.h"
 #include "universe/BuildingType.h"
+#include "universe/ShipHull.h"
 #include "universe/Conditions.h"
 #include "universe/Effects.h"
 #include "universe/Encyclopedia.h"
@@ -344,6 +345,43 @@ BOOST_AUTO_TEST_CASE(parse_named_values_full) {
             uint32_t value{0};
             CheckSums::CheckSumCombine(value, named_value_it->second.get());
             BOOST_REQUIRE_EQUAL(named_value_checksum, value);
+        }
+    }
+}
+
+/**
+ * Checks count of ship hulls in real scripts
+ * FO_CHECKSUM_SHIP_HULL_NAME determines ship hull name to be check for FO_CHECKSUM_SHIP_HULL_VALUE checksum
+ */
+
+BOOST_AUTO_TEST_CASE(parse_ship_hulls_full) {
+    PythonParser parser(m_python);
+
+    auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_scripting_dir / "macros");
+
+    auto ship_hulls_p = Pending::ParseSynchronously(parse::ship_hulls, parser, m_scripting_dir / "ship_hulls");
+    auto ship_hulls_opt = Pending::WaitForPendingUnlocked(std::move(ship_hulls_p));
+
+    BOOST_REQUIRE(ship_hulls_opt);
+
+    const auto ship_hulls = *std::move(ship_hulls_opt);
+    BOOST_CHECK(!ship_hulls.empty());
+    BOOST_REQUIRE_EQUAL(68, ship_hulls.size());
+
+    DumpEntitiesList(ship_hulls);
+    if (const char *ship_hull_name = std::getenv("FO_CHECKSUM_SHIP_HULL_NAME")) {
+        const auto ship_hull_it = ship_hulls.find(ship_hull_name);
+        BOOST_REQUIRE_MESSAGE(ship_hulls.end() != ship_hull_it, "Missing " << ship_hull_name);
+        BOOST_REQUIRE_EQUAL(ship_hull_name, ship_hull_it->second->Name());
+
+        BOOST_TEST_MESSAGE("Dump " << ship_hull_name << ":");
+        DumpEntity(*(ship_hull_it->second));
+
+        if (const char *ship_hull_checksum_str = std::getenv("FO_CHECKSUM_SHIP_HULL_VALUE")) {
+            uint32_t ship_hull_checksum = boost::lexical_cast<uint32_t>(ship_hull_checksum_str);
+            uint32_t value{0};
+            CheckSums::CheckSumCombine(value, ship_hull_it->second);
+            BOOST_REQUIRE_EQUAL(ship_hull_checksum, value);
         }
     }
 }

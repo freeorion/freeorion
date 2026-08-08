@@ -38,6 +38,8 @@ public:
         [[nodiscard]] bool operator==(const Slot& rhs) const noexcept
         { return type == rhs.type && x == rhs.x && y == rhs.y; }
 
+        [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const;
+
         ShipSlotType type = ShipSlotType::INVALID_SHIP_SLOT_TYPE;
         double x = 0.5, y = 0.5;
     };
@@ -151,6 +153,8 @@ public:
     //! the parsed content is consistent without sending it all between
     //! clients and server.
     [[nodiscard]] auto GetCheckSum() const -> uint32_t;
+
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const;
 
 private:
     const std::string m_name;

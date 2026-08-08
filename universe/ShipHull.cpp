@@ -119,6 +119,23 @@ namespace {
 
         return retval;
     }
+
+    // FOCS keyword for a ship slot type, as accepted by the parser
+    // (parse/EnumParser.cpp ship_slot_enum_grammar)
+    std::string SlotTypeKeyword(ShipSlotType slot_type) {
+        switch (slot_type) {
+        case ShipSlotType::SL_EXTERNAL: return "External";
+        case ShipSlotType::SL_INTERNAL: return "Internal";
+        case ShipSlotType::SL_CORE:     return "Core";
+        default:                        return "";
+        }
+    }
+}
+
+
+std::string ShipHull::Slot::Dump(uint8_t ntabs) const {
+    return DumpIndent(ntabs) + "Slot type = " + SlotTypeKeyword(type)
+        + " position = (" + std::to_string(x) + ", " + std::to_string(y) + ")\n";
 }
 
 
@@ -384,6 +401,75 @@ uint32_t ShipHull::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_graphic);
     CheckSums::CheckSumCombine(retval, m_icon);
 
+    return retval;
+}
+
+std::string ShipHull::Dump(uint8_t ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "Hull\n";
+    retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
+    retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";
+
+    if (!m_exclusions.empty()) {
+        retval += DumpIndent(ntabs+1) + "exclusions = [ ";
+        for (const auto& exclusion : m_exclusions)
+            retval.append("\"").append(exclusion).append("\" ");
+        retval += " ]\n";
+    }
+
+    retval += DumpIndent(ntabs+1) + "speed = " + std::to_string(m_speed) + "\n";
+    if (!m_default_speed_effects)
+        retval += DumpIndent(ntabs+1) + "NoDefaultSpeedEffect\n";
+    retval += DumpIndent(ntabs+1) + "fuel = " + std::to_string(m_fuel) + "\n";
+    retval += DumpIndent(ntabs+1) + "stealth = " + std::to_string(m_stealth) + "\n";
+    retval += DumpIndent(ntabs+1) + "structure = " + std::to_string(m_structure) + "\n";
+    if (!m_default_structure_effects)
+        retval += DumpIndent(ntabs+1) + "NoDefaultStructureEffect\n";
+
+    if (!m_slots.empty()) {
+        if (m_slots.size() == 1) {
+            retval += DumpIndent(ntabs+1) + "slots =\n";
+            retval += m_slots.front().Dump(ntabs+2);
+        } else {
+            retval += DumpIndent(ntabs+1) + "slots = [\n";
+            for (const auto& slot : m_slots)
+                retval += slot.Dump(ntabs+2);
+            retval += DumpIndent(ntabs+1) + "]\n";
+        }
+    }
+
+    if (m_production_cost)
+        retval += DumpIndent(ntabs+1) + "buildcost = " + m_production_cost->Dump(ntabs+1) + "\n";
+    if (m_production_time)
+        retval += DumpIndent(ntabs+1) + "buildtime = " + m_production_time->Dump(ntabs+1) + "\n";
+    retval += DumpIndent(ntabs+1) + (m_producible ? "Producible" : "Unproducible") + "\n";
+
+    if (!m_tags.empty()) {
+        if (m_tags.size() == 1) {
+            retval.append(DumpIndent(ntabs+1)).append("tags = \"").append(m_tags.front()).append("\"\n");
+        } else {
+            retval += DumpIndent(ntabs+1) + "tags = [ ";
+            for (const auto& tag : m_tags)
+                retval.append("\"").append(tag).append("\" ");
+            retval += " ]\n";
+        }
+    }
+
+    if (m_location) {
+        retval += DumpIndent(ntabs+1) + "location = \n";
+        retval += m_location->Dump(ntabs+2);
+    }
+
+    if (m_effects.size() == 1) {
+        retval += DumpIndent(ntabs+1) + "effectsgroups =\n";
+        retval += m_effects.front().Dump(ntabs+2);
+    } else {
+        retval += DumpIndent(ntabs+1) + "effectsgroups = [\n";
+        for (const auto& effect : m_effects)
+            retval += effect.Dump(ntabs+2);
+        retval += DumpIndent(ntabs+1) + "]\n";
+    }
+    retval += DumpIndent(ntabs+1) + "icon = \"" + m_icon + "\"\n";
+    retval += DumpIndent(ntabs+1) + "graphic = \"" + m_graphic + "\"\n";
     return retval;
 }
 
