@@ -1,3 +1,9 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# Linked resources
+/assets/art
+/assets/fonts
+/assets/sound
+
