@@ -876,6 +876,7 @@ class galaxyShape(IntEnum):
     irregular = 7
     ring = 8
     random = 9
+    spiralPlayer = 10
 
 class meterType(IntEnum):
     targetPopulation = 0

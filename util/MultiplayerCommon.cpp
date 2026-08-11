@@ -189,6 +189,7 @@ const std::string& TextForGalaxyShape(Shape shape) {
         case Shape::IRREGULAR:  return UserString("GSETUP_IRREGULAR");
         case Shape::RING:       return UserString("GSETUP_RING");
         case Shape::RANDOM:     return UserString("GSETUP_RANDOM");
+        case Shape::SPIRAL_PLAYER: return UserString("GSETUP_PLAYER_ARM");
         default:                return EMPTY_STRING;
     }
 }

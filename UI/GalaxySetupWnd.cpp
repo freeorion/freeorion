@@ -699,6 +699,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_textures[int(Shape::IRREGULAR)] =  ui.GetTexture(ClientUI::ArtDir() / "gp_irregular.png");
     m_textures[int(Shape::RING)] =       ui.GetTexture(ClientUI::ArtDir() / "gp_ring.png");
     m_textures[int(Shape::RANDOM)] =     ui.GetTexture(ClientUI::ArtDir() / "gp_random.png");
+    m_textures[int(Shape::SPIRAL_PLAYER)] = ui.GetTexture(ClientUI::ArtDir() / "gp_spiral4.png");
 
     // fill droplists
     TraceLogger() << "GalaxySetupPanel::CompleteConstruction filling droplists";
@@ -712,6 +713,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_galaxy_shapes_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_IRREGULAR")));
     m_galaxy_shapes_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_RING")));
     m_galaxy_shapes_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_RANDOM")));
+    m_galaxy_shapes_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_PLAYER_ARM")));
 
     m_galaxy_ages_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_YOUNG")));
     m_galaxy_ages_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_MATURE")));
