@@ -512,7 +512,7 @@ public:
       * adds them to the build queue of the indicated empires (if it is an
       * empire), deletes them, or leaves them on the build queue of their
       * current empire */
-    static void ConquerProductionQueueItemsAtLocation(UniverseObjectID location_id, ::EmpireID empire_id, EmpireManager& empires);
+    static void ConquerProductionQueueItemsAtLocation(UniverseObjectID location_id, EmpireID empire_id, EmpireManager& empires);
 
     mutable boost::signals2::signal<void ()> ShipDesignsChangedSignal;
     mutable boost::signals2::signal<void ()> PoliciesChangedSignal;
@@ -520,7 +520,7 @@ public:
 private:
     void Init();
 
-    ::EmpireID       m_id = ALL_EMPIRES;                ///< Empire's unique numeric id
+    EmpireID         m_id = ALL_EMPIRES;                ///< Empire's unique numeric id
     UniverseObjectID m_capital_id = INVALID_OBJECT_ID;  ///< the ID of the empire's capital planet
     std::string      m_name;                            ///< Empire's name
     std::string      m_player_name;                     ///< Empire's Player's name
@@ -559,19 +559,19 @@ public:
     void PrepPolicyInfoForSerialization(const ScriptingContext& context);
 
 private:
-    std::map<::EmpireID, decltype(m_adopted_policies)>                 m_adopted_policies_to_serialize_for_empires;
-    std::map<::EmpireID, decltype(m_initial_adopted_policies)>         m_initial_adopted_policies_to_serialize_for_empires;
-    std::map<::EmpireID, decltype(m_policy_adoption_total_duration)>   m_policy_adoption_total_duration_to_serialize_for_empires;
-    std::map<::EmpireID, decltype(m_policy_adoption_current_duration)> m_policy_adoption_current_duration_to_serialize_for_empires;
-    std::map<::EmpireID, decltype(m_policy_latest_turn_adopted)>       m_policy_latest_turn_adopted_to_serialize_for_empires;
-    std::map<::EmpireID, decltype(m_available_policies)>               m_available_policies_to_serialize_for_empires;
+    std::map<EmpireID, decltype(m_adopted_policies)>                 m_adopted_policies_to_serialize_for_empires;
+    std::map<EmpireID, decltype(m_initial_adopted_policies)>         m_initial_adopted_policies_to_serialize_for_empires;
+    std::map<EmpireID, decltype(m_policy_adoption_total_duration)>   m_policy_adoption_total_duration_to_serialize_for_empires;
+    std::map<EmpireID, decltype(m_policy_adoption_current_duration)> m_policy_adoption_current_duration_to_serialize_for_empires;
+    std::map<EmpireID, decltype(m_policy_latest_turn_adopted)>       m_policy_latest_turn_adopted_to_serialize_for_empires;
+    std::map<EmpireID, decltype(m_available_policies)>               m_available_policies_to_serialize_for_empires;
 
-    const decltype(m_adopted_policies)& GetAdoptedPoliciesToSerialize(::EmpireID encoding_empire) const;
-    const decltype(m_initial_adopted_policies)& GetInitialPoliciesToSerialize(::EmpireID encoding_empire) const;
-    const decltype(m_policy_adoption_total_duration)& GetAdoptionTotalDurationsToSerialize(::EmpireID encoding_empire) const;
-    const decltype(m_policy_adoption_current_duration)& GetAdoptionCurrentDurationsToSerialize(::EmpireID encoding_empire) const;
-    const decltype(m_policy_latest_turn_adopted)& GetAdoptionLatestTurnsToSerialize(::EmpireID encoding_empire) const;
-    const decltype(m_available_policies)& GetAvailablePoliciesToSerialize(::EmpireID encoding_empire) const;
+    const decltype(m_adopted_policies)& GetAdoptedPoliciesToSerialize(EmpireID encoding_empire) const;
+    const decltype(m_initial_adopted_policies)& GetInitialPoliciesToSerialize(EmpireID encoding_empire) const;
+    const decltype(m_policy_adoption_total_duration)& GetAdoptionTotalDurationsToSerialize(EmpireID encoding_empire) const;
+    const decltype(m_policy_adoption_current_duration)& GetAdoptionCurrentDurationsToSerialize(EmpireID encoding_empire) const;
+    const decltype(m_policy_latest_turn_adopted)& GetAdoptionLatestTurnsToSerialize(EmpireID encoding_empire) const;
+    const decltype(m_available_policies)& GetAvailablePoliciesToSerialize(EmpireID encoding_empire) const;
 
 
     using StringFlatSet = boost::container::flat_set<std::string, std::less<>>;
@@ -714,7 +714,7 @@ private:
 
     std::unordered_set<UniverseObjectID> m_ships_destroyed;
 
-    std::map<::EmpireID, int>       m_empire_ships_destroyed;   ///< how many ships of each empire has this empire destroyed?
+    std::map<EmpireID, int>         m_empire_ships_destroyed;   ///< how many ships of each empire has this empire destroyed?
     std::map<int, int>              m_ship_designs_destroyed;   ///< how many ships of each design has this empire destroyed?
     std::map<std::string, int>      m_species_ships_destroyed;  ///< how many ships crewed by each species has this empire destroyed?
     std::map<std::string, int>      m_species_planets_invaded;  ///< how many planets populated by each species has this empire captured?
@@ -746,23 +746,23 @@ public:
     void PrepQueueAvailabilityInfoForSerialization(const ScriptingContext& context);
 
 private:
-    std::map<::EmpireID, decltype(m_techs)>                    m_techs_to_serialize_for_empires;
-    std::map<::EmpireID, decltype(m_research_queue)>           m_research_queue_to_serialize_for_empires;
-    std::map<::EmpireID, decltype(m_research_progress)>        m_research_progress_to_serialize_for_empires;
-    std::map<::EmpireID, decltype(m_production_queue)>         m_production_queue_to_serialize_for_empires;
-    std::map<::EmpireID, decltype(m_influence_queue)>          m_influence_queue_to_serialize_for_empires;
-    std::map<::EmpireID, decltype(m_available_building_types)> m_available_building_types_to_serialize_for_empires;
-    std::map<::EmpireID, decltype(m_available_ship_parts)>     m_available_ship_parts_to_serialize_for_empires;
-    std::map<::EmpireID, decltype(m_available_ship_hulls)>     m_available_ship_hulls_to_serialize_for_empires;
+    std::map<EmpireID, decltype(m_techs)>                    m_techs_to_serialize_for_empires;
+    std::map<EmpireID, decltype(m_research_queue)>           m_research_queue_to_serialize_for_empires;
+    std::map<EmpireID, decltype(m_research_progress)>        m_research_progress_to_serialize_for_empires;
+    std::map<EmpireID, decltype(m_production_queue)>         m_production_queue_to_serialize_for_empires;
+    std::map<EmpireID, decltype(m_influence_queue)>          m_influence_queue_to_serialize_for_empires;
+    std::map<EmpireID, decltype(m_available_building_types)> m_available_building_types_to_serialize_for_empires;
+    std::map<EmpireID, decltype(m_available_ship_parts)>     m_available_ship_parts_to_serialize_for_empires;
+    std::map<EmpireID, decltype(m_available_ship_hulls)>     m_available_ship_hulls_to_serialize_for_empires;
 
-    const decltype(Empire::m_techs)& GetTechsToSerialize(::EmpireID encoding_empire);
-    const decltype(Empire::m_research_queue)& GetResearchQueueToSerialize(::EmpireID encoding_empire);
-    const decltype(Empire::m_research_progress)& GetResearchProgressToSerialize(::EmpireID encoding_empire);
-    const decltype(Empire::m_production_queue)& GetProductionQueueToSerialize(::EmpireID encoding_empire);
-    const decltype(Empire::m_influence_queue)& GetInfluenceQueueToSerialize(::EmpireID encoding_empire);
-    const decltype(Empire::m_available_building_types)& GetAvailableBuildingsToSerialize(::EmpireID encoding_empire);
-    const decltype(Empire::m_available_ship_parts)& GetAvailablePartsToSerialize(::EmpireID encoding_empire);
-    const decltype(Empire::m_available_ship_hulls)& GetAvailableHullsToSerialize(::EmpireID encoding_empire);
+    const decltype(Empire::m_techs)& GetTechsToSerialize(EmpireID encoding_empire);
+    const decltype(Empire::m_research_queue)& GetResearchQueueToSerialize(EmpireID encoding_empire);
+    const decltype(Empire::m_research_progress)& GetResearchProgressToSerialize(EmpireID encoding_empire);
+    const decltype(Empire::m_production_queue)& GetProductionQueueToSerialize(EmpireID encoding_empire);
+    const decltype(Empire::m_influence_queue)& GetInfluenceQueueToSerialize(EmpireID encoding_empire);
+    const decltype(Empire::m_available_building_types)& GetAvailableBuildingsToSerialize(EmpireID encoding_empire);
+    const decltype(Empire::m_available_ship_parts)& GetAvailablePartsToSerialize(EmpireID encoding_empire);
+    const decltype(Empire::m_available_ship_hulls)& GetAvailableHullsToSerialize(EmpireID encoding_empire);
 
 
     /** The source id is the id of any object owned by the empire.  It is

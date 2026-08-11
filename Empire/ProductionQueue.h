@@ -238,7 +238,7 @@ private:
     std::map<id_flat_set, float>    m_object_group_allocated_stockpile_pp;
     float                           m_expected_new_stockpile_amount = 0.0f;
     float                           m_expected_project_transfer_to_stockpile = 0.0f;
-    ::EmpireID                      m_empire_id = ALL_EMPIRES;
+    EmpireID                        m_empire_id = ALL_EMPIRES;
 
     friend class boost::serialization::access;
     template <typename Archive>

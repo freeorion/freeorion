@@ -86,7 +86,7 @@ namespace {
 // Empire //
 ////////////
 Empire::Empire(std::string name, std::string player_name,
-               ::EmpireID empire_id, EmpireColor color, bool authenticated) :
+               EmpireID empire_id, EmpireColor color, bool authenticated) :
     m_id(empire_id),
     m_name(std::move(name)),
     m_player_name(std::move(player_name)),
@@ -1896,7 +1896,7 @@ void Empire::AllowUseImperialPP(int index, bool allow) {
     m_production_queue[index].allowed_imperial_stockpile_use = allow;
 }
 
-void Empire::ConquerProductionQueueItemsAtLocation(UniverseObjectID location_id, ::EmpireID empire_id, EmpireManager& empires) {
+void Empire::ConquerProductionQueueItemsAtLocation(UniverseObjectID location_id, EmpireID empire_id, EmpireManager& empires) {
     if (location_id == INVALID_OBJECT_ID) {
         ErrorLogger() << "Empire::ConquerProductionQueueItemsAtLocation: tried to conquer build items located at an invalid location";
         return;
@@ -3219,42 +3219,42 @@ void Empire::PrepPolicyInfoForSerialization(const ScriptingContext& context) {
 }
 
 const decltype(Empire::m_adopted_policies)&
-Empire::GetAdoptedPoliciesToSerialize(::EmpireID encoding_empire) const {
+Empire::GetAdoptedPoliciesToSerialize(EmpireID encoding_empire) const {
     const auto it = m_adopted_policies_to_serialize_for_empires.find(encoding_empire);
     return (it == m_adopted_policies_to_serialize_for_empires.end()) ?
         m_adopted_policies : it->second;
 }
 
 const decltype(Empire::m_initial_adopted_policies)&
-Empire::GetInitialPoliciesToSerialize(::EmpireID encoding_empire) const {
+Empire::GetInitialPoliciesToSerialize(EmpireID encoding_empire) const {
     const auto it = m_initial_adopted_policies_to_serialize_for_empires.find(encoding_empire);
     return (it == m_initial_adopted_policies_to_serialize_for_empires.end()) ?
         m_initial_adopted_policies : it->second;
 }
 
 const decltype(Empire::m_policy_adoption_total_duration)&
-Empire::GetAdoptionTotalDurationsToSerialize(::EmpireID encoding_empire) const {
+Empire::GetAdoptionTotalDurationsToSerialize(EmpireID encoding_empire) const {
     const auto it = m_policy_adoption_total_duration_to_serialize_for_empires.find(encoding_empire);
     return (it == m_policy_adoption_total_duration_to_serialize_for_empires.end()) ?
         m_policy_adoption_total_duration : it->second;
 }
 
 const decltype(Empire::m_policy_adoption_current_duration)&
-Empire::GetAdoptionCurrentDurationsToSerialize(::EmpireID encoding_empire) const {
+Empire::GetAdoptionCurrentDurationsToSerialize(EmpireID encoding_empire) const {
     const auto it = m_policy_adoption_current_duration_to_serialize_for_empires.find(encoding_empire);
     return (it == m_policy_adoption_current_duration_to_serialize_for_empires.end()) ?
         m_policy_adoption_current_duration : it->second;
 }
 
 const decltype(Empire::m_policy_latest_turn_adopted)&
-Empire::GetAdoptionLatestTurnsToSerialize(::EmpireID encoding_empire) const {
+Empire::GetAdoptionLatestTurnsToSerialize(EmpireID encoding_empire) const {
     const auto it = m_policy_latest_turn_adopted_to_serialize_for_empires.find(encoding_empire);
     return (it == m_policy_latest_turn_adopted_to_serialize_for_empires.end()) ?
         m_policy_latest_turn_adopted : it->second;
 }
 
 const decltype(Empire::m_available_policies)&
-Empire::GetAvailablePoliciesToSerialize(::EmpireID encoding_empire) const {
+Empire::GetAvailablePoliciesToSerialize(EmpireID encoding_empire) const {
     const auto it = m_available_policies_to_serialize_for_empires.find(encoding_empire);
     return (it == m_available_policies_to_serialize_for_empires.end()) ?
         m_available_policies : it->second;
@@ -3306,49 +3306,49 @@ void Empire::PrepQueueAvailabilityInfoForSerialization(const ScriptingContext& c
     }
 }
 
-const decltype(Empire::m_techs)& Empire::GetTechsToSerialize(::EmpireID encoding_empire) {
+const decltype(Empire::m_techs)& Empire::GetTechsToSerialize(EmpireID encoding_empire) {
     const auto it = m_techs_to_serialize_for_empires.find(encoding_empire);
     return (it == m_techs_to_serialize_for_empires.end()) ?
         m_techs : it->second;
 }
 
-const decltype(Empire::m_research_queue)& Empire::GetResearchQueueToSerialize(::EmpireID encoding_empire) {
+const decltype(Empire::m_research_queue)& Empire::GetResearchQueueToSerialize(EmpireID encoding_empire) {
     const auto it = m_research_queue_to_serialize_for_empires.find(encoding_empire);
     return (it == m_research_queue_to_serialize_for_empires.end()) ?
         m_research_queue : it->second;
 }
 
-const decltype(Empire::m_research_progress)& Empire::GetResearchProgressToSerialize(::EmpireID encoding_empire) {
+const decltype(Empire::m_research_progress)& Empire::GetResearchProgressToSerialize(EmpireID encoding_empire) {
     const auto it = m_research_progress_to_serialize_for_empires.find(encoding_empire);
     return (it == m_research_progress_to_serialize_for_empires.end()) ?
         m_research_progress : it->second;
 }
 
-const decltype(Empire::m_production_queue)& Empire::GetProductionQueueToSerialize(::EmpireID encoding_empire) {
+const decltype(Empire::m_production_queue)& Empire::GetProductionQueueToSerialize(EmpireID encoding_empire) {
     const auto it = m_production_queue_to_serialize_for_empires.find(encoding_empire);
     return (it == m_production_queue_to_serialize_for_empires.end()) ?
         m_production_queue : it->second;
 }
 
-const decltype(Empire::m_influence_queue)& Empire::GetInfluenceQueueToSerialize(::EmpireID encoding_empire) {
+const decltype(Empire::m_influence_queue)& Empire::GetInfluenceQueueToSerialize(EmpireID encoding_empire) {
     const auto it = m_influence_queue_to_serialize_for_empires.find(encoding_empire);
     return (it == m_influence_queue_to_serialize_for_empires.end()) ?
         m_influence_queue : it->second;
 }
 
-const decltype(Empire::m_available_building_types)& Empire::GetAvailableBuildingsToSerialize(::EmpireID encoding_empire) {
+const decltype(Empire::m_available_building_types)& Empire::GetAvailableBuildingsToSerialize(EmpireID encoding_empire) {
     const auto it = m_available_building_types_to_serialize_for_empires.find(encoding_empire);
     return (it == m_available_building_types_to_serialize_for_empires.end()) ?
         m_available_building_types : it->second;
 }
 
-const decltype(Empire::m_available_ship_parts)& Empire::GetAvailablePartsToSerialize(::EmpireID encoding_empire) {
+const decltype(Empire::m_available_ship_parts)& Empire::GetAvailablePartsToSerialize(EmpireID encoding_empire) {
     const auto it = m_available_ship_parts_to_serialize_for_empires.find(encoding_empire);
     return (it == m_available_ship_parts_to_serialize_for_empires.end()) ?
         m_available_ship_parts : it->second;
 }
 
-const decltype(Empire::m_available_ship_hulls)& Empire::GetAvailableHullsToSerialize(::EmpireID encoding_empire) {
+const decltype(Empire::m_available_ship_hulls)& Empire::GetAvailableHullsToSerialize(EmpireID encoding_empire) {
     const auto it = m_available_ship_hulls_to_serialize_for_empires.find(encoding_empire);
     return (it == m_available_ship_hulls_to_serialize_for_empires.end()) ?
         m_available_ship_hulls : it->second;

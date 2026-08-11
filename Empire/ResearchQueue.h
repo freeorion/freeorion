@@ -92,10 +92,10 @@ struct FO_COMMON_API ResearchQueue {
     mutable boost::signals2::signal<void ()> ResearchQueueChangedSignal;
 
 private:
-    QueueType   m_queue;
-    int         m_projects_in_progress = 0;
-    float       m_total_RPs_spent = 0.0f;
-    ::EmpireID  m_empire_id = ALL_EMPIRES;
+    QueueType m_queue;
+    int       m_projects_in_progress = 0;
+    float     m_total_RPs_spent = 0.0f;
+    EmpireID  m_empire_id = ALL_EMPIRES;
 
     friend class boost::serialization::access;
     template <typename Archive>

@@ -4908,7 +4908,7 @@ boost::optional<std::pair<double, double>> MapWnd::MovingFleetMapPositionOnLane(
 
 namespace {
     template <typename Key>
-    using KeyToFleetsMap = std::unordered_map<Key, std::vector<UniverseObjectID>/*, std::hash<Key>*/>;
+    using KeyToFleetsMap = std::unordered_map<Key, std::vector<UniverseObjectID>>;
     using SystemXEmpireToFleetsMap = KeyToFleetsMap<std::pair<UniverseObjectID, EmpireID>>;
     using LocationXEmpireToFleetsMap = KeyToFleetsMap<std::pair<std::pair<double, double>, EmpireID>>;
     using StarlaneToFleetsMap = KeyToFleetsMap<std::pair<UniverseObjectID, UniverseObjectID>>;

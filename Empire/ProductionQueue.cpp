@@ -380,7 +380,7 @@ bool ProductionQueue::ProductionItem::CostIsProductionLocationInvariant(const Un
 }
 
 std::pair<float, int> ProductionQueue::ProductionItem::ProductionCostAndTime(
-    ::EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const
+    EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const
 {
     if (build_type == BuildType::BT_BUILDING) {
         const BuildingType* type = GetBuildingType(name);
@@ -566,7 +566,7 @@ std::string ProductionQueue::Element::Dump() const {
 /////////////////////
 // ProductionQueue //
 /////////////////////
-ProductionQueue::ProductionQueue(::EmpireID empire_id) :
+ProductionQueue::ProductionQueue(EmpireID empire_id) :
     m_empire_id(empire_id)
 {}
 

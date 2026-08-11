@@ -329,8 +329,6 @@ private:
 
     ServerFSM        m_fsm;
 
-    using EmpireID = ::EmpireID;
-
     PythonServer            m_python_server;
     std::map<int, EmpireID> m_player_empire_ids;                ///< map from player id to empire id that the player controls.
     int                     m_current_turn = INVALID_GAME_TURN; ///< current turn number

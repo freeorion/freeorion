@@ -73,7 +73,7 @@ namespace std {
     template <typename F, typename S, typename T> class hash<std::pair<std::pair<F, S>, T>>
     {
     public:
-        constexpr std::size_t operator()(const std::pair<std::pair<F, S>, T>& p) noexcept
+        constexpr std::size_t operator()(const std::pair<std::pair<F, S>, T>& p) const noexcept
         { return hash_detail::combine(hash_detail::combine(hash_detail::combine(8334358, p.first.first), p.first.second), p.second); }
     };
 }

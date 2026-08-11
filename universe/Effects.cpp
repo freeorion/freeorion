@@ -4232,7 +4232,7 @@ void SetVisibility::Execute(ScriptingContext& context) const {
     if (!m_vis)
         return; // nothing to evaluate!
 
-    const auto main_empire_id = m_empire_id ? ::EmpireID{m_empire_id->Eval(context)} : ALL_EMPIRES;
+    const auto main_empire_id = m_empire_id ? EmpireID{m_empire_id->Eval(context)} : ALL_EMPIRES;
     const auto not_main_empire = [main_empire_id](const auto other_id) { return main_empire_id != other_id; };
     const auto to_id_status = [&context, main_empire_id](const auto other_empire_id)
     { return std::pair(other_empire_id, context.ContextDiploStatus(main_empire_id, other_empire_id)); };
@@ -4240,7 +4240,7 @@ void SetVisibility::Execute(ScriptingContext& context) const {
 
     // whom to set visbility for?
     const auto all_empire_ids{context.EmpireIDs()};
-    std::vector<::EmpireID> empire_ids;
+    std::vector<EmpireID> empire_ids;
 
     switch (m_affiliation) {
     case EmpireAffiliationType::AFFIL_SELF: {

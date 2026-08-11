@@ -146,7 +146,7 @@ private:
 
     UniverseObjectID FleetInRow(GG::ListBox::iterator it) const;
     std::string      TitleText() const;
-    void             CreateNewFleetFromDrops(const std::vector<UniverseObjectID>& ship_ids, ScriptingContext& context, ::EmpireID empire_id);
+    void             CreateNewFleetFromDrops(const std::vector<UniverseObjectID>& ship_ids, ScriptingContext& context, EmpireID empire_id);
 
     void ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
     void UniverseObjectDeleted(const std::shared_ptr<const UniverseObject>& obj);
@@ -159,7 +159,7 @@ private:
     std::vector<boost::signals2::scoped_connection> m_fleet_connections;
 
     std::set<UniverseObjectID> m_fleet_ids;                    ///< IDs of fleets shown in this wnd (always.  set when creating wnd, either by being passed in directly, or found by checking indicated system for indicated empire's fleets.  If set directly, never updates.  If set by checking system, updates when the system has a fleet added or removed.
-    ::EmpireID                 m_empire_id = ALL_EMPIRES;      ///< ID of empire whose fleets are shown in this wnd.  May be ALL_EMPIRES if this FleetWnd wasn't set to shown a particular empire's fleets.
+    EmpireID                   m_empire_id = ALL_EMPIRES;      ///< ID of empire whose fleets are shown in this wnd.  May be ALL_EMPIRES if this FleetWnd wasn't set to shown a particular empire's fleets.
     UniverseObjectID           m_system_id =INVALID_OBJECT_ID; ///< ID of system whose fleets are shown in this wnd.  May be INVALID_OBJECT_ID if this FleetWnd wasn't set to show a system's fleets.
 
     /** The size of box up to which moving fleets are still within the same fleet window.*/
