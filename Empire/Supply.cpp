@@ -964,12 +964,12 @@ void SupplyManager::Update(const ScriptingContext& context) {
 
         TraceLogger(supply) << "Empire " << empire_id << " supply groups map before merging:";
         for (auto const& [root_sys_id, other_sys_ids] : supply_groups_map) {
-            TraceLogger(supply) << " ... " << root_sys_id << " to: " << [&other_sys_ids]() {
-                std::stringstream other_ids;
-                for (auto const& r : other_sys_ids)
-                    other_ids << r << ", ";
-                return other_ids.str();
-            }();
+            TraceLogger(supply) << " ... " << root_sys_id << " to: " << [](const auto& ids) {
+                std::stringstream ss;
+                for (auto const& r : ids)
+                    ss << r << ", ";
+                return ss.str();
+            }(other_sys_ids);
         }
 
 
