@@ -1325,7 +1325,7 @@ Empire::IDSet Empire::ExploredSystems() const {
 #if BOOST_VERSION > 107800
     return {boost::container::ordered_unique_range, rng.begin(), rng.end()};
 #else
-    return rng | range_to<Empire::IDSet>();
+    return Empire::IDSet(rng.begin(), rng.end());
 #endif
 }
 
