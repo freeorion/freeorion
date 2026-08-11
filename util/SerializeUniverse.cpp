@@ -465,32 +465,62 @@ void serialize(Archive& ar, ObjectMap& objmap, unsigned int const)
 }
 
 namespace {
-    template <typename FromT, typename ToT>
-    constexpr void MoveMap(FromT& from, ToT& to) {
-        using FromKeyT = FromT::key_type;
-        //using FromMappedValueT = FromT::mapped_type::value_type;
-        using ToKeyT = ToT::key_type;
-        //using ToMappedValueT = ToT::mapped_type::value_type;
+    template <typename ToT, typename FromT> requires (
+        requires(FromT&& from) { ToT{std::forward<FromT>(from)}; } ||
+        requires(FromT&& from) { ToT{Value(from)}; })
+    constexpr ToT ConvertValue(FromT&& from)
+    {
+        if constexpr (requires { ToT{std::forward<FromT>(from)}; })
+            return ToT{std::forward<FromT>(from)};
+        else if constexpr (requires { ToT{Value(from)}; })
+            return ToT{Value(from)};
+    }
 
-        if constexpr (requires { to = std::move(from); }) {
-            to = move(from);
+    template <typename ToT, typename FromT>
+    constexpr ToT ConvertMove(FromT&& from) {
+        if constexpr (requires { ToT{std::forward<FromT>(from)}; }) { // value or whole container directly convertable
+            return ToT{std::forward<FromT>(from)};
 
-        } else if constexpr (requires { to.insert(std::move(*from.begin())); }) {
-            to.clear();
-            for (auto& entry : from)
-                to.insert(std::move(entry));
+        } else if constexpr (requires { ConvertValue<ToT>(std::forward<FromT>(from)); }) { // value convertible eg. to/from strong typedef
+            return ConvertValue<ToT>(std::forward<FromT>(from));
 
         } else {
-            //if constexpr (std::is_convertible_v<FromKeyT, ToKeyT> && std::is_convertib)
-            for (auto& [key, vals] : from)
-                to.emplace(std::piecewise_construct,
-                           std::forward_as_tuple(key),
-                           std::forward_as_tuple(std::make_move_iterator(vals.begin()),
-                                                 std::make_move_iterator(vals.end())));
-        } 
+            static_assert(requires { from.begin(); from.end(); typename std::decay_t<FromT>::value_type; });
+            static_assert(requires { typename std::decay_t<ToT>::value_type; });
+            using ToKeyValT = std::decay_t<ToT>::value_type;
+            using FromKeyValT = std::decay_t<FromT>::value_type;
+            auto b = std::make_move_iterator(from.begin());
+            auto e = std::make_move_iterator(from.end());
 
-        // TODO: convert between in and out types when not same...
+            if constexpr (std::constructible_from<ToKeyValT, FromKeyValT>) { // values in output container constructible from values in input
+                static_assert(std::constructible_from<ToT, decltype(b), decltype(e)>);
+                return ToT(b, e);
+
+            } else if constexpr (requires { ConvertValue<ToKeyValT>(*b); }) { // values in output container convertible to/from strong typedef
+                auto convert = [](auto& in) { return ConvertValue<ToKeyValT>(std::move(in)); };
+                auto converted_rng = from | range_transform(convert);
+                return ToT(converted_rng.begin(), converted_rng.end());
+
+            } else if constexpr (requires { b->first; b->second; }) { // map where, presumably, key and/or mapped types are convertible via other cases of this function
+                using ToKeyT = std::decay_t<ToT>::key_type;
+                using ToValT = std::decay_t<ToT>::mapped_type;
+                auto convert = [](auto& in) {
+                    return std::pair(ConvertMove<ToKeyT>(std::move(in.first)),
+                                     ConvertMove<ToValT>(std::move(in.second)));
+                };
+                auto converted_rng = from | range_transform(convert);
+                return ToT(converted_rng.begin(), converted_rng.end());
+
+            } else {
+                static_assert(requires { b->first; b->second; }); // fail!
+            }
+        }
     };
+
+    template <typename ToT, typename FromT>
+    constexpr void ConvertMove(FromT&& from, ToT& to)
+    { to = ConvertMove<std::decay_t<ToT>>(std::forward<FromT>(from)); }
+
 }
 
 template <typename Archive>
@@ -606,9 +636,7 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
 
     Serialize(ar, empire_object_visibility_turns, version);
     if constexpr (Archive::is_loading::value)
-        MoveMap(empire_object_visibility_turns, u.m_empire_object_visibility_turns);
-
-
+         ConvertMove(empire_object_visibility_turns, u.m_empire_object_visibility_turns);
 
     if constexpr (Archive::is_loading::value) {
         u.m_empire_known_destroyed_object_ids.clear();
@@ -618,23 +646,23 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
             std::map<int, std::set<int>> stale_map;
             ar >> make_nvp("empire_known_destroyed_object_ids", known_map);
             ar >> make_nvp("empire_stale_knowledge_object_ids", stale_map);
-            MoveMap(known_map, u.m_empire_known_destroyed_object_ids);
-            MoveMap(stale_map, u.m_empire_stale_knowledge_object_ids);
+            ConvertMove(known_map, u.m_empire_known_destroyed_object_ids);
+            ConvertMove(stale_map, u.m_empire_stale_knowledge_object_ids);
 
         } else {
             std::map<int, std::vector<int>> known_map;
             std::map<int, std::vector<int>> stale_map;
             ar >> make_nvp("empire_known_destroyed_object_ids", known_map);
             ar >> make_nvp("empire_stale_knowledge_object_ids", stale_map);
-            MoveMap(known_map, u.m_empire_known_destroyed_object_ids);
-            MoveMap(stale_map, u.m_empire_stale_knowledge_object_ids);
+            ConvertMove(known_map, u.m_empire_known_destroyed_object_ids);
+            ConvertMove(stale_map, u.m_empire_stale_knowledge_object_ids);
         }
 
     } else { // saving
         std::map<int, std::vector<int>> known_map;
         std::map<int, std::vector<int>> stale_map;
-        MoveMap(empire_known_destroyed_object_ids, known_map);
-        MoveMap(empire_stale_knowledge_object_ids, stale_map);
+        ConvertMove(empire_known_destroyed_object_ids, known_map);
+        ConvertMove(empire_stale_knowledge_object_ids, stale_map);
         ar << make_nvp("empire_known_destroyed_object_ids", known_map);
         ar << make_nvp("empire_stale_knowledge_object_ids", stale_map);
     }
