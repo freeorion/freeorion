@@ -8,8 +8,10 @@ class FreeOrionNode : public godot::Node {
 public:
     FreeOrionNode();
     ~FreeOrionNode();
+
+    void _ready() override;
 protected:
-	static void _bind_methods();
+    static void _bind_methods();
 private:
     godot::String get_version() const;
     godot::String get_user_data_dir() const;
