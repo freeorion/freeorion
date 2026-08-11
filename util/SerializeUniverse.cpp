@@ -478,7 +478,7 @@ namespace {
 
     template <typename ToT, typename FromT>
     constexpr ToT ConvertMove(FromT&& from) {
-        if constexpr (std::is_constructable_v<ToT, FromT>) { // value or whole container directly convertable
+        if constexpr (std::is_constructible_v<ToT, FromT>) { // value or whole container directly convertable
             return ToT{std::forward<FromT>(from)};
 
         } else if constexpr (requires { ConvertValue<ToT>(std::forward<FromT>(from)); }) { // value convertible eg. to/from strong typedef
@@ -492,8 +492,8 @@ namespace {
             auto b = std::make_move_iterator(from.begin());
             auto e = std::make_move_iterator(from.end());
 
-            if constexpr (std::constructible_from<ToKeyValT, FromKeyValT>) { // values in output container constructible from values in input
-                static_assert(std::constructible_from<ToT, decltype(b), decltype(e)>);
+            if constexpr (std::is_constructible_v<ToKeyValT, FromKeyValT>) { // values in output container constructible from values in input
+                static_assert(std::is_constructible_v<ToT, decltype(b), decltype(e)>);
                 return ToT(b, e);
 
             } else if constexpr (requires { ConvertValue<ToKeyValT>(*b); }) { // values in output container convertible to/from strong typedef
