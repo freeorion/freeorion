@@ -56,7 +56,7 @@ struct LaneEndpoints {
 
 namespace hash_detail {
     template <typename V>
-    inline static std::size_t combine(std::size_t hash_val, const V& val) noexcept {
+    constexpr std::size_t combine(std::size_t hash_val, const V& val) noexcept {
         hash_val ^= std::hash<V>{}(val) + 0x9e3779b9 + (hash_val<<6) + (hash_val>>2);
         return hash_val;
     }
@@ -66,14 +66,14 @@ namespace std {
     template <typename F, typename S> class hash<std::pair<F, S>>
     {
     public:
-        static std::size_t operator()(const std::pair<F, S>& p) noexcept
+        constexpr std::size_t operator()(const std::pair<F, S>& p) const noexcept
         { return hash_detail::combine(hash_detail::combine(8334358, p.first), p.second); }
     };
 
     template <typename F, typename S, typename T> class hash<std::pair<std::pair<F, S>, T>>
     {
     public:
-        static std::size_t operator()(const std::pair<std::pair<F, S>, T>& p) noexcept
+        constexpr std::size_t operator()(const std::pair<std::pair<F, S>, T>& p) noexcept
         { return hash_detail::combine(hash_detail::combine(hash_detail::combine(8334358, p.first.first), p.first.second), p.second); }
     };
 }
