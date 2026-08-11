@@ -466,11 +466,12 @@ void serialize(Archive& ar, ObjectMap& objmap, unsigned int const)
 
 namespace {
     template <typename ToT, typename FromT> requires (
-        requires(FromT&& from) { ToT{std::forward<FromT>(from)}; } ||
-        requires(FromT&& from) { ToT{Value(from)}; })
+        std::is_constructible_v<ToT, FromT> ||
+        std::is_constructible_v<ToT, decltype(Value(std::declval<FromT>()))>
+    )
     constexpr ToT ConvertValue(FromT&& from)
     {
-        if constexpr (requires { ToT{std::forward<FromT>(from)}; })
+        if constexpr (std::is_constructible_v<ToT, FromT>)
             return ToT{std::forward<FromT>(from)};
         else if constexpr (requires { ToT{Value(from)}; })
             return ToT{Value(from)};
