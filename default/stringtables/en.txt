@@ -2864,6 +2864,9 @@ Spiral, 3-arm
 GSETUP_4ARM
 Spiral, 4-arm
 
+GSETUP_PLAYER_ARM
+Spiral, arm of players number
+
 # A galaxy shape to select when generating a universe.
 GSETUP_CLUSTER
 Cluster

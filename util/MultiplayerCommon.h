@@ -38,6 +38,7 @@ FO_ENUM(
     ((IRREGULAR))      ///< an irregular galaxy
     ((RING))           ///< a ring galaxy
     ((RANDOM))         ///< a random one of the other shapes
+    ((SPIRAL_PLAYER))  ///< a spiral galaxy with number of arms equal to number of players
     ((GALAXY_SHAPES))   ///< the number of shapes in this enum (leave this last)
 )
 

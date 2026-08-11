@@ -248,6 +248,7 @@ namespace FreeOrionPython {
             .value("irregular",     Shape::IRREGULAR)
             .value("ring",          Shape::RING)
             .value("random",        Shape::RANDOM)
+            .value("spiralPlayer",  Shape::SPIRAL_PLAYER)
         ;
         py::enum_<GameRule::Type>("ruleType")
             .value("invalid",       GameRule::Type::INVALID)

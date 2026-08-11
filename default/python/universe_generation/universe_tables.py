@@ -97,6 +97,7 @@ GALAXY_SHAPE_MOD_TO_PLANET_SIZE_DIST = {
     fo.galaxyShape.spiral2: (0, 0, 0, 0, 0, 0, 0, 0),
     fo.galaxyShape.spiral3: (0, 0, 0, 0, 0, 0, 0, 0),
     fo.galaxyShape.spiral4: (0, 0, 0, 0, 0, 0, 0, 0),
+    fo.galaxyShape.spiralPlayer: (0, 0, 0, 0, 0, 0, 0, 0),
     fo.galaxyShape.cluster: (0, 0, 0, 0, 0, 0, 0, 0),
     fo.galaxyShape.elliptical: (0, 0, 0, 0, 0, 0, 0, 0),
     fo.galaxyShape.disc: (0, 0, 0, 0, 0, 0, 0, 0),

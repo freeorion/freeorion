@@ -97,7 +97,7 @@ def create_universe(psd_map):  # noqa: C901
 
     # calculate star system positions
     seed_rng(seed_pool.pop())
-    system_positions = calc_star_system_positions(gsd)
+    system_positions = calc_star_system_positions(gsd, total_players)
     size = len(system_positions)
     print(gsd.shape, "Star system positions calculated, final number of systems:", size)
 
