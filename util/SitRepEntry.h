@@ -8,6 +8,7 @@
 #include "../universe/ConstantsFwd.h"
 #include "../util/ranges.h"
 
+#include <compare>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -107,7 +108,7 @@ public:
             m_stringtable_lookup_flag(lookup)
         {}
 
-#if defined(__cpp_impl_three_way_comparison)
+#if defined(__cpp_impl_three_way_comparison) && defined(__cpp_lib_three_way_comparison)
         CONSTEXPR_VEC_AND_STRING auto operator<=>(const FixedInfo&) const noexcept = default;
 #else
         CONSTEXPR_VEC_AND_STRING bool operator==(const FixedInfo&) const noexcept = default;
