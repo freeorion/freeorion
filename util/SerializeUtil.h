@@ -110,7 +110,7 @@ namespace {
     constexpr std::size_t ten_pow_int_digits = [](int exp) { std::size_t retval = 1; while (exp--) retval *= 10; return retval; }(int_digits + 1);
     static_assert(ten_pow_int_digits > static_cast<std::size_t>(int_max)); // biggest possible int should fit in buffer
 
-    constexpr std::string ToString(const auto& data)
+    CONSTEXPR_STRING std::string ToString(const auto& data)
         requires requires { data.size(); } && (
             std::is_same_v<int, std::decay_t<decltype(*data.begin())>> || (
                 requires { Value(*data.begin()); to_string(*data.begin()); } &&
@@ -142,7 +142,7 @@ namespace {
         return retval;
     }
 
-    template <typename ContainerT, typename ContainedT = ContainerT::value_type>
+    template <typename ContainerT, typename ContainedT = typename ContainerT::value_type>
     inline CONSTEXPR_FROM_CHARS void FillIntContainer(ContainerT& container, std::string_view buffer)
         requires (requires { container.push_back(ContainedT{1}); } || requires { container.insert(ContainedT{1}); })
     {
