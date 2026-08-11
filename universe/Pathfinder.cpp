@@ -398,7 +398,7 @@ namespace SystemPathing {
         if (system1_id == INVALID_OBJECT_ID || system2_id == INVALID_OBJECT_ID)
             return {{}, -1}; // not such systems, so no path between them
 
-        using vertices_size_type = Graph::vertices_size_type;
+        using vertices_size_type = typename Graph::vertices_size_type;
 
         // convert system IDs to graph indices.  try/catch for invalid input system ids.
         vertices_size_type system1_index, system2_index;
