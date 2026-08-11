@@ -493,8 +493,7 @@ namespace {
             auto b = std::make_move_iterator(from.begin());
             auto e = std::make_move_iterator(from.end());
 
-            if constexpr (std::is_constructible_v<ToKeyValT, FromKeyValT>) { // values in output container constructible from values in input
-                static_assert(std::is_constructible_v<ToT, decltype(b), decltype(e)>);
+            if constexpr (std::is_same_v<ToKeyValT, FromKeyValT>) {
                 return ToT(b, e);
 
             } else if constexpr (requires { ConvertValue<ToKeyValT>(*b); }) { // values in output container convertible to/from strong typedef
