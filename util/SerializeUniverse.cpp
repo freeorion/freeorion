@@ -478,7 +478,7 @@ namespace {
 
     template <typename ToT, typename FromT>
     constexpr ToT ConvertMove(FromT&& from) {
-        if constexpr (requires { ToT{std::forward<FromT>(from)}; }) { // value or whole container directly convertable
+        if constexpr (std::is_constructable_v<ToT, FromT>) { // value or whole container directly convertable
             return ToT{std::forward<FromT>(from)};
 
         } else if constexpr (requires { ConvertValue<ToT>(std::forward<FromT>(from)); }) { // value convertible eg. to/from strong typedef
