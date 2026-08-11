@@ -1325,7 +1325,9 @@ Empire::IDSet Empire::ExploredSystems() const {
 #if BOOST_VERSION > 107800
     return {boost::container::ordered_unique_range, rng.begin(), rng.end()};
 #else
-    Empire::IDSet::sequence_type scratch(rng.begin(), rng.end());
+    Empire::IDSet::sequence_type scratch;
+    scratch.reserve(m_explored_systems.size());
+    range_copy(rng, std::back_inserter(scratch));
     Empire::IDSet retval;
     retval.adopt_sequence(boost::container::ordered_unique_range, std::move(scratch));
     return retval;
