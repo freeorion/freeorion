@@ -1,0 +1,58 @@
+Special
+    name = "GLYPHS_SPECIAL"
+    description = "GLYPHS_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 1
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not WithinStarlaneJumps jumps = 4 condition = And [
+            System
+            Contains Planet HasSpecial name = "GLYPHS_SPECIAL"
+        ]
+        Not WithinStarlaneJumps jumps = 7 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = NumberOf number = 1 condition = And [
+                Ship
+                InSystem id = Source.SystemID
+                Not WithinStarlaneJumps jumps = 2 condition = And [
+                    System
+                    Contains And [
+                        Ship
+                        Armed
+                        OwnedBy affiliation = EnemyOf empire = RootCandidate.Owner
+                   ]
+                ]
+            ]
+
+            activation = And [
+                    Unowned
+                    // The Special works only outside of any player's Supply:
+                    Not (Source.System.SupplyingEmpire > 0)
+                    // it's meant to provoke skirmishes in the No Alien's Land,
+                    // not to bring a bonus inside one's territory
+
+                    ContainedBy Contains Ship
+            ]
+
+            stackinggroup = "GLYPHS_STACK"
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
+
+            effects = SetTargetResearch value = Value + (NamedReal name = "GLYPHS_TARGET_RESEARCH_FLAT" value = 2)
+
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
+    ]
+    graphic = "icons/specials_huge/glyphs.png"
+
+#include "/scripting/macros/priorities.macros"
+#include "/scripting/specials/specials.macros.txt"
+
+

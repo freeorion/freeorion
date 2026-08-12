@@ -10034,6 +10034,19 @@ The effect requires a stability of [[value ANCIENT_RUINS_MIN_STABILITY]].
 
 This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech [[tech LRN_XENOARCH]] to possess this planet receives one free advanced tech or uncovers a powerful building or ship. There's also a good chance that well preserved bodies of an extinct species will be found.'''
 
+GLYPHS_SPECIAL
+Planet-wide glyphs
+
+GLYPHS_SPECIAL_DESC
+'''Increases [[metertype METER_TARGET_RESEARCH]] of one undisturbed ship above the unsupplied planet by [[value GLYPHS_TARGET_RESEARCH_FLAT]].
+
+This planet shows mysterious huge patterns on its surface, visible only from space.
+Either appearing as medium-sized canyons on the surface of rocky planets, as broken lines on Asteroids, or as faint infrared signatures below the clouds of Gas Giants.
+Studying these patterns will bring valuable scientific information about the Precursors.
+A ship will need to be undisturbed to be able to study them from different angles, so any armed enemy ship up to two starlanes away will reduce the research bonus to zero.
+Also, the patterns are fragile and need to be protected from any outside interference, so the research can only be done if the planet is outside of Supply.
+'''
+
 EXTINCT_BANFORO_SPECIAL
 Banforo Remains
 
