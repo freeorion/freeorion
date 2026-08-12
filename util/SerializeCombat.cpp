@@ -232,7 +232,15 @@ namespace {
         }
     }
 
-    template <typename Archive, typename ContainerT> requires requires(ContainerT c) { { Value(*c.begin()) } -> std::convertible_to<int>; }
+    template <typename C>
+    concept is_intlike_valued =
+        requires(C c) { Value(*c.begin()); } &&
+        std::is_integral_v<std::decay_t<decltype(Value(*std::declval<C>().begin()))>>; // instead of requires(C c) { { Value(*c.begin()) } -> std::convertible_to<int>; } to keep clang 14 happy
+    static_assert(is_intlike_valued<boost::container::flat_set<UniverseObjectID>>);
+    static_assert(is_intlike_valued<std::set<EmpireID>>);
+    static_assert(!is_intlike_valued<std::set<int>>);
+
+    template <typename Archive, typename ContainerT> requires is_intlike_valued<ContainerT>
     void Serialize(Archive& ar, ContainerT& container, const char* tag, bool old_non_string_format)
     {
         if constexpr (Archive::is_loading::value) {
