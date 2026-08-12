@@ -65,26 +65,9 @@ namespace {
 
         auto icon = boost::python::extract<std::string>(kw["icon"])();
 
-        std::unique_ptr<ValueRef::ValueRef<double>> production_cost;
-        auto production_cost_arg = boost::python::extract<value_ref_wrapper<double>>(kw["buildcost"]);
-        if (production_cost_arg.check()) {
-            production_cost = ValueRef::CloneUnique(production_cost_arg().value_ref);
-        } else {
-            production_cost = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["buildcost"])());
-        }
+        auto production_cost = pyobject_to_vref_or_cast<double, int>(kw["buildcost"]);
 
-        std::unique_ptr<ValueRef::ValueRef<int>> production_time;
-        auto production_time_arg = boost::python::extract<value_ref_wrapper<int>>(kw["buildtime"]);
-        if (production_time_arg.check()) {
-            production_time = ValueRef::CloneUnique(production_time_arg().value_ref);
-        } else {
-            auto production_time_arg_double = boost::python::extract<value_ref_wrapper<double>>(kw["buildtime"]);
-            if (production_time_arg_double.check()) {
-                production_time = std::make_unique<ValueRef::StaticCast<double, int>>(ValueRef::CloneUnique(production_time_arg_double().value_ref));
-            } else {
-                production_time = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["buildtime"])());
-            }
-        }
+        auto production_time = pyobject_to_vref_or_cast<int, double>(kw["buildtime"]);
 
         bool producible = true;
         if (kw.has_key("producible"))

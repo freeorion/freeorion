@@ -148,7 +148,7 @@ namespace {
             nullptr;
 
         std::unique_ptr<ValueRef::ValueRef<double>> annexation_cost = kw.has_key("annexation_cost") ?
-            ValueRef::CloneUnique(boost::python::extract<value_ref_wrapper<double>>(kw["annexation_cost"])().value_ref) :
+            pyobject_to_vref_or_cast<double, int>(kw["annexation_cost"]) :
             nullptr;
 
         py_grammar& p = boost::python::extract<py_grammar&>(scope.attr("__grammar"))();
