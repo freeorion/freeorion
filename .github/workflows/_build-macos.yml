@@ -42,7 +42,7 @@ jobs:
       - name: Configure
         run: |
           export PATH="/usr/local/opt/ccache/libexec:$PATH"
-          ccache --set-config=max_size=500M --set-config=sloppiness=file_macro
+          ccache --set-config=max_size=500M --set-config=sloppiness=file_macro,time_macros
           ccache --zero-stats
           mkdir build
           cd build
