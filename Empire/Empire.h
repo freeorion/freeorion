@@ -213,7 +213,13 @@ public:
     struct LaneEndpoints {
         UniverseObjectID start = INVALID_OBJECT_ID;
         UniverseObjectID end = INVALID_OBJECT_ID;
+#if defined(__cpp_impl_three_way_comparison) && defined(__cpp_lib_three_way_comparison)
         constexpr auto operator<=>(const LaneEndpoints&) const noexcept = default;
+#else
+        constexpr bool operator<(const LaneEndpoints& rhs) const noexcept { return (start < rhs.start) || (start == rhs.start && end < rhs.end); }
+        constexpr bool operator==(const LaneEndpoints&) const noexcept = default;
+        constexpr bool operator!=(const LaneEndpoints&) const noexcept = default;
+#endif
 #if (defined(__clang_major__) && (__clang_major__ < 16))
         LaneEndpoints() = default;
         LaneEndpoints(UniverseObjectID s, UniverseObjectID e) noexcept : start(s), end(e) {};
