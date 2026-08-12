@@ -6,6 +6,7 @@
 #include "../combat/CombatEvents.h"
 #include "../combat/CombatLogManager.h"
 
+#include <concepts>
 #include <numeric>
 
 using boost::serialization::make_nvp;
