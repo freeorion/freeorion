@@ -66,6 +66,10 @@ jobs:
           key: build-${{ matrix.image }}-docker-ccache-${{ steps.build-docker-ccache-timestamp.outputs.timestamp }}
           restore-keys: |
             build-${{ matrix.image }}-docker-ccache-
+      - name: Configure ccache
+        run: |
+          mkdir build
+          docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} ccache --set-config=sloppiness=file_macro,time_macros
       - name: Detect godot
         id: detect-godot
         if: ${{ matrix.godot != 'OFF' }}
@@ -75,7 +79,6 @@ jobs:
       - name: Copy godot
         if: ${{ matrix.godot != 'OFF' }}
         run: |
-          mkdir build
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} cp ${{ steps.detect-godot.outputs.godot }} /freeorion/build/godot
       - name: Generate godot API file
         if: ${{ matrix.godot == '3' }}

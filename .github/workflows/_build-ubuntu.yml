@@ -56,6 +56,11 @@ jobs:
           key: build-${{ matrix.os }}-${{ matrix.compiler }}-ccache-${{ steps.build-ubuntu-ccache-timestamp.outputs.timestamp }}
           restore-keys: |
             build-${{ matrix.os }}-${{ matrix.compiler }}-ccache-
+      - name: Configure ccache
+        env:
+          CCACHE_DIR: ${{ runner.temp }}/ccache
+        run: |
+          ccache --set-config=sloppiness=file_macro,time_macros
       - name: Show ccache statistics before build
         env:
           CCACHE_DIR: ${{ runner.temp }}/ccache
