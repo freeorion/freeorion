@@ -488,8 +488,8 @@ namespace {
         } else {
             static_assert(requires { from.begin(); from.end(); typename std::decay_t<FromT>::value_type; });
             static_assert(requires { typename std::decay_t<ToT>::value_type; });
-            using ToKeyValT = std::decay_t<ToT>::value_type;
-            using FromKeyValT = std::decay_t<FromT>::value_type;
+            using ToKeyValT = typename std::decay_t<ToT>::value_type;
+            using FromKeyValT = typename std::decay_t<FromT>::value_type;
             auto b = std::make_move_iterator(from.begin());
             auto e = std::make_move_iterator(from.end());
 
@@ -502,8 +502,8 @@ namespace {
                 return ToT(converted_rng.begin(), converted_rng.end());
 
             } else if constexpr (requires { b->first; b->second; }) { // map where, presumably, key and/or mapped types are convertible via other cases of this function
-                using ToKeyT = std::decay_t<ToT>::key_type;
-                using ToValT = std::decay_t<ToT>::mapped_type;
+                using ToKeyT = typename std::decay_t<ToT>::key_type;
+                using ToValT = typename std::decay_t<ToT>::mapped_type;
                 auto convert = [](auto& in) {
                     return std::pair(ConvertMove<ToKeyT>(std::move(in.first)),
                                      ConvertMove<ToValT>(std::move(in.second)));
