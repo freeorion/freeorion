@@ -110,35 +110,31 @@ namespace {
     constexpr std::size_t ten_pow_int_digits = [](int exp) { std::size_t retval = 1; while (exp--) retval *= 10; return retval; }(int_digits + 1);
     static_assert(ten_pow_int_digits > static_cast<std::size_t>(int_max)); // biggest possible int should fit in buffer
 
-    CONSTEXPR_STRING std::string ToString(const auto& data)
-        requires requires { data.size(); } && (
-            std::is_same_v<int, std::decay_t<decltype(*data.begin())>> || (
-                requires { Value(*data.begin()); to_string(*data.begin()); } &&
-                std::is_convertible_v<decltype(Value(*data.begin())), int>)
-        )
+
+    inline CONSTEXPR_STRING std::string ToString(const auto& data)
+        requires (requires { data.size(); } && (
+                  requires { to_string(*data.begin()); } ||
+                  requires(char* c) { ToChars(*data.begin(), c, c); }))
     {
         std::string retval;
         retval.reserve(data.size() * (int_digits + 1) + int_digits + 2); // space for count and all values and gaps
 
         std::array<std::string::value_type, int_digits + 1> sz_buf{};
-        auto written_chars = ToChars(data.size(), sz_buf.data(), sz_buf.data() + sz_buf.size());
+        std::size_t written_chars = ToChars(data.size(), sz_buf.data(), sz_buf.data() + sz_buf.size());
         retval.append(sz_buf.data(), written_chars);
 
         for (const auto& v : data) {
-            if constexpr (requires(const char* c) { ToChars(v, c, c); }) {
-                std::array<std::string::value_type, (int_digits + 1)> number_buf{" "};
+            std::array<std::string::value_type, (int_digits + 1)> number_buf{" "};
+            if constexpr (requires(char* c) { ToChars(v, c, c); }) {
                 written_chars = ToChars(v, number_buf.data() + 1, number_buf.data() + number_buf.size());
                 retval.append(number_buf.data(), written_chars + 1);
-            } else if constexpr (requires { ToChars(Value(v), nullptr, nullptr); }) {
-                std::array<std::string::value_type, (int_digits + 1)> number_buf{" "};
+            } else if constexpr(requires (char* c) { ToChars(Value(v), c, c); }) {
                 written_chars = ToChars(Value(v), number_buf.data() + 1, number_buf.data() + number_buf.size());
                 retval.append(number_buf.data(), written_chars + 1);
             } else {
-                using std::to_string;
                 retval.append(" ").append(to_string(v));
             }
         }
-
         return retval;
     }
 
@@ -204,7 +200,7 @@ namespace {
     // is not interpretable as int or unsigned int as appropriate.
     // returns tuple of result value, bool indicating success/fail, and new next address
     template <typename IntOrUInt> requires std::is_same_v<int, IntOrUInt> || std::is_same_v<unsigned int, IntOrUInt>
-    CONSTEXPR_FROM_CHARS std::tuple<IntOrUInt, bool, const char*>
+    inline CONSTEXPR_FROM_CHARS std::tuple<IntOrUInt, bool, const char*>
         GetIntFromChars(const char* const buffer_end, const char* next, const IntOrUInt default_val)
     {
         // safety checks
