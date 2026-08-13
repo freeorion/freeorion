@@ -12,6 +12,7 @@
 #include "../universe/ConstantsFwd.h"
 #include "../util/Enum.h"
 #include "../util/Export.h"
+#include "../util/ranges.h"
 
 class ObjectMap;
 
@@ -98,14 +99,38 @@ BOOST_CLASS_VERSION(ResourcePool, 1)
 template <typename Archive>
 void ResourcePool::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_type)
-        & BOOST_SERIALIZATION_NVP(m_object_ids)
-        & BOOST_SERIALIZATION_NVP(m_stockpile);
+    static_assert(std::is_class_v<UniverseObjectID>);
+
+    static constexpr auto to_int = [](const auto& id) noexcept -> int { return Value(id); };
+    static constexpr auto to_uid = [](const int id) noexcept { return UniverseObjectID{id}; };
+
+    ar  & BOOST_SERIALIZATION_NVP(m_type);
+
+    std::vector<int> ids;
+    if constexpr (Archive::is_saving::value)
+        ids = m_object_ids | range_transform(to_int) | range_to_vec;
+    ar  & boost::serialization::make_nvp("m_object_ids", ids);
+    if constexpr (Archive::is_loading::value)
+        m_object_ids = ids | range_transform(to_uid) | range_to_vec;
+
+    ar  & BOOST_SERIALIZATION_NVP(m_stockpile);
+
     if (version < 1) {
         int dummy = -1;
         ar  & boost::serialization::make_nvp("m_stockpile_object_id", dummy);
     }
-    ar  & BOOST_SERIALIZATION_NVP(m_connected_system_groups);
+
+    std::set<std::set<int>> sys_groups;
+    if constexpr (Archive::is_saving::value) {
+        for (const auto& sys_group : m_connected_system_groups)
+            sys_groups.insert(sys_group | range_transform(to_int) | range_to_set);
+    }
+    ar  & boost::serialization::make_nvp("m_connected_system_groups", sys_groups);
+    if constexpr (Archive::is_loading::value) {
+        m_connected_system_groups.clear();
+        for (const auto& sys_group : sys_groups)
+            m_connected_system_groups.insert(sys_group | range_transform(to_uid) | range_to_set);
+    }
 }
 
 

@@ -6,7 +6,9 @@
 #include <boost/signals2/signal.hpp>
 #include <boost/serialization/nvp.hpp>
 #include "../universe/ConstantsFwd.h"
+#include "../util/ranges.h"
 #include <vector>
+
 class ObjectMap;
 
 /** The PopulationPool class keeps track of an empire's total population and its growth. */
@@ -33,7 +35,12 @@ private:
 template <typename Archive>
 void PopulationPool::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_pop_center_ids);
+    std::vector<int> ids;
+    if constexpr (Archive::is_saving::value)
+        ids = m_pop_center_ids | range_transform([](const auto& id) noexcept { return Value(id); }) | range_to_vec;
+    ar  & boost::serialization::make_nvp("m_pop_center_ids", ids);
+    if constexpr (Archive::is_loading::value)
+        m_pop_center_ids = ids | range_transform([](const auto& id) noexcept { return UniverseObjectID{id}; }) | range_to_vec;
 }
 
 
