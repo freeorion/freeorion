@@ -42,14 +42,14 @@ struct CookieData {
 };
 
 struct OutgoingMessage {
-    OutgoingMessage(Message&& message, int empire_id, int turn) :
+    OutgoingMessage(Message&& message, EmpireID empire_id, int turn) :
        m_message(std::move(message)),
        m_empire_id(empire_id),
        m_turn(turn)
     {}
 
     const Message m_message;
-    const int m_empire_id;
+    const EmpireID m_empire_id;
     const int m_turn;
 };
 
@@ -108,7 +108,7 @@ public:
 
     /** Sends \a synchronous message to out on the connection. */
     void SendMessage(const Message& message);
-    void SendMessage(const Message& message, int empire_id, int turn);
+    void SendMessage(const Message& message, EmpireID empire_id, int turn);
 
     /** Set player properties to use them after authentication successed. */
     void AwaitPlayer(Networking::ClientType client_type, std::string client_version_string);
@@ -133,7 +133,7 @@ public:
     /** Sets cookie value to this connection to update expire date. */
     void SetCookie(boost::uuids::uuid cookie) noexcept;
 
-    mutable boost::signals2::signal<void(bool, int, int)> MessageSentSignal;
+    mutable boost::signals2::signal<void(bool, EmpireID, int)> MessageSentSignal;
     mutable boost::signals2::signal<void (const NullaryFn&)> EventSignal;
 
     PlayerConnection(boost::asio::io_context& io_context,
@@ -148,11 +148,11 @@ private:
     static void HandleMessageWrite(PlayerConnectionPtr self,
                                    boost::system::error_code error,
                                    std::size_t bytes_transferred,
-                                   int empire_id, int turn);
+                                   EmpireID empire_id, int turn);
 
     /** Places message to the end of sending queue and start asynchronous write if \a message was
         first in the queue. */
-    static void SendMessageImpl(PlayerConnectionPtr self, Message message, int empire_id, int turn);
+    static void SendMessageImpl(PlayerConnectionPtr self, Message message, EmpireID empire_id, int turn);
     static void AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error,
                                   boost::system::error_code error);
 
@@ -262,9 +262,7 @@ public:
     void SetHostPlayerID(int host_player_id) noexcept { m_host_player_id = host_player_id; }
 
     /** Generate cookies for player's name, roles, and authentication status. */
-    boost::uuids::uuid GenerateCookie(std::string player_name,
-                                      Networking::AuthRoles roles,
-                                      bool authenticated);
+    boost::uuids::uuid GenerateCookie(std::string player_name, Networking::AuthRoles roles, bool authenticated);
 
     /** Bump cookie's expired date. */
     void UpdateCookie(boost::uuids::uuid cookie);
@@ -273,7 +271,7 @@ public:
     void CleanupCookies();
 
     /** Signal to notify if message sent successfully or failed for empire about turn. */
-    mutable boost::signals2::signal<void (bool, int, int)> MessageSentSignal;
+    mutable boost::signals2::signal<void (bool, EmpireID, int)> MessageSentSignal;
 
 private:
     void Init();

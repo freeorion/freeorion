@@ -125,7 +125,7 @@ inline void AddAllFieldsSet(const ObjectMap& objects, ObjectSet& in_out) { AddAl
 inline void AddAllSystemsSet(const ObjectMap& objects, ObjectSet& in_out) { AddAllObjectsSet<::System>(objects, in_out); }
 
 // add single objects, avoiding re-adding any objects already in the set
-inline void AddNonduplicatesFromIDs(const ObjectMap& objects, ObjectSet& in_out, std::span<const int> ids) {
+inline void AddNonduplicatesFromIDs(const ObjectMap& objects, ObjectSet& in_out, std::span<const UniverseObjectID> ids) {
     if (ids.empty())
         return;
     auto single_objs = objects.findRaw(ids);
@@ -570,7 +570,7 @@ struct FO_COMMON_API SortedNumberOf final : public Condition {
     [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context,
                                std::span<const UniverseObjectCXBase*> candidates) const override;
     [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context,
-                               std::span<const int> candidates_ids) const override;
+                               std::span<const UniverseObjectID> candidates_ids) const override;
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
@@ -603,7 +603,7 @@ struct FO_COMMON_API None final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalAny(const ScriptingContext&, std::span<const UniverseObjectCXBase*>) const noexcept override { return false; }
-    [[nodiscard]] bool EvalAny(const ScriptingContext&, std::span<const int>) const noexcept override { return false; }
+    [[nodiscard]] bool EvalAny(const ScriptingContext&, std::span<const UniverseObjectID>) const noexcept override { return false; }
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext&) const override
     { return {}; /* efficient rejection of everything. */ }
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -797,7 +797,7 @@ struct FO_COMMON_API Capital final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalAny(const ScriptingContext&,
                                std::span<const UniverseObjectCXBase*> candidates) const override; // no noexcept due to logging
-    [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context, std::span<const int> candidate_ids) const override;
+    [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context, std::span<const UniverseObjectID> candidate_ids) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const override
     { return Match(ScriptingContext{parent_context, ScriptingContext::LocalCandidate{}, candidate}); }
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
@@ -827,7 +827,7 @@ struct FO_COMMON_API CapitalWithID final : public Condition {
     [[nodiscard]] bool EvalAny(const ScriptingContext&,
                                std::span<const UniverseObjectCXBase*> candidates) const override; // no noexcept due to logging
     [[nodiscard]] bool EvalAny(const ScriptingContext&,
-                               std::span<const int> candidates) const override;
+                               std::span<const UniverseObjectID> candidates) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const override
     { return Match(ScriptingContext{parent_context, ScriptingContext::LocalCandidate{}, candidate}); }
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
@@ -1157,7 +1157,7 @@ private:
   * Container objects are Systems, Planets (which contain Buildings),
   * and Fleets (which contain Ships). */
 struct ContainsSimpleMatch {
-    CONSTEXPR_VEC ContainsSimpleMatch(std::vector<int> subcondition_matches_ids) :
+    CONSTEXPR_VEC explicit ContainsSimpleMatch(std::vector<UniverseObjectID> subcondition_matches_ids) :
         m_subcondition_matches_ids([&subcondition_matches_ids]() {
             // We need a sorted container for efficiently intersecting
             // subcondition_matches with the set of objects contained in some
@@ -1168,10 +1168,14 @@ struct ContainsSimpleMatch {
         }())
     {}
 
-    CONSTEXPR_VEC ContainsSimpleMatch(const ObjectSet& subcondition_matches) :
+    CONSTEXPR_VEC explicit ContainsSimpleMatch(UniverseObjectID subcondition_matches_id) :
+        ContainsSimpleMatch{std::vector{{subcondition_matches_id}}}
+    {}
+
+    CONSTEXPR_VEC explicit ContainsSimpleMatch(const ObjectSet& subcondition_matches) :
         ContainsSimpleMatch([&subcondition_matches]() {
             // We only need ids, not objects.
-            std::vector<int> m;
+            std::vector<UniverseObjectID> m;
             m.reserve(subcondition_matches.size());
             // gather the ids and sort them
             for (auto* obj : subcondition_matches)
@@ -1191,7 +1195,7 @@ struct ContainsSimpleMatch {
         // We choose the strategy that is more efficient by comparing the sizes of both sets.
         if (candidate_elements.size() < m_subcondition_matches_ids.size()) {
             // candidate_elements is smaller, so we iterate it and look up each candidate element in m_subcondition_matches_ids
-            for (int id : candidate_elements) {
+            for (auto id : candidate_elements) {
                 // std::lower_bound requires m_subcondition_matches_ids to be sorted
                 auto matching_it = std::lower_bound(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end(), id);
 
@@ -1200,7 +1204,7 @@ struct ContainsSimpleMatch {
             }
         } else {
             // m_subcondition_matches_ids is smaller, so we iterate it and look up each subcondition match in the set of candidate's elements
-            for (int id : m_subcondition_matches_ids) {
+            for (auto id : m_subcondition_matches_ids) {
                 // candidate->Contains() may have a faster implementation than candidate_elements->find()
                 if (candidate->Contains(id))
                     return true;
@@ -1210,7 +1214,7 @@ struct ContainsSimpleMatch {
         return false;
     }
 
-    const std::vector<int> m_subcondition_matches_ids;
+    const std::vector<UniverseObjectID> m_subcondition_matches_ids;
 };
 
 template <class ConditionT = std::unique_ptr<Condition>>
@@ -1318,7 +1322,7 @@ struct FO_COMMON_API Contains final : public Impl::NestedCondition<ConditionT> {
         // if the subcondition matches buildings, planets, ships, fleets, and/or fields, then system are also candidates for Contains
         // if the subcondition matches single objects (source, target, rootcandidate), then the containers of those objects are candidates for Contains
 
-        static constexpr auto add_container_ids_of = [](const auto* obj, std::vector<int>& out) {
+        static constexpr auto add_container_ids_of = [](const auto* obj, std::vector<UniverseObjectID>& out) {
             if (obj) {
                 out.push_back(obj->SystemID());
                 out.push_back(obj->ContainerObjectID());
@@ -1328,7 +1332,7 @@ struct FO_COMMON_API Contains final : public Impl::NestedCondition<ConditionT> {
         const auto mt = m_nested_cond_matches_types;
 
         // get IDs of anything that contains single context objects
-        std::vector<int> container_ids;
+        std::vector<UniverseObjectID> container_ids;
         container_ids.reserve(6u);
 
         if (mt & Impl::MatchesType::SOURCE)
@@ -1412,7 +1416,7 @@ Contains(T) -> Contains<std::decay_t<T>>;
   * \a condition.  Container objects are Systems, Planets (which contain
   * Buildings), and Fleets (which contain Ships). */
 struct ContainedBySimpleMatch {
-    CONSTEXPR_VEC ContainedBySimpleMatch(std::vector<int> subcondition_matches_ids) :
+    CONSTEXPR_VEC ContainedBySimpleMatch(std::vector<UniverseObjectID> subcondition_matches_ids) :
         m_subcondition_matches_ids([&subcondition_matches_ids]() {
             // We need a sorted container for efficiently intersecting
             // subcondition_matches with the set of objects contained in some
@@ -1426,7 +1430,7 @@ struct ContainedBySimpleMatch {
     CONSTEXPR_VEC ContainedBySimpleMatch(const ObjectSet& subcondition_matches) :
         ContainedBySimpleMatch([&subcondition_matches]() {
             // We only need ids, not objects.
-            std::vector<int> m;
+            std::vector<UniverseObjectID> m;
             m.reserve(subcondition_matches.size());
             // gather the ids and sort them
             for (auto* obj : subcondition_matches)
@@ -1440,9 +1444,9 @@ struct ContainedBySimpleMatch {
         if (!candidate)
             return false;
 
-        const int candidate_id = candidate->ID();
-        const int    system_id = candidate->SystemID();
-        const int container_id = candidate->ContainerObjectID();
+        const auto candidate_id = candidate->ID();
+        const auto    system_id = candidate->SystemID();
+        const auto container_id = candidate->ContainerObjectID();
         const bool sys_ok = system_id != INVALID_OBJECT_ID && system_id != candidate_id;
         const bool con_ok = container_id != INVALID_OBJECT_ID && container_id != system_id;
 
@@ -1453,7 +1457,7 @@ struct ContainedBySimpleMatch {
                (con_ok && range_contains(scm, container_id));
     }
 
-    const std::vector<int> m_subcondition_matches_ids;
+    const std::vector<UniverseObjectID> m_subcondition_matches_ids;
 };
 
 template <class ConditionT = std::unique_ptr<Condition>>
@@ -1592,7 +1596,7 @@ struct FO_COMMON_API ContainedBy final : public Impl::NestedCondition<ConditionT
         // if the subcondition matches systems, buildings, planets, ships, fleets, and fields are candidates for ContainedBy
         // if the subcondition matches single objects (source, target, rootcandidate), then the containers of those objects are candidates for Contains
 
-        static constexpr auto add_contents_ids_of = [](const auto* obj, std::vector<int>& out) {
+        static constexpr auto add_contents_ids_of = [](const auto* obj, std::vector<UniverseObjectID>& out) {
             if (obj) {
                 const auto& ids = obj->ContainedObjectIDs();
                 out.insert(out.end(), ids.begin(), ids.end());
@@ -1602,7 +1606,7 @@ struct FO_COMMON_API ContainedBy final : public Impl::NestedCondition<ConditionT
         const auto mt = m_nested_cond_matches_types;
 
         // get IDs of anything contained within single context objects
-        std::vector<int> contents_ids;
+        std::vector<UniverseObjectID> contents_ids;
         if (mt & Impl::MatchesType::SOURCE)
             add_contents_ids_of(context.source, contents_ids);
         if (mt & Impl::MatchesType::TARGET)

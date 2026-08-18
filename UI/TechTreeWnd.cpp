@@ -111,7 +111,7 @@ namespace {
             return false;
 
         // check tech status
-        const Empire* empire = GetEmpire(GetApp().EmpireID());
+        const Empire* empire = GetEmpire(GetApp().GetEmpireID());
         if (!empire)
             return true;    // if no empire, techs have no status, so just return true
         if (!statuses_shown.contains(empire->GetTechStatus(tech_name)))
@@ -125,7 +125,7 @@ namespace {
 ///////////////////////////
 //   TechRowBrowseWnd    //
 ///////////////////////////
-std::shared_ptr<GG::BrowseInfoWnd> TechRowBrowseWnd(const std::string& tech_name, int empire_id) {
+std::shared_ptr<GG::BrowseInfoWnd> TechRowBrowseWnd(const std::string& tech_name, EmpireID empire_id) {
     auto& app = GetApp();
     const auto& context = app.GetContext();
     auto empire = context.GetEmpire(empire_id);
@@ -772,7 +772,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::PreRender() {
         m_name_label->SizeMove(text_ul, text_ul + text_size);
 
         // show cost and duration for unresearched techs
-        const Empire* empire = GetEmpire(GetApp().EmpireID());
+        const Empire* empire = GetEmpire(GetApp().GetEmpireID());
         if (empire) {
             if (empire->TechResearched(m_tech_name))
                 m_cost_and_duration_label->Hide();
@@ -948,7 +948,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
     Select(m_layout_panel->m_selected_tech_name == m_tech_name);
 
     auto& app = GetApp();
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     const auto& context = app.GetContext();
     auto& ui = app.GetUI();
 
@@ -1640,7 +1640,7 @@ void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
     push_back(std::move(text));
 
     const std::string cost_str = std::to_string(std::lround(
-        this_row_tech->ResearchCost(app.EmpireID(), context)));
+        this_row_tech->ResearchCost(app.GetEmpireID(), context)));
     text = GG::Wnd::Create<CUILabel>(cost_str + just_pad + just_pad, GG::FORMAT_RIGHT);
     text->SetResetMinSize(false);
     text->ClipText(true);
@@ -1648,7 +1648,7 @@ void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
     push_back(std::move(text));
 
     const std::string time_str = std::to_string(
-        this_row_tech->ResearchTime(app.EmpireID(), context));
+        this_row_tech->ResearchTime(app.GetEmpireID(), context));
     text = GG::Wnd::Create<CUILabel>(time_str + just_pad + just_pad, GG::FORMAT_RIGHT);
     text->SetResetMinSize(false);
     text->ClipText(true);
@@ -1675,7 +1675,7 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
     std::string just_pad = "    ";
 
     auto& app = GetApp();
-    const auto client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     const ScriptingContext& context = app.GetContext();
     const auto empire = context.GetEmpire(client_empire_id);
 
@@ -1941,7 +1941,7 @@ void TechTreeWnd::TechListBox::TechLeftClicked(GG::ListBox::iterator it, GG::Pt 
 void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey>) {
     if ((*it)->Disabled())
         return;
-    const Empire* empire = GetEmpire(GetApp().EmpireID());
+    const Empire* empire = GetEmpire(GetApp().GetEmpireID());
     if (!empire)
         return;
 
@@ -2224,7 +2224,7 @@ void TechTreeWnd::CenterOnTech(const std::string& tech_name) {
     // ensure tech exists and is visible
     const Tech* tech = ::GetTech(tech_name);
     if (!tech) return;
-    if (const Empire* empire = GetEmpire(GetApp().EmpireID()))
+    if (const Empire* empire = GetEmpire(GetApp().GetEmpireID()))
         SetTechStatus(empire->GetTechStatus(tech_name), true);
     ShowCategory(tech->Category());
 
@@ -2281,7 +2281,7 @@ void TechTreeWnd::AddTechToResearchQueue(std::string tech_name, bool to_front) {
 
     auto& app = GetApp();
     const ScriptingContext& context = app.GetContext();
-    const int empire_id = GetApp().EmpireID();
+    const EmpireID empire_id = GetApp().GetEmpireID();
     const auto empire = context.GetEmpire(empire_id);
     if (!empire)
         return;

@@ -3,16 +3,18 @@
 
 #include <GG/Wnd.h>
 
+#include "../universe/ConstantsFwd.h"
+
 class StatisticIcon;
 
 /** Displays a set of specials attached to an UniverseObject */
 class SpecialsPanel : public GG::Wnd {
 public:
-    SpecialsPanel(GG::X w, int object_id);
+    SpecialsPanel(GG::X w, UniverseObjectID object_id);
     void CompleteConstruction() override;
 
     bool InWindow(GG::Pt pt) const override;
-    int  ObjectID() const { return m_object_id; }
+    auto ObjectID() const noexcept { return m_object_id; }
 
     void Render() noexcept override {}
     void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
@@ -20,7 +22,7 @@ public:
     void Update();          ///< regenerates indicators according specials on object
 
 private:
-    const int m_object_id; ///< id for the Object whose specials this panel displays
+    const UniverseObjectID m_object_id; ///< id for the Object whose specials this panel displays
     std::vector<std::shared_ptr<StatisticIcon>> m_icons;
 };
 

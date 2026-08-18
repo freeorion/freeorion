@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <vector>
 #include "../util/Logger.h"
+#include "../universe/ConstantsFwd.h"
 
 class Universe;
 
@@ -26,19 +27,27 @@ class Universe;
     require coordination between clients and servers and does not leak any information to clients
     about other client's allocations.
 */
-
 class IDAllocator {
 public:
     using ID_t = int;
 
     /** \p client_ids are all the player ids in the game. \p highest_pre_allocated_id is the used for
-        legacy loads to offset the newly allocated id to after the ones from the save game.
-    */
+      * legacy loads to offset the newly allocated id to after the ones from the save game. */
     IDAllocator(const int server_id,
                 const std::vector<int>& client_ids,
                 const ID_t invalid_id,
                 const ID_t temp_id,
                 const ID_t highest_pre_allocated_id);
+
+
+    IDAllocator(const int server_id,
+                const std::vector<int>& client_ids,
+                const UniverseObjectID invalid_id,
+                const UniverseObjectID temp_id,
+                const UniverseObjectID highest_pre_allocated_id) :
+        IDAllocator(server_id, client_ids, static_cast<ID_t>(Value(invalid_id)),
+                    static_cast<ID_t>(Value(temp_id)), static_cast<ID_t>(Value(highest_pre_allocated_id)))
+    {}
 
     IDAllocator& operator=(IDAllocator&& other) noexcept = default;
 
@@ -48,9 +57,9 @@ public:
     /** Return {hard_success, soft_success} where \p hard_success determines if
         \p id is unused and valid and \p soft_success determines if \p id is in
         the id space of \p empire_id.  This allows errors that are probably due
-        to legacy loading and order processing to be ignored for now.
-     */
-    std::pair<bool, bool> IsIDValidAndUnused(const ID_t id, const int empire_id);
+        to legacy loading and order processing to be ignored for now. */
+    std::pair<bool, bool> IsIDValidAndUnused(ID_t id, EmpireID empire_id);
+    std::pair<bool, bool> IsIDValidAndUnused(UniverseObjectID id, EmpireID empire_id) { return IsIDValidAndUnused(Value(id), empire_id); }
 
     /** UpdateIDAndCheckIfOwned behaves differently on the server and clients.
 
@@ -61,7 +70,10 @@ public:
 
         On the client it returns true iff this client allocated \p id and does
         nothing else. That means that id modulo m_stride == client's offset.*/
-    bool UpdateIDAndCheckIfOwned(const ID_t id);
+    bool UpdateIDAndCheckIfOwned(ID_t id);
+
+    bool UpdateIDAndCheckIfOwned(UniverseObjectID id)
+    { return UpdateIDAndCheckIfOwned(static_cast<ID_t>(Value(id))); }
 
     /** ObfuscateBeforeSerialization randomizes which client is using which modulus each turn
         before IDAllocator is serialized and sent to the clients. */
@@ -69,14 +81,14 @@ public:
 
     /** Serialize while stripping out information not known to \p empire_id. */
     template <typename Archive>
-        void SerializeForEmpire(Archive& ar, const unsigned int version, int empire_id);
+        void SerializeForEmpire(Archive& ar, const unsigned int version, EmpireID empire_id);
 
 private:
     /** Return the empire that should have assigned \p id. */
-    ID_t& AssigningEmpireForID(ID_t id);
+    EmpireID& AssigningEmpireForID(ID_t id);
 
     /// Increment the next assigned id for an empire until it is past checked_id.
-    void IncrementNextAssignedId(const int assigning_empire, const int checked_id);
+    void IncrementNextAssignedId(const EmpireID assigning_empire, const int checked_id);
 
     /// Return a string representing the state.
     std::string StateString() const;
@@ -93,13 +105,13 @@ private:
     // and deserialization may downgrade empire id to one of the lesser (not
     // server) ids.
     int m_server_id;
-    int m_empire_id;
+    EmpireID m_empire_id;
 
     // A map from empire id to next used object id;
-    std::unordered_map<int, ID_t> m_empire_id_to_next_assigned_object_id;
+    std::unordered_map<EmpireID, ID_t> m_empire_id_to_next_assigned_object_id;
 
     // An index from id % m_stride to empire ids
-    std::vector<int> m_offset_to_empire_id;
+    std::vector<EmpireID> m_offset_to_empire_id;
 
     /// if less than m_next_assigned_id warn about id exhaustion.
     ID_t m_warn_threshold;

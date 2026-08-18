@@ -22,9 +22,9 @@
 #include <numeric>
 
 
-Ship::Ship(int empire_id, int design_id, std::string species_name,
+Ship::Ship(EmpireID empire_id, int design_id, std::string species_name,
            const Universe& universe, const SpeciesManager& species,
-           int produced_by_empire_id, int current_turn) :
+           EmpireID produced_by_empire_id, int current_turn) :
     UniverseObject{UniverseObjectType::OBJ_SHIP, "", empire_id, current_turn},
     m_species_name(std::move(species_name)),
     m_design_id(design_id),
@@ -94,7 +94,7 @@ Ship::Ship(int empire_id, int design_id, std::string species_name,
     }
 }
 
-std::shared_ptr<UniverseObject> Ship::Clone(const Universe& universe, int empire_id) const {
+std::shared_ptr<UniverseObject> Ship::Clone(const Universe& universe, EmpireID empire_id) const {
     const Visibility vis = empire_id == ALL_EMPIRES ?
         Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
@@ -106,7 +106,7 @@ std::shared_ptr<UniverseObject> Ship::Clone(const Universe& universe, int empire
     return retval;
 }
 
-void Ship::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
+void Ship::Copy(const UniverseObject& copied_object, const Universe& universe, EmpireID empire_id) {
     if (std::addressof(copied_object) == this)
         return;
 
@@ -118,11 +118,11 @@ void Ship::Copy(const UniverseObject& copied_object, const Universe& universe, i
     Copy(static_cast<const Ship&>(copied_object), universe, empire_id);
 }
 
-void Ship::Copy(const Ship& copied_ship, const Universe& universe, int empire_id) {
+void Ship::Copy(const Ship& copied_ship, const Universe& universe, EmpireID empire_id) {
     if (std::addressof(copied_ship) == this)
         return;
 
-    const int copied_object_id = copied_ship.ID();
+    const auto copied_object_id = copied_ship.ID();
     const Visibility vis = empire_id == ALL_EMPIRES ?
         Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
     const auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
@@ -155,7 +155,7 @@ void Ship::Copy(const Ship& copied_ship, const Universe& universe, int empire_id
     }
 }
 
-bool Ship::HostileToEmpire(int empire_id, const EmpireManager& empires) const {
+bool Ship::HostileToEmpire(EmpireID empire_id, const EmpireManager& empires) const {
     if (OwnedBy(empire_id))
         return false;
     return empire_id == ALL_EMPIRES || Unowned() ||
@@ -183,7 +183,7 @@ UniverseObject::TagVecs Ship::Tags(const ScriptingContext& context) const {
     else return {};
 }
 
-bool Ship::ContainedBy(int object_id) const noexcept {
+bool Ship::ContainedBy(UniverseObjectID object_id) const noexcept {
     return object_id != INVALID_OBJECT_ID
         && (    object_id == m_fleet_id
             ||  object_id == this->SystemID());
@@ -193,9 +193,9 @@ std::string Ship::Dump(uint8_t ntabs) const {
     std::string retval = UniverseObject::Dump(ntabs);
     retval.reserve(2048); // guesstimate
     retval.append(" design id: ").append(std::to_string(m_design_id))
-          .append(" fleet id: ").append(std::to_string(m_fleet_id))
+          .append(" fleet id: ").append(to_string(m_fleet_id))
           .append(" species name: ").append(m_species_name)
-          .append(" produced by empire id: ").append(std::to_string(m_produced_by_empire_id))
+          .append(" produced by empire id: ").append(to_string(m_produced_by_empire_id))
           .append(" arrived on turn: ").append(std::to_string(m_arrived_on_turn))
           .append(" last resupplied on turn: ").append(std::to_string(m_last_resupplied_on_turn));
     if (!m_part_meters.empty()) {
@@ -346,7 +346,7 @@ bool Ship::CanHaveTroops(const Universe& universe) const {
     return design ? design->HasTroops() : false;
 }
 
-const std::string& Ship::PublicName(int empire_id, const Universe& universe) const {
+const std::string& Ship::PublicName(EmpireID empire_id, const Universe& universe) const {
     // Disclose real ship name only to fleet owners. Rationale: a player who
     // doesn't know the design for a particular ship can easily guess it if the
     // ship's name is "Scout"
@@ -365,7 +365,7 @@ const std::string& Ship::PublicName(int empire_id, const Universe& universe) con
         return UserString("OBJ_SHIP");
 }
 
-const std::string& Ship::PublicName(int empire_id) const {
+const std::string& Ship::PublicName(EmpireID empire_id) const {
     if (empire_id == ALL_EMPIRES || OwnedBy(empire_id))
         return Name();
     else if (!Unowned())
@@ -551,7 +551,7 @@ std::size_t Ship::SizeInMemory() const {
     return retval;
 }
 
-void Ship::SetFleetID(int fleet_id) {
+void Ship::SetFleetID(UniverseObjectID fleet_id) {
     if (m_fleet_id != fleet_id) {
         m_fleet_id = fleet_id;
         StateChangedSignal();
@@ -629,7 +629,7 @@ void Ship::SetOrderedScrapped(bool b) {
     StateChangedSignal();
 }
 
-void Ship::SetColonizePlanet(int planet_id) {
+void Ship::SetColonizePlanet(UniverseObjectID planet_id) {
     if (planet_id == m_ordered_colonize_planet_id) return;
     m_ordered_colonize_planet_id = planet_id;
     StateChangedSignal();
@@ -638,7 +638,7 @@ void Ship::SetColonizePlanet(int planet_id) {
 void Ship::ClearColonizePlanet()
 { SetColonizePlanet(INVALID_OBJECT_ID); }
 
-void Ship::SetInvadePlanet(int planet_id) {
+void Ship::SetInvadePlanet(UniverseObjectID planet_id) {
     if (planet_id == m_ordered_invade_planet_id) return;
     m_ordered_invade_planet_id = planet_id;
     StateChangedSignal();
@@ -647,7 +647,7 @@ void Ship::SetInvadePlanet(int planet_id) {
 void Ship::ClearInvadePlanet()
 { SetInvadePlanet(INVALID_OBJECT_ID); }
 
-void Ship::SetBombardPlanet(int planet_id) {
+void Ship::SetBombardPlanet(UniverseObjectID planet_id) {
     if (planet_id == m_ordered_bombard_planet_id) return;
     m_ordered_bombard_planet_id = planet_id;
     StateChangedSignal();

@@ -4,6 +4,7 @@
 #include "Networking.h"
 #include "../util/Enum.h"
 #include "../util/Export.h"
+#include "../universe/ConstantsFwd.h"
 
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/uuid/uuid.hpp>
@@ -211,7 +212,7 @@ FO_COMMON_API Message HostIDMessage(int host_player_id);
 
 /** creates a GAME_START message.  Contains the initial game state visible to the player.*/
 FO_COMMON_API Message GameStartMessage(
-    bool single_player_game, int empire_id, int current_turn,
+    bool single_player_game, EmpireID empire_id, int current_turn,
     const EmpireManager& empires, const Universe& universe,
     const SpeciesManager& species, CombatLogManager& combat_logs,
     const SupplyManager& supply, const std::map<int, PlayerInfo>& players,
@@ -221,7 +222,7 @@ FO_COMMON_API Message GameStartMessage(
 /** creates a GAME_START message.  Contains the initial game state visible to
   * the player.  Also includes data loaded from a saved game. */
 FO_COMMON_API Message GameStartMessage(
-    bool single_player_game, int empire_id, int current_turn,
+    bool single_player_game, EmpireID empire_id, int current_turn,
     const EmpireManager& empires, const Universe& universe,
     const SpeciesManager& species, CombatLogManager& combat_logs,
     const SupplyManager& supply, const std::map<int, PlayerInfo>& players,
@@ -232,7 +233,7 @@ FO_COMMON_API Message GameStartMessage(
 /** creates a GAME_START message.  Contains the initial game state visible to
   * the player.  Also includes state string loaded from a saved game. */
 FO_COMMON_API Message GameStartMessage(
-    bool single_player_game, int empire_id, int current_turn,
+    bool single_player_game, EmpireID empire_id, int current_turn,
     const EmpireManager& empires, const Universe& universe,
     const SpeciesManager& species, CombatLogManager& combat_logs,
     const SupplyManager& supply, const std::map<int, PlayerInfo>& players,
@@ -270,10 +271,10 @@ FO_COMMON_API Message TurnProgressMessage(Message::TurnProgressPhase phase_id);
 
 /** creates a PLAYER_STATUS message. */
 FO_COMMON_API Message PlayerStatusMessage(Message::PlayerStatus player_status,
-                                          int about_empire_id);
+                                          EmpireID about_empire_id);
 
 /** creates a TURN_UPDATE message. */
-FO_COMMON_API Message TurnUpdateMessage(int empire_id, int current_turn,
+FO_COMMON_API Message TurnUpdateMessage(EmpireID empire_id, int current_turn,
                                         const EmpireManager& empires, const Universe& universe,
                                         const SpeciesManager& species, CombatLogManager& combat_logs,
                                         const SupplyManager& supply,
@@ -281,7 +282,7 @@ FO_COMMON_API Message TurnUpdateMessage(int empire_id, int current_turn,
                                         bool use_compression);
 
 /** create a TURN_PARTIAL_UPDATE message. */
-FO_COMMON_API Message TurnPartialUpdateMessage(int empire_id, const Universe& universe,
+FO_COMMON_API Message TurnPartialUpdateMessage(EmpireID empire_id, const Universe& universe,
                                                bool use_binary_serialization,
                                                bool use_compression);
 
@@ -409,7 +410,7 @@ FO_COMMON_API void ExtractServerPlayerChatMessageData(const Message& msg,
                                                       int& sender, boost::posix_time::ptime& timestamp,
                                                       std::string& data, bool& pm);
 
-FO_COMMON_API void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, int& empire_id,
+FO_COMMON_API void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, EmpireID& empire_id,
                                                int& current_turn, EmpireManager& empires, Universe& universe,
                                                SpeciesManager& species, CombatLogManager& combat_logs,
                                                SupplyManager& supply,
@@ -418,7 +419,7 @@ FO_COMMON_API void ExtractGameStartMessageData(const Message& msg, bool& single_
                                                SaveGameUIData& ui_data, bool& save_state_string_available,
                                                std::string& save_state_string, GalaxySetupData& galaxy_setup_data);
 
-FO_COMMON_API void ExtractGameStartMessageData(std::string text, bool& single_player_game, int& empire_id,
+FO_COMMON_API void ExtractGameStartMessageData(std::string text, bool& single_player_game, EmpireID& empire_id,
                                                int& current_turn, EmpireManager& empires, Universe& universe,
                                                SpeciesManager& species, CombatLogManager& combat_logs,
                                                SupplyManager& supply,
@@ -442,21 +443,19 @@ FO_COMMON_API void ExtractTurnOrdersMessageData(const Message& msg, OrderSet& or
 
 FO_COMMON_API void ExtractTurnPartialOrdersMessageData(const Message& msg, OrderSet& added, std::set<int>& deleted);
 
-FO_COMMON_API void ExtractTurnUpdateMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires,
+FO_COMMON_API void ExtractTurnUpdateMessageData(const Message& msg, EmpireID empire_id, int& current_turn, EmpireManager& empires,
                                                 Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
                                                 SupplyManager& supply, std::map<int, PlayerInfo>& players);
 
-FO_COMMON_API void ExtractTurnUpdateMessageData(std::string text, int empire_id, int& current_turn, EmpireManager& empires,
+FO_COMMON_API void ExtractTurnUpdateMessageData(std::string text, EmpireID empire_id, int& current_turn, EmpireManager& empires,
                                                 Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
                                                 SupplyManager& supply, std::map<int, PlayerInfo>& players);
 
-FO_COMMON_API void ExtractTurnPartialUpdateMessageData(const Message& msg, int empire_id, Universe& universe);
+FO_COMMON_API void ExtractTurnPartialUpdateMessageData(const Message& msg, EmpireID empire_id, Universe& universe);
 
 FO_COMMON_API void ExtractTurnProgressMessageData(const Message& msg, Message::TurnProgressPhase& phase_id);
 
-FO_COMMON_API void ExtractPlayerStatusMessageData(const Message& msg,
-                                                  Message::PlayerStatus& status,
-                                                  int& about_empire_id);
+FO_COMMON_API void ExtractPlayerStatusMessageData(const Message& msg, Message::PlayerStatus& status, EmpireID& about_empire_id);
 
 FO_COMMON_API void ExtractHostSPGameMessageData(const Message& msg, SinglePlayerSetupData& setup_data, std::string& client_version_string, std::map<std::string, std::string>& dependencies);
 

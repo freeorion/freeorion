@@ -99,11 +99,11 @@ public:
     [[nodiscard]] auto ProductionCostTimeLocationInvariant() const -> bool;
 
     //! Returns the number of production points required to produce this hull
-    [[nodiscard]] auto ProductionCost(int empire_id, int location_id, const ScriptingContext& parent_context,
+    [[nodiscard]] auto ProductionCost(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& parent_context,
                                       int in_design_id = INVALID_DESIGN_ID) const -> float;
 
     //! Returns the number of turns required to produce this hull
-    [[nodiscard]] auto ProductionTime(int empire_id, int location_id, const ScriptingContext& parent_context,
+    [[nodiscard]] auto ProductionTime(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& parent_context,
                                       int in_design_id = INVALID_DESIGN_ID) const -> int;
 
     //! Returns whether this hull type is producible by players and appears on

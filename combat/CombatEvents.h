@@ -48,9 +48,9 @@ struct FO_COMMON_API SimultaneousEvents : public CombatEvent {
     void AddEvent(CombatEventPtr event) { events.push_back(std::move(event)); }
 
     [[nodiscard]] std::string DebugString(const ScriptingContext&) const override;
-    [[nodiscard]] std::string CombatLogDescription(int, const ScriptingContext&)
+    [[nodiscard]] std::string CombatLogDescription(EmpireID, const ScriptingContext&)
         const noexcept(CombatEventDetail::nxstr) override { return {}; }
-    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(int viewing_empire_id) const override;
+    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(EmpireID viewing_empire_id) const override;
     [[nodiscard]] auto& Events() const noexcept { return events; };
 
     [[nodiscard]] bool IsEmpty() const noexcept override { return events.empty(); }
@@ -74,7 +74,7 @@ struct FO_COMMON_API InitialStealthEvent : public CombatEvent {
     {}
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
-    [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
+    [[nodiscard]] std::string CombatLogDescription(EmpireID viewing_empire_id, const ScriptingContext& context) const override;
 
 private:
     EmpireObjectVisibilityMap empire_object_visibility;
@@ -90,28 +90,30 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
     [[nodiscard]] StealthChangeEvent() = default;
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
-    [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
-    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(int viewing_empire_id) const override;
+    [[nodiscard]] std::string CombatLogDescription(EmpireID viewing_empire_id, const ScriptingContext& context) const override;
+    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(EmpireID viewing_empire_id) const override;
     [[nodiscard]] bool IsEmpty() const noexcept override { return events.empty(); }
 
-    void AddEvent(int attacker_id, int target_id, int attacker_empire_id, int target_empire_id, Visibility new_visibility)
+    void AddEvent(UniverseObjectID attacker_id, UniverseObjectID target_id, EmpireID attacker_empire_id,
+                  EmpireID target_empire_id, Visibility new_visibility)
     { events.emplace_back(attacker_id, target_id, attacker_empire_id, target_empire_id, new_visibility); }
 
-    void AddEvent(int launcher_id, int launcher_empire_id, int observer_empire_id, Visibility new_visibility)
+    void AddEvent(UniverseObjectID launcher_id, EmpireID launcher_empire_id, EmpireID observer_empire_id, Visibility new_visibility)
     { events.emplace_back(launcher_id, launcher_empire_id, observer_empire_id, new_visibility); }
 
     struct StealthChangeEventDetail : public CombatEvent {
         [[nodiscard]] constexpr StealthChangeEventDetail() noexcept = default;
-        [[nodiscard]] constexpr StealthChangeEventDetail(int attacker_id_, int target_id_, int attacker_empire_,
-                                                         int target_observer_empire_, Visibility new_visibility_) noexcept :
+        [[nodiscard]] constexpr StealthChangeEventDetail(UniverseObjectID attacker_id_, UniverseObjectID target_id_,
+                                                         EmpireID attacker_empire_, EmpireID target_observer_empire_,
+                                                         Visibility new_visibility_) noexcept :
             attacker_id(attacker_id_),
             target_id(target_id_),
             attacker_empire_id(attacker_empire_),
             target_observer_empire_id(target_observer_empire_),
             visibility(new_visibility_)
         {}
-        [[nodiscard]] constexpr StealthChangeEventDetail(int laucher_id_, int attacker_laucher_empire_,
-                                                         int target_observer_empire_, Visibility new_visibility_) noexcept :
+        [[nodiscard]] constexpr StealthChangeEventDetail(UniverseObjectID laucher_id_, EmpireID attacker_laucher_empire_,
+                                                         EmpireID target_observer_empire_, Visibility new_visibility_) noexcept :
             attacker_id(laucher_id_),
             attacker_empire_id(attacker_laucher_empire_),
             target_observer_empire_id(target_observer_empire_),
@@ -120,12 +122,12 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
         {}
 
         [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
-        [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
+        [[nodiscard]] std::string CombatLogDescription(EmpireID viewing_empire_id, const ScriptingContext& context) const override;
 
-        int attacker_id = INVALID_OBJECT_ID;
-        int target_id = INVALID_OBJECT_ID;
-        int attacker_empire_id = ALL_EMPIRES;
-        int target_observer_empire_id = ALL_EMPIRES;
+        UniverseObjectID attacker_id = INVALID_OBJECT_ID;
+        UniverseObjectID target_id = INVALID_OBJECT_ID;
+        EmpireID attacker_empire_id = ALL_EMPIRES;
+        EmpireID target_observer_empire_id = ALL_EMPIRES;
         Visibility visibility = Visibility::VIS_NO_VISIBILITY;
         bool is_fighter_launch = false;
     };
@@ -151,10 +153,10 @@ struct FO_COMMON_API WeaponFireEvent final : public CombatEvent {
 
       * The use of tuple in the constructor is to keep the number of parameters below 10 which
       * is the maximum that some compilers that emulate variadic templates support. */
-    [[nodiscard]] CONSTEXPR_STRING WeaponFireEvent(int attacker_id_, int target_id_,
+    [[nodiscard]] CONSTEXPR_STRING WeaponFireEvent(UniverseObjectID attacker_id_, UniverseObjectID target_id_,
                                                    std::string weapon_name_,
                                                    const std::tuple<float, float, float>& power_shield_damage,
-                                                   int attacker_owner_id_, int target_owner_id_)
+                                                   EmpireID attacker_owner_id_, EmpireID target_owner_id_)
         noexcept(CombatEventDetail::nxstrmove) :
         attacker_id(attacker_id_),
         target_id(target_id_),
@@ -167,19 +169,19 @@ struct FO_COMMON_API WeaponFireEvent final : public CombatEvent {
     {}
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
-    [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
-    [[nodiscard]] std::string CombatLogDetails(int viewing_empire_id) const override;
+    [[nodiscard]] std::string CombatLogDescription(EmpireID viewing_empire_id, const ScriptingContext& context) const override;
+    [[nodiscard]] std::string CombatLogDetails(EmpireID viewing_empire_id) const override;
     [[nodiscard]] bool IsEmpty() const noexcept override { return false; }
-    [[nodiscard]] std::optional<int> PrincipalFaction(int viewing_empire_id) const noexcept override { return attacker_id; }
+    [[nodiscard]] std::optional<EmpireID> PrincipalFaction(EmpireID viewing_empire_id) const noexcept override { return attacker_owner_id; }
 
-    int attacker_id = INVALID_OBJECT_ID;
-    int target_id = INVALID_OBJECT_ID;
+    UniverseObjectID attacker_id = INVALID_OBJECT_ID;
+    UniverseObjectID target_id = INVALID_OBJECT_ID;
     std::string weapon_name;
     float power = 0.0f;
     float shield = 0.0f;
     float damage = 0.0f;
-    int attacker_owner_id = ALL_EMPIRES;
-    int target_owner_id = ALL_EMPIRES;
+    EmpireID attacker_owner_id = ALL_EMPIRES;
+    EmpireID target_owner_id = ALL_EMPIRES;
 };
 
 
@@ -192,36 +194,39 @@ struct FO_COMMON_API IncapacitationsEvent : public CombatEvent {
     {}
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
-    [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
-    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(int viewing_empire_id) const override;
+    [[nodiscard]] std::string CombatLogDescription(EmpireID viewing_empire_id, const ScriptingContext& context) const override;
+    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(EmpireID viewing_empire_id) const override;
     [[nodiscard]] bool IsEmpty() const noexcept override {
         static constexpr auto second_is_empty = [](const auto& c) noexcept { return c.second.empty(); };
         return events.empty() || std::all_of(events.begin(), events.end(), second_is_empty);
     }
     [[nodiscard]] bool FlattenSubEvents() const noexcept override { return true; }
 
-    void AddEvent(int object_id, int owner_id);
+    void AddEvent(UniverseObjectID object_id, EmpireID owner_id);
 
     struct IncapacitationDetail : public CombatEvent {
         [[nodiscard]] constexpr IncapacitationDetail() noexcept = default;
         [[nodiscard]] constexpr explicit IncapacitationDetail(
-            int id_, UniverseObjectType obj_type_ = UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE) noexcept :
+            UniverseObjectID id_, UniverseObjectType obj_type_ = UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE) noexcept :
             id(id_), object_type(obj_type_)
         {}
 
         [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override
-        { return std::string{"incapacitation of id "} + std::to_string(id); }
+        { return std::string{"incapacitation of id "} + to_string(id); }
 
-        [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
+        [[nodiscard]] std::string CombatLogDescription(EmpireID viewing_empire_id, const ScriptingContext& context) const override;
 
-        [[nodiscard]] constexpr operator int() const noexcept { return id; }
+        [[nodiscard]] constexpr explicit operator UniverseObjectID() const noexcept { return id; }
 
-        int id = INVALID_OBJECT_ID;
+        UniverseObjectID id = INVALID_OBJECT_ID;
         UniverseObjectType object_type = UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE;
+
+        template <typename Archive>
+        friend void serialize(Archive&, IncapacitationDetail&, unsigned int const);
     };
 
 private:
-    std::vector<std::pair<int, std::vector<IncapacitationDetail>>> events;
+    std::vector<std::pair<EmpireID, std::vector<IncapacitationDetail>>> events;
     UniverseObjectType objects_type = UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE;
 
     template <typename Archive>
@@ -234,15 +239,15 @@ struct FO_COMMON_API FightersAttackFightersEvent : public CombatEvent {
     [[nodiscard]] FightersAttackFightersEvent() = default;
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
-    [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
+    [[nodiscard]] std::string CombatLogDescription(EmpireID viewing_empire_id, const ScriptingContext& context) const override;
     [[nodiscard]] bool IsEmpty() const noexcept override { return events.empty(); }
 
-    void AddEvent(int attacker_empire_, int target_empire_)
+    void AddEvent(EmpireID attacker_empire_, EmpireID target_empire_)
     { events[{attacker_empire_, target_empire_}] += 1; }
 
 private:
     // Store the number of each of the identical fighter combat events.
-    std::map<std::pair<int, int>, unsigned int> events; // indexed by {attacker_empire, target_empire} -> count of such attacks
+    std::map<std::pair<EmpireID, EmpireID>, unsigned int> events; // indexed by {attacker_empire, target_empire} -> count of such attacks
 
     template <typename Archive>
     friend void serialize(Archive&, FightersAttackFightersEvent&, unsigned int const);
@@ -252,19 +257,19 @@ private:
 /** Created when a fighter is launched. */
 struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
     [[nodiscard]] constexpr FighterLaunchEvent() noexcept = default;
-    [[nodiscard]] constexpr FighterLaunchEvent(int launched_from_id_, int fighter_owner_empire_id_, int number_launched_) noexcept :
+    [[nodiscard]] constexpr FighterLaunchEvent(UniverseObjectID launched_from_id_, EmpireID fighter_owner_empire_id_, int number_launched_) noexcept :
         fighter_owner_empire_id(fighter_owner_empire_id_),
         launched_from_id(launched_from_id_),
         number_launched(number_launched_)
     {}
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
-    [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
-    [[nodiscard]] std::optional<int> PrincipalFaction(int viewing_empire_id) const noexcept override { return fighter_owner_empire_id; }
+    [[nodiscard]] std::string CombatLogDescription(EmpireID viewing_empire_id, const ScriptingContext& context) const override;
+    [[nodiscard]] std::optional<EmpireID> PrincipalFaction(EmpireID viewing_empire_id) const noexcept override { return fighter_owner_empire_id; }
     [[nodiscard]] bool IsEmpty() const noexcept override { return false; }
 
-    int fighter_owner_empire_id = ALL_EMPIRES;
-    int launched_from_id = INVALID_OBJECT_ID;
+    EmpireID fighter_owner_empire_id = ALL_EMPIRES;
+    UniverseObjectID launched_from_id = INVALID_OBJECT_ID;
     int number_launched = 0;
 };
 
@@ -273,32 +278,32 @@ struct FO_COMMON_API FighterLaunchesEvent : public CombatEvent {
     [[nodiscard]] CONSTEXPR_VEC FighterLaunchesEvent() noexcept = default;
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
-    [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
-    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(int viewing_empire_id) const override;
+    [[nodiscard]] std::string CombatLogDescription(EmpireID viewing_empire_id, const ScriptingContext& context) const override;
+    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(EmpireID viewing_empire_id) const override;
     [[nodiscard]] bool IsEmpty() const noexcept override {
         static constexpr auto second_is_empty = [](const auto& c) noexcept { return c.second.empty(); };
         return events.empty() || std::all_of(events.begin(), events.end(), second_is_empty);
     }
 
-    void AddEvent(int from_id, int fighter_owner_empire_id, int count);
+    void AddEvent(UniverseObjectID from_id, EmpireID fighter_owner_empire_id, int count);
 
     struct FighterLaunchDetail : public CombatEvent {
         [[nodiscard]] constexpr FighterLaunchDetail() noexcept = default;
-        [[nodiscard]] constexpr FighterLaunchDetail(int from_id_, int count_) noexcept :
+        [[nodiscard]] constexpr FighterLaunchDetail(UniverseObjectID from_id_, int count_) noexcept :
             from_id(from_id_), count(count_)
         {}
 
         [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override
-        { return std::string{"launched "} + std::to_string(count) + " from " + std::to_string(from_id); }
+        { return std::string{"launched "} + std::to_string(count) + " from " + to_string(from_id); }
 
-        [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
+        [[nodiscard]] std::string CombatLogDescription(EmpireID viewing_empire_id, const ScriptingContext& context) const override;
 
-        int from_id = INVALID_OBJECT_ID;
+        UniverseObjectID from_id = INVALID_OBJECT_ID;
         int count = 0;
     };
 
 private:
-    std::vector<std::pair<int, std::vector<FighterLaunchDetail>>> events; // .first are launching empires
+    std::vector<std::pair<EmpireID, std::vector<FighterLaunchDetail>>> events; // .first are launching empires
 
     template <typename Archive>
     friend void serialize(Archive&, FighterLaunchesEvent&, unsigned int const);
@@ -310,14 +315,14 @@ struct FO_COMMON_API FightersDestroyedEvent : public CombatEvent {
     [[nodiscard]] FightersDestroyedEvent() = default;
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
-    [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
+    [[nodiscard]] std::string CombatLogDescription(EmpireID viewing_empire_id, const ScriptingContext& context) const override;
     [[nodiscard]] bool IsEmpty() const noexcept override { return true; }
 
-    void AddEvent(int target_empire_) { events[target_empire_] += 1; }
+    void AddEvent(EmpireID target_empire_) { events[target_empire_] += 1; }
 
 private:
     // for each empire ID that owned fighter(s), the number of destroyed fighters
-    std::map<int, unsigned int> events;
+    std::map<EmpireID, unsigned int> events;
 
     template <typename Archive>
     friend void serialize(Archive&, FightersDestroyedEvent&, unsigned int const);
@@ -328,12 +333,12 @@ private:
   * It may have some WeaponFire sub-events.*/
 struct FO_COMMON_API WeaponsPlatformEvent : public CombatEvent {
     [[nodiscard]] WeaponsPlatformEvent() = default;
-    [[nodiscard]] WeaponsPlatformEvent(int attacker_id_, int attacker_owner_id_) :
+    [[nodiscard]] WeaponsPlatformEvent(UniverseObjectID attacker_id_, EmpireID attacker_owner_id_) :
         attacker_id(attacker_id_),
         attacker_owner_id(attacker_owner_id_)
     {}
 
-    void AddEvent(int target_id, int target_owner_id_, std::string weapon_name_,
+    void AddEvent(UniverseObjectID target_id, EmpireID target_owner_id_, std::string weapon_name_,
                   float power_, float shield_, float damage_)
     {
         events[target_id].emplace_back(attacker_id, target_id, std::move(weapon_name_),
@@ -341,14 +346,14 @@ struct FO_COMMON_API WeaponsPlatformEvent : public CombatEvent {
     }
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
-    [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
-    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(int viewing_empire_id) const override;
+    [[nodiscard]] std::string CombatLogDescription(EmpireID viewing_empire_id, const ScriptingContext& context) const override;
+    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(EmpireID viewing_empire_id) const override;
     [[nodiscard]] bool IsEmpty() const noexcept override { return events.empty(); }
-    [[nodiscard]] std::optional<int> PrincipalFaction(int viewing_empire_id) const noexcept override { return attacker_owner_id; }
+    [[nodiscard]] std::optional<EmpireID> PrincipalFaction(EmpireID viewing_empire_id) const noexcept override { return attacker_owner_id; }
 
-    int attacker_id = INVALID_OBJECT_ID;
-    int attacker_owner_id = ALL_EMPIRES;
-    std::map<int, std::vector<WeaponFireEvent>> events; // indexed by target ID
+    UniverseObjectID attacker_id = INVALID_OBJECT_ID;
+    EmpireID attacker_owner_id = ALL_EMPIRES;
+    std::map<UniverseObjectID, std::vector<WeaponFireEvent>> events; // indexed by target ID
 
 private:
     template <typename Archive>
@@ -364,8 +369,8 @@ struct FO_COMMON_API BoutEvent : public CombatEvent {
     {}
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
-    [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
-    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(int viewing_empire_id) const override;
+    [[nodiscard]] std::string CombatLogDescription(EmpireID viewing_empire_id, const ScriptingContext& context) const override;
+    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(EmpireID viewing_empire_id) const override;
     [[nodiscard]] bool FlattenSubEvents() const noexcept override { return true; }
 
     [[nodiscard]] bool IsEmpty() const noexcept override {

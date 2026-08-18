@@ -121,6 +121,14 @@ namespace {
         return retval;
     }
 
+    [[nodiscard]] CONSTEXPR_FROM_CHARS UniverseObjectID ToInt(std::string_view sv, UniverseObjectID default_result)
+        noexcept(noexcept(ToInt("", -1)))
+    { return UniverseObjectID{ToInt(sv, Value(default_result))}; }
+
+    [[nodiscard]] CONSTEXPR_FROM_CHARS EmpireID ToInt(std::string_view sv, EmpireID default_result)
+        noexcept(noexcept(ToInt("", -1)))
+    { return EmpireID{ToInt(sv, Value(default_result))}; }
+
 #if defined(__cpp_lib_constexpr_charconv)
     static_assert(ToInt("1") == 1 && ToInt("banana") == -1 &&
                   ToInt("-42") == -42 && ToInt(std::string_view{}) == -1);
@@ -184,6 +192,9 @@ namespace {
 #endif
         }
     }
+
+    auto ToChars(UniverseObjectID t) { return ToChars(Value(t)); }
+    auto ToChars(EmpireID t) { return ToChars(Value(t)); }
 }
 
 namespace {
@@ -272,7 +283,7 @@ namespace {
 
         const Encyclopedia& encyclopedia = GetEncyclopedia();
         const auto& app = GetApp();
-        const int client_empire_id = app.EmpireID();
+        const auto client_empire_id = app.GetEmpireID();
         const ScriptingContext& context = app.GetContext();
         const Universe& universe = context.ContextUniverse();
         const ObjectMap& objects = context.ContextObjects();
@@ -421,7 +432,7 @@ namespace {
             const auto& homeworlds{sm.GetSpeciesHomeworldsMap()};
 
             for (const auto& species_name : sm.AllSpecies() | range_keys) {
-                std::set<int> known_homeworlds;
+                std::set<UniverseObjectID> known_homeworlds;
                 std::string species_entry = LinkTaggedText(VarText::SPECIES_TAG, species_name).append(" ");
 
                 // TODO: stealthy worlds should be hidden on the server side and not show up
@@ -433,7 +444,7 @@ namespace {
                     std::string homeworld_info;
                     species_entry.append("(").append(ToChars(this_species_homeworlds.size())).append("):  ");
                     bool first = true;
-                    for (int homeworld_id : this_species_homeworlds) {
+                    for (auto homeworld_id : this_species_homeworlds) {
                         if (first) first = false;
                         else homeworld_info.append(",  ");
                         if (auto homeworld = objects.get<Planet>(homeworld_id)) {
@@ -563,7 +574,7 @@ namespace {
                 retval.emplace_back(std::piecewise_construct,
                                     std::forward_as_tuple(ship_name),
                                     std::forward_as_tuple(LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name).append("  "),
-                                                          ToChars(ship->ID())));
+                                                          ToChars(Value(ship->ID()))));
             }
 
         }
@@ -1167,7 +1178,7 @@ void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, cons
     auto& context = app.GetContext();
     auto& objects = context.ContextObjects();
     auto& universe = context.ContextUniverse();
-    const auto client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     auto& ui = app.GetUI();
 
     try {
@@ -1235,9 +1246,10 @@ void EncyclopediaDetailPanel::HandleLinkDoubleClick(const std::string& link_type
     auto& app = GetApp();
     auto& context = app.GetContext();
     auto& universe = context.ContextUniverse();
-    const auto client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     auto& ui = app.GetUI();
-    const auto data_int = [&data](const int invalid_result = INVALID_OBJECT_ID) { return ToInt(data, invalid_result); };
+
+    const auto data_int = [&data]<typename T = UniverseObjectID>(T invalid_result = T{-1}) { return ToInt(data, invalid_result); };
 
     try {
         if (link_type == VarText::PLANET_ID_TAG) {
@@ -1344,7 +1356,7 @@ namespace {
         return retval;
     }
 
-    [[nodiscard]] int DefaultLocationForEmpire(int empire_id, const ScriptingContext& context) {
+    [[nodiscard]] UniverseObjectID DefaultLocationForEmpire(EmpireID empire_id, const ScriptingContext& context) {
         if (empire_id == ALL_EMPIRES)
             return INVALID_OBJECT_ID;
 
@@ -1502,14 +1514,14 @@ namespace {
             return;
         }
         auto& app = GetApp();
-        const int client_empire_id = app.EmpireID();
+        const auto client_empire_id = app.GetEmpireID();
         const auto& context = app.GetContext();
 
         // Ship Parts
         if (!only_description) {
             name = UserString(item_name);
             texture = app.GetUI().PartIcon(item_name);
-            int default_location_id = DefaultLocationForEmpire(client_empire_id, context);
+            const UniverseObjectID default_location_id = DefaultLocationForEmpire(client_empire_id, context);
             turns = part->ProductionTime(client_empire_id, default_location_id, context);
             cost = part->ProductionCost(client_empire_id, default_location_id, context);
             cost_units = UserString("ENC_PP");
@@ -1582,14 +1594,14 @@ namespace {
             return;
         }
         auto& app = GetApp();
-        const int client_empire_id = app.EmpireID();
+        const auto client_empire_id = app.GetEmpireID();
         const auto& context = app.GetContext();
 
         // Ship Hulls
         if (!only_description) {
             name = UserString(item_name);
             texture = app.GetUI().HullTexture(item_name);
-            int default_location_id = DefaultLocationForEmpire(client_empire_id, context);
+            UniverseObjectID default_location_id = DefaultLocationForEmpire(client_empire_id, context);
             turns = hull->ProductionTime(client_empire_id, default_location_id, context);
             cost = hull->ProductionCost(client_empire_id, default_location_id, context);
             cost_units = UserString("ENC_PP");
@@ -1671,7 +1683,7 @@ namespace {
         }
 
         auto& app = GetApp();
-        const int client_empire_id = app.EmpireID();
+        const auto client_empire_id = app.GetEmpireID();
         auto& ui = app.GetUI();
 
         // Technologies
@@ -1755,7 +1767,7 @@ namespace {
         }
 
         auto& app = GetApp();
-        const int client_empire_id = app.EmpireID();
+        const auto client_empire_id = app.GetEmpireID();
 
         // Policies
         if (!only_description) {
@@ -1848,11 +1860,11 @@ namespace {
             return;
         }
         auto& app = GetApp();
-        const int client_empire_id = app.EmpireID();
+        const auto client_empire_id = app.GetEmpireID();
         const ScriptingContext& context = app.GetContext();
         auto& ui = app.GetUI();
 
-        int this_location_id = INVALID_OBJECT_ID;
+        UniverseObjectID this_location_id = INVALID_OBJECT_ID;
         if (auto map_wnd = ui.GetMapWndConst())
             this_location_id = map_wnd->SelectedPlanetID();
         if (this_location_id == INVALID_OBJECT_ID && !only_description)
@@ -1943,7 +1955,7 @@ namespace {
             return;
         }
         auto& app = GetApp();
-        const int client_empire_id = app.EmpireID();
+        const auto client_empire_id = app.GetEmpireID();
         const Universe& u = app.GetContext().ContextUniverse();
         const ObjectMap& objects = app.GetContext().ContextObjects();
 
@@ -2024,7 +2036,7 @@ namespace {
                                             std::string&/* specific_type*/, std::string& detailed_description,
                                             GG::Clr&/* color*/, bool only_description = false)
     {
-        const int empire_id = ToInt(item_name, ALL_EMPIRES);
+        const EmpireID empire_id = ToInt(item_name, ALL_EMPIRES);
         const auto& app = GetApp();
         const auto& context = app.GetContext();
         const auto empire = context.GetEmpire(empire_id);
@@ -2033,7 +2045,7 @@ namespace {
             return;
         }
 
-        const int client_empire_id = app.EmpireID();
+        const auto client_empire_id = app.GetEmpireID();
         const Universe& universe = context.ContextUniverse();
         const ObjectMap& objects = context.ContextObjects();
 
@@ -2179,7 +2191,7 @@ namespace {
         }
 
         // Issued orders this turn
-        if (empire_id == GetApp().EmpireID())
+        if (empire_id == GetApp().GetEmpireID())
             detailed_description.append("\n\n").append(UserString("ISSUED_ORDERS"))
                                 .append("\n").append(GetApp().Orders().Dump());
 
@@ -2427,7 +2439,7 @@ namespace {
         const Universe& universe = context.ContextUniverse();
         const ObjectMap& objects = context.ContextObjects();
         const EmpireManager& empires = context.Empires();
-        const int client_empire_id = app.EmpireID();
+        const auto client_empire_id = app.GetEmpireID();
 
 
         if (!only_description) {
@@ -2500,7 +2512,7 @@ namespace {
             bool first = true;
             // TODO: alphabetical sorting order to make the list better readable
             // TODO: stealthy worlds should be hidden on the server side and not show up as clear text here, only when the empire has sufficient detection strength
-            for (int hw_id : homeworlds.at(species->Name())) {
+            for (auto hw_id : homeworlds.at(species->Name())) {
                 if (first) first = false;
                 else detailed_description.append(",  ");
                 if (auto homeworld = objects.get<Planet>(hw_id))
@@ -2544,7 +2556,7 @@ namespace {
                     detailed_description.append(LinkTaggedIDText(VarText::EMPIRE_ID_TAG, op_id, empire->Name()));
                 else
                     detailed_description.append(boost::io::str(FlexibleFormat(UserString("UNKNOWN_EMPIRE"))
-                                                               % op_id));
+                                                               % Value(op_id)));
                 detailed_description.append(" : Opinion: ").append(DoubleToString(opinion.Initial(), 3, false))
                     .append(" : Target Opinion: ").append(DoubleToString(target.Initial(), 3, false))
                     .append("\n");
@@ -2657,7 +2669,7 @@ namespace {
 
         detailed_description.append("\n\n").append(UserString("KNOWN_FIELDS_OF_THIS_TYPE")).append("\n");
         if (!current_fields.empty()) {
-            const int client_empire_id = app.EmpireID();
+            const auto client_empire_id = app.GetEmpireID();
             for (auto* obj : current_fields) {
                 auto TEXT_TAG = VarText::FIELD_ID_TAG;
                 detailed_description.append(
@@ -2802,7 +2814,7 @@ namespace {
 #endif
 
 
-    auto GetShotsAndSpeciesAndDR(const ScriptingContext& context, const ObjectMap& objects, const ClientUI& ui, int client_empire_id) {
+    auto GetShotsAndSpeciesAndDR(const ScriptingContext& context, const ObjectMap& objects, const ClientUI& ui, EmpireID client_empire_id) {
         const double tech_level = boost::algorithm::clamp(context.current_turn / 400.0, 0.0, 1.0);
         const double scaling = GetGameRules().Get<double>("RULE_SHIP_WEAPON_DAMAGE_FACTOR");
         const float typical_shot = (3 + 27 * tech_level) * scaling;
@@ -2825,7 +2837,7 @@ namespace {
         }
 
         FleetUIManager& fleet_manager = FleetUIManager::GetFleetUIManager();
-        int selected_ship = fleet_manager.SelectedShipID();
+        auto selected_ship = fleet_manager.SelectedShipID();
         const FleetWnd* fleet_wnd = fleet_manager.ActiveFleetWnd();
         if ((selected_ship == INVALID_OBJECT_ID) && fleet_wnd) {
             const auto selected_fleets = fleet_wnd->SelectedFleetIDs();
@@ -2833,7 +2845,7 @@ namespace {
             if (!selected_ships.empty()) {
                 selected_ship = *selected_ships.begin();
             } else {
-                int selected_fleet_id = INVALID_OBJECT_ID;
+                auto selected_fleet_id = INVALID_OBJECT_ID;
                 if (selected_fleets.size() == 1) 
                     selected_fleet_id = *selected_fleets.begin();
                 else if (!fleet_wnd->FleetIDs().empty())
@@ -2845,7 +2857,7 @@ namespace {
             }
         }
 
-        std::vector<int> chosen_ships;
+        std::vector<UniverseObjectID> chosen_ships;
         if (selected_ship != INVALID_OBJECT_ID) {
             chosen_ships.push_back(selected_ship);
             if (const auto* this_ship = objects.getRaw<const Ship>(selected_ship)) {
@@ -2901,7 +2913,7 @@ namespace {
     {
         const int design_id = ToInt(item_name, INVALID_DESIGN_ID);
         auto& app = GetApp();
-        const int client_empire_id = app.EmpireID();
+        const auto client_empire_id = app.GetEmpireID();
         ScriptingContext& context = app.GetContext();
         Universe& universe = context.ContextUniverse();
         ObjectMap& objects = context.ContextObjects();
@@ -2921,7 +2933,7 @@ namespace {
         if (!only_description) {
             name = design.Name();
             texture = ClientUI::ShipDesignIcon(design);
-            int default_location_id = DefaultLocationForEmpire(client_empire_id, context);
+            UniverseObjectID default_location_id = DefaultLocationForEmpire(client_empire_id, context);
             turns = design.ProductionTime(client_empire_id, default_location_id, context);
             cost = design.ProductionCost(client_empire_id, default_location_id, context);
             cost_units = UserString("ENC_PP");
@@ -2979,7 +2991,7 @@ namespace {
                                             GG::Clr&/* color*/, std::weak_ptr<const ShipDesign>& inc_design,
                                             bool only_description = false)
     {
-        int client_empire_id = GetApp().EmpireID();
+        const auto client_empire_id = GetApp().GetEmpireID();
         general_type = UserString("ENC_INCOMPETE_SHIP_DESIGN");
 
         auto incomplete_design = inc_design.lock();
@@ -3009,7 +3021,7 @@ namespace {
         else
             texture = ui.GetTexture(ClientUI::ArtDir() / design_icon, true);
 
-        const int default_location_id = DefaultLocationForEmpire(client_empire_id, context);
+        const UniverseObjectID default_location_id = DefaultLocationForEmpire(client_empire_id, context);
         universe.InsertShipDesignID(*incomplete_design, client_empire_id, incomplete_design->ID());
         detailed_description = GetDetailedDescriptionBase(*incomplete_design);
 
@@ -3031,8 +3043,8 @@ namespace {
         }
 
         FleetUIManager& fleet_manager = FleetUIManager::GetFleetUIManager();
-        std::set<int> chosen_ships;
-        const int selected_ship = fleet_manager.SelectedShipID();
+        std::set<UniverseObjectID> chosen_ships;
+        const UniverseObjectID selected_ship = fleet_manager.SelectedShipID();
         if (selected_ship != INVALID_OBJECT_ID) {
             chosen_ships.insert(selected_ship);
             if (auto this_ship = objects.getRaw<const Ship>(selected_ship)) {
@@ -3087,7 +3099,7 @@ namespace {
         }
 
         universe.Delete(temp->ID());
-        universe.DeleteShipDesign(TEMPORARY_OBJECT_ID);
+        universe.DeleteShipDesign(incomplete_design->ID());
     }
 
     void RefreshDetailPanelObjectTag(       const std::string&/* item_type*/, const std::string& item_name,
@@ -3097,7 +3109,7 @@ namespace {
                                             std::string&/* specific_type*/, std::string& detailed_description,
                                             GG::Clr&/* color*/, bool only_description = false)
     {
-        int object_id = ToInt(item_name, INVALID_OBJECT_ID);
+        UniverseObjectID object_id = ToInt(item_name, INVALID_OBJECT_ID);
         const auto& app = GetApp();
 
         auto obj = app.GetContext().ContextObjects().get(object_id);
@@ -3111,7 +3123,7 @@ namespace {
         if (only_description)
             return;
 
-        name = obj->PublicName(app.EmpireID(), app.GetContext().ContextUniverse());
+        name = obj->PublicName(app.GetEmpireID(), app.GetContext().ContextUniverse());
         general_type = GeneralTypeOfObject(obj->ObjectType());
         if (general_type.empty()) {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't interpret object: " << obj->Name()
@@ -3143,7 +3155,7 @@ namespace {
             }
         }
 
-        const auto empire_id = app.EmpireID();
+        const auto empire_id = app.GetEmpireID();
         const auto empire = empires.GetEmpire(empire_id);
         if (!empire)
             return retval;
@@ -3204,10 +3216,10 @@ namespace {
         const auto original_owner_id = planet->Owner();
         const auto orig_initial_target_pop = planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Initial();
 
-        const std::vector<int> planet_id_vec{planet->ID()};
+        const std::vector<UniverseObjectID> planet_id_vec{planet->ID()};
 
         auto& app = GetApp();
-        const auto empire_id = app.EmpireID();
+        const auto empire_id = app.GetEmpireID();
         ScriptingContext& context = app.GetContext();
         Universe& universe = context.ContextUniverse();
         UniverseObjectSignalInhibitor scoped_signal_inhibitor{universe};
@@ -3482,11 +3494,13 @@ namespace {
 
         general_type = UserString("SP_PLANET_SUITABILITY");
 
-        auto& context = GetApp().GetContext();
+        auto& app = GetApp();
+        auto& context = app.GetContext();
         auto& objects = context.ContextObjects();
         auto& universe = context.ContextUniverse();
+        const auto client_empire_id = app.GetEmpireID();
 
-        int planet_id = ToInt(item_name, INVALID_OBJECT_ID);
+        UniverseObjectID planet_id = ToInt(item_name, INVALID_OBJECT_ID);
         auto planet = objects.get<Planet>(planet_id); // non-const so it can be test modified to check results for various species
         if (!planet) {
             ErrorLogger() << "RefreshDetailPlanetSuitability couldn't find planet with id " << planet_id;
@@ -3494,7 +3508,7 @@ namespace {
         }
 
         // show image of planet environment at the top of the suitability report
-        auto filename = PlanetEnvFilename(planet->Type(), planet_id);
+        auto filename = PlanetEnvFilename(planet->Type(), std::abs(Value(planet_id)));
         if (!filename.empty()) {
             auto env_img_tag = std::string{"<img src=\"encyclopedia/planet_environments/"}
                                 .append(filename).append("\"></img>");
@@ -3503,7 +3517,7 @@ namespace {
         }
 
         try {
-            name = planet->PublicName(planet_id, universe);
+            name = planet->PublicName(client_empire_id, universe);
 
             const auto species_names = ReportedSpeciesForPlanet(*planet);
             const auto target_population_species = SpeciesEnvByTargetPop(planet, species_names);
@@ -3523,7 +3537,7 @@ namespace {
                 if (target_pop > 0) {
                     if (!positive_header_placed) {
                         auto pos_header = str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_POSITIVE_HEADER"))
-                                              % planet->PublicName(planet_id, universe));
+                                              % planet->PublicName(client_empire_id, universe));
                         TraceLogger() << "Suitability report positive header \"" << pos_header << "\"";
                         detailed_description.append(pos_header);
                         positive_header_placed = true;
@@ -3542,7 +3556,7 @@ namespace {
                             detailed_description += "\n\n";
 
                         auto neg_header = str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_NEGATIVE_HEADER"))
-                                              % planet->PublicName(planet_id, universe));
+                                              % planet->PublicName(client_empire_id, universe));
                         TraceLogger() << "Suitability report regative header \"" << neg_header << "\"";
                         detailed_description.append(neg_header);
                         negative_header_placed = true;
@@ -4480,8 +4494,8 @@ void EncyclopediaDetailPanel::SetText(const std::string& text, bool lookup_in_st
         AddItem(TextLinker::ENCYCLOPEDIA_TAG, (text.empty() || !lookup_in_stringtable) ? text : UserString(text));
 }
 
-void EncyclopediaDetailPanel::SetPlanet(int planet_id) {
-    int current_item_id =
+void EncyclopediaDetailPanel::SetPlanet(UniverseObjectID planet_id) {
+    auto current_item_id =
         (m_items_it != m_items.end() && m_items_it->first == PLANET_SUITABILITY_REPORT) ?
             ToInt(m_items_it->second, INVALID_OBJECT_ID) : INVALID_OBJECT_ID;
     if (planet_id == current_item_id)
@@ -4548,8 +4562,8 @@ void EncyclopediaDetailPanel::SetMeterType(MeterType meter_type) {
         AddItem("ENC_METER_TYPE", std::string{to_string(meter_type)});
 }
 
-void EncyclopediaDetailPanel::SetObject(int object_id) {
-    int current_item_id = ToInt(m_items_it->second, INVALID_OBJECT_ID);
+void EncyclopediaDetailPanel::SetObject(UniverseObjectID object_id) {
+    UniverseObjectID current_item_id = ToInt(m_items_it->second, INVALID_OBJECT_ID);
     if (object_id == current_item_id)
         return;
     AddItem(UNIVERSE_OBJECT, ToChars(object_id));
@@ -4561,8 +4575,8 @@ void EncyclopediaDetailPanel::SetObject(std::string object_id) {
     AddItem(UNIVERSE_OBJECT, std::move(object_id));
 }
 
-void EncyclopediaDetailPanel::SetEmpire(int empire_id) {
-    int current_item_id = ToInt(m_items_it->second, ALL_EMPIRES);
+void EncyclopediaDetailPanel::SetEmpire(EmpireID empire_id) {
+    EmpireID current_item_id = ToInt(m_items_it->second, ALL_EMPIRES);
     if (empire_id == current_item_id)
         return;
     AddItem("ENC_EMPIRE", ToChars(empire_id));
@@ -4636,7 +4650,7 @@ void EncyclopediaDetailPanel::SetItem(const std::shared_ptr<const UniverseObject
 { SetObject(obj ? obj->ID() : INVALID_OBJECT_ID); }
 
 void EncyclopediaDetailPanel::SetItem(const Empire* empire)
-{ SetEmpire(empire ? empire->EmpireID() : ALL_EMPIRES); }
+{ SetEmpire(empire ? empire->GetEmpireID() : ALL_EMPIRES); }
 
 void EncyclopediaDetailPanel::SetItem(const ShipDesign* design)
 { SetDesign(design ? design->ID() : INVALID_DESIGN_ID); }

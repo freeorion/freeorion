@@ -348,7 +348,9 @@ namespace {
 
     // Row for player info when loading a game
     struct LoadGamePlayerRow : PlayerRow {
-        LoadGamePlayerRow(const PlayerSetupData& player_data, int player_id, const std::map<int, SaveGameEmpireData>& save_game_empire_data, bool disabled, bool in_game) :
+        LoadGamePlayerRow(const PlayerSetupData& player_data, int player_id,
+                          const std::map<EmpireID, SaveGameEmpireData>& save_game_empire_data,
+                          bool disabled, bool in_game) :
             PlayerRow(player_data, player_id),
             m_save_game_empire_data(save_game_empire_data),
             m_initial_disabled(disabled),
@@ -490,11 +492,11 @@ namespace {
             }
         }
 
-        std::shared_ptr<EmpireColorSelector>     m_color_selector;
-        std::shared_ptr<GG::DropDownList>        m_empire_list;
-        const std::map<int, SaveGameEmpireData>& m_save_game_empire_data;
-        bool                                     m_initial_disabled;
-        bool                                     m_in_game;
+        std::shared_ptr<EmpireColorSelector>          m_color_selector;
+        std::shared_ptr<GG::DropDownList>             m_empire_list;
+        const std::map<EmpireID, SaveGameEmpireData>& m_save_game_empire_data;
+        bool                                          m_initial_disabled;
+        bool                                          m_in_game;
     };
 
     // Row for empire without assigned player

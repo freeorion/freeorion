@@ -23,8 +23,8 @@ namespace {
 
 std::string DiplomaticMessage::Dump() const {
     std::string retval;
-    retval += "Dimplomatic message from : " + std::to_string(m_sender_empire) +
-              " to: " + std::to_string(m_recipient_empire) + " about: ";
+    retval += "Dimplomatic message from : " + to_string(m_sender_empire) +
+              " to: " + to_string(m_recipient_empire) + " about: ";
     switch (m_type) {
     case Type::WAR_DECLARATION:           retval += "War Declaration";            break;
     case Type::PEACE_PROPOSAL:            retval += "Peace Proposal";             break;
@@ -46,26 +46,26 @@ bool DiplomaticMessage::IsAllowed() const {
 }
 
 
-DiplomaticMessage WarDeclarationDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
+DiplomaticMessage WarDeclarationDiplomaticMessage(EmpireID sender_empire_id, EmpireID recipient_empire_id)
 { return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::WAR_DECLARATION); }
 
-DiplomaticMessage PeaceProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
+DiplomaticMessage PeaceProposalDiplomaticMessage(EmpireID sender_empire_id, EmpireID recipient_empire_id)
 { return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::PEACE_PROPOSAL); }
 
-DiplomaticMessage AcceptPeaceDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
+DiplomaticMessage AcceptPeaceDiplomaticMessage(EmpireID sender_empire_id, EmpireID recipient_empire_id)
 { return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::ACCEPT_PEACE_PROPOSAL); }
 
-DiplomaticMessage AlliesProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
+DiplomaticMessage AlliesProposalDiplomaticMessage(EmpireID sender_empire_id, EmpireID recipient_empire_id)
 { return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::ALLIES_PROPOSAL); }
 
-DiplomaticMessage AcceptAlliesDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
+DiplomaticMessage AcceptAlliesDiplomaticMessage(EmpireID sender_empire_id, EmpireID recipient_empire_id)
 { return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::ACCEPT_ALLIES_PROPOSAL); }
 
-DiplomaticMessage EndAllianceDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
+DiplomaticMessage EndAllianceDiplomaticMessage(EmpireID sender_empire_id, EmpireID recipient_empire_id)
 { return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::END_ALLIANCE_DECLARATION); }
 
-DiplomaticMessage CancelDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
+DiplomaticMessage CancelDiplomaticMessage(EmpireID sender_empire_id, EmpireID recipient_empire_id)
 { return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::CANCEL_PROPOSAL); }
 
-DiplomaticMessage RejectProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
+DiplomaticMessage RejectProposalDiplomaticMessage(EmpireID sender_empire_id, EmpireID recipient_empire_id)
 { return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::REJECT_PROPOSAL); }

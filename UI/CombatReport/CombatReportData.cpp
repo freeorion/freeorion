@@ -9,14 +9,14 @@
 
 #include <GG/ClrConstants.h>
 
-ParticipantSummary::ParticipantSummary(int object_id_, int empire_id_, const CombatParticipantState& state) :
+ParticipantSummary::ParticipantSummary(UniverseObjectID object_id_, EmpireID empire_id_, const CombatParticipantState& state) :
     object_id(object_id_),
     empire_id(empire_id_),
     current_health(state.current_health),
     max_health(state.max_health)
 {}
 
-CombatSummary::CombatSummary(int empire_id) :
+CombatSummary::CombatSummary(EmpireID empire_id) :
     empire(GetEmpire(empire_id))
 {}
 
@@ -41,9 +41,9 @@ unsigned int CombatSummary::DestroyedUnits() const {
     return std::count_if(unit_summaries.begin(), unit_summaries.end(), is_destroyed);
 }
 
-void CombatSummary::AddUnit(int unit_id, const CombatParticipantState& state) {
+void CombatSummary::AddUnit(UniverseObjectID unit_id, const CombatParticipantState& state) {
     unit_summaries.push_back(std::make_shared<ParticipantSummary>(
-        unit_id, empire ? empire->EmpireID() : ALL_EMPIRES, state));
+        unit_id, empire ? empire->GetEmpireID() : ALL_EMPIRES, state));
 
     total_current_health += std::max(unit_summaries.back()->current_health, 0.0f);
     total_max_health += std::max(unit_summaries.back()->max_health, 0.0f);

@@ -52,7 +52,7 @@ float ResourcePool::TotalOutput() const {
                                  0.0f, std::plus{}, [](const auto& entry) { return entry.second; });
 }
 
-float ResourcePool::GroupOutput(int object_id) const {
+float ResourcePool::GroupOutput(UniverseObjectID object_id) const {
     // find group containing specified object
     auto it = range_find_if(m_connected_object_groups_resource_output,
                             [object_id](const auto& entry) { return entry.first.contains(object_id); });
@@ -69,7 +69,7 @@ float ResourcePool::TargetOutput() const {
                                  0.0f, std::plus{}, [](const auto& entry) noexcept { return entry.second; });
 }
 
-float ResourcePool::GroupTargetOutput(int object_id) const {
+float ResourcePool::GroupTargetOutput(UniverseObjectID object_id) const {
     // find group containing specified object
     auto it = range_find_if(m_connected_object_groups_resource_target_output,
                             [object_id](const auto& entry) { return entry.first.contains(object_id); });
@@ -87,7 +87,7 @@ float ResourcePool::TotalAvailable() const {
                                  m_stockpile, std::plus{}, [](const auto& entry) { return entry.second; });
 }
 
-float ResourcePool::GroupAvailable(int object_id) const {
+float ResourcePool::GroupAvailable(UniverseObjectID object_id) const {
     TraceLogger() << "ResourcePool::GroupAvailable(" << object_id << ")";
     // available is production in this group
     return GroupOutput(object_id);
@@ -97,15 +97,15 @@ std::string ResourcePool::Dump() const {
     std::string retval{"ResourcePool type = "};
     retval.append(to_string(m_type)).append(" stockpile = ").append(std::to_string(m_stockpile))
           .append(" object_ids: ");
-    for (int obj_id : m_object_ids)
-        retval.append(std::to_string(obj_id)).append(", ");
+    for (auto obj_id : m_object_ids)
+        retval.append(to_string(obj_id)).append(", ");
     return retval;
 }
 
-void ResourcePool::SetObjects(std::vector<int> object_ids) noexcept
+void ResourcePool::SetObjects(std::vector<UniverseObjectID> object_ids) noexcept
 { m_object_ids = std::move(object_ids); }
 
-void ResourcePool::SetConnectedSupplyGroups(std::set<std::set<int>> connected_system_groups) noexcept
+void ResourcePool::SetConnectedSupplyGroups(std::set<std::set<UniverseObjectID>> connected_system_groups) noexcept
 { m_connected_system_groups = std::move(connected_system_groups); }
 
 void ResourcePool::SetStockpile(float d) {
@@ -128,7 +128,7 @@ void ResourcePool::Update(const ObjectMap& objects) {
 
     // temporary storage: indexed by group of systems, which objects
     // are located in that system group?
-    std::map<int_flat_set, std::pair<boost::container::flat_set<const UniverseObject*>, int_flat_set>> system_groups_to_object_groups;
+    std::map<id_flat_set, std::pair<boost::container::flat_set<const UniverseObject*>, id_flat_set>> system_groups_to_object_groups;
 
 
     // for every object, find if a connected system group contains the object's
@@ -136,14 +136,14 @@ void ResourcePool::Update(const ObjectMap& objects) {
     // of objects.  If no group contains the object, place the object in its own
     // single-object group.
     for (auto* obj : objects.findRaw<const UniverseObject>(m_object_ids)) {
-        const int object_id = obj->ID();
-        const int object_system_id = obj->SystemID();
+        const auto object_id = obj->ID();
+        const auto object_system_id = obj->SystemID();
         // can't generate resources when not in a system
         if (object_system_id == INVALID_OBJECT_ID)
             continue;
 
         // is object's system in a system group?
-        int_flat_set object_system_group = [&]() -> int_flat_set {
+        id_flat_set object_system_group = [&]() -> id_flat_set {
             for (const auto& sys_group : m_connected_system_groups)
                 if (sys_group.find(object_system_id) != sys_group.end())
                     return {boost::container::ordered_unique_range, sys_group.begin(), sys_group.end()};

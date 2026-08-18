@@ -10,6 +10,7 @@
 #include <map>
 
 #include "Export.h"
+#include "../universe/ConstantsFwd.h"
 
 class OrderSet;
 class Universe;
@@ -21,12 +22,21 @@ typedef boost::archive::binary_oarchive freeorion_bin_oarchive;
 typedef boost::archive::xml_iarchive freeorion_xml_iarchive;
 typedef boost::archive::xml_oarchive freeorion_xml_oarchive;
 
+namespace boost::serialization {
+    inline decltype(auto) make_nvp(const char* n, strong_id_typedef auto& v) noexcept
+    { return make_nvp(n, UnderRef(v)); }
+
+    inline decltype(auto) make_nvp(const char* n, const strong_id_typedef auto& v) noexcept
+    { return make_nvp(n, UnderRef(v)); }
+}
+
+
 //! This must be set to the encoding empire's id when serializing various
 //! gamestate information, so that only the relevant info is serialized for the
 //! intended recieipient. This is implemented this way so that we don't need to
 //! write custom boost::serialization classes that implement empire-dependent
 //! visibility.
-FO_COMMON_API int& GlobalSerializationEncodingForEmpire();
+FO_COMMON_API EmpireID& GlobalSerializationEncodingForEmpire();
 
 //! @warning
 //!     Do not try to serialize types that contain longs, since longs are
@@ -47,10 +57,10 @@ void Serialize(Archive& oa, const std::map<int, std::shared_ptr<UniverseObject>>
 template <typename Archive>
 void Serialize(Archive& oa, const OrderSet& order_set);
 
-//! Serialize @p eov to output archive @p oa.
-template <typename Archive>
-FO_COMMON_API void Serialize(Archive& ia, const std::map<int, Visibilities>& eov);
-
+//! (De)Serialize @p eov to/from archive @p a.
+template <typename Archive, typename EOV>
+FO_COMMON_API void SerializeEmpireObjectVisMap(Archive& a, EOV& eov, bool old_map_format = false,
+                                               const char* xml_tag = "empire_object_visibility");
 
 //! Deserialize @p universe from input archive @p ia.
 template <typename Archive>
@@ -63,11 +73,6 @@ void Deserialize(Archive& ia, std::map<int, std::shared_ptr<UniverseObject>>& ob
 //! Deserialize @p order_set from input archive @p ia.
 template <typename Archive>
 void Deserialize(Archive& ia, OrderSet& order_set);
-
-//! Deserialize @p eov from input archive @p ia.
-template <typename Archive>
-FO_COMMON_API void Deserialize(Archive& ia, std::map<int, Visibilities>& eov, bool old_map_format, const char* xml_tag = nullptr);
-
 
 struct ChatHistoryEntity;
 

@@ -139,7 +139,7 @@ struct FO_COMMON_API Condition {
     [[nodiscard]] virtual bool EvalAny(const ScriptingContext& parent_context,
                                        std::span<const UniverseObjectCXBase*> candidates) const;
     [[nodiscard]] virtual bool EvalAny(const ScriptingContext& parent_context,
-                                       std::span<const int> candidate_ids) const
+                                       std::span<const UniverseObjectID> candidate_ids) const
     {
         auto objs = parent_context.ContextObjects().findRaw<UniverseObjectCXBase>(candidate_ids);
         return EvalAny(parent_context, objs);

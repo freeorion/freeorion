@@ -6,7 +6,11 @@
 #include "../combat/CombatEvents.h"
 #include "../combat/CombatLogManager.h"
 
+#include <concepts>
 #include <numeric>
+
+using boost::serialization::make_nvp;
+using boost::serialization::base_object;
 
 namespace {
     DeclareThreadSafeLogger(combat_log);
@@ -34,7 +38,7 @@ namespace {
     // for backwards compatability
     struct BoutBeginEvent final : public CombatEvent {
         std::string DebugString(const ScriptingContext&) const override { return ""; }
-        std::string CombatLogDescription(int, const ScriptingContext&) const override { return ""; }
+        std::string CombatLogDescription(EmpireID, const ScriptingContext&) const override { return ""; }
         int bout = 0;
     };
 }
@@ -42,7 +46,6 @@ namespace {
 template <typename Archive>
 void serialize(Archive& ar, BoutBeginEvent& obj, unsigned int const)
 {
-    using namespace boost::serialization;
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
     ar & make_nvp("bout", obj.bout);
 }
@@ -60,18 +63,16 @@ namespace {
     struct IncapacitationEvent : public CombatEvent {
         constexpr IncapacitationEvent() noexcept = default;
         std::string DebugString(const ScriptingContext&) const override { return ""; }
-        std::string CombatLogDescription(int, const ScriptingContext&) const override { return ""; }
+        std::string CombatLogDescription(EmpireID, const ScriptingContext&) const override { return ""; }
 
-        int object_id = INVALID_OBJECT_ID;
-        int object_owner_id = ALL_EMPIRES;
+        int object_id = Value(INVALID_OBJECT_ID);
+        int object_owner_id = Value(ALL_EMPIRES);
     };
 }
 
 template <typename Archive>
 void serialize(Archive& ar, IncapacitationEvent& obj, unsigned int const version)
 {
-    using namespace boost::serialization;
-
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
 
     if constexpr (Archive::is_loading::value) {
@@ -106,8 +107,6 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Incapac
 template <typename Archive>
 void serialize(Archive& ar, BoutEvent& obj, unsigned int const version)
 {
-    using namespace boost::serialization;
-
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
     ar & make_nvp("bout", obj.bout);
 
@@ -130,7 +129,7 @@ void serialize(Archive& ar, BoutEvent& obj, unsigned int const version)
                     else if (auto wpfe = std::dynamic_pointer_cast<WeaponsPlatformEvent>(sub_event))
                         obj.weapons_platform_firings.AddEvent(std::move(wpfe));
                     else if (auto ie = std::dynamic_pointer_cast<IncapacitationEvent>(sub_event))
-                        obj.other_incapacitations.AddEvent(ie->object_id, ie->object_owner_id); // don't know type from prior serialization version events
+                        obj.other_incapacitations.AddEvent(UniverseObjectID{ie->object_id}, EmpireID{ie->object_owner_id}); // don't know type from prior serialization version events
                     else if (auto le = std::dynamic_pointer_cast<FighterLaunchEvent>(sub_event))
                         obj.fighter_launches.AddEvent(le->launched_from_id, le->fighter_owner_empire_id, le->number_launched);
                     else if (sub_event)
@@ -195,8 +194,6 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, BoutEve
 template <typename Archive>
 void serialize(Archive& ar, SimultaneousEvents& obj, unsigned int const version)
 {
-    using namespace boost::serialization;
-
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
     ar & make_nvp("events", obj.events);
 }
@@ -212,30 +209,59 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Simulta
 
 
 namespace {
-    template <typename Archive>
-    void Serialize(Archive& ar, auto& container, const char* tag, bool old_non_string_format)
-        requires std::is_same_v<int, std::decay_t<decltype(*container.begin())>>
+    template <typename Archive, typename ContainerT> requires std::is_same_v<typename ContainerT::value_type, int>
+    void Serialize(Archive& ar, ContainerT& container, const char* tag, bool old_non_string_format)
     {
         if constexpr (Archive::is_loading::value) {
             if (old_non_string_format) {
-                ar >> boost::serialization::make_nvp(tag, container);
+                ar >> make_nvp(tag, container);
             } else if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
                 std::string str;
-                ar >> boost::serialization::make_nvp(tag, str);
+                ar >> make_nvp(tag, str);
                 FillIntContainer(container, str);
             } else {
-                ar >> boost::serialization::make_nvp(tag, container);
+                ar >> make_nvp(tag, container);
             }
         } else {
             if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
                 std::string str = ToString(container);
-                ar << boost::serialization::make_nvp(tag, str);
+                ar << make_nvp(tag, str);
             } else {
-                ar << boost::serialization::make_nvp(tag, container);
+                ar << make_nvp(tag, container);
             }
         }
     }
 
+    template <typename C>
+    concept is_intlike_valued =
+        requires(C c) { Value(*c.begin()); } &&
+        std::is_integral_v<std::decay_t<decltype(Value(*std::declval<C>().begin()))>>; // instead of requires(C c) { { Value(*c.begin()) } -> std::convertible_to<int>; } to keep clang 14 happy
+    static_assert(is_intlike_valued<boost::container::flat_set<UniverseObjectID>>);
+    static_assert(is_intlike_valued<std::set<EmpireID>>);
+    static_assert(!is_intlike_valued<std::set<int>>);
+
+    template <typename Archive, typename ContainerT> requires is_intlike_valued<ContainerT>
+    void Serialize(Archive& ar, ContainerT& container, const char* tag, bool old_non_string_format)
+    {
+        if constexpr (Archive::is_loading::value) {
+            if (old_non_string_format) {
+                ar >> make_nvp(tag, container);
+            } else if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
+                std::string str;
+                ar >> make_nvp(tag, str);
+                FillIntContainer(container, str);
+            } else {
+                ar >> make_nvp(tag, container);
+            }
+        } else {
+            if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
+                std::string str = ToString(container);
+                ar << make_nvp(tag, str);
+            } else {
+                ar << make_nvp(tag, container);
+            }
+        }
+    }
 
     std::string ToString(const auto& data)
         requires requires {
@@ -290,11 +316,11 @@ namespace {
         { return GetIntFromChars<int>(buffer_end, next, default_val); };
 
         for (std::size_t idx = 0; idx < static_cast<std::size_t>(count) && next != buffer_end; ++idx) {
-            int obj_id = INVALID_OBJECT_ID;
+            int obj_id = Value(INVALID_OBJECT_ID);
             int cur_int = Meter::DEFAULT_INT;
             int max_int = Meter::DEFAULT_INT;
 
-            std::tie(obj_id, success, next) = get_int_from_chars(next, INVALID_OBJECT_ID);
+            std::tie(obj_id, success, next) = get_int_from_chars(next, Value(INVALID_OBJECT_ID));
             if (!success)
                 break;
             std::tie(cur_int, success, next) = get_int_from_chars(next, Meter::DEFAULT_INT);
@@ -318,22 +344,22 @@ namespace {
         if constexpr (Archive::is_loading::value) {
             if (old_non_string_format) {
                 std::map<int, CombatParticipantState> data;
-                ar >> boost::serialization::make_nvp(tag, data);
+                ar >> make_nvp(tag, data);
                 states.clear();
                 states.insert(boost::container::ordered_unique_range, data.begin(), data.end());
             } else if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
                 std::string str;
-                ar >> boost::serialization::make_nvp(tag, str);
+                ar >> make_nvp(tag, str);
                 FillCombatStates(states, str);
             } else {
-                ar >> boost::serialization::make_nvp(tag, states);
+                ar >> make_nvp(tag, states);
             }
         } else {
             if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
                 std::string str = ToString(states);
-                ar << boost::serialization::make_nvp(tag, str);
+                ar << make_nvp(tag, str);
             } else {
-                ar << boost::serialization::make_nvp(tag, states);
+                ar << make_nvp(tag, states);
             }
         }
     }
@@ -343,17 +369,15 @@ namespace {
 template <typename Archive>
 void serialize(Archive& ar, InitialStealthEvent& obj, unsigned int const version)
 {
-    using namespace boost::serialization;
-
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
 
     if constexpr (Archive::is_loading::value) {
         obj.empire_object_visibility.clear();
         bool old_format = version < 5;
         const char* xml_tag = old_format ? "empire_to_object_visibility" : nullptr;
-        Deserialize(ar, obj.empire_object_visibility, old_format, xml_tag);
+        SerializeEmpireObjectVisMap(ar, obj.empire_object_visibility, old_format, xml_tag);
     } else {
-        Serialize(ar, obj.empire_object_visibility);
+        SerializeEmpireObjectVisMap(ar, obj.empire_object_visibility);
     }
 }
 
@@ -402,10 +426,10 @@ namespace {
         retval.append(std::to_string(events.size()));
         for (const auto& event : events) {
             retval.append("  ")
-                  .append(std::to_string(event.attacker_id)).append(" ")
-                  .append(std::to_string(event.target_id)).append(" ")
-                  .append(std::to_string(event.attacker_empire_id)).append(" ")
-                  .append(std::to_string(event.target_observer_empire_id)).append(" ")
+                  .append(to_string(event.attacker_id)).append(" ")
+                  .append(to_string(event.target_id)).append(" ")
+                  .append(to_string(event.attacker_empire_id)).append(" ")
+                  .append(to_string(event.target_observer_empire_id)).append(" ")
                   .append(VisToChar(event.visibility))
                   .append(event.is_fighter_launch ? "l" : "n");
         }
@@ -415,8 +439,6 @@ namespace {
     template <typename Archive>
     void FillStealthChangeEventViaSharedPtrs(Archive& ar, std::vector<StealthChangeEvent::StealthChangeEventDetail>& events)
     {
-        using boost::serialization::make_nvp;
-
         using StealthChangeEventDetailPtr = std::shared_ptr<StealthChangeEvent::StealthChangeEventDetail>;
         std::map<int, std::vector<StealthChangeEventDetailPtr>> sced_sptr_map;
         ar >> make_nvp("events", sced_sptr_map);
@@ -446,16 +468,16 @@ namespace {
 
         bool success = false;
 
-        std::tie(retval.attacker_id, success, next) = get_next_int(next, INVALID_OBJECT_ID);
+        std::tie(UnderRef(retval.attacker_id), success, next) = get_next_int(next, Value(INVALID_OBJECT_ID));
         if (!success)
             return {retval, next, false};
-        std::tie(retval.target_id, success, next) = get_next_int(next, INVALID_OBJECT_ID);
+        std::tie(UnderRef(retval.target_id), success, next) = get_next_int(next, Value(INVALID_OBJECT_ID));
         if (!success)
             return {retval, next, false};
-        std::tie(retval.attacker_empire_id, success, next) = get_next_int(next, ALL_EMPIRES);
+        std::tie(UnderRef(retval.attacker_empire_id), success, next) = get_next_int(next, Value(ALL_EMPIRES));
         if (!success)
             return {retval, next, false};
-        std::tie(retval.target_observer_empire_id, success, next) = get_next_int(next, ALL_EMPIRES);
+        std::tie(UnderRef(retval.target_observer_empire_id), success, next) = get_next_int(next, Value(ALL_EMPIRES));
         if (!success)
             return {retval, next, false};
 
@@ -515,9 +537,6 @@ namespace {
 template <typename Archive>
 void serialize(Archive& ar, StealthChangeEvent& obj, unsigned int const version)
 {
-    using boost::serialization::make_nvp;
-    using boost::serialization::base_object;
-
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
     if (version < 6) {
         int ignored = -1;
@@ -556,8 +575,6 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Stealth
 template <typename Archive>
 void serialize(Archive& ar, StealthChangeEvent::StealthChangeEventDetail& obj, unsigned int const version)
 {
-    using namespace boost::serialization;
-
     ar  & make_nvp("attacker_id", obj.attacker_id)
         & make_nvp("target_id", obj.target_id)
         & make_nvp("attacker_empire_id", obj.attacker_empire_id)
@@ -582,10 +599,10 @@ namespace {
         try {
             retval.reserve(7 * (int_digits + 1) + obj.weapon_name.size());
         } catch (...) {}
-        retval.append(std::to_string(obj.attacker_id)).append(" ")
-              .append(std::to_string(obj.target_id)).append(" ")
-              .append(std::to_string(obj.attacker_owner_id)).append(" ")
-              .append(std::to_string(obj.target_owner_id)).append(" ")
+        retval.append(to_string(obj.attacker_id)).append(" ")
+              .append(to_string(obj.target_id)).append(" ")
+              .append(to_string(obj.attacker_owner_id)).append(" ")
+              .append(to_string(obj.target_owner_id)).append(" ")
               .append(std::to_string(Meter::FromFloat(obj.power))).append(" ")
               .append(std::to_string(Meter::FromFloat(obj.shield))).append(" ")
               .append(std::to_string(Meter::FromFloat(obj.damage))).append(" ")
@@ -603,16 +620,16 @@ namespace {
         const auto get_next_int = [buffer_end](const char* next, const int default_val)
         { return GetIntFromChars<int>(buffer_end, next, default_val); };
 
-        std::tie(obj.attacker_id, success, next) = get_next_int(next, INVALID_OBJECT_ID);
+        std::tie(UnderRef(obj.attacker_id), success, next) = get_next_int(next, Value(INVALID_OBJECT_ID));
         if (!success)
             return false;
-        std::tie(obj.target_id, success, next) = get_next_int(next, INVALID_OBJECT_ID);
+        std::tie(UnderRef(obj.target_id), success, next) = get_next_int(next, Value(INVALID_OBJECT_ID));
         if (!success)
             return false;
-        std::tie(obj.attacker_owner_id, success, next) = get_next_int(next, ALL_EMPIRES);
+        std::tie(UnderRef(obj.attacker_owner_id), success, next) = get_next_int(next, Value(ALL_EMPIRES));
         if (!success)
             return false;
-        std::tie(obj.target_owner_id, success, next) = get_next_int(next, ALL_EMPIRES);
+        std::tie(UnderRef(obj.target_owner_id), success, next) = get_next_int(next, Value(ALL_EMPIRES));
         if (!success)
             return false;
 
@@ -671,7 +688,6 @@ namespace {
     template <typename Archive>
     void Serialize(Archive& ar, WeaponFireEvent& obj, bool short_tags, bool include_bout_round)
     {
-        using boost::serialization::make_nvp;
         if (include_bout_round) {
             int ignored = -1;
             ar  & make_nvp(short_tags ? "b" : "bout", ignored)
@@ -691,9 +707,6 @@ namespace {
 template <typename Archive>
 void serialize(Archive& ar, WeaponFireEvent& obj, unsigned int const version)
 {
-    using boost::serialization::make_nvp;
-    using boost::serialization::base_object;
-
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
 
     if constexpr (Archive::is_loading::value) {
@@ -730,7 +743,7 @@ namespace {
     constexpr auto to_second_size = [](const auto& id_vec) noexcept { return id_vec.second.size(); };
 
     // for vectors (of pairs (of ints and vectors of castable-to-int))
-    std::string ToString(const std::vector<std::pair<int, std::vector<IncapacitationsEvent::IncapacitationDetail>>>& events) {
+    std::string ToString(const std::vector<std::pair<EmpireID, std::vector<IncapacitationsEvent::IncapacitationDetail>>>& events) {
         auto events_sizes_rng = events | range_transform(to_second_size);
         const std::size_t event_count = std::accumulate(events_sizes_rng.begin(), events_sizes_rng.end(), std::size_t{0});
 
@@ -741,10 +754,10 @@ namespace {
 
         retval.append(std::to_string(events.size()));
         for (const auto& [empire_id, objs_ids] : events) {
-            retval.append("  ").append(std::to_string(empire_id)).append(" ")
+            retval.append("  ").append(to_string(empire_id)).append(" ")
                   .append(std::to_string(objs_ids.size()));
             for (const auto& obj_id : objs_ids)
-                retval.append(" ").append(std::to_string(static_cast<int>(obj_id)));
+                retval.append(" ").append(to_string(UniverseObjectID{obj_id}));
         }
 
         return retval;
@@ -752,7 +765,7 @@ namespace {
 
     // for vectors (of pairs (of ints and vectors of wrapper-of-int))
     void FillVecOfIntAndVecOfIncapDetailEvent(
-        std::vector<std::pair<int, std::vector<IncapacitationsEvent::IncapacitationDetail>>>& events,
+        std::vector<std::pair<EmpireID, std::vector<IncapacitationsEvent::IncapacitationDetail>>>& events,
         std::string_view buffer, UniverseObjectType object_type)
     {
         const auto* const buffer_end = buffer.data() + buffer.size();
@@ -774,8 +787,8 @@ namespace {
         events.reserve(empire_count);
 
         for (std::size_t empire_idx = 0; empire_idx < empire_count && next != buffer_end; ++empire_idx) {
-            int empire_id = ALL_EMPIRES;
-            std::tie(empire_id, success, next) = get_next_int(next, ALL_EMPIRES);
+            EmpireID empire_id = ALL_EMPIRES;
+            std::tie(UnderRef(empire_id), success, next) = get_next_int(next, Value(ALL_EMPIRES));
             if (!success)
                 return;
             std::tie(count_ui, success, next) = get_next_uint(next, 0u);
@@ -789,11 +802,11 @@ namespace {
             obj_ids.reserve(id_count);
 
             for (std::size_t obj_id_idx = 0; obj_id_idx < id_count && next != buffer_end; ++obj_id_idx) {
-                int object_id = INVALID_OBJECT_ID;
-                std::tie(object_id, success, next) = get_next_int(next, INVALID_OBJECT_ID);
+                int object_id = Value(INVALID_OBJECT_ID);
+                std::tie(object_id, success, next) = get_next_int(next, Value(INVALID_OBJECT_ID));
                 if (!success)
                     return;
-                obj_ids.emplace_back(object_id, object_type);
+                obj_ids.emplace_back(UniverseObjectID{object_id}, object_type);
             }
         }
     }
@@ -801,7 +814,7 @@ namespace {
 
 template <typename Archive>
 void serialize(Archive& ar, IncapacitationsEvent::IncapacitationDetail& obj, unsigned int const)
-{ ar & boost::serialization::make_nvp("id", obj.id); }
+{ ar & make_nvp("id", obj.id); }
 
 BOOST_CLASS_EXPORT(IncapacitationsEvent::IncapacitationDetail)
 
@@ -809,9 +822,6 @@ BOOST_CLASS_EXPORT(IncapacitationsEvent::IncapacitationDetail)
 template <typename Archive>
 void serialize(Archive& ar, IncapacitationsEvent& obj, unsigned int const)
 {
-    using boost::serialization::make_nvp;
-    using boost::serialization::base_object;
-
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
     ar & make_nvp("type", obj.objects_type);
 
@@ -825,11 +835,24 @@ void serialize(Archive& ar, IncapacitationsEvent& obj, unsigned int const)
         std::string str = ToString(obj.events);
         ar << make_nvp("events", str);
     } else {
-        ar & make_nvp("events", obj.events);
+        std::vector<std::pair<int, std::vector<IncapacitationsEvent::IncapacitationDetail>>> scratch;
+
+        if constexpr (Archive::is_saving::value) {
+            scratch.reserve(obj.events.size());
+            for (auto& [eid, icaps] : obj.events)
+                scratch.emplace_back(Value(eid), icaps);
+        }
+
+        ar & make_nvp("events", scratch);
+
         if constexpr (Archive::is_loading::value) {
-            for (auto& events : obj.events | range_values)
-                for (auto& event : events)
-                    event.object_type = obj.objects_type;
+            obj.events.clear();
+            obj.events.reserve(scratch.size());
+            for (auto& [eid, icaps] : scratch) {
+                for (auto& icap : icaps)
+                    icap.object_type = obj.objects_type;
+                obj.events.emplace_back(EmpireID{eid}, std::move(icaps));
+            }
         }
     }
 }
@@ -845,8 +868,6 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Incapac
 template <typename Archive>
 void serialize(Archive& ar, FightersAttackFightersEvent& obj, unsigned int const version)
 {
-    using namespace boost::serialization;
-
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
 
     if constexpr (Archive::is_loading::value) {
@@ -870,8 +891,6 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Fighter
 template <typename Archive>
 void serialize(Archive& ar, FighterLaunchEvent& obj, unsigned int const version)
 {
-    using namespace boost::serialization;
-
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
 
     if constexpr (Archive::is_loading::value) {
@@ -895,8 +914,8 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Fighter
 
 
 namespace {
-    // for vectors (of pairs (of ints and vectors castable to of pair of ints))
-    std::string ToString(const std::vector<std::pair<int, std::vector<FighterLaunchesEvent::FighterLaunchDetail>>>& events) {
+    // for vectors (of pairs (of EmpireID and vectors castable to of pair of ints))
+    std::string ToString(const std::vector<std::pair<EmpireID, std::vector<FighterLaunchesEvent::FighterLaunchDetail>>>& events) {
         auto events_sizes_rng = events | range_transform(to_second_size);
         const std::size_t event_count = std::accumulate(events_sizes_rng.begin(), events_sizes_rng.end(), std::size_t{0});
 
@@ -907,10 +926,10 @@ namespace {
 
         retval.append(std::to_string(events.size()));                           // number of top-level pair<int, vector>
         for (const auto& [empire_id, launches] : events) {
-            retval.append("  ").append(std::to_string(empire_id)).append(" ")   // number id of empire launching fighters
+            retval.append("  ").append(to_string(empire_id)).append(" ")   // number id of empire launching fighters
                 .append(std::to_string(launches.size()));                       // number of distinct launches
             for (const auto& launch : launches) {
-                retval.append("  ").append(std::to_string(launch.from_id))      // id of launching ship
+                retval.append("  ").append(to_string(launch.from_id))      // id of launching ship
                       .append(" ").append(std::to_string(launch.count));        // number of fighters launched
             }
         }
@@ -920,7 +939,7 @@ namespace {
 
     // for vectors (of pairs (of ints and vectors of wrapper of pair of ints))
     CONSTEXPR_VEC_AND_FROMCHARS bool FillVecOfIntAndVecOfLaunchDetailEvent(
-        std::vector<std::pair<int, std::vector<FighterLaunchesEvent::FighterLaunchDetail>>>& events,
+        std::vector<std::pair<EmpireID, std::vector<FighterLaunchesEvent::FighterLaunchDetail>>>& events,
         std::string_view buffer)
     {
         const auto* const buffer_end = buffer.data() + buffer.size();
@@ -942,8 +961,8 @@ namespace {
         events.reserve(empire_count);
 
         for (std::size_t empire_idx = 0; empire_idx < empire_count && next != buffer_end; ++empire_idx) {
-            int empire_id = ALL_EMPIRES;
-            std::tie(empire_id, success, next) = get_next_int(next, ALL_EMPIRES);
+            EmpireID empire_id = ALL_EMPIRES;
+            std::tie(UnderRef(empire_id), success, next) = get_next_int(next, Value(ALL_EMPIRES));
             if (!success)
                 return false;
             std::tie(count_ui, success, next) = get_next_uint(next, 0u);
@@ -951,21 +970,21 @@ namespace {
                 return false;
 
             auto& from_id_counts_vec = events.emplace_back(std::piecewise_construct,
-                                                           std::forward_as_tuple(empire_id),
+                                                           std::forward_as_tuple(Value(empire_id)),
                                                            std::forward_as_tuple()).second;
             const std::size_t from_id_count_count = static_cast<std::size_t>(count_ui);
             from_id_counts_vec.reserve(from_id_count_count);
 
             for (std::size_t obj_id_idx = 0; obj_id_idx < from_id_count_count && next != buffer_end; ++obj_id_idx) {
-                int object_id = INVALID_OBJECT_ID;
-                std::tie(object_id, success, next) = get_next_int(next, INVALID_OBJECT_ID);
+                int object_id = Value(INVALID_OBJECT_ID);
+                std::tie(object_id, success, next) = get_next_int(next, Value(INVALID_OBJECT_ID));
                 if (!success)
                     return false;
                 int count = 0;
                 std::tie(count, success, next) = get_next_int(next, 0);
                 if (!success)
                     return false;
-                from_id_counts_vec.emplace_back(object_id, count);
+                from_id_counts_vec.emplace_back(UniverseObjectID{object_id}, count);
             }
         }
 
@@ -974,16 +993,16 @@ namespace {
 
 #if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
     constexpr auto ToLaunchesEvent(std::string_view str) {
-        std::vector<std::pair<int, std::vector<FighterLaunchesEvent::FighterLaunchDetail>>> retval;
+        std::vector<std::pair<EmpireID, std::vector<FighterLaunchesEvent::FighterLaunchDetail>>> retval;
         bool success = FillVecOfIntAndVecOfLaunchDetailEvent(retval, str);
         return std::pair{retval, success};
     }
 
     static_assert(ToLaunchesEvent("").first.empty() && !ToLaunchesEvent("").second);
     static_assert(ToLaunchesEvent("0").first.empty() && ToLaunchesEvent("0").second);
-    static_assert(ToLaunchesEvent("1  1 2  100 2 200 3").first[0].first == 1);
+    static_assert(ToLaunchesEvent("1  1 2  100 2 200 3").first[0].first == EmpireID{1});
     static_assert(ToLaunchesEvent("1  1 2  100 2 200 3").first[0].second.size() == 2);
-    static_assert(ToLaunchesEvent("1  1 2  100 2 200 3").first[0].second[0].from_id == 100);
+    static_assert(ToLaunchesEvent("1  1 2  100 2 200 3").first[0].second[0].from_id == UniverseObjectID{100});
     static_assert(ToLaunchesEvent("1  1 2  100 2 200 3").first[0].second[0].count == 2);
 #endif
 }
@@ -1000,9 +1019,6 @@ BOOST_CLASS_EXPORT(FighterLaunchesEvent::FighterLaunchDetail)
 template <typename Archive>
 void serialize(Archive& ar, FighterLaunchesEvent& obj, unsigned int const version)
 {
-    using boost::serialization::make_nvp;
-    using boost::serialization::base_object;
-
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
 
     if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
@@ -1030,8 +1046,6 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Fighter
 template <typename Archive>
 void serialize(Archive& ar, FightersDestroyedEvent& obj, unsigned int const version)
 {
-    using namespace boost::serialization;
-
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
 
     if (version < 5) {
@@ -1066,8 +1080,8 @@ namespace {
 
         auto& own_state_str = retval.emplace_back();
         own_state_str.reserve(2*int_digits + 1);
-        own_state_str.append(std::to_string(obj.attacker_id)).append(" ")
-                     .append(std::to_string(obj.attacker_owner_id));
+        own_state_str.append(to_string(obj.attacker_id)).append(" ")
+                     .append(to_string(obj.attacker_owner_id));
 
         for (const auto& [target_id, weapon_fire_events] : obj.events) {
             auto wfe_str_rng = weapon_fire_events | range_transform(wfe_to_string);
@@ -1082,10 +1096,10 @@ namespace {
         const auto* next = buffer.data();
         bool success = false;
 
-        std::tie(obj.attacker_id, success, next) = GetIntFromChars<int>(buffer_end, next, INVALID_OBJECT_ID);
+        std::tie(UnderRef(obj.attacker_id), success, next) = GetIntFromChars<int>(buffer_end, next, Value(INVALID_OBJECT_ID));
         if (!success)
             return false;
-        std::tie(obj.attacker_owner_id, success, next) = GetIntFromChars<int>(buffer_end, next, ALL_EMPIRES);
+        std::tie(UnderRef(obj.attacker_owner_id), success, next) = GetIntFromChars<int>(buffer_end, next, Value(ALL_EMPIRES));
         return success;
     }
 
@@ -1104,7 +1118,7 @@ namespace {
             WeaponFireEvent wfe;
             bool success = FillWeaponFireEvent(wfe, wfe_buffer);
             if (!success) continue;
-            const int target_id = wfe.target_id;
+            const auto target_id = wfe.target_id;
             obj.events[target_id].push_back(std::move(wfe));
         }
     }
@@ -1113,7 +1127,6 @@ namespace {
     void FillWeaponsPlatformEventViaSharedPtrVecs(Archive& ar, WeaponsPlatformEvent& obj)
     {
         static_assert(Archive::is_loading::value);
-        using boost::serialization::make_nvp;
 
         int ingored = 0;
         ar >> make_nvp("bout", ingored)
@@ -1125,7 +1138,7 @@ namespace {
 
         ar >> make_nvp("events", shared_wfes);
 
-        static_assert(std::is_same_v<std::decay_t<decltype(obj.events)>, std::map<int, std::vector<WeaponFireEvent>>>);
+        static_assert(std::is_same_v<std::decay_t<decltype(obj.events)>, std::map<UniverseObjectID, std::vector<WeaponFireEvent>>>);
 
 
         obj.events.clear();
@@ -1142,7 +1155,6 @@ namespace {
     template <typename Archive>
     void Serialize(Archive& ar, WeaponsPlatformEvent& obj, bool include_bout)
     {
-        using boost::serialization::make_nvp;
         if (include_bout) {
             int ignored = -1;
             ar  & make_nvp("bout", ignored);
@@ -1156,9 +1168,6 @@ namespace {
 template <typename Archive>
 void serialize(Archive& ar, WeaponsPlatformEvent& obj, unsigned int const version)
 {
-    using boost::serialization::make_nvp;
-    using boost::serialization::base_object;
-
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
 
     if constexpr (Archive::is_loading::value) {
@@ -1193,8 +1202,6 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Weapons
 template <typename Archive>
 void serialize(Archive& ar, CombatParticipantState& obj, const unsigned int/* version*/)
 {
-    using namespace boost::serialization;
-
     ar & make_nvp("current_health", obj.current_health)
        & make_nvp("max_health", obj.max_health);
 }
@@ -1239,10 +1246,8 @@ void serialize(Archive& ar, CombatLog& obj, const unsigned int version)
 {
     using namespace boost::serialization;
 
-    // CombatEvents are serialized only through
-    // pointers to their base class.
-    // Therefore we need to manually register their types
-    // in the archive.
+    // CombatEvents are serialized only through pointers to their base class.
+    // Therefore we need to manually register their types in the archive.
     ar.template register_type<WeaponFireEvent>();
     ar.template register_type<IncapacitationEvent>();
     ar.template register_type<BoutBeginEvent>();
@@ -1259,7 +1264,8 @@ void serialize(Archive& ar, CombatLog& obj, const unsigned int version)
     Serialize(ar, obj.destroyed_object_ids, "destroyed_object_ids", version < 2);
 
     if (obj.combat_events.size() > 1)
-        TraceLogger() << "CombatLog::serialize turn " << obj.turn << "  combat at " << obj.system_id << "  combat events size: " << obj.combat_events.size();
+        TraceLogger() << "CombatLog::serialize turn " << obj.turn << "  combat at "
+                      << obj.system_id << "  combat events size: " << obj.combat_events.size();
     try {
         ar  & make_nvp("combat_events", obj.combat_events);
     } catch (const std::exception& e) {
@@ -1269,9 +1275,15 @@ void serialize(Archive& ar, CombatLog& obj, const unsigned int version)
     if (Archive::is_loading::value && version < 4)
         ConsolidateLaunchEvents(obj.combat_events);
 
-    static_assert(std::is_same_v<std::pair<int, CombatParticipantState>, std::decay_t<decltype(*obj.participant_states.begin())>>);
-
-    Serialize(ar, obj.participant_states, "participant_states", version < 3);
+    {
+        static_assert(std::is_same_v<std::pair<UniverseObjectID, CombatParticipantState>,
+                                     std::decay_t<decltype(*obj.participant_states.begin())>>);
+        flat_map<int, CombatParticipantState> scratch;
+        Serialize(ar, scratch, "participant_states", version < 3);
+        obj.participant_states.clear();
+        for (auto& [key, vals] : scratch.extract_sequence())
+            obj.participant_states.emplace(UniverseObjectID{key}, std::move(vals));
+    }
 }
 
 
@@ -1284,8 +1296,6 @@ template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, CombatL
 template <typename Archive>
 void serialize(Archive& ar, CombatLogManager& obj, const unsigned int/* version*/)
 {
-    using namespace boost::serialization;
-
     std::map<int, CombatLog> logs;
 
     if constexpr (Archive::is_saving::value) {
@@ -1319,8 +1329,6 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, CombatL
 template <typename Archive>
 void SerializeIncompleteLogs(Archive& ar, CombatLogManager& obj, const unsigned int/* version*/)
 {
-    using namespace boost::serialization;
-
     int latest_log_id = obj.m_latest_log_id.load();
     if constexpr (Archive::is_loading::value) {
         int old_latest_log_id = latest_log_id;

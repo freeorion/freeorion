@@ -241,11 +241,11 @@ void AIClientApp::HandleMessage(const Message& msg) {
 
     case Message::MessageType::GAME_START: {
         DebugLogger() << "AIClientApp::HandleMessage : Received GAME_START message; starting AI turn...";
-        bool single_player_game;        // ignored
-        bool loaded_game_data;
-        bool ui_data_available;         // ignored
-        SaveGameUIData ui_data;         // ignored
-        bool state_string_available;    // ignored, as save_state_string is sent even if not set by ExtractMessageData
+        bool single_player_game = false;     // ignored
+        bool loaded_game_data = false;
+        bool ui_data_available = false;      // ignored
+        SaveGameUIData ui_data;              // ignored
+        bool state_string_available = false; // ignored, as save_state_string is sent even if not set by ExtractMessageData
         std::string save_state_string;
 
         ExtractGameStartMessageData(msg,                     single_player_game,     m_empire_id,

@@ -30,7 +30,7 @@ namespace {
     }
 
     /** Returns order ID of scrap order affecting object obj_id */
-    std::optional<int> PendingScrapOrderForObject(const ClientApp& app, int obj_id) {
+    std::optional<int> PendingScrapOrderForObject(const ClientApp& app, UniverseObjectID obj_id) {
         for (const auto& [order_id, order] : app.Orders()) {
             if (auto scrap_order = std::dynamic_pointer_cast<ScrapOrder>(order))
                 if (obj_id == scrap_order->ObjectID())
@@ -43,7 +43,7 @@ namespace {
     { return Networking::is_mod(GetApp()); }
 }
 
-BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
+BuildingsPanel::BuildingsPanel(GG::X w, int columns, UniverseObjectID planet_id) :
     AccordionPanel(w, GG::Y(ClientUI::Pts()*2)),
     m_planet_id(planet_id),
     m_columns(columns)
@@ -93,16 +93,16 @@ void BuildingsPanel::Update() {
         ErrorLogger() << "BuildingsPanel::Update couldn't get planet with id " << m_planet_id;
         return;
     }
-    const int system_id = planet->SystemID();
+    const auto system_id = planet->SystemID();
 
     const int indicator_size = static_cast<int>(Width() / static_cast<float>(m_columns));
 
-    const int this_client_empire_id = app.EmpireID();
+    const auto this_client_empire_id = app.GetEmpireID();
     const auto& this_client_known_destroyed_objects = context.ContextUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
     const auto& this_client_stale_object_info = context.ContextUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
     // get existing / finished buildings and use them to create building indicators
-    for (int object_id : planet->BuildingIDs()) {
+    for (auto object_id : planet->BuildingIDs()) {
         // skip known destroyed and stale info objects
         if (this_client_known_destroyed_objects.contains(object_id))
             continue;
@@ -237,12 +237,12 @@ void BuildingsPanel::DoLayout() {
             parent->RequirePreRender();
 }
 
-std::map<int, bool> BuildingsPanel::s_expanded_map;
+std::map<UniverseObjectID, bool> BuildingsPanel::s_expanded_map;
 
 /////////////////////////////////////
 //       BuildingIndicator         //
 /////////////////////////////////////
-BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
+BuildingIndicator::BuildingIndicator(GG::X w, UniverseObjectID building_id) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_scanlines(GG::Wnd::Create<ScanlineControl>()),
     m_building_id(building_id)
@@ -329,7 +329,7 @@ void BuildingIndicator::Refresh() {
 
         // Scanlines for not currently-visible objects?
         if (GetOptionsDB().Get<bool>("ui.map.scanlines.shown")) {
-            const int empire_id = app.EmpireID();
+            const EmpireID empire_id = app.GetEmpireID();
             if (empire_id != ALL_EMPIRES &&
                 context.ContextUniverse().GetObjectVisibilityByEmpire(m_building_id, empire_id) < Visibility::VIS_BASIC_VISIBILITY)
             { AttachChild(m_scanlines); }
@@ -388,7 +388,7 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     }
 
     auto scrap_building_action = [this]()
-    { GetApp().Orders().IssueOrder<ScrapOrder>(GetApp().GetContext(), GetApp().EmpireID(), m_building_id); };
+    { GetApp().Orders().IssueOrder<ScrapOrder>(GetApp().GetContext(), GetApp().GetEmpireID(), m_building_id); };
 
     auto un_scrap_building_action = [this]() {
         // find order to scrap this building, and recind it
@@ -398,7 +398,7 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-    if (m_order_issuing_enabled && ScrapOrder::Check(GetApp().EmpireID(), m_building_id, context)) {
+    if (m_order_issuing_enabled && ScrapOrder::Check(GetApp().GetEmpireID(), m_building_id, context)) {
         if (!building->OrderedScrapped()) {
             // create popup menu with "Scrap" option
             popup->AddMenuItem(UserString("ORDER_BUIDLING_SCRAP"), false, false, scrap_building_action);
@@ -410,9 +410,9 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
 
     // find sensor ghost
     if (map_wnd &&
-        app.EmpireID() != ALL_EMPIRES &&
-        !building->OwnedBy(app.EmpireID()) &&
-        context.ContextVis(m_building_id, app.EmpireID()) < Visibility::VIS_BASIC_VISIBILITY)
+        app.GetEmpireID() != ALL_EMPIRES &&
+        !building->OwnedBy(app.GetEmpireID()) &&
+        context.ContextVis(m_building_id, app.GetEmpireID()) < Visibility::VIS_BASIC_VISIBILITY)
     {
         auto forget_building_action = [this, map_wnd]() { map_wnd->ForgetObject(m_building_id); };
 

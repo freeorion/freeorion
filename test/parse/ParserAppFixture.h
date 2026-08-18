@@ -24,15 +24,15 @@ public:
     const ParserAppFixture& operator=(const ParserAppFixture&) = delete;
     ParserAppFixture& operator=(ParserAppFixture&&) = delete;
 
-    int EmpireID() const noexcept override;
+    EmpireID GetEmpireID() const noexcept override;
     int CurrentTurn() const noexcept override;
     Universe& GetUniverse() noexcept override;
     const GalaxySetupData& GetGalaxySetupData() const noexcept override;
-    Networking::ClientType GetEmpireClientType(int empire_id) const override;
+    Networking::ClientType GetEmpireClientType(EmpireID empire_id) const override;
     Networking::ClientType GetPlayerClientType(int player_id) const override;
     std::string GetVisibleObjectName(const UniverseObject& object) override;
     EmpireManager& Empires() noexcept override;
-    Empire* GetEmpire(int empire_id) override;
+    Empire* GetEmpire(EmpireID empire_id) override;
     SpeciesManager& GetSpeciesManager() noexcept override;
     SupplyManager& GetSupplyManager() noexcept override;
     int EffectsProcessingThreads() const override;

@@ -61,7 +61,7 @@ Planet::Planet(PlanetType type, PlanetSize size, int creation_turn) :
         m_rotational_period = -m_rotational_period;
 }
 
-std::shared_ptr<UniverseObject> Planet::Clone(const Universe& universe, int empire_id) const {
+std::shared_ptr<UniverseObject> Planet::Clone(const Universe& universe, EmpireID empire_id) const {
     const Visibility vis = empire_id == ALL_EMPIRES ?
         Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
@@ -73,7 +73,7 @@ std::shared_ptr<UniverseObject> Planet::Clone(const Universe& universe, int empi
     return retval;
 }
 
-void Planet::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
+void Planet::Copy(const UniverseObject& copied_object, const Universe& universe, EmpireID empire_id) {
     if (std::addressof(copied_object) == this)
         return;
 
@@ -85,11 +85,11 @@ void Planet::Copy(const UniverseObject& copied_object, const Universe& universe,
     Copy(static_cast<const Planet&>(copied_object), universe, empire_id);
 }
 
-void Planet::Copy(const Planet& copied_planet, const Universe& universe, int empire_id) {
+void Planet::Copy(const Planet& copied_planet, const Universe& universe, EmpireID empire_id) {
     if (&copied_planet == this)
         return;
 
-    const int copied_object_id = copied_planet.ID();
+    const auto copied_object_id = copied_planet.ID();
     const Visibility vis = empire_id == ALL_EMPIRES ?
         Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
     const auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
@@ -140,7 +140,7 @@ void Planet::Copy(const Planet& copied_planet, const Universe& universe, int emp
     }
 }
 
-bool Planet::HostileToEmpire(int empire_id, const EmpireManager& empires) const {
+bool Planet::HostileToEmpire(EmpireID empire_id, const EmpireManager& empires) const {
     if (OwnedBy(empire_id))
         return false;
 
@@ -180,12 +180,12 @@ std::string Planet::Dump(uint8_t ntabs) const {
           .append(" axis tilt: ").append(std::to_string(m_axial_tilt))
           .append(" buildings: ");
     for (auto it = m_buildings.begin(); it != m_buildings.end();) {
-        int building_id = *it;
+        UniverseObjectID building_id = *it;
         ++it;
-        retval.append(std::to_string(building_id)).append(it == m_buildings.end() ? "" : ", ");
+        retval.append(to_string(building_id)).append(it == m_buildings.end() ? "" : ", ");
     }
     if (m_ordered_annexed_by_empire_id != ALL_EMPIRES)
-        retval.append(" (About to be Annexed by ").append(std::to_string(m_ordered_annexed_by_empire_id)).append(")");
+        retval.append(" (About to be Annexed by ").append(to_string(m_ordered_annexed_by_empire_id)).append(")");
     if (m_is_about_to_be_colonized)
         retval.append(" (About to be Colonized)");
     if (m_is_about_to_be_invaded)
@@ -194,17 +194,17 @@ std::string Planet::Dump(uint8_t ntabs) const {
     retval.append(" annexed on turn: ").append(std::to_string(m_turn_last_annexed))
           .append(" colonized on turn: ").append(std::to_string(m_turn_last_colonized))
           .append(" conquered on turn: ").append(std::to_string(m_turn_last_conquered))
-          .append(" owner before being conquered: ").append(std::to_string(m_owner_before_last_conquered))
-          .append(" last invaded by: ").append(std::to_string(m_last_invaded_by_empire_id))
-          .append(" last colonized by: ").append(std::to_string(m_last_colonized_by_empire_id))
-          .append(" last annexed by: ").append(std::to_string(m_last_annexed_by_empire_id));
+          .append(" owner before being conquered: ").append(to_string(m_owner_before_last_conquered))
+          .append(" last invaded by: ").append(to_string(m_last_invaded_by_empire_id))
+          .append(" last colonized by: ").append(to_string(m_last_colonized_by_empire_id))
+          .append(" last annexed by: ").append(to_string(m_last_annexed_by_empire_id));
 
     if (m_is_about_to_be_bombarded)
         retval.append(" (About to be Bombarded)");
 
     if (m_ordered_given_to_empire_id != ALL_EMPIRES)
         retval.append(" (Ordered to be given to empire with id: ")
-              .append(std::to_string(m_ordered_given_to_empire_id)).append(")");
+              .append(to_string(m_ordered_given_to_empire_id)).append(")");
 
     retval.append(" last attacked on turn: ").append(std::to_string(m_last_turn_attacked_by_ship));
 
@@ -476,22 +476,20 @@ std::string Planet::CardinalSuffix(const ObjectMap& objects) const {
     std::string retval;
     // Early return for invalid ID
     if (ID() == INVALID_OBJECT_ID) {
-        WarnLogger() << "Planet " << Name() << " has invalid ID";
+        WarnLogger() << "Planet " << this->NameAndID() << " has invalid ID";
         return retval;
     }
 
     auto cur_system = objects.get<System>(SystemID());
     // Early return for no system
     if (!cur_system) {
-        ErrorLogger() << "Planet " << Name() << "(" << ID()
-                      << ") not assigned to a system";
+        ErrorLogger() << "Planet " << this->NameAndID() << " is not assigned to a system";
         return retval;
     }
 
     // Early return for unknown orbit
     if (cur_system->OrbitOfPlanet(ID()) < 0) {
-        WarnLogger() << "Planet " << Name() << "(" << ID() << ") "
-                     << "has no current orbit";
+        WarnLogger() << "Planet " << this->NameAndID() << " has no current orbit";
         retval.append(RomanNumber(1));
         return retval;
     }
@@ -500,7 +498,7 @@ std::string Planet::CardinalSuffix(const ObjectMap& objects) const {
     int num_planets_total = 0;
     bool prior_current_planet = true;
 
-    for (int sys_orbit : cur_system->PlanetIDsByOrbit()) {
+    for (const auto sys_orbit : cur_system->PlanetIDsByOrbit()) {
         if (sys_orbit == INVALID_OBJECT_ID)
             continue;
 
@@ -512,7 +510,7 @@ std::string Planet::CardinalSuffix(const ObjectMap& objects) const {
             continue;
         }
 
-        PlanetType other_planet_type = objects.get<Planet>(sys_orbit)->Type();
+        PlanetType other_planet_type = objects.getRaw<Planet>(sys_orbit)->Type();
         if (other_planet_type == PlanetType::INVALID_PLANET_TYPE)
             continue;
 
@@ -547,10 +545,10 @@ std::string Planet::CardinalSuffix(const ObjectMap& objects) const {
     return retval;
 }
 
-bool Planet::Contains(int object_id) const
+bool Planet::Contains(UniverseObjectID object_id) const
 { return object_id != INVALID_OBJECT_ID && m_buildings.contains(object_id); }
 
-bool Planet::ContainedBy(int object_id) const noexcept
+bool Planet::ContainedBy(UniverseObjectID object_id) const noexcept
 { return object_id != INVALID_OBJECT_ID && this->SystemID() == object_id; }
 
 bool Planet::FocusAvailable(std::string_view focus, const ScriptingContext& context) const {
@@ -600,8 +598,8 @@ const std::string& Planet::FocusIcon(std::string_view focus_name, const Scriptin
     return EMPTY_STRING;
 }
 
-std::map<int, double> Planet::EmpireGroundCombatForces() const {
-    std::map<int, double> empire_troops;
+std::map<EmpireID, double> Planet::EmpireGroundCombatForces() const {
+    std::map<EmpireID, double> empire_troops;
     if (UniverseObject::GetMeter(MeterType::METER_TROOPS)->Initial() > 0.0f) {
         // empires may have garrisons on planets
         empire_troops[Owner()] += UniverseObject::GetMeter(MeterType::METER_TROOPS)->Initial() + 0.0001; // small bonus to ensure ties are won by initial owner
@@ -626,7 +624,7 @@ std::size_t Planet::SizeInMemory() const {
     return retval;
 }
 
-double Planet::AnnexationCost(int empire_id, const ScriptingContext& context) const {
+double Planet::AnnexationCost(EmpireID empire_id, const ScriptingContext& context) const {
     if (m_species_name.empty())
         return 0.0;
     const auto* species = context.species.GetSpecies(m_species_name);
@@ -705,7 +703,7 @@ void Planet::SetHighAxialTilt() {
     m_axial_tilt = HIGH_TILT_THERESHOLD + RandZeroToOne() * (MAX_TILT - HIGH_TILT_THERESHOLD);
 }
 
-void Planet::AddBuilding(int building_id) {
+void Planet::AddBuilding(UniverseObjectID building_id) {
     auto buildings_size = m_buildings.size();
     m_buildings.insert(building_id);
     if (buildings_size != m_buildings.size())
@@ -713,7 +711,7 @@ void Planet::AddBuilding(int building_id) {
     // expect calling code to set building's planet
 }
 
-bool Planet::RemoveBuilding(int building_id) {
+bool Planet::RemoveBuilding(UniverseObjectID building_id) {
     if (m_buildings.contains(building_id)) {
         m_buildings.erase(building_id);
         StateChangedSignal();
@@ -785,7 +783,7 @@ void Planet::Depopulate(int current_turn) {
     ClearFocus(current_turn);
 }
 
-void Planet::Conquer(int conquerer, ScriptingContext& context) {
+void Planet::Conquer(EmpireID conquerer, ScriptingContext& context) {
     m_turn_last_conquered = context.current_turn;
     m_owner_before_last_conquered = this->Owner();
 
@@ -794,7 +792,7 @@ void Planet::Conquer(int conquerer, ScriptingContext& context) {
 
     ObjectMap& objects{context.ContextObjects()};
     const auto& ids_as_flatset{context.EmpireIDs()};
-    const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()};
+    const std::vector<EmpireID> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()};
 
     // deal with UniverseObjects (eg. buildings) located on this planet
     for (auto* building : objects.findRaw<Building>(m_buildings)) {
@@ -900,7 +898,7 @@ void Planet::UpdateFocusHistory() {
     }
 }
 
-bool Planet::Colonize(int empire_id, std::string species_name, double population,
+bool Planet::Colonize(EmpireID empire_id, std::string species_name, double population,
                       ScriptingContext& context)
 {
     const Species* species = nullptr;
@@ -993,7 +991,7 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
     return true;
 }
 
-void Planet::SetIsOrderAnnexedByEmpire(int empire_id) {
+void Planet::SetIsOrderAnnexedByEmpire(EmpireID empire_id) {
     const auto initial_empire = m_ordered_annexed_by_empire_id;
     if (empire_id == initial_empire)
         return;
@@ -1005,7 +1003,7 @@ void Planet::SetIsOrderAnnexedByEmpire(int empire_id) {
 void Planet::ResetBeingAnnxed()
 { SetIsOrderAnnexedByEmpire(ALL_EMPIRES); }
 
-void Planet::SetLastAnnexedByEmpire(int id) {
+void Planet::SetLastAnnexedByEmpire(EmpireID id) {
     const auto initial_empire_id = m_last_annexed_by_empire_id;
     if (initial_empire_id == id) return;
     m_last_annexed_by_empire_id = id;
@@ -1022,7 +1020,7 @@ void Planet::SetIsAboutToBeColonized(bool b) {
 void Planet::ResetIsAboutToBeColonized()
 { SetIsAboutToBeColonized(false); }
 
-void Planet::SetLastColonizedByEmpire(int id) {
+void Planet::SetLastColonizedByEmpire(EmpireID id) {
     const auto initial_empire_id = m_last_colonized_by_empire_id;
     if (initial_empire_id == id) return;
     m_last_colonized_by_empire_id = id;
@@ -1046,7 +1044,7 @@ void Planet::SetIsAboutToBeInvaded(bool b) {
 void Planet::ResetIsAboutToBeInvaded()
 { SetIsAboutToBeInvaded(false); }
 
-void Planet::SetLastInvadedByEmpire(int id) {
+void Planet::SetLastInvadedByEmpire(EmpireID id) {
     const auto initial_empire_id = m_last_invaded_by_empire_id;
     if (initial_empire_id == id) return;
     m_last_invaded_by_empire_id = id;
@@ -1063,7 +1061,7 @@ void Planet::SetIsAboutToBeBombarded(bool b) {
 void Planet::ResetIsAboutToBeBombarded()
 { SetIsAboutToBeBombarded(false); }
 
-void Planet::SetGiveToEmpire(int empire_id) {
+void Planet::SetGiveToEmpire(EmpireID empire_id) {
     if (empire_id != m_ordered_given_to_empire_id) {
         m_ordered_given_to_empire_id = empire_id;
         StateChangedSignal();
@@ -1167,12 +1165,12 @@ void Planet::ClampMeters() {
 
 namespace {
     // sorted pair, so order of empire IDs specified doesn't matter
-    constexpr std::pair<int, int> DiploKey(int id1, int ind2)
+    constexpr std::pair<EmpireID, EmpireID> DiploKey(EmpireID id1, EmpireID ind2)
         noexcept(noexcept(std::max(1, -3)) && noexcept(std::min(-124, 0)))
     { return {std::max(id1, ind2), std::min(id1, ind2)}; }
 }
 
-void Planet::ResolveGroundCombat(std::map<int, double>& empires_troops,
+void Planet::ResolveGroundCombat(std::map<EmpireID, double>& empires_troops,
                                  const DiploStatusMap& diplo_statuses)
 {
     if (empires_troops.empty() || empires_troops.size() == 1)
@@ -1191,12 +1189,12 @@ void Planet::ResolveGroundCombat(std::map<int, double>& empires_troops,
     }
 
     // find effective troops and ID of victor...
-    std::multimap<double, int> inverted_empires_troops;
+    std::multimap<double, EmpireID> inverted_empires_troops;
     for (const auto& [eff_emp_id, eff_troops] : effective_empires_troops)
         inverted_empires_troops.emplace(eff_troops, eff_emp_id);
 
     const auto [victor_self_troops, victor_id] = *inverted_empires_troops.rbegin();
-    static_assert(std::is_integral_v<decltype(victor_id)>);
+    static_assert(std::is_integral_v<decltype(Value(victor_id))>);
 
 
     // victor has effective troops reduced by the effective troop count of

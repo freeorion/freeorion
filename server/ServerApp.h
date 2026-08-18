@@ -11,6 +11,8 @@
 #include "ServerFSM.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
+#include "../universe/ConstantsFwd.h"
+#include "../universe/EnumsFwd.h"
 #include "../universe/ScriptingContext.h"
 #include "../universe/Species.h"
 #include "../universe/Universe.h"
@@ -41,7 +43,7 @@ public:
     /** Returns a ClientApp pointer to the singleton instance of the app. */
     [[nodiscard]] Universe& GetUniverse() noexcept override { return m_universe; }
     [[nodiscard]] EmpireManager& Empires() noexcept override { return m_empires; }
-    [[nodiscard]] Empire* GetEmpire(int id) override { return m_empires.GetEmpire(id).get(); }
+    [[nodiscard]] Empire* GetEmpire(EmpireID id) override { return m_empires.GetEmpire(id).get(); }
     [[nodiscard]] SupplyManager& GetSupplyManager() noexcept override { return m_supply_manager; }
     [[nodiscard]] SpeciesManager& GetSpeciesManager() noexcept override { return m_species_manager; }
 
@@ -50,13 +52,13 @@ public:
 
     [[nodiscard]] std::string GetVisibleObjectName(const UniverseObject& object) override { return object.Name(); }
 
-    [[nodiscard]] int EmpireID() const noexcept override { return ALL_EMPIRES; }
+    [[nodiscard]] EmpireID GetEmpireID() const noexcept override { return ALL_EMPIRES; }
     [[nodiscard]] int CurrentTurn() const noexcept override { return m_current_turn; }
 
-    [[nodiscard]] int SelectedSystemID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
-    [[nodiscard]] int SelectedPlanetID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
-    [[nodiscard]] int SelectedFleetID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
-    [[nodiscard]] int SelectedShipID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
+    [[nodiscard]] UniverseObjectID SelectedSystemID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
+    [[nodiscard]] UniverseObjectID SelectedPlanetID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
+    [[nodiscard]] UniverseObjectID SelectedFleetID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
+    [[nodiscard]] UniverseObjectID SelectedShipID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
 
     [[nodiscard]] const GalaxySetupData& GetGalaxySetupData() const noexcept override { return m_galaxy_setup_data; }
 
@@ -65,7 +67,7 @@ public:
     [[nodiscard]] bool IsLocalHumanPlayer(int player_id);
 
     /** Returns the networking client type for the given empire_id. */
-    [[nodiscard]] Networking::ClientType GetEmpireClientType(int empire_id) const override;
+    [[nodiscard]] Networking::ClientType GetEmpireClientType(EmpireID empire_id) const override;
 
     /** Returns the networking client type for the given player_id. */
     [[nodiscard]] Networking::ClientType GetPlayerClientType(int player_id) const override;
@@ -73,11 +75,11 @@ public:
     [[nodiscard]] int EffectsProcessingThreads() const override;
 
     /** Returns the empire ID for the player with ID \a player_id */
-    [[nodiscard]] int PlayerEmpireID(int player_id) const;
+    [[nodiscard]] EmpireID PlayerEmpireID(int player_id) const;
 
     /** Returns the player ID for the player controlling the empire with id \a
         empire_id */
-    [[nodiscard]] int EmpirePlayerID(int empire_id) const;
+    [[nodiscard]] int EmpirePlayerID(EmpireID empire_id) const;
 
     /** Checks if \a player_name are not used by other players. */
     [[nodiscard]] bool IsAvailableName(const std::string& player_name, bool ignore_ai = false) const;
@@ -111,13 +113,13 @@ public:
 
     /** Updated empire orders without changes in readiness status. Removes all \a deleted orders
       * and insert \a added orders. */
-    void UpdatePartialOrders(int empire_id, OrderSet added, const std::set<int>& deleted);
+    void UpdatePartialOrders(EmpireID empire_id, OrderSet added, const std::set<int>& deleted);
 
     /** Revokes turn order's ready state for the given empire. */
-    void RevokeEmpireTurnReadyness(int empire_id);
+    void RevokeEmpireTurnReadyness(EmpireID empire_id);
 
     /** Sets all empire turn orders to an empty set. */
-    void ClearEmpireTurnOrders(int empire_id = ALL_EMPIRES);
+    void ClearEmpireTurnOrders(EmpireID empire_id = ALL_EMPIRES);
 
     /** Determines if all empired have submitted their orders for this turn It
       * will loop the turn squence vector and check for a set order_set. A
@@ -191,14 +193,14 @@ public:
     [[nodiscard]] bool EliminatePlayer(const PlayerConnectionPtr& player_connection);
 
     /** Drop link between player with \a player_id and his empire. */
-    void DropPlayerEmpireLink(int planet_id);
+    void DropPlayerEmpireLink(int player_id);
 
     /** Adds new player to running game.
       * Search empire by player's name or delegation list if \a target_empire_id set and return
       * empire id if success and ALL_EMPIRES if no empire found.
       * Simply sends GAME_START message so established player knows he is in the game.
       * Notificates the player about statuses of other empires. */
-    int AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, int target_empire_id);
+    EmpireID AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, EmpireID target_empire_id);
 
     /** Get list of players delegated by \a player_name */
     [[nodiscard]] std::vector<std::string> GetPlayerDelegation(const std::string& player_name);
@@ -256,7 +258,7 @@ private:
     /** Calls Python universe generator script.
       * Supposed to be called to create a new universe so it can be used by content
       * scripters to customize universe generation. */
-    void GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data);
+    void GenerateUniverse(std::map<EmpireID, PlayerSetupData>& player_setup_data);
 
     /** Calls Python turn events script.
       * Supposed to be called every turn so it can be used by content scripters to
@@ -297,21 +299,21 @@ private:
 
     /** Called when this server's EmpireManager changes the diplomatic status
       * between two empires. Updates those empires of the change. */
-    void HandleDiplomaticStatusChange(int empire1_id, int empire2_id);
+    void HandleDiplomaticStatusChange(EmpireID empire1_id, EmpireID empire2_id);
 
     /** Called when this sever's EmpireManager changes the diplmatic message
       * between two empires. Updates those empires of the change. */
-    void HandleDiplomaticMessageChange(int empire1_id, int empire2_id);
+    void HandleDiplomaticMessageChange(EmpireID empire1_id, EmpireID empire2_id);
 
     /** Removes an empire from turn processing. This is most likely called when
       * an empire is eliminated from the game */
-    void RemoveEmpireData(int empire_id);
+    void RemoveEmpireData(EmpireID empire_id);
 
     /** Called when asyncio timer ends. Executes Python asyncio callbacks if any was generated. */
     void AsyncIOTimedoutHandler(const boost::system::error_code& error);
 
     /** Called when new \a turn state received by player playing \a empire_id. */
-    void UpdateEmpireTurnReceived(bool success, int empire_id, int turn);
+    void UpdateEmpireTurnReceived(bool success, EmpireID empire_id, int turn);
 
     boost::asio::io_context m_io_context;
     boost::asio::signal_set m_signals;
@@ -328,7 +330,7 @@ private:
     ServerFSM        m_fsm;
 
     PythonServer            m_python_server;
-    std::map<int, int>      m_player_empire_ids;                ///< map from player id to empire id that the player controls.
+    std::map<int, EmpireID> m_player_empire_ids;                ///< map from player id to empire id that the player controls.
     int                     m_current_turn = INVALID_GAME_TURN; ///< current turn number
     bool                    m_turn_expired = false;             ///< true when turn exceeds its timeout
     bool                    m_single_player_game = false;       ///< true when the game being played is single-player
@@ -345,7 +347,7 @@ private:
         std::string player_name;
         std::string empire_name;
         int         player_id = Networking::INVALID_PLAYER_ID;
-        int         empire_id = ALL_EMPIRES;
+        EmpireID    empire_id = ALL_EMPIRES;
 
         static_assert(__cpp_impl_three_way_comparison);
 #if !defined(__cpp_lib_three_way_comparison)
@@ -365,12 +367,12 @@ private:
 
     // storage for cached costs between pre- and post-combat update steps
     void CacheCostsTimes(const ScriptingContext& context);
-    std::map<int, std::vector<std::pair<std::string_view, double>>> m_cached_empire_policy_adoption_costs;
-    std::map<int, std::vector<std::tuple<std::string_view, double, int>>> m_cached_empire_research_costs_times;
-    std::map<int, std::vector<std::tuple<std::string_view, int, float, int>>> m_cached_empire_production_costs_times;
-    std::map<int, std::vector<std::pair<int, double>>> m_cached_empire_annexation_costs;
+    std::map<EmpireID, std::vector<std::pair<std::string_view, double>>> m_cached_empire_policy_adoption_costs;
+    std::map<EmpireID, std::vector<std::tuple<std::string_view, double, int>>> m_cached_empire_research_costs_times;
+    std::map<EmpireID, std::vector<std::tuple<std::string_view, int, float, int>>> m_cached_empire_production_costs_times; // item name, design ID, cost PP, turns
+    std::map<EmpireID, std::vector<std::pair<UniverseObjectID, double>>> m_cached_empire_annexation_costs;
 
-    std::map<int, std::vector<int>> m_empire_fleet_combat_initiation_vis_overrides;
+    std::map<EmpireID, std::vector<UniverseObjectID>> m_empire_fleet_combat_initiation_vis_overrides;
 
     // Give FSM and its states direct access.  We are using the FSM code as a
     // control-flow mechanism; it is all notionally part of this class.

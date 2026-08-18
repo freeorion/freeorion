@@ -56,6 +56,7 @@
     <None Include="..\..\cmake\make_versioncpp.py">
       <Filter>Source Files\cmake</Filter>
     </None>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\network\Message.h">
@@ -319,6 +320,9 @@
     </ClInclude>
     <ClInclude Include="..\..\util\ranges.h">
       <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ConstantsFwd.h">
+      <Filter>Header Files\universe</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

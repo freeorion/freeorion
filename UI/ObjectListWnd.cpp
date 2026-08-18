@@ -733,7 +733,7 @@ public:
                 return std::make_unique<Condition::EmpireAffiliation>(affil);
 
             // get id of empire matching name
-            int empire_id = ALL_EMPIRES;
+            EmpireID empire_id = ALL_EMPIRES;
             for (auto& [loop_empire_id, loop_empire] : Empires()) {
                 if (loop_empire->Name() == empire_name) {
                     empire_id = loop_empire_id;
@@ -741,7 +741,7 @@ public:
                 }
             }
             return std::make_unique<Condition::EmpireAffiliation>(
-                std::make_unique<ValueRef::Constant<int>>(empire_id), affil);
+                std::make_unique<ValueRef::Constant<int>>(Value(empire_id)), affil);
 
         } else if (condition_key == HOMEWORLD_CONDITION) {
             const auto& species_name = GetString();
@@ -1399,7 +1399,7 @@ namespace {
                     retval.push_back(ClientUI::ShipDesignIcon(*design));
             }
             if (retval.empty())
-                retval.push_back(ClientUI::ShipDesignIcon(INVALID_OBJECT_ID, app.GetContext().ContextUniverse()));  // default icon
+                retval.push_back(ClientUI::ShipDesignIcon(INVALID_DESIGN_ID, app.GetContext().ContextUniverse()));  // default icon
 
         } else if (obj->ObjectType() == UniverseObjectType::OBJ_FLEET) {
             if (auto* fleet = static_cast<const Fleet*>(obj.get())) {
@@ -1415,10 +1415,10 @@ namespace {
             if (auto* system = static_cast<const System*>(obj.get())) {
                 StarType star_type = system->GetStarType();
                 if (auto disc_texture = ui.GetModuloTexture(
-                    ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefix(star_type), system->ID()))
+                    ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefix(star_type), Value(system->ID())))
                 { retval.push_back(std::move(disc_texture)); }
                 if (auto halo_texture = ui.GetModuloTexture(
-                    ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefix(star_type), system->ID()))
+                    ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefix(star_type), Value(system->ID())))
                 { retval.push_back(std::move(halo_texture)); }
             }
         } else if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
@@ -1488,7 +1488,7 @@ public:
         }
     }
 
-    [[nodiscard]] int ObjectID() const noexcept { return m_object_id; }
+    [[nodiscard]] UniverseObjectID ObjectID() const noexcept { return m_object_id; }
 
     void PreRender() override {
         GG::Control::PreRender();
@@ -1640,8 +1640,8 @@ private:
         return retval;
     }
 
-    int     m_object_id = INVALID_OBJECT_ID;
-    int     m_indent = 1;
+    UniverseObjectID m_object_id = INVALID_OBJECT_ID;
+    int              m_indent = 1;
 
     std::shared_ptr<GG::Button>                 m_expand_button;
     std::shared_ptr<GG::StaticGraphic>          m_dot;
@@ -1649,10 +1649,10 @@ private:
     std::vector<std::shared_ptr<GG::Control>>   m_controls;
     mutable std::map<std::size_t, std::string>  m_column_val_cache;
 
-    bool    m_selected = false;
-    bool    m_initialized = false;
-    bool    m_expanded = false;
-    bool    m_has_contents = false;
+    bool m_selected = false;
+    bool m_initialized = false;
+    bool m_expanded = false;
+    bool m_has_contents = false;
 };
 
 ////////////////////////////////////////////////
@@ -1660,8 +1660,9 @@ private:
 ////////////////////////////////////////////////
 class ObjectRow : public GG::ListBox::Row {
 public:
-    ObjectRow(GG::X w, GG::Y h, std::shared_ptr<const UniverseObject> obj, bool expanded,
-              int container_object_panel, const std::span<const int> contained_object_panels,
+    ObjectRow(GG::X w, GG::Y h, std::shared_ptr<const UniverseObject> obj,
+              bool expanded, UniverseObjectID container_object_panel,
+              const std::span<const UniverseObjectID> contained_object_panels,
               int indent) :
         GG::ListBox::Row(w, h),
         m_container_object_panel(container_object_panel),
@@ -1697,22 +1698,22 @@ public:
     [[nodiscard]] GG::ListBox::Row::SortKeyType SortKey(std::size_t column) const override
     { return m_panel ? m_panel->SortKey(column) : EMPTY_STRING; }
 
-    [[nodiscard]] int ObjectID() const noexcept
+    [[nodiscard]] UniverseObjectID ObjectID() const noexcept
     { return m_panel ? m_panel->ObjectID() : INVALID_OBJECT_ID; }
 
-    [[nodiscard]] int ContainedByPanel() const noexcept
+    [[nodiscard]] UniverseObjectID ContainedByPanel() const noexcept
     { return m_container_object_panel; }
 
     [[nodiscard]] auto& ContainedPanels() const noexcept
     { return m_contained_object_panels; }
 
-    void SetContainedPanels(boost::container::flat_set<int>&& contained_object_panels) {
+    void SetContainedPanels(boost::container::flat_set<UniverseObjectID>&& contained_object_panels) {
         m_contained_object_panels = std::move(contained_object_panels);
         m_panel->SetHasContents(!m_contained_object_panels.empty());
         m_panel->RequirePreRender();
     }
 
-    void SetContainedPanels(const std::span<const int> contained_object_panels) {
+    void SetContainedPanels(const std::span<const UniverseObjectID> contained_object_panels) {
         m_contained_object_panels.clear();
         m_contained_object_panels.insert(contained_object_panels.begin(), contained_object_panels.end());
         m_panel->SetHasContents(!m_contained_object_panels.empty());
@@ -1735,15 +1736,15 @@ public:
     void ExpandCollapseClicked()
     { ExpandCollapseSignal(m_panel ? m_panel->ObjectID() : INVALID_OBJECT_ID); }
 
-    mutable boost::signals2::signal<void (int)> ExpandCollapseSignal;
+    mutable boost::signals2::signal<void (UniverseObjectID)> ExpandCollapseSignal;
 
 private:
-    std::shared_ptr<ObjectPanel>            m_panel;
-    int                                     m_container_object_panel = INVALID_OBJECT_ID;
-    boost::container::flat_set<int>         m_contained_object_panels;
-    std::shared_ptr<const UniverseObject>   m_obj_init;
-    int                                     m_indent_init = 0;
-    bool                                    m_expanded_init = false;
+    std::shared_ptr<ObjectPanel>                 m_panel;
+    UniverseObjectID                             m_container_object_panel = INVALID_OBJECT_ID;
+    boost::container::flat_set<UniverseObjectID> m_contained_object_panels;
+    std::shared_ptr<const UniverseObject>        m_obj_init;
+    int                                          m_indent_init = 0;
+    bool                                         m_expanded_init = false;
 };
 
 ////////////////////////////////////////////////
@@ -2084,7 +2085,7 @@ public:
     const auto& Visibilities() const noexcept
     { return m_visibilities; }
 
-    void CollapseObject(int object_id = INVALID_OBJECT_ID) {
+    void CollapseObject(UniverseObjectID object_id = INVALID_OBJECT_ID) {
         if (object_id == INVALID_OBJECT_ID) {
             for (const auto& row : *this)
                 if (const ObjectRow* object_row = dynamic_cast<const ObjectRow*>(row.get()))
@@ -2095,7 +2096,7 @@ public:
         Refresh(GetApp().GetContext());
     }
 
-    void ExpandObject(int object_id = INVALID_OBJECT_ID) {
+    void ExpandObject(UniverseObjectID object_id = INVALID_OBJECT_ID) {
         if (object_id == INVALID_OBJECT_ID)
             m_collapsed_objects.clear();
         else
@@ -2103,7 +2104,7 @@ public:
         Refresh(GetApp().GetContext());
     }
 
-    bool ObjectCollapsed(int object_id) const
+    bool ObjectCollapsed(UniverseObjectID object_id) const
     { return object_id != INVALID_OBJECT_ID && m_collapsed_objects.contains(object_id); }
 
     bool AnythingCollapsed() const noexcept
@@ -2166,8 +2167,8 @@ public:
         if (it == m_visibilities.end())
             return false;
 
-        const int object_id = obj->ID();
-        const int client_empire_id = GetApp().EmpireID();
+        const auto object_id = obj->ID();
+        const auto client_empire_id = GetApp().GetEmpireID();
 
         if (context.ContextUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).contains(object_id))
             return it->second.contains(VIS_DISPLAY::SHOW_DESTROYED);
@@ -2193,12 +2194,12 @@ public:
         m_header_row->Update();
 
         // sort objects by containment associations
-        std::vector<std::shared_ptr<const System>>                  systems;
-        std::map<int, std::vector<std::shared_ptr<const Fleet>>>    system_fleets;
-        std::map<int, std::vector<std::shared_ptr<const Ship>>>     fleet_ships;
-        std::map<int, std::vector<std::shared_ptr<const Planet>>>   system_planets;
-        std::map<int, std::vector<std::shared_ptr<const Building>>> planet_buildings;
-        std::map<int, std::vector<std::shared_ptr<const Field>>>    system_fields;
+        std::vector<std::shared_ptr<const System>>                               systems;
+        std::map<UniverseObjectID, std::vector<std::shared_ptr<const Fleet>>>    system_fleets;
+        std::map<UniverseObjectID, std::vector<std::shared_ptr<const Ship>>>     fleet_ships;
+        std::map<UniverseObjectID, std::vector<std::shared_ptr<const Planet>>>   system_planets;
+        std::map<UniverseObjectID, std::vector<std::shared_ptr<const Building>>> planet_buildings;
+        std::map<UniverseObjectID, std::vector<std::shared_ptr<const Field>>>    system_fields;
 
         const ObjectMap& objects{context.ContextObjects()};
 
@@ -2237,10 +2238,10 @@ public:
 
         // add system rows
         for (auto& system : systems) {
-            const int SYSTEM_ID = system->ID();
+            const auto SYSTEM_ID = system->ID();
 
             timer.EnterSection("system rows");
-            std::vector<int> system_contents;
+            std::vector<UniverseObjectID> system_contents;
             system_contents.reserve(system_planets[SYSTEM_ID].size() + system_fleets[SYSTEM_ID].size());
             for (const auto& planet : system_planets[SYSTEM_ID])
                 system_contents.push_back(planet->ID());
@@ -2263,9 +2264,9 @@ public:
             // add planet rows in this system
             timer.EnterSection("system planet rows");
             for (auto& planet : system_planets[SYSTEM_ID]) {
-                const int PLANET_ID = planet->ID();
+                const auto PLANET_ID = planet->ID();
 
-                std::vector<int> planet_contents;
+                std::vector<UniverseObjectID> planet_contents;
                 planet_contents.reserve(planet_buildings[PLANET_ID].size());
                 for (const auto& building : planet_buildings[PLANET_ID])
                     planet_contents.push_back(building->ID());
@@ -2289,9 +2290,9 @@ public:
             // add fleet rows in this system
             timer.EnterSection("system fleet rows");
             for (auto& fleet : system_fleets[SYSTEM_ID]) {
-                const int FLEET_ID = fleet->ID();
+                const auto FLEET_ID = fleet->ID();
 
-                std::vector<int> fleet_contents;
+                std::vector<UniverseObjectID> fleet_contents;
                 fleet_contents.reserve(fleet_ships[FLEET_ID].size());
                 std::transform(fleet_ships[FLEET_ID].begin(), fleet_ships[FLEET_ID].end(),
                                std::back_inserter(fleet_contents),
@@ -2326,9 +2327,9 @@ public:
         timer.EnterSection("non-system planet rows");
         for (const auto& [system_id, planets] : system_planets) {
             for (const auto& planet : planets) {
-                const int PLANET_ID = planet->ID();
+                const auto PLANET_ID = planet->ID();
 
-                std::vector<int> planet_contents;
+                std::vector<UniverseObjectID> planet_contents;
                 planet_contents.reserve(planet_buildings[PLANET_ID].size());
                 for (const auto& building : planet_buildings[PLANET_ID])
                     planet_contents.emplace_back(building->ID());
@@ -2358,10 +2359,10 @@ public:
         timer.EnterSection("non-system fleet rows");
         for (const auto& [sys_id, sys_fleets] : system_fleets) {
            for (const auto& fleet : sys_fleets) {
-               const int FLEET_ID = fleet->ID();
+               const auto FLEET_ID = fleet->ID();
 
                 // add fleet rows in this system
-                std::vector<int> fleet_contents;
+                std::vector<UniverseObjectID> fleet_contents;
                 fleet_contents.reserve(fleet_ships[FLEET_ID].size());
                 for (const auto& ship : fleet_ships[FLEET_ID])
                     fleet_contents.emplace_back(ship->ID());
@@ -2405,7 +2406,7 @@ public:
             this->BringRowIntoView(std::next(this->begin(), first_visible_queue_row));
     }
 
-    void UpdateObjectPanel(int object_id = INVALID_OBJECT_ID) {
+    void UpdateObjectPanel(UniverseObjectID object_id = INVALID_OBJECT_ID) {
         if (object_id == INVALID_OBJECT_ID)
             return;
         for (auto& row : *this) {
@@ -2449,15 +2450,15 @@ public:
     mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
 
 private:
-    void AddObjectRow(int object_id, int container, int indent, const std::span<const int> contents)
+    void AddObjectRow(UniverseObjectID object_id, UniverseObjectID container, int indent, const std::span<const UniverseObjectID> contents)
     { AddObjectRow(Objects().get(object_id), container, indent, contents); }
 
-    void AddObjectRow(std::shared_ptr<const UniverseObject> obj, int container,
-                      int indent, const std::span<const int> contents = {})
+    void AddObjectRow(std::shared_ptr<const UniverseObject> obj, UniverseObjectID container,
+                      int indent, const std::span<const UniverseObjectID> contents = {})
     {
         if (!obj)
             return;
-        const int OBJ_ID = obj->ID();
+        const auto OBJ_ID = obj->ID();
 
         m_object_change_connections[OBJ_ID].disconnect();
         m_object_change_connections[OBJ_ID] = obj->StateChangedSignal.connect(
@@ -2476,10 +2477,10 @@ private:
 
     // Removes row of indicated object, and all contained rows, recursively.
     // Also updates contents tracking of containing row, if any.
-    void RemoveObjectRow(int object_id) {
+    void RemoveObjectRow(UniverseObjectID object_id) {
         if (object_id == INVALID_OBJECT_ID)
             return;
-        int container_object_id = INVALID_OBJECT_ID;
+        auto container_object_id = INVALID_OBJECT_ID;
         for (GG::ListBox::iterator it = this->begin(); it != this->end(); ++it) {
             if (ObjectRow* object_row = dynamic_cast<ObjectRow*>(it->get())) {
                 if (object_row->ObjectID() == object_id) {
@@ -2534,7 +2535,7 @@ private:
         this->Erase(it);
     }
 
-    void ObjectExpandCollapseClicked(int object_id) {
+    void ObjectExpandCollapseClicked(UniverseObjectID object_id) {
         if (object_id == INVALID_OBJECT_ID)
             return;
         if (ObjectCollapsed(object_id))
@@ -2544,7 +2545,7 @@ private:
         ExpandCollapseSignal();
     }
 
-    void ObjectStateChanged(int object_id) {
+    void ObjectStateChanged(UniverseObjectID object_id) {
         if (object_id == INVALID_OBJECT_ID)
             return;
         const auto& app = GetApp();
@@ -2563,12 +2564,12 @@ private:
     void UniverseObjectDeleted(const std::shared_ptr<const UniverseObject>& obj)
     { if (obj) RemoveObjectRow(obj->ID()); }
 
-    std::map<int, boost::signals2::scoped_connection>   m_object_change_connections;
-    std::set<int>                                       m_collapsed_objects;
-    std::unique_ptr<Condition::Condition>               m_filter_condition;
-    VisMap                                              m_visibilities;
-    std::shared_ptr<ObjectHeaderRow>                    m_header_row;
-    boost::signals2::scoped_connection                  m_obj_deleted_connection;
+    std::map<UniverseObjectID, boost::signals2::scoped_connection>  m_object_change_connections;
+    std::set<UniverseObjectID>                                      m_collapsed_objects;
+    std::unique_ptr<Condition::Condition>                           m_filter_condition;
+    VisMap                                                          m_visibilities;
+    std::shared_ptr<ObjectHeaderRow>                                m_header_row;
+    boost::signals2::scoped_connection                              m_obj_deleted_connection;
 };
 
 ////////////////////////////////////////////////
@@ -2671,22 +2672,20 @@ void ObjectListWnd::ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows
     SelectedObjectsChangedSignal();
 }
 
-void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it, GG::Pt pt,
-                                        GG::Flags<GG::ModKey> modkeys)
-{
-    int object_id = ObjectInRow(it);
+void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
+    auto object_id = ObjectInRow(it);
     if (object_id != INVALID_OBJECT_ID)
         ObjectDoubleClickedSignal(object_id);
 
     auto& app = GetApp();
-    app.GetUI().ZoomToObject(object_id, app.GetContext(), app.EmpireID());
+    app.GetUI().ZoomToObject(object_id, app.GetContext(), app.GetEmpireID());
 }
 
-std::set<int> ObjectListWnd::SelectedObjectIDs() const {
-    std::set<int> sel_ids;
+std::set<UniverseObjectID> ObjectListWnd::SelectedObjectIDs() const {
+    std::set<UniverseObjectID> sel_ids;
     for (const auto& entry : m_list_box->Selections()) {
         if (ObjectRow *row = dynamic_cast<ObjectRow *>(entry->get())) {
-            int selected_object_id = row->ObjectID();
+            auto selected_object_id = row->ObjectID();
             if (selected_object_id != INVALID_OBJECT_ID)
                 sel_ids.insert(selected_object_id);
         }
@@ -2694,10 +2693,10 @@ std::set<int> ObjectListWnd::SelectedObjectIDs() const {
     return sel_ids;
 }
 
-void ObjectListWnd::SetSelectedObjects(std::set<int> sel_ids) {
+void ObjectListWnd::SetSelectedObjects(std::set<UniverseObjectID> sel_ids) {
     for (auto it = m_list_box->begin(); it != m_list_box->end(); ++it) {
         if (auto* row = dynamic_cast<ObjectRow*>(it->get())) {
-            const int selected_object_id = row->ObjectID();
+            const auto selected_object_id = row->ObjectID();
             if (selected_object_id != INVALID_OBJECT_ID) {
                 if (sel_ids.contains(selected_object_id))
                     m_list_box->SelectRow(it);
@@ -2707,7 +2706,7 @@ void ObjectListWnd::SetSelectedObjects(std::set<int> sel_ids) {
 }
 
 void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
-    int object_id = ObjectInRow(it);
+    UniverseObjectID object_id = ObjectInRow(it);
     if (object_id == INVALID_OBJECT_ID)
         return;
     auto& app = GetApp();
@@ -2748,7 +2747,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
     std::map<std::string, int> all_foci, avail_blds;    // counts of how many planets can use each focus or can produce each building type
     std::map<int, int> avail_designs_planet_counts;     // count of how many planets can produce each ship design
     UniverseObjectType type = obj->ObjectType();
-    auto cur_empire = context.GetEmpire(app.EmpireID());
+    auto cur_empire = context.GetEmpire(app.GetEmpireID());
 
     if (type == UniverseObjectType::OBJ_PLANET) {
         popup->AddMenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, suitability_action);
@@ -2759,7 +2758,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
                 continue;
 
             auto one_planet = context.ContextObjects().getRaw<const Planet>(row->ObjectID());
-            if (one_planet && one_planet->OwnedBy(app.EmpireID())) {
+            if (one_planet && one_planet->OwnedBy(app.GetEmpireID())) {
                 for (const auto& planet_focus : one_planet->AvailableFoci(context))
                     all_foci[std::string{planet_focus}]++;
 
@@ -2779,7 +2778,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
             }
         }
 
-        const int app_empire_id{app.EmpireID()};
+        const auto app_empire_id{app.GetEmpireID()};
 
         GG::MenuItem focus_menu_item(UserString("MENUITEM_SET_FOCUS"), false, false/*, no action*/);
         for (auto& [focus_name, count_of_planets_that_have_focus_available] : all_foci) {
@@ -2829,7 +2828,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
 
                 auto& app = GetApp();
                 auto& context = app.GetContext();
-                const auto empire_id = app.EmpireID();
+                const auto empire_id = app.GetEmpireID();
                 const auto cur_empire = context.GetEmpire(empire_id);
 
                 for (const auto& entry : m_list_box->Selections()) {
@@ -2838,7 +2837,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
                         continue;
                     {
                         auto one_planet = context.ContextObjects().get<Planet>(row->ObjectID());
-                        if (!one_planet || !one_planet->OwnedBy(app.EmpireID()) ||
+                        if (!one_planet || !one_planet->OwnedBy(app.GetEmpireID()) ||
                             !cur_empire->ProducibleItem(BuildType::BT_SHIP, design_id,
                                                     row->ObjectID(), context))
                         { continue; }
@@ -2885,7 +2884,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
                 auto& app = GetApp();
                 auto& context = app.GetContext();
                 const auto& objects = context.ContextObjects();
-                const auto cur_empire = context.GetEmpire(app.EmpireID());
+                const auto cur_empire = context.GetEmpire(app.GetEmpireID());
 
                 for (const auto& selection : m_list_box->Selections()) {
                     auto row = dynamic_cast<const ObjectRow*>(selection->get());
@@ -2893,7 +2892,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
                         continue;
 
                     auto one_planet = objects.get<Planet>(row->ObjectID());
-                    if (!one_planet || !one_planet->OwnedBy(app.EmpireID()))
+                    if (!one_planet || !one_planet->OwnedBy(app.GetEmpireID()))
                         continue;
                     if (!cur_empire->EnqueuableItem(BuildType::BT_BUILDING, building_type_name,
                                                     row->ObjectID(), context)
@@ -2903,7 +2902,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
 
                     app.Orders().IssueOrder<ProductionQueueOrder>(
                         context,
-                        ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE, app.EmpireID(),
+                        ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE, app.GetEmpireID(),
                         ProductionQueue::ProductionItem{BuildType::BT_BUILDING, building_type_name},
                         1, row->ObjectID(), pos); // TODO: pass bld_item with move?
 
@@ -2942,7 +2941,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
     popup->Run();
 }
 
-int ObjectListWnd::ObjectInRow(GG::ListBox::iterator it) const {
+UniverseObjectID ObjectListWnd::ObjectInRow(GG::ListBox::iterator it) const {
     if (it == m_list_box->end())
         return INVALID_OBJECT_ID;
 

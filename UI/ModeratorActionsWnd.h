@@ -4,6 +4,7 @@
 #include <vector>
 #include <boost/signals2/signal.hpp>
 #include "../universe/EnumsFwd.h"
+#include "../universe/ConstantsFwd.h"
 #include "../util/Enum.h"
 
 #include "CUIWnd.h"
@@ -31,7 +32,7 @@ public:
     PlanetType              SelectedPlanetType() const;
     PlanetSize              SelectedPlanetSize() const;
     StarType                SelectedStarType() const;
-    int                     SelectedEmpire() const;
+    EmpireID                SelectedEmpire() const;
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
@@ -43,7 +44,7 @@ public:
     mutable boost::signals2::signal<void (StarType)>   CreateSystemActionSelectedSignal;
     mutable boost::signals2::signal<void (PlanetType)> CreatePlanetActionSelectedSignal;
     mutable boost::signals2::signal<void ()>           DeleteObjectActionSelectedSignal;
-    mutable boost::signals2::signal<void (int)>        SetOwnerActionSelectedSignal;
+    mutable boost::signals2::signal<void (EmpireID)>   SetOwnerActionSelectedSignal;
     mutable boost::signals2::signal<void ()>           AddStarlaneActionSelectedSignal;
 
 private:
@@ -62,7 +63,7 @@ private:
     StarType   StarTypeFromIndex(std::size_t i) const;
     PlanetType PlanetTypeFromIndex(std::size_t i) const;
     PlanetSize PlanetSizeFromIndex(std::size_t i) const;
-    int        EmpireIDFromIndex(std::size_t i) const;
+    EmpireID   EmpireIDFromIndex(std::size_t i) const;
 
     bool                              m_actions_enabled = false;
     ModeratorActionSetting            m_selected_action = ModeratorActionSetting::MAS_NoAction;

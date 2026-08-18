@@ -49,13 +49,13 @@ namespace Effect {
     struct SourcedEffectsGroup; // struct SourcedEffectsGroup { int source_object_id; const EffectsGroup* effects_group; };
     class EffectsGroup;
     using TargetSet = std::vector<UniverseObject*>;
-    using AccountingMap = std::unordered_map<int, boost::container::flat_map<MeterType, std::vector<AccountingInfo>>>;
+    using AccountingMap = std::unordered_map<UniverseObjectID, boost::container::flat_map<MeterType, std::vector<AccountingInfo>>>;
     using SourcesEffectsTargetsAndCause = std::pair<SourcedEffectsGroup, TargetsAndCause>;
     using SourcesEffectsTargetsAndCausesVec = std::vector<SourcesEffectsTargetsAndCause>;
 }
 
 
-using IDSet = boost::container::flat_set<int32_t>;
+using IDSet = boost::container::flat_set<UniverseObjectID>;
 
 /** The Universe class contains the majority of FreeOrion gamestate: All the
   * UniverseObjects in a game, and (of less importance) all ShipDesigns in a
@@ -66,28 +66,28 @@ using IDSet = boost::container::flat_set<int32_t>;
   * and populate new Universe gamestates when new games are started. */
 class FO_COMMON_API Universe {
 public:
-    using EmpireObjectMap = std::map<int, ObjectMap>; ///< Known information each empire had about objects in the Universe; keyed by empire id
+    using EmpireObjectMap = std::map<EmpireID, ObjectMap>; ///< Known information each empire had about objects in the Universe; keyed by empire id
 
     using IDSet = ::IDSet;
 
 private:
-    using ObjectKnowledgeMap = std::map<int, std::unordered_set<int>>; ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
+    using ObjectKnowledgeMap = std::map<EmpireID, std::unordered_set<UniverseObjectID>>; ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
 
     using VisValRef = const ValueRef::ValueRef<Visibility>*;
-    using SrcVisValRefVec = std::vector<std::pair<int, VisValRef>>;
-    using ObjSrcVisValRefVecMap = std::map<int, SrcVisValRefVec>;
-    using EmpireObjectVisValueRefMap = std::map<int, ObjSrcVisValRefVecMap>;
+    using SrcVisValRefVec = std::vector<std::pair<UniverseObjectID, VisValRef>>;
+    using ObjSrcVisValRefVecMap = std::map<UniverseObjectID, SrcVisValRefVec>;
+    using EmpireObjectVisValueRefMap = std::map<EmpireID, ObjSrcVisValRefVecMap>;
 
     /** Discrepancy between meter's value at start of turn, and the value that
       * this client calculate that the meter should have with the knowledge
       * available -> the unknown factor affecting the meter.  This is used
       * when generating effect accounting, in the case where the expected
       * and actual meter values don't match. */
-    using DiscrepancyMap = std::unordered_map<int, boost::container::flat_map<MeterType, double>>;
+    using DiscrepancyMap = std::unordered_map<UniverseObjectID, boost::container::flat_map<MeterType, double>>;
 
 public:
-    using ObjectSpecialsMap = std::map<int, std::set<std::string>>;       ///< map from object id to names of specials on an object
-    using EmpireObjectSpecialsMap = std::map<int, ObjectSpecialsMap>;     ///< map from empire id to ObjectSpecialsMap of known specials for objects for that empire
+    using ObjectSpecialsMap = std::map<UniverseObjectID, std::set<std::string>>; ///< map from object id to names of specials on an object
+    using EmpireObjectSpecialsMap = std::map<EmpireID, ObjectSpecialsMap>;       ///< map from empire id to ObjectSpecialsMap of known specials for objects for that empire
 
     using ShipDesignMap = std::map<int, ShipDesign>;                      ///< ShipDesigns in universe; keyed by design id
     using ship_design_iterator = ShipDesignMap::const_iterator;           ///< const iterator over ship designs created by players that are known by this client
@@ -108,28 +108,28 @@ public:
       * id \a empire_id or the true / complete state of all objects in this
       * Universe (the same as calling Objects()) if \a empire_id is
       * ALL_EMPIRES*/
-    [[nodiscard]] const ObjectMap& EmpireKnownObjects(int empire_id = ALL_EMPIRES) const;
-    [[nodiscard]] ObjectMap&       EmpireKnownObjects(int empire_id = ALL_EMPIRES);
+    [[nodiscard]] const ObjectMap& EmpireKnownObjects(EmpireID empire_id = ALL_EMPIRES) const;
+    [[nodiscard]] ObjectMap&       EmpireKnownObjects(EmpireID empire_id = ALL_EMPIRES);
 
     /** Returns IDs of objects that the Empire with id \a empire_id has vision
       * of on the current turn, or objects that at least one empire has vision
       * of on the current turn if \a empire_id = ALL_EMPIRES */
-    [[nodiscard]] IDSet EmpireVisibleObjectIDs(int empire_id, const EmpireManager& empires) const;
+    [[nodiscard]] IDSet EmpireVisibleObjectIDs(EmpireID empire_id, const EmpireManager& empires) const;
 
     /** Returns IDs of objects that have been destroyed. */
     [[nodiscard]] auto& DestroyedObjectIds() const noexcept { return m_destroyed_object_ids; }
-    [[nodiscard]] int   HighestDestroyedObjectID() const;
+    [[nodiscard]] UniverseObjectID HighestDestroyedObjectID() const;
 
     /** Returns IDs of objects that the Empire with id \a empire_id knows have
       * been destroyed.  Each empire's latest known objects data contains the
       * last known information about each object, whether it has been destroyed
       * or not. */
-    [[nodiscard]] const std::unordered_set<int>& EmpireKnownDestroyedObjectIDs(int empire_id) const;
+    [[nodiscard]] const std::unordered_set<UniverseObjectID>& EmpireKnownDestroyedObjectIDs(EmpireID empire_id) const;
 
     /** Returns IDs of objects that the Empire with id \a empire_id has stale
       * knowledge of in its latest known objects.  The latest known data about
       * these objects suggests that they should be visible, but they are not. */
-    [[nodiscard]] const std::unordered_set<int>& EmpireStaleKnowledgeObjectIDs(int empire_id) const;
+    [[nodiscard]] const std::unordered_set<UniverseObjectID>& EmpireStaleKnowledgeObjectIDs(EmpireID empire_id) const;
 
     [[nodiscard]] const ShipDesign* GetShipDesign(int ship_design_id) const;    ///< returns the ship design with id \a ship_design id, or 0 if non exists
 
@@ -142,12 +142,12 @@ public:
     /** Returns IDs of ship designs that the Empire with id \a empire_id has
       * seen during the game.  If \a empire_id = ALL_EMPIRES an empty set of
       * ids is returned */
-    [[nodiscard]] const std::set<int>& EmpireKnownShipDesignIDs(int empire_id) const;
+    [[nodiscard]] const std::set<int>& EmpireKnownShipDesignIDs(EmpireID empire_id) const;
 
     /** Returns the Visibility level of empire with id \a empire_id of UniverseObject with
       * id \a object_id as determined by calling UpdateEmpireObjectVisibilities.
       * Monsters/neutrals are treated as an empire with id ALL_EMPIRES. */
-    [[nodiscard]] Visibility GetObjectVisibilityByEmpire(int object_id, int empire_id) const;
+    [[nodiscard]] Visibility GetObjectVisibilityByEmpire(UniverseObjectID object_id, EmpireID empire_id) const;
 
     /* Return the map from empire id to (map from id to that empire's current
      * visibility of that object) */
@@ -162,43 +162,43 @@ public:
       * \a object_id at basic/partial/full visibility. Returned value may
       * be INVALID_OBJECT_ID/INVALID_GAME_TURN if the empire has not seen
       * the object at one or more visibility levels yet. */
-    [[nodiscard]] const ObjVisTurns& GetObjectVisibilityTurnsByEmpire(int object_id, int empire_id) const;
+    [[nodiscard]] const ObjVisTurns& GetObjectVisibilityTurnsByEmpire(UniverseObjectID object_id, EmpireID empire_id) const;
 
     /** Returns the turn on which empire \a empire_id last saw the object
       * \a object_id at visibility \a vis. If \a vis is not one of
       * FULL/PARTIAL/BASIC visibility, returns the turn for VIS_BASIC_VISIBILTY.
       * If that empire has not seen that object, returns INVALID_GAME_TURN. */
-    [[nodiscard]] int GetObjectVisibilityTurnByEmpire(int object_id, int empire_id, Visibility vis = Visibility::VIS_BASIC_VISIBILITY) const;
+    [[nodiscard]] int GetObjectVisibilityTurnByEmpire(UniverseObjectID object_id, EmpireID empire_id, Visibility vis = Visibility::VIS_BASIC_VISIBILITY) const;
 
     /** Returns true if the empire \a empire_id has ever detected the object
       * \a object_id at visibility \a vis or higher. If \a vis is not one of
       * FULL/PARTIAL/BASIC visibility, returns as if for VIS_BASIC_VISIBILITY. */
-    [[nodiscard]] bool EmpireHasEverDetectedObjectAtVisibility(int object_id, int empire_id, Visibility vis) const;
-    [[nodiscard]] bool EmpireHasEverDetectedObject(int object_id, int empire_id) const
+    [[nodiscard]] bool EmpireHasEverDetectedObjectAtVisibility(UniverseObjectID object_id, EmpireID empire_id, Visibility vis) const;
+    [[nodiscard]] bool EmpireHasEverDetectedObject(UniverseObjectID object_id, EmpireID empire_id) const
     { return EmpireHasEverDetectedObjectAtVisibility(object_id, empire_id, Visibility::VIS_BASIC_VISIBILITY); }
 
 
     /** Sets latest visibility turn for \a empire_id of object \a object_id
       * to \a turn for visibility level \a vis and below. */
-    void SetObjectVisibilityTurnsByEmpire(int object_id, int empire_id, Visibility vis, int turn);
+    void SetObjectVisibilityTurnsByEmpire(UniverseObjectID object_id, EmpireID empire_id, Visibility vis, int turn);
 
     /** Returns the set of specials attached to the object with id \a object_id
       * that the empire with id \a empire_id can see this turn. */
-    [[nodiscard]] std::set<std::string> GetObjectVisibleSpecialsByEmpire(int object_id, int empire_id) const;
+    [[nodiscard]] std::set<std::string> GetObjectVisibleSpecialsByEmpire(UniverseObjectID object_id, EmpireID empire_id) const;
 
     /** Returns map from empire ID to map from location (X, Y) to detection range
       * that empire has at that location. */
-    [[nodiscard]] std::map<int, std::map<std::pair<double, double>, float>>
+    [[nodiscard]] std::map<EmpireID, std::map<std::pair<double, double>, float>>
         GetEmpiresAndNeutralPositionDetectionRanges(const ObjectMap& objects) const;
 
-    [[nodiscard]] std::map<int, std::map<std::pair<double, double>, float>>
+    [[nodiscard]] std::map<EmpireID, std::map<std::pair<double, double>, float>>
         GetEmpiresAndNeutralPositionDetectionRanges(const ObjectMap& objects,
-                                                    const std::unordered_set<int>& exclude_ids) const;
+                                                    const std::unordered_set<UniverseObjectID>& exclude_ids) const;
 
     /** Returns map from empire ID to map from location (X, Y) to detection range
       * that empire is expected to have at that location after the next turn's
       * fleet movement. */
-    [[nodiscard]] std::map<int, std::map<std::pair<double, double>, float>>
+    [[nodiscard]] std::map<EmpireID, std::map<std::pair<double, double>, float>>
         GetEmpiresPositionNextTurnFleetDetectionRanges(const ScriptingContext& context) const;
 
     /** Return the Pathfinder */
@@ -226,10 +226,10 @@ public:
       * the server is allocating an id on behalf of itself.  This can be removed
       * when no longer supporting legacy id allocation in pending Orders. \note
       * Universe gains ownership of \a ship_design once inserted. */
-    bool InsertShipDesignID(ShipDesign ship_design, std::optional<int> empire_id, int id);
+    bool InsertShipDesignID(ShipDesign ship_design, std::optional<EmpireID> empire_id, int id);
 
    /** Reset object and ship design id allocation for a new game. */
-    void ResetAllIDAllocation(const std::vector<int>& empire_ids = std::vector<int>());
+    void ResetAllIDAllocation(const std::vector<EmpireID>& empire_ids = std::vector<EmpireID>());
 
     /** Clears main ObjectMap, empires' latest known objects map, and
       * ShipDesign map. */
@@ -249,14 +249,14 @@ public:
       * \a object_ids.  Then clamps meter values so target and max meters are
       * within a reasonable range and any current meters with associated max
       * meters are limited by their max. */
-    void ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids, ScriptingContext& context,
+    void ApplyMeterEffectsAndUpdateMeters(const std::vector<UniverseObjectID>& object_ids, ScriptingContext& context,
                                           bool do_accounting = true);
 
     /** Calls above ApplyMeterEffectsAndUpdateMeters() function on all objects.*/
     void ApplyMeterEffectsAndUpdateMeters(ScriptingContext& context, bool do_accounting = true);
 
     /** Executes effects that modify objects' appearance in the human client. */
-    void ApplyAppearanceEffects(const std::vector<int>& object_ids, ScriptingContext& context);
+    void ApplyAppearanceEffects(const std::vector<UniverseObjectID>& object_ids, ScriptingContext& context);
 
     /** Executes effects that modify objects' apperance for all objects. */
     void ApplyAppearanceEffects(ScriptingContext& context);
@@ -272,13 +272,13 @@ public:
     /** Based on (known subset of, if in a client) universe and any orders
       * given so far this turn, updates estimated meter maxes for next turn
       * for the objects with ids indicated in \a objects_vec. */
-    void UpdateMeterEstimates(const std::vector<int>& objects_vec, ScriptingContext& context);
+    void UpdateMeterEstimates(const std::vector<UniverseObjectID>& objects_vec, ScriptingContext& context);
 
     /** Updates indicated object's meters, and if applicable, the
       * meters of objects contained within the indicated object.
       * If \a object_id is INVALID_OBJECT_ID, then all
       * objects' meters are updated. */
-    void UpdateMeterEstimates(int object_id, ScriptingContext& context, bool update_contained_objects = false);
+    void UpdateMeterEstimates(UniverseObjectID object_id, ScriptingContext& context, bool update_contained_objects = false);
 
     /** Updates all meters for all (known) objects */
     void UpdateMeterEstimates(ScriptingContext& context);
@@ -292,28 +292,28 @@ public:
     void UpdateEmpireObjectVisibilities(const ScriptingContext& context);
 
     /** Sets visibility by empires of objects with specified ids. */
-    void SetObjectVisibilityOverrides(std::map<int, std::vector<int>> empires_ids);
+    void SetObjectVisibilityOverrides(std::map<EmpireID, std::vector<UniverseObjectID>> empires_ids);
     void ApplyObjectVisibilityOverrides();
 
     /** Sets a special record of visibility that overrides the standard
       * empire-object visibility after the latter is processed. */
-    void SetEffectDerivedVisibility(int empire_id, int object_id, int source_id,
-                                    const ValueRef::ValueRef<Visibility>* vis);
+    void SetEffectDerivedVisibility(EmpireID empire_id, UniverseObjectID object_id,
+                                    UniverseObjectID source_id, const ValueRef::ValueRef<Visibility>* vis);
 
     /** Applies empire-object visibilities set by effects. */
     void ApplyEffectDerivedVisibilities(const ScriptingContext& context);
 
     /** If an \p empire_id can't currently see \p object_id, then remove
      * \p object_id' object from the object map and the set of known objects. */
-    void ForgetKnownObject(int empire_id, int object_id);
+    void ForgetKnownObject(EmpireID empire_id, UniverseObjectID object_id);
 
     /** Sets visibility for indicated \a empire_id of object with \a object_id
       * to at least * \a vis. If visibility is already equal or higher, does nothing.
       * For ship object ids, also sets the ship's design to be known to the empire. */
-    void SetEmpireObjectVisibility(int empire_id, int object_id, Visibility vis);
+    void SetEmpireObjectVisibility(EmpireID empire_id, UniverseObjectID object_id, Visibility vis);
 
     /** Sets visibility for indicated \a empire_id for the indicated \a special */
-    void SetEmpireSpecialVisibility(int empire_id, int object_id,
+    void SetEmpireSpecialVisibility(EmpireID empire_id, UniverseObjectID object_id,
                                     const std::string& special_name, bool visible = true);
 
     /** Stores latest known information about each object for each empire and
@@ -341,15 +341,16 @@ public:
 
     /** Adds the object ID \a object_id to the set of object ids for the empire
       * with id \a empire_id that the empire knows have been destroyed. */
-    void SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id);
+    void SetEmpireKnowledgeOfDestroyedObject(UniverseObjectID object_id, EmpireID empire_id);
 
     /** Adds the ship design ID \a ship_design_id to the set of ship design ids
       * known by the empire with id \a empire_id */
-    void SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id);
+    void SetEmpireKnowledgeOfShipDesign(int ship_design_id, EmpireID empire_id);
 
     /** Record in statistics that \a object_id was destroyed by species/empire
       * associated with \a source_object_id */
-    void CountDestructionInStats(int object_id, int source_object_id, const std::map<int, std::shared_ptr<Empire>>& empires);
+    void CountDestructionInStats(UniverseObjectID object_id, UniverseObjectID source_object_id,
+                                 const std::map<EmpireID, std::shared_ptr<Empire>>& empires);
 
     /** Removes the object with ID number \a object_id from the universe's map
       * of existing objects, and adds the object's id to the set of destroyed
@@ -359,7 +360,7 @@ public:
       * to have been destroyed.  Older or limited versions of objects remain
       * in empires latest known objects ObjectMap, regardless of whether the
       * empire knows the object is destroyed. */
-    void Destroy(int object_id, const std::span<const int> empire_ids,
+    void Destroy(UniverseObjectID object_id, const std::span<const EmpireID> empire_ids,
                  bool update_destroyed_object_knowers = true);
 
     /** Destroys object with ID \a object_id, and destroys any associted
@@ -369,18 +370,18 @@ public:
       * whose ID is in \a empire_ids and that currently have visibility of the
       * object have its id added to their set of objects' ids that are known
       * to have been destroyed. */
-    std::vector<int> RecursiveDestroy(int object_id, const std::span<const int> empire_ids);
+    std::vector<UniverseObjectID> RecursiveDestroy(UniverseObjectID object_id, const std::span<const EmpireID> empire_ids);
 
     /** Used by the Destroy effect to mark an object for destruction later
       * during turn processing. (objects can't be destroyed immediately as
       * other effects might depend on their existence) */
-    void EffectDestroy(int destroyed_object_id, int source_object_id = INVALID_OBJECT_ID);
+    void EffectDestroy(UniverseObjectID destroyed_object_id, UniverseObjectID source_object_id = INVALID_OBJECT_ID);
 
     /** Permanently deletes object with ID number \a object_id.
       * No information about this object is retained in the Universe.
       * Can be performed on objects whether or not the have been destroyed.
       * Returns true if such an object was found, false otherwise. */
-    bool Delete(int object_id);
+    bool Delete(UniverseObjectID object_id);
 
     /** Permanently deletes the ship design with ID number \a design_id. No
       * information about this design is retained in the Universe. */
@@ -413,10 +414,10 @@ public:
     /** InsertTemp inserts the provided \a objets into the object map with a series of
       * temporary ids. It returns the ids of the inserted objects. */
     template <typename T>
-    std::vector<int> InsertTemp(const std::vector<std::shared_ptr<T>>& objects)
+    std::vector<UniverseObjectID> InsertTemp(const std::vector<std::shared_ptr<T>>& objects)
     {
         auto ID = TEMPORARY_OBJECT_ID;
-        std::vector<int> retval;
+        std::vector<UniverseObjectID> retval;
         retval.reserve(objects.size());
         for (auto& obj : objects) {
             if (!obj)
@@ -434,7 +435,7 @@ public:
         and receive a new id and then are run a second time on the server using
         the id assigned on the client. */
     template <typename T, typename... Args>
-    std::shared_ptr<T> InsertByEmpireWithID(int empire_id, int id, Args&&... args)
+    std::shared_ptr<T> InsertByEmpireWithID(EmpireID empire_id, UniverseObjectID id, Args&&... args)
     {
         if (!VerifyUnusedObjectID(empire_id, id))
             return nullptr;
@@ -475,17 +476,17 @@ private:
     Pathfinder m_pathfinder;
 
     /** Generates an object ID for a future object. Usually used by the server to service new ID requests. */
-    int GenerateObjectID();
+    UniverseObjectID GenerateObjectID();
 
     /** Generates design ID for a new (ship) design. Usually used by the server to service new ID requests. */
     int GenerateDesignID();
 
     /** Verify that an object ID \p id could be generated by \p empire_id. */
-    bool VerifyUnusedObjectID(const int empire_id, const int id);
+    bool VerifyUnusedObjectID(EmpireID empire_id, UniverseObjectID id);
 
     /** Inserts object \p obj into the universe with the given \p id. */
     template <typename T, typename... Args>
-    std::shared_ptr<T> InsertID(int id, Args&&... args) {
+    std::shared_ptr<T> InsertID(UniverseObjectID id, Args&&... args) {
         static_assert(std::is_base_of_v<UniverseObject, T>);
         static_assert(!std::is_same_v<UniverseObject, T>);
         auto obj = std::make_shared<T>(std::forward<Args>(args)...);
@@ -494,22 +495,19 @@ private:
     }
 
     /** Inserts object \p obj into the universe with the given \p id. */
-    void InsertIDCore(std::shared_ptr<UniverseObject> obj, int id);
+    void InsertIDCore(std::shared_ptr<UniverseObject> obj, UniverseObjectID id);
 
-    /** Clears \a source_effects_targets_causes, and then populates with all
-      * EffectsGroups and their targets in the known universe. */
-    void GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
-                              const ScriptingContext& context,
-                              bool only_meter_effects = false) const;
+    /** Returns map with all EffectsGroups and their targets in the known universe,
+      * indexed by effect priority. */
+    std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> GetEffectsAndTargets(
+        const ScriptingContext& context, bool only_meter_effects = false) const;
 
-    /** Removes entries in \a source_effects_targets_causes about effects groups acting
-      * on objects in \a target_objects, and then repopulates for EffectsGroups
-      * that act on at least one of the objects in \a target_objects. If
-      * \a target_objects is empty then default target candidates will be used. */
-    void GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
-                              const std::vector<int>& target_objects,
-                              const ScriptingContext& context,
-                              bool only_meter_effects = false) const;
+    /** Return map with EffectsGroups that act on at least one of the objects in
+      * \a target_objects, indexed by effect priority.
+      * If \a target_objects is empty then default target candidates will be used. */
+    std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> GetEffectsAndTargets(
+        const std::vector<UniverseObjectID>& target_objects, const ScriptingContext& context,
+        bool only_meter_effects = false) const;
 
     /** Executes all effects.  For use on server when processing turns.
       * If \a only_meter_effects is true, then only SetMeter effects are
@@ -528,28 +526,28 @@ private:
       * processed objects_vec or whatever they were passed and cleared the
       * relevant effect accounting for those objects and meters. If an empty
       * vector is passed, it will instead update all existing objects. */
-    void UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, ScriptingContext& context, bool do_accounting);
+    void UpdateMeterEstimatesImpl(const std::vector<UniverseObjectID>& objects_vec, ScriptingContext& context, bool do_accounting);
 
-    ObjectMap                       m_objects;                          ///< map from object id to UniverseObjects in the universe.  for the server: all of them, up to date and true information about object is stored;  for clients, only limited information based on what the client knows about is sent.
-    EmpireObjectMap                 m_empire_latest_known_objects;      ///< map from empire id to (map from object id to latest known information about each object by that empire)
+    ObjectMap                       m_objects;                             ///< map from object id to UniverseObjects in the universe.  for the server: all of them, up to date and true information about object is stored;  for clients, only limited information based on what the client knows about is sent.
+    EmpireObjectMap                 m_empire_latest_known_objects;         ///< map from empire id to (map from object id to latest known information about each object by that empire)
 
-    std::unordered_set<int>         m_destroyed_object_ids;             ///< all ids of objects that have been destroyed (on server) or that a player knows were destroyed (on clients)
+    std::unordered_set<UniverseObjectID> m_destroyed_object_ids;           ///< all ids of objects that have been destroyed (on server) or that a player knows were destroyed (on clients)
 
-    EmpireObjectVisibilityMap         m_empire_object_visibility;       ///< map from empire id to (map from object id to visibility of that object for that empire)
-    EmpireObjectVisibilityTurnsVecMap m_empire_object_visibility_turns; ///< map from empire id to (map from object id to (map from Visibility rating to turn number on which the empire last saw the object at the indicated Visibility rating or higher)
+    EmpireObjectVisibilityMap            m_empire_object_visibility;       ///< map from empire id to (map from object id to visibility of that object for that empire)
+    EmpireObjectVisibilityTurnsVecMap    m_empire_object_visibility_turns; ///< map from empire id to (map from object id to (map from Visibility rating to turn number on which the empire last saw the object at the indicated Visibility rating or higher)
 
-    std::map<int, std::vector<int>> m_fleet_blockade_ship_visibility_overrides; // map from empire id to (list of ship ids that are visibile to that empire due to being revealed by participating in a blockade)
-    EmpireObjectVisValueRefMap      m_effect_specified_empire_object_visibilities;
+    std::map<EmpireID, std::vector<UniverseObjectID>> m_fleet_blockade_ship_visibility_overrides; // map from empire id to (list of ship ids that are visibile to that empire due to being revealed by participating in a blockade)
+    EmpireObjectVisValueRefMap                        m_effect_specified_empire_object_visibilities;
 
-    EmpireObjectSpecialsMap         m_empire_object_visible_specials;   ///< map from empire id to (map from object id to (set of names of specials that empire can see are on that object) )
+    EmpireObjectSpecialsMap           m_empire_object_visible_specials;    ///< map from empire id to (map from object id to (set of names of specials that empire can see are on that object) )
 
-    ObjectKnowledgeMap              m_empire_known_destroyed_object_ids;///< map from empire id to (set of object ids that the empire knows have been destroyed)
-    ObjectKnowledgeMap              m_empire_stale_knowledge_object_ids;///< map from empire id to (set of object ids that the empire has previously observed but has subsequently been unable to detect at its last known location despite expecting to be able to detect it based on stealth of the object and having detectors in range)
+    ObjectKnowledgeMap                m_empire_known_destroyed_object_ids; ///< map from empire id to (set of object ids that the empire knows have been destroyed)
+    ObjectKnowledgeMap                m_empire_stale_knowledge_object_ids; ///< map from empire id to (set of object ids that the empire has previously observed but has subsequently been unable to detect at its last known location despite expecting to be able to detect it based on stealth of the object and having detectors in range)
 
-    ShipDesignMap                   m_ship_designs;                     ///< ship designs in the universe
-    std::map<int, std::set<int>>    m_empire_known_ship_design_ids;     ///< ship designs known to each empire
+    ShipDesignMap                     m_ship_designs;                      ///< ship designs in the universe
+    std::map<EmpireID, std::set<int>> m_empire_known_ship_design_ids;      ///< ship designs known to each empire
 
-    Effect::AccountingMap           m_effect_accounting_map;            ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
+    Effect::AccountingMap             m_effect_accounting_map;             ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
 
     /// map from target object id, to map from target meter, to discrepancy
     /// between meter's actual initial value, and the initial value that this
@@ -557,13 +555,13 @@ private:
     /// affecting the meter.
     DiscrepancyMap                  m_effect_discrepancy_map;
 
-    std::map<int, std::set<int>>    m_marked_destroyed;                 ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object. key is destroyed object, and value set are the ids of objects that caused the destruction (may be multiples destroying a single target on a given turn)
+    std::map<UniverseObjectID, std::set<UniverseObjectID>> m_marked_destroyed;  ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object. key is destroyed object, and value set are the ids of objects that caused the destruction (may be multiples destroying a single target on a given turn)
 
     double                          m_universe_width = 1000.0;
     bool                            m_inhibit_universe_object_signals = false;
 
-    std::map<std::string, std::map<int, std::map<int, double>>>
-                                    m_stat_records;                     ///< storage for statistics calculated for empires. Indexed by stat name (string), contains a map indexed by empire id, contains a map from turn number (int) to stat value (double).
+    std::map<std::string, std::map<EmpireID, std::map<int, double>>>
+                                    m_stat_records;                             ///< storage for statistics calculated for empires. Indexed by stat name (string), contains a map indexed by empire id, contains a map from turn number (int) to stat value (double).
 
     //! @name Parsed items
     //! Various unlocked items are kept as a Pending::Pending while being parsed and
@@ -582,40 +580,38 @@ private:
     mutable EmpireStatsMap                                  m_empire_stats;
     //! @}
 
-    /** Fills \a designs_to_serialize with ShipDesigns known to the empire with
-      * the ID \a encoding empire.  If encoding_empire is ALL_EMPIRES, then all
-      * designs are included. */
-    const ShipDesignMap& GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, int encoding_empire) const;
+    /** Returns ShipDesigns known to the empire with the ID \a encoding empire.
+      * If encoding_empire is ALL_EMPIRES, then all designs are included. */
+    ShipDesignMap GetShipDesignsToSerialize(EmpireID encoding_empire) const;
 
-    /** Fills \a objects with copies of UniverseObjects that should be sent
+    /** Returns objects with copies of UniverseObjects that should be sent
       * to the empire with id \a encoding_empires */
-    void GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) const;
+    ObjectMap GetObjectsToSerialize(EmpireID encoding_empire) const;
 
-    /** Fills \a destroyed_object_ids with ids of objects known to be destroyed
-      * by the empire with ID \a encoding empire. If encoding_empire is
-      * ALL_EMPIRES, then all destroyed objects are included. */
-    void GetDestroyedObjectsToSerialize(std::set<int>& destroyed_object_ids, int encoding_empire) const;
+    /** Returns ids (as ints) of objects known, by the empire with ID
+      * \a encoding_empire, to be destroyed.  If encoding_empire is ALL_EMPIRES,
+      * then all destroyed objects are included. */
+    std::set<int> GetDestroyedObjectsToSerialize(EmpireID encoding_empire) const;
 
-    /** Fills \a empire_latest_known_objects map with the latest known data
-      * about UniverseObjects for the empire with id \a encoding_empire.  If
-      * the encoding empire is ALL_EMPIRES then all stored empire object
-      * knowledge is included. */
-    void GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_known_objects, int encoding_empire) const;
-
-    /***/
-    void GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility, int encoding_empire) const;
+    /** Returns the latest known data about UniverseObjects for the empire with
+      * id \a encoding_empire. If the encoding empire is ALL_EMPIRES then all
+      * stored empire object knowledge is included. */
+    std::map<int, ObjectMap> GetEmpireKnownObjectsToSerialize(EmpireID encoding_empire) const;
 
     /***/
-    void GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnsVecMap& empire_object_visibility_turns, int encoding_empire) const;
+    std::map<int, Visibilities> GetEmpireObjectVisibilityMapToSerialize(EmpireID encoding_empire) const;
 
     /***/
-    //void GetEffectSpecifiedVisibilities(EmpireObjectVisibilityMap& effect_specified_empire_object_visibilities, int encoding_empire) const;
+    std::map<int, std::vector<ObjVisTurns>> GetEmpireObjectVisibilityTurnMapToSerialize(EmpireID encoding_empire) const;
 
     /***/
-    void GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids, int encoding_empire) const;
+    //EmpireObjectVisibilityMap GetEffectSpecifiedVisibilities(EmpireID encoding_empire) const;
 
     /***/
-    void GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_knowledge_object_ids, int encoding_empire) const;
+    std::map<int, std::unordered_set<int>> GetEmpireKnownDestroyedObjectsToSerialize(EmpireID encoding_empire) const;
+
+    /***/
+    std::map<int, std::unordered_set<int>> GetEmpireStaleKnowledgeObjectsToSerialize(EmpireID encoding_empire) const;
 
     /** Manages allocating and verifying new object ids.*/
     std::unique_ptr<IDAllocator> m_object_id_allocator;

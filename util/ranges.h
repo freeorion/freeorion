@@ -8,6 +8,10 @@
 # define USING_STD_RANGES 0
 #endif
 
+#include <map>
+#include <set>
+#include <vector>
+
 #if (USING_STD_RANGES)
 # include <algorithm>
 # include <ranges>
@@ -101,8 +105,6 @@ inline auto operator|(std::span<T, N> r, const RangeTransformT& tform) {
     using it_t = std::decay_t<decltype(begin_it)>;
     return boost::iterator_range<it_t>(begin_it, end_it) | boost::adaptors::transformed(tform.func);
 }
-
-
 # endif
 
 
@@ -243,6 +245,25 @@ inline constexpr auto operator|(R&& r, range_to_vec_t) {
     using std::begin;
     using ValT = std::remove_cvref_t<decltype(*begin(r))>;
     return range_to<std::vector<ValT>>(std::forward<R>(r));
+}
+
+constexpr struct range_to_map_t {} range_to_map{};
+
+template <typename R>
+inline constexpr auto operator|(R&& r, range_to_map_t) {
+    using std::begin;
+    using KeyT = std::remove_cvref_t<decltype((*begin(r)).first)>;
+    using ValT = std::remove_cvref_t<decltype((*begin(r)).second)>;
+    return range_to<std::map<KeyT, ValT>>(std::forward<R>(r));
+}
+
+constexpr struct range_to_set_t {} range_to_set{};
+
+template <typename R>
+inline constexpr auto operator|(R&& r, range_to_set_t) {
+    using std::begin;
+    using ValT = std::remove_cvref_t<decltype(*begin(r))>;
+    return range_to<std::set<ValT>>(std::forward<R>(r));
 }
 
 

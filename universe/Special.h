@@ -9,6 +9,7 @@
 #include <boost/optional/optional.hpp>
 #include "../util/Export.h"
 #include "../util/Pending.h"
+#include "ConstantsFwd.h"
 
 
 namespace Effect {
@@ -51,7 +52,7 @@ public:
     [[nodiscard]] float       SpawnRate() const noexcept       { return m_spawn_rate; }
     [[nodiscard]] int         SpawnLimit() const noexcept      { return m_spawn_limit; }
     [[nodiscard]] auto*       InitialCapacity() const noexcept { return m_initial_capacity.get(); } ///< ValueRef to use to set the initial capacity of the special when placed
-    [[nodiscard]] float       InitialCapacity(int object_id, const ScriptingContext& context) const; ///< evaluates initial capacity ValueRef using the object with specified \a object_id as the object on which the special will be placed
+    [[nodiscard]] float       InitialCapacity(UniverseObjectID object_id, const ScriptingContext& context) const; ///< evaluates initial capacity ValueRef using the object with specified \a object_id as the object on which the special will be placed
     [[nodiscard]] const auto* Location() const noexcept        { return m_location.get(); }///< condition that determines whether an UniverseObject can have this special applied during universe creation
     [[nodiscard]] auto&       Graphic() const noexcept         { return m_graphic; };      ///< name of the grapic file for this special
 

@@ -110,25 +110,37 @@ namespace {
     constexpr std::size_t ten_pow_int_digits = [](int exp) { std::size_t retval = 1; while (exp--) retval *= 10; return retval; }(int_digits + 1);
     static_assert(ten_pow_int_digits > static_cast<std::size_t>(int_max)); // biggest possible int should fit in buffer
 
-    inline std::string ToString(const auto& data)
-        requires requires { data.size(); } && std::is_same_v<int, std::decay_t<decltype(*data.begin())>>
+
+    inline CONSTEXPR_STRING std::string ToString(const auto& data)
+        requires (requires { data.size(); } && (
+                  requires { to_string(*data.begin()); } ||
+                  requires(char* c) { ToChars(*data.begin(), c, c); }))
     {
         std::string retval;
+        retval.reserve(data.size() * (int_digits + 1) + int_digits + 2); // space for count and all values and gaps
 
-        try {
-            retval.reserve(data.size() * (int_digits + 1) + int_digits + 2); // space for count and all values and gaps
-        } catch(...) {}
+        std::array<std::string::value_type, int_digits + 1> sz_buf{};
+        std::size_t written_chars = ToChars(data.size(), sz_buf.data(), sz_buf.data() + sz_buf.size());
+        retval.append(sz_buf.data(), written_chars);
 
-        retval.append(std::to_string(data.size()));
-
-        for (const auto& v : data)
-            retval.append(" ").append(std::to_string(v));
-
+        for (const auto& v : data) {
+            std::array<std::string::value_type, (int_digits + 1)> number_buf{" "};
+            if constexpr (requires(char* c) { ToChars(v, c, c); }) {
+                written_chars = ToChars(v, number_buf.data() + 1, number_buf.data() + number_buf.size());
+                retval.append(number_buf.data(), written_chars + 1);
+            } else if constexpr(requires (char* c) { ToChars(Value(v), c, c); }) {
+                written_chars = ToChars(Value(v), number_buf.data() + 1, number_buf.data() + number_buf.size());
+                retval.append(number_buf.data(), written_chars + 1);
+            } else {
+                retval.append(" ").append(to_string(v));
+            }
+        }
         return retval;
     }
 
-    inline CONSTEXPR_FROM_CHARS void FillIntContainer(auto& container, std::string_view buffer)
-        requires requires { container.push_back(1); } || requires { container.insert(1); }
+    template <typename ContainerT, typename ContainedT = typename ContainerT::value_type>
+    inline CONSTEXPR_FROM_CHARS void FillIntContainer(ContainerT& container, std::string_view buffer)
+        requires (requires { container.push_back(ContainedT{1}); } || requires { container.insert(ContainedT{1}); })
     {
         if (buffer.empty())
             return;
@@ -169,14 +181,14 @@ namespace {
         for (std::size_t idx = 0; idx < static_cast<std::size_t>(count) && next != buffer_end; ++idx) {
             int num = 0;
 
-            std::tie(num, success, next) = get_int_from_chars(next, INVALID_OBJECT_ID);
+            std::tie(num, success, next) = get_int_from_chars(next, Value(INVALID_OBJECT_ID));
             if (!success)
                 break;
 
-            if constexpr (requires { container.push_back(num); })
-                container.push_back(num);
-            else if constexpr (requires { container.insert(num); })
-                container.insert(num);
+            if constexpr (requires { container.push_back(ContainedT{num}); })
+                container.push_back(ContainedT{num});
+            else if constexpr (requires { container.insert(ContainedT{num}); })
+                container.insert(ContainedT{num});
             else
                 static_assert(sizeof(container) == 0); // unsupported container type...
         }
@@ -188,7 +200,7 @@ namespace {
     // is not interpretable as int or unsigned int as appropriate.
     // returns tuple of result value, bool indicating success/fail, and new next address
     template <typename IntOrUInt> requires std::is_same_v<int, IntOrUInt> || std::is_same_v<unsigned int, IntOrUInt>
-    CONSTEXPR_FROM_CHARS std::tuple<IntOrUInt, bool, const char*>
+    inline CONSTEXPR_FROM_CHARS std::tuple<IntOrUInt, bool, const char*>
         GetIntFromChars(const char* const buffer_end, const char* next, const IntOrUInt default_val)
     {
         // safety checks

@@ -5,6 +5,7 @@
 #include <GG/GGFwd.h>
 #include "CUIWnd.h"
 #include "../universe/EnumsFwd.h"
+#include "../universe/ConstantsFwd.h"
 
 
 class Planet;
@@ -47,7 +48,7 @@ public:
     void ClearItems();
     int GetItemsSize() { return m_items.size(); }
 
-    void SetPlanet(int planet_id);
+    void SetPlanet(UniverseObjectID planet_id);
     void SetItem(const std::shared_ptr<const Planet>& planet);
     void SetTech(std::string tech_name);
     void SetItem(const Tech* tech);
@@ -65,10 +66,10 @@ public:
     void SetItem(const Species* species);
     void SetFieldType(std::string field_type_name);
     void SetItem(const FieldType* field_type);
-    void SetObject(int object_id);
+    void SetObject(UniverseObjectID object_id);
     void SetObject(std::string object_id);
     void SetItem(const std::shared_ptr<const UniverseObject>& obj);
-    void SetEmpire(int empire_id);
+    void SetEmpire(EmpireID empire_id);
     void SetEmpire(std::string empire_id);
     void SetItem(const Empire* empire);
     void SetDesign(int design_id);

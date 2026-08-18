@@ -240,7 +240,7 @@ bool BuildingType::ProductionCostTimeLocationInvariant() const {
     return true;
 }
 
-float BuildingType::ProductionCost(int empire_id, int location_id,
+float BuildingType::ProductionCost(EmpireID empire_id, UniverseObjectID location_id,
                                    const ScriptingContext& context) const
 {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION") || !m_production_cost)
@@ -276,12 +276,12 @@ float BuildingType::ProductionCost(int empire_id, int location_id,
     return m_production_cost->Eval(local_context);
 }
 
-float BuildingType::PerTurnCost(int empire_id, int location_id, const ScriptingContext& context) const {
+float BuildingType::PerTurnCost(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const {
     return ProductionCost(empire_id, location_id, context) /
         std::max(1, ProductionTime(empire_id, location_id, context));
 }
 
-int BuildingType::ProductionTime(int empire_id, int location_id, const ScriptingContext& context) const {
+int BuildingType::ProductionTime(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION") || !m_production_time)
         return 1;
 
@@ -314,7 +314,7 @@ int BuildingType::ProductionTime(int empire_id, int location_id, const Scripting
     return m_production_time->Eval(local_context);
 }
 
-bool BuildingType::ProductionLocation(int empire_id, int location_id, const ScriptingContext& context) const {
+bool BuildingType::ProductionLocation(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const {
     if (!m_location)
         return true;
 
@@ -334,7 +334,7 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id, const Scri
     return m_location->EvalOne(local_context, location);
 }
 
-bool BuildingType::EnqueueLocation(int empire_id, int location_id, const ScriptingContext& context) const {
+bool BuildingType::EnqueueLocation(EmpireID empire_id, UniverseObjectID location_id, const ScriptingContext& context) const {
     if (!m_enqueue_location)
         return true;
 

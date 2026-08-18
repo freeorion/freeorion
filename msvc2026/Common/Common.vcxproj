@@ -190,6 +190,7 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Configuring Version.cpp</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Configuring Version.cpp</Message>
     </CustomBuild>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\combat\CombatDamage.h" />
@@ -217,6 +218,7 @@
     <ClInclude Include="..\..\universe\ConditionAll.h" />
     <ClInclude Include="..\..\universe\Conditions.h" />
     <ClInclude Include="..\..\universe\ConditionSource.h" />
+    <ClInclude Include="..\..\universe\ConstantsFwd.h" />
     <ClInclude Include="..\..\universe\Effects.h" />
     <ClInclude Include="..\..\universe\Effect.h" />
     <ClInclude Include="..\..\universe\Encyclopedia.h" />

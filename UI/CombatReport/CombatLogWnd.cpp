@@ -49,11 +49,11 @@ public:
     /** Fill \p new_logs with pointers to the flat log contents of \p
         event using the pre-calculated \p details.*/
     void PopulateWithFlatLogs(
-        GG::X w, int viewing_empire_id, std::vector<std::shared_ptr<GG::Wnd>>& new_logs,
+        GG::X w, EmpireID viewing_empire_id, std::vector<std::shared_ptr<GG::Wnd>>& new_logs,
         const CombatEvent& event, std::string details);
 
     // Returns either a simple LinkText for a simple log or a CombatLogAccordionPanel for a complex log
-    std::vector<std::shared_ptr<GG::Wnd>> MakeCombatLogPanel(GG::X w, int viewing_empire_id, const CombatEvent& event);
+    std::vector<std::shared_ptr<GG::Wnd>> MakeCombatLogPanel(GG::X w, EmpireID viewing_empire_id, const CombatEvent& event);
 
     // public interface
     CombatLogWnd& m_wnd;
@@ -85,16 +85,16 @@ namespace {
         }
     }
 
-    // TODO: Function adapted from CombatEvents.cpp, will need to beextracted to a common library
-    std::string WrapWithTagAndId(std::string_view meat, std::string_view tag, int id)
-    { return boost::str(boost::format("<%1% %2%>%3%</%1%>") % tag % id % meat); }
+    // TODO: Function adapted from CombatEvents.cpp, will need to be extracted to a common library
+    std::string WrapWithTagAndId(std::string_view meat, std::string_view tag, auto id)
+    { return boost::str(boost::format("<%1% %2%>%3%</%1%>") % tag % to_string(id) % meat); }
 
     /// Segregates \a objects into categories based on \a categories and ownership;
     /// only applies to objects owned by one of \a owners;
     /// within a category, sorts by \a order
-    std::map<int, std::vector<std::vector<std::shared_ptr<UniverseObject>>>> SegregateForces(
-        const std::set<int>& owners,
-        const std::set<int>& objects,
+    std::map<EmpireID, std::vector<std::vector<std::shared_ptr<UniverseObject>>>> SegregateForces(
+        const std::set<EmpireID>& owners,
+        const std::set<UniverseObjectID>& objects,
         std::vector<std::function<bool(std::shared_ptr<UniverseObject>)>> categories,
         std::function<bool(std::shared_ptr<UniverseObject>, std::shared_ptr<UniverseObject>)> order)
     {
@@ -132,26 +132,26 @@ namespace {
         return m && m->Initial() > 0.0f;
     }
 
-    std::string EmpireIdToText(int empire_id) {
+    std::string EmpireIdToText(EmpireID empire_id) {
         std::string retval;
         static constexpr std::size_t retval_sz = 24 + 1 + VarText::EMPIRE_ID_TAG.length()*2 + 1 + 8 + 1 + 30 + 3 + 1 + 10 + 20; // semi-guesstimate
         retval.reserve(retval_sz);
         const auto& context = GetApp().GetContext();
         if (const auto empire = context.GetEmpire(empire_id))
             return retval.append(GG::RgbaTag(empire->Color())).append("<").append(VarText::EMPIRE_ID_TAG).append(" ")
-                         .append(std::to_string(empire->EmpireID())).append(">").append(empire->Name()).append("</")
+                         .append(to_string(empire->GetEmpireID())).append(">").append(empire->Name()).append("</")
                          .append(VarText::EMPIRE_ID_TAG).append(">").append("</rgba>");
         else
             return retval.append(GG::RgbaTag(ClientUI::DefaultLinkColor())).append(UserString("NEUTRAL")).append("</rgba>");
     }
 
     /// converts to "Empire_name: n" text
-    std::string CountToText(int empire_id, int forces_count)
+    std::string CountToText(EmpireID empire_id, int forces_count)
     { return EmpireIdToText(empire_id).append(": ").append(std::to_string(forces_count)); }
 
     class OrderByNameAndId {
     public:
-        explicit OrderByNameAndId(int viewing_empire_id_ = ALL_EMPIRES) :
+        explicit OrderByNameAndId(EmpireID viewing_empire_id_ = ALL_EMPIRES) :
             viewing_empire_id(viewing_empire_id_)
         {}
 
@@ -176,11 +176,11 @@ namespace {
         }
 
     private:
-        const int viewing_empire_id;
+        const EmpireID viewing_empire_id;
     };
 
     std::string ForcesToText(
-        int viewing_empire_id,
+        EmpireID viewing_empire_id,
         const std::vector<std::vector<std::shared_ptr<UniverseObject>>>& forces,
         const std::string_view delimiter = ", ",
         const std::string_view category_delimiter = "\n-\n")
@@ -222,7 +222,7 @@ namespace {
     class CombatLogAccordionPanel : public AccordionPanel {
     public:
         CombatLogAccordionPanel(GG::X w, CombatLogWnd::Impl& log_,
-                                int viewing_empire_id_, const CombatEvent* event_);
+                                EmpireID viewing_empire_id_, const CombatEvent* event_);
         ~CombatLogAccordionPanel() = default;
         void CompleteConstruction() override;
 
@@ -231,7 +231,7 @@ namespace {
         void ToggleExpansion();
 
         CombatLogWnd::Impl&                     log;
-        int                                     viewing_empire_id = ALL_EMPIRES;
+        EmpireID                                viewing_empire_id = ALL_EMPIRES;
         std::shared_ptr<LinkText>               title;
         std::vector<std::shared_ptr<GG::Wnd>>   details;
 
@@ -240,7 +240,7 @@ namespace {
     };
 
     CombatLogAccordionPanel::CombatLogAccordionPanel(GG::X w, CombatLogWnd::Impl& log_,
-                                                     int viewing_empire_id_, const CombatEvent* event) :
+                                                     EmpireID viewing_empire_id_, const CombatEvent* event) :
         AccordionPanel(w, GG::Y(ClientUI::Pts()), true),
         log(log_),
         viewing_empire_id(viewing_empire_id_),
@@ -283,8 +283,8 @@ namespace {
     public:
         EmpireForcesAccordionPanel(GG::X w,
                                    CombatLogWnd::Impl& log_,
-                                   int viewing_empire_id_,
-                                   int empire_id,
+                                   EmpireID viewing_empire_id_,
+                                   EmpireID empire_id,
                                    std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces_);
 
         ~EmpireForcesAccordionPanel() = default;
@@ -295,7 +295,7 @@ namespace {
         void ToggleExpansion();
 
         CombatLogWnd::Impl& log;
-        const int viewing_empire_id = ALL_EMPIRES;
+        const EmpireID viewing_empire_id = ALL_EMPIRES;
         std::shared_ptr<LinkText> title;
         std::shared_ptr<LinkText> details;
         std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces;
@@ -311,8 +311,8 @@ namespace {
 
     EmpireForcesAccordionPanel::EmpireForcesAccordionPanel(GG::X w,
                                                            CombatLogWnd::Impl& log_,
-                                                           int viewing_empire_id_,
-                                                           int empire_id,
+                                                           EmpireID viewing_empire_id_,
+                                                           EmpireID empire_id,
                                                            std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces_) :
         AccordionPanel(w, GG::Y(ClientUI::Pts()), true),
         log(log_),
@@ -504,7 +504,7 @@ namespace {
 
 /** Fill \p new_logs with pointers to the flat log contents of \p
     event using the pre-calculated \p details.*/
-void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id,
+void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, EmpireID viewing_empire_id,
                                               std::vector<std::shared_ptr<GG::Wnd>>& new_logs,
                                               const CombatEvent& event, std::string details)
 {
@@ -523,7 +523,7 @@ void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id,
 
 // Returns either a simple LinkText for a simple log or a CombatLogAccordionPanel for a complex log
 std::vector<std::shared_ptr<GG::Wnd>> CombatLogWnd::Impl::MakeCombatLogPanel(
-    GG::X w, int viewing_empire_id, const CombatEvent& event)
+    GG::X w, EmpireID viewing_empire_id, const CombatEvent& event)
 {
     std::vector<std::shared_ptr<GG::Wnd>> new_logs;
 
@@ -570,7 +570,7 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
 
     const auto& app = GetApp();
     const ScriptingContext& context = app.GetContext();
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     const Universe& universe = context.ContextUniverse();
     const ObjectMap& objects = context.ContextObjects();
     const auto font = app.GetUI().GetFont();
@@ -582,7 +582,7 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
                             << ") with " << log->combat_events.size() << " events";
 
     AddRow(DecorateLinkText(str(FlexibleFormat(UserString("ENC_COMBAT_LOG_DESCRIPTION_STR"))
-                                % LinkTaggedIDText(VarText::SYSTEM_ID_TAG, log->system_id, sys_name)
+                                % LinkTaggedIDText(VarText::SYSTEM_ID_TAG, Value(log->system_id), sys_name)
                                 % log->turn) + "\n"));
 
 

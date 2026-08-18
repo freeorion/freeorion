@@ -349,7 +349,7 @@ namespace {
             total_cost = std::max(total_cost, 0.0f);
             minimum_turns = std::max(1, minimum_turns);
 
-            auto empire = context.GetEmpire(app.EmpireID());
+            auto empire = context.GetEmpire(app.GetEmpireID());
             const float pp_accumulated = std::max<float>(
                 0.0f,
                 empire ? empire->ProductionStatus(queue_index, context) : 0.0f); // returns as PP
@@ -506,7 +506,7 @@ namespace {
             }
         }
 
-        auto this_client_empire = context.GetEmpire(GetApp().EmpireID());
+        auto this_client_empire = context.GetEmpire(GetApp().GetEmpireID());
         if (this_client_empire && (system_selected || rally_dest_selected)) {
             const auto empire_color = this_client_empire->Color();
             const auto rally_color = GG::DarkenClr(GG::InvertClr(empire_color));
@@ -701,13 +701,13 @@ namespace {
             }
         }
 
-        boost::signals2::signal<void (GG::ListBox::iterator, int)>  QueueItemRalliedToSignal;
-        boost::signals2::signal<void ()>                            ShowPediaSignal;
-        boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemPausedSignal;
-        boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemMarkedDeletedSignal;
-        boost::signals2::signal<void (GG::ListBox::iterator)>       QueueItemDupedSignal;
-        boost::signals2::signal<void (GG::ListBox::iterator)>       QueueItemSplitSignal;
-        boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemUseImperialPPSignal;
+        boost::signals2::signal<void (GG::ListBox::iterator, UniverseObjectID)> QueueItemRalliedToSignal;
+        boost::signals2::signal<void ()>                                        ShowPediaSignal;
+        boost::signals2::signal<void (GG::ListBox::iterator, bool)>             QueueItemPausedSignal;
+        boost::signals2::signal<void (GG::ListBox::iterator, bool)>             QueueItemMarkedDeletedSignal;
+        boost::signals2::signal<void (GG::ListBox::iterator)>                   QueueItemDupedSignal;
+        boost::signals2::signal<void (GG::ListBox::iterator)>                   QueueItemSplitSignal;
+        boost::signals2::signal<void (GG::ListBox::iterator, bool)>             QueueItemUseImperialPPSignal;
 
     protected:
         void ItemRightClickedImpl(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) override {
@@ -772,7 +772,7 @@ namespace {
             if (build_type == BuildType::BT_SHIP) {
                 // for ships, add a set rally point command
                 if (auto system = context.ContextObjects().getRaw<System>(SidePanel::SystemID())) {
-                    int empire_id = app.EmpireID();
+                    EmpireID empire_id = app.GetEmpireID();
                     std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM"))
                                                               % system->PublicName(empire_id, u));
                     popup->AddMenuItem(std::move(rally_prompt), disabled, false, rally_to_action);
@@ -838,7 +838,7 @@ public:
         m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
         m_queue_lb->SetName("ProductionQueue ListBox");
 
-        SetEmpire(GetApp().EmpireID());
+        SetEmpire(GetApp().GetEmpireID());
 
         AttachChild(m_queue_lb);
 
@@ -857,7 +857,7 @@ public:
 
     ProdQueueListBox* GetQueueListBox() noexcept { return m_queue_lb.get(); }
 
-    void SetEmpire(int id) {
+    void SetEmpire(EmpireID id) {
         if (auto empire = GetApp().GetContext().GetEmpire(id)) {
             SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_EMPIRE")) %
                                    empire->Name()));
@@ -941,7 +941,7 @@ void ProductionWnd::CompleteConstruction() {
     AttachChild(m_build_designator_wnd);
 }
 
-int ProductionWnd::SelectedPlanetID() const noexcept
+UniverseObjectID ProductionWnd::SelectedPlanetID() const noexcept
 { return m_build_designator_wnd->SelectedPlanetID(); }
 
 bool ProductionWnd::InWindow(GG::Pt pt) const noexcept
@@ -973,7 +973,7 @@ void ProductionWnd::DoLayout() {
 void ProductionWnd::Render()
 {}
 
-void ProductionWnd::SetEmpireShown(int empire_id, const ScriptingContext& context) {
+void ProductionWnd::SetEmpireShown(EmpireID empire_id, const ScriptingContext& context) {
     if (empire_id != m_empire_shown_id) {
         m_empire_shown_id = empire_id;
         Refresh(context);
@@ -1017,7 +1017,7 @@ void ProductionWnd::ShowBuildingTypeInEncyclopedia(std::string building_type)
 void ProductionWnd::ShowShipDesignInEncyclopedia(int design_id)
 { m_build_designator_wnd->ShowShipDesignInEncyclopedia(design_id); }
 
-void ProductionWnd::ShowPlanetInEncyclopedia(int planet_id)
+void ProductionWnd::ShowPlanetInEncyclopedia(UniverseObjectID planet_id)
 { m_build_designator_wnd->ShowPlanetInEncyclopedia(planet_id); }
 
 void ProductionWnd::ShowTechInEncyclopedia(std::string tech_name)
@@ -1032,7 +1032,7 @@ void ProductionWnd::ShowShipPartInEncyclopedia(std::string part_name)
 void ProductionWnd::ShowSpeciesInEncyclopedia(std::string species_name)
 { m_build_designator_wnd->ShowSpeciesInEncyclopedia(std::move(species_name)); }
 
-void ProductionWnd::ShowEmpireInEncyclopedia(int empire_id)
+void ProductionWnd::ShowEmpireInEncyclopedia(EmpireID empire_id)
 { m_build_designator_wnd->ShowEmpireInEncyclopedia(empire_id); }
 
 void ProductionWnd::ShowSpecialInEncyclopedia(std::string special_name)
@@ -1056,7 +1056,7 @@ bool ProductionWnd::PediaVisible()
 void ProductionWnd::CenterOnBuild(int queue_idx, bool open)
 { m_build_designator_wnd->CenterOnBuild(queue_idx, open); }
 
-void ProductionWnd::SelectPlanet(int planet_id, const ScriptingContext& context) {
+void ProductionWnd::SelectPlanet(UniverseObjectID planet_id, const ScriptingContext& context) {
     m_build_designator_wnd->SelectPlanet(planet_id, context.ContextObjects());
     UpdateInfoPanel(context);
 }
@@ -1064,7 +1064,7 @@ void ProductionWnd::SelectPlanet(int planet_id, const ScriptingContext& context)
 void ProductionWnd::SelectDefaultPlanet(const ObjectMap& objects)
 { m_build_designator_wnd->SelectDefaultPlanet(objects); }
 
-void ProductionWnd::SelectSystem(int system_id, ScriptingContext& context) {
+void ProductionWnd::SelectSystem(UniverseObjectID system_id, ScriptingContext& context) {
     if (system_id != SidePanel::SystemID()) {
         m_build_designator_wnd->SelectSystem(system_id, context.ContextObjects());
         // refresh so as to correctly highlight builds for selected system
@@ -1182,7 +1182,7 @@ void ProductionWnd::UpdateInfoPanel(const ScriptingContext& context) {
     m_production_info_panel->SetStockpileCost(stockpile, stockpile_use, stockpile_use_max);
 
     // find if there is a local location
-    const int prod_loc_id = this->SelectedPlanetID();
+    const auto prod_loc_id = this->SelectedPlanetID();
     const auto loc_obj = objects.get(prod_loc_id);
     if (!loc_obj) {
         // clear local info...
@@ -1229,11 +1229,11 @@ void ProductionWnd::UpdateInfoPanel(const ScriptingContext& context) {
                                                 loc_obj->Name(), context);
 }
 
-void ProductionWnd::AddBuildToQueueSlot(ProductionQueue::ProductionItem item, int number, int location, int pos) {
+void ProductionWnd::AddBuildToQueueSlot(ProductionQueue::ProductionItem item, int number, UniverseObjectID location, int pos) {
     if (!m_order_issuing_enabled)
         return;
     auto& app = GetApp();
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
     ScriptingContext& context = app.GetContext();
@@ -1254,7 +1254,7 @@ void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity) const {
     if (!m_order_issuing_enabled)
         return;
     auto& app = GetApp();
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
     ScriptingContext& context = app.GetContext();
@@ -1277,7 +1277,7 @@ void ProductionWnd::ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, in
     if (!m_order_issuing_enabled)
         return;
     auto& app = GetApp();
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
     ScriptingContext& context = app.GetContext();
@@ -1301,7 +1301,7 @@ void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it, bool do_delete) {
         return;
 
     auto& app = GetApp();
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
     ScriptingContext& context = app.GetContext();
@@ -1336,7 +1336,7 @@ void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, GG::Pt pt, GG
         return;
 
     auto& app = GetApp();
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
     const ScriptingContext& context = app.GetContext();
@@ -1356,12 +1356,12 @@ void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, GG::Pt 
         m_build_designator_wnd->CenterOnBuild(m_queue_wnd->GetQueueListBox()->IteraterIndex(it), true);
 }
 
-void ProductionWnd::QueueItemRallied(GG::ListBox::iterator it, int object_id) {
+void ProductionWnd::QueueItemRallied(GG::ListBox::iterator it, UniverseObjectID object_id) {
     if (!m_order_issuing_enabled)
         return;
 
     auto& app = GetApp();
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
     ScriptingContext& context = app.GetContext();
@@ -1369,7 +1369,7 @@ void ProductionWnd::QueueItemRallied(GG::ListBox::iterator it, int object_id) {
     if (!empire)
         return;
 
-    int rally_point_id = object_id;
+    UniverseObjectID rally_point_id = object_id;
     if (rally_point_id == INVALID_OBJECT_ID) {
         // get rally point from selected system
         rally_point_id = SidePanel::SystemID();
@@ -1394,7 +1394,7 @@ void ProductionWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
         return;
 
     auto& app = GetApp();
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
     ScriptingContext& context = app.GetContext();
@@ -1419,7 +1419,7 @@ void ProductionWnd::QueueItemDuped(GG::ListBox::iterator it) {
         return;
 
     auto& app = GetApp();
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
     ScriptingContext& context = app.GetContext();
@@ -1444,7 +1444,7 @@ void ProductionWnd::QueueItemSplit(GG::ListBox::iterator it) {
         return;
 
     auto& app = GetApp();
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
     ScriptingContext& context = app.GetContext();
@@ -1469,7 +1469,7 @@ void ProductionWnd::QueueItemUseImperialPP(GG::ListBox::iterator it, bool allow)
         return;
 
     auto& app = GetApp();
-    const int client_empire_id = app.EmpireID();
+    const auto client_empire_id = app.GetEmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
     ScriptingContext& context = app.GetContext();

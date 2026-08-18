@@ -16,7 +16,7 @@ public:
     /** Initializes server Python modules. */
     bool InitModules();
 
-    bool CreateUniverse(std::map<int, PlayerSetupData>& player_setup_data); // Wraps call to the main Python universe generator function
+    bool CreateUniverse(std::map<EmpireID, PlayerSetupData>& player_setup_data); // Wraps call to the main Python universe generator function
     bool ExecuteTurnEvents();    // Wraps call to the main Python turn events function
     bool IsRequireAuthOrReturnRoles(const std::string& player_name, const std::string& ip_address, bool &result, Networking::AuthRoles& roles) const; // Wraps call to AuthProvider's method is_require_auth
     bool IsSuccessAuthAndReturnRoles(const std::string& player_name, const std::string& auth, bool &result, Networking::AuthRoles& roles) const; // Wraps call to AuthProvider's method is_success_auth

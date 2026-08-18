@@ -103,7 +103,7 @@ namespace {
 
 class BarSizer {
 public:
-    typedef std::map<int, CombatSummary> CombatSummaryMap;
+    typedef std::map<EmpireID, CombatSummary> CombatSummaryMap;
 
     BarSizer(const CombatSummaryMap& combat_summaries , GG::Pt available_size):
         m_max_total_max_health(-1.0f),
@@ -134,7 +134,7 @@ public:
         assert(m_max_total_max_health > 0);
     }
 
-    GG::Pt GetBarSize( const ParticipantSummary& participant, const GG::X& label_margin ) const {
+    GG::Pt GetBarSize(const ParticipantSummary& participant, const GG::X& label_margin ) const {
         GG::Pt total_space = GetSideBarSize(participant.empire_id);
 
         total_space = AdjustForAxes(total_space);
@@ -144,7 +144,7 @@ public:
 
         auto side_summary_it = m_summaries.find(participant.empire_id);
 
-        if ( side_summary_it == m_summaries.end() ) {
+        if (side_summary_it == m_summaries.end()) {
             ErrorLogger() << "The empire of the object " << participant.object_id
                           << " is not known to be in this battle. (empire_id = " << participant.empire_id << ")";
             return GG::Pt(GG::X{10}, GG::Y{10});
@@ -153,39 +153,36 @@ public:
         const CombatSummary& side_summary = side_summary_it->second;
 
         GG::X width;
-        if (participant.current_health > 0.0) {
+        if (participant.current_health > 0.0)
             width = CalculateAliveWidth(participant, total_space);
-        } else {
+        else
             width = CalculateDeadWidth(participant, total_space);
-        }
+
         GG::Y height;
-        if ( Get( TOGGLE_BAR_HEIGHT_PROPORTIONAL) ) {
+        if (Get(TOGGLE_BAR_HEIGHT_PROPORTIONAL))
             height = GG::ToY((participant.max_health / side_summary.max_max_health) * total_space.y);
-        } else {
+        else
             height = total_space.y;
-        }
 
         return GG::Pt(std::max(width, GG::X{3}), height);
     }
 
     GG::X CalculateAliveWidth(const ParticipantSummary& participant, GG::Pt total_space) const {
-        if (Get(TOGGLE_BAR_WIDTH_PROPORTIONAL)) {
+        if (Get(TOGGLE_BAR_WIDTH_PROPORTIONAL))
             return GG::X((participant.current_health / m_max_total_max_health) * total_space.x);
-        } else {
+        else
             return GG::X(total_space.x / m_max_units_on_a_side);
-        }
     }
 
     GG::X CalculateDeadWidth( const ParticipantSummary& participant, GG::Pt total_space) const {
-        if (Get(TOGGLE_BAR_WIDTH_PROPORTIONAL)) {
+        if (Get(TOGGLE_BAR_WIDTH_PROPORTIONAL))
             return GG::X((participant.max_health / m_max_total_max_health) * total_space.x);
-        } else {
+        else
             return GG::X(total_space.x / m_max_units_on_a_side);
-        }
     }
 
     GG::Pt GetSideBarSize(const Empire* empire) const
-    { return GetSideBarSize( empire ? empire->EmpireID() : ALL_EMPIRES ); }
+    { return GetSideBarSize(empire ? empire->GetEmpireID() : ALL_EMPIRES); }
 
     void SetAvailableSize(GG::Pt size) {
         m_available_space = size;
@@ -237,17 +234,16 @@ private:
 
     const CombatSummaryMap& m_summaries;
 
-    GG::Pt GetSideBarSize(int empire_id) const {
+    GG::Pt GetSideBarSize(EmpireID empire_id) const {
         // The client (participant bar) height of this side bar.
         GG::Y calculated_height(GG::Y0);
 
         auto summary_it = m_summaries.find(empire_id);
 
-        if (Get(TOGGLE_GRAPH_HEIGHT_PROPORTIONAL) && summary_it != m_summaries.end()) {
+        if (Get(TOGGLE_GRAPH_HEIGHT_PROPORTIONAL) && summary_it != m_summaries.end())
             calculated_height = GG::ToY(m_available_participant_bar_height * summary_it->second.max_max_health / m_sum_of_max_max_healths);
-        } else {
+        else
             calculated_height = m_available_participant_bar_height / static_cast<int>(m_summaries.size());
-        }
 
         // Reconstruct the total size for this side bar from the available
         // total width and the calculated client height (which is converted to
@@ -268,7 +264,7 @@ public:
         const auto& app = GetApp();
         const auto& context = app.GetContext();
         if (auto object = context.ContextObjects().getRaw(participant.object_id)) {
-            SetBrowseText(object->PublicName(app.EmpireID(), context.ContextUniverse()) +
+            SetBrowseText(object->PublicName(app.GetEmpireID(), context.ContextUniverse()) +
                           " " + DoubleToString(participant.current_health, 3, false) +
                           "/" + DoubleToString(participant.max_health, 3, false));
         }
@@ -635,8 +631,8 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
         ErrorLogger() << "CombatReportWnd::CombatReportPrivate::MakeSummaries: Could not find log: " << log_id;
     } else {
         const auto& objects = GetApp().GetContext().ContextObjects();
-        for (int object_id : log->object_ids) {
-            if (object_id < 0)
+        for (auto object_id : log->object_ids) {
+            if (Value(object_id) < 0)
                 continue;   // fighters and invalid objects
             const auto object = objects.get(object_id);
             if (!object) {
@@ -644,15 +640,14 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
                 continue;
             }
 
-            const int owner_id = object->Owner();
+            const auto owner_id = object->Owner();
             auto& summary = m_summaries.try_emplace(owner_id, owner_id).first->second;
 
             auto map_it = log->participant_states.find(object_id);
-            if (map_it != log->participant_states.end()) {
+            if (map_it != log->participant_states.end())
                 summary.AddUnit(object_id, map_it->second);
-            } else {
+            else
                 ErrorLogger() << "Participant state missing from log. Object id: " << object_id << " log id: " << log_id;
-            }
         }
 
         for (auto& summary : m_summaries) {

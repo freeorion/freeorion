@@ -26,7 +26,7 @@ namespace {
     }
 }
 
-MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
+MilitaryPanel::MilitaryPanel(GG::X w, UniverseObjectID planet_id) :
     AccordionPanel(w, GG::Y(ClientUI::Pts()*2)),
     m_planet_id(planet_id)
 {}
@@ -40,7 +40,7 @@ void MilitaryPanel::CompleteConstruction() {
 
     auto planet = app.GetContext().ContextObjects().get<Planet>(m_planet_id);
     if (!planet) {
-        ErrorLogger() << "MilitaryPanel::CompleteConstruction couldn't get planet with id  " << m_planet_id;
+        ErrorLogger() << "MilitaryPanel::CompleteConstruction couldn't get planet with id " << m_planet_id;
         return;
     }
 
@@ -109,7 +109,7 @@ void MilitaryPanel::Update(const ObjectMap& objects) {
         const auto* meter = obj->GetMeter(meter_type);
         if (!meter) {
             ErrorLogger() << "MilitaryPanel couldn't get " << to_string(meter_type)
-                          << " meter from " << obj->Name() << " (" << obj->ID() << ")";
+                          << " meter from " << obj->NameAndID();
             continue;
         }
 
@@ -189,4 +189,4 @@ void MilitaryPanel::DoLayout() {
     SetCollapsed(!s_expanded_map[m_planet_id]);
 }
 
-std::map<int, bool> MilitaryPanel::s_expanded_map;
+std::map<UniverseObjectID, bool> MilitaryPanel::s_expanded_map;
