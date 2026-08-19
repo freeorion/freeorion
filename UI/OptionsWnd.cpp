@@ -647,7 +647,7 @@ void OptionsWnd::CompleteConstruction() {
     current_page = CreatePage(UserString("OPTIONS_PAGE_DIRECTORIES"));
     /** GetRootDataDir() returns the default browse path when modifying this directory option.
      *  The actual default directory (before modifying) is gotten from the specified option name "resource.path" */
-    DirectoryOption(current_page, 0, "resource.path",                   UserString("OPTIONS_FOLDER_SETTINGS"),      GetRootDataDir(), is_game_running);
+    DirectoryOption2(current_page, 0, "resource.path",                   UserString("OPTIONS_FOLDER_SETTINGS"),      GetRootDataDir(), is_game_running);
     DirectoryOption(current_page, 0, "save.path",                       UserString("OPTIONS_FOLDER_SAVE"),          GetUserDataDir());
     DirectoryOption(current_page, 0, "save.server.path",                UserString("OPTIONS_SERVER_FOLDER_SAVE"),   GetUserDataDir());
     PathDisplay(    current_page, 0,                                    UserString("OPTIONS_FOLDER_CONFIG_LOG"),    GetUserConfigDir());
@@ -1112,6 +1112,64 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, std::s
         edit->SetTextColor(GG::CLR_RED);
 }
 
+void OptionsWnd::FileOptionImpl2(GG::ListBox* page, int indentation_level, std::string option_name,
+                                std::string text, fs::path path,
+                                std::vector<std::pair<std::string, std::string>> filters,
+                                std::function<bool (const std::string&)> string_validator,
+                                bool directory, bool relative_path, bool disabled)
+{
+    auto text_control = GG::Wnd::Create<CUILabel>(std::move(text),
+                                                  GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
+    auto edit = GG::Wnd::Create<CUIEdit>(PathToString(GetOptionsDB().Get<fs::path>(option_name)));
+    edit->Resize(GG::Pt(50*SPIN_WIDTH, edit->Height())); // won't resize within layout bigger than its initial size, so giving a big initial size here
+    auto button = Wnd::Create<CUIButton>("...");
+    if (disabled) {
+        edit->Disable();
+        button->Disable();
+    }
+
+    const auto& desc = UserString(GetOptionsDB().GetDescription(option_name));
+    const auto delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
+    edit->SetBrowseModeTime(delay);
+    edit->SetBrowseText(desc);
+    button->SetBrowseModeTime(delay);
+    button->SetBrowseText(desc);
+    text_control->SetBrowseModeTime(delay);
+    text_control->SetBrowseText(desc);
+
+    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, ROW_WIDTH, button->MinUsableSize().y,
+                                              1, 3, 0, 5);
+
+    layout->Add(std::move(text_control), 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(edit, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(button, 0, 2, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
+    layout->SetMinimumColumnWidth(1, SPIN_WIDTH);
+    layout->SetMinimumColumnWidth(2, button->Width());
+    layout->SetColumnStretch(0, 0.5);
+    layout->SetColumnStretch(1, 1.0);
+    layout->SetColumnStretch(2, 0.0);
+
+    const auto layout_height = layout->Height() + 6;
+    auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, layout_height, std::move(layout), indentation_level);
+    page->Insert(std::move(row));
+
+    edit->EditedSignal.connect(
+        [on{std::move(option_name)}, edit, string_validator](const std::string& str) {
+            if (string_validator && !string_validator(str)) {
+                edit->SetTextColor(GG::CLR_RED);
+            } else {
+                edit->SetTextColor(ClientUI::TextColor());
+                GetOptionsDB().Set(on, FilenameToPath(str));
+            }
+        }
+    );
+    button->LeftClickedSignal.connect(
+        BrowseForPathButtonFunctor(std::move(path), std::move(filters), edit, directory, relative_path));
+    if (string_validator && !string_validator(edit->Text()))
+        edit->SetTextColor(GG::CLR_RED);
+}
+
 void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, std::string option_name,
                             std::string text, std::filesystem::path path,
                             std::function<bool (const std::string&)> string_validator)
@@ -1148,6 +1206,14 @@ void OptionsWnd::DirectoryOption(GG::ListBox* page, int indentation_level, std::
                                  std::string text, fs::path path, bool disabled)
 {
     FileOptionImpl(page, indentation_level, std::move(option_name), std::move(text),
+                   std::move(path), std::vector<std::pair<std::string, std::string>>(),
+                   ValidDirectory, true, false, disabled);
+}
+
+void OptionsWnd::DirectoryOption2(GG::ListBox* page, int indentation_level, std::string option_name,
+                                 std::string text, fs::path path, bool disabled)
+{
+    FileOptionImpl2(page, indentation_level, std::move(option_name), std::move(text),
                    std::move(path), std::vector<std::pair<std::string, std::string>>(),
                    ValidDirectory, true, false, disabled);
 }

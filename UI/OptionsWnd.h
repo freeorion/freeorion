@@ -77,6 +77,11 @@ private:
                                        std::vector<std::pair<std::string, std::string>> filters,
                                        std::function<bool (const std::string&)> string_validator,
                                        bool directory, bool relative_path, bool disabled);
+    void                FileOptionImpl2(GG::ListBox* page, int indentation_level, std::string option_name,
+                                       std::string text, std::filesystem::path path,
+                                       std::vector<std::pair<std::string, std::string>> filters,
+                                       std::function<bool (const std::string&)> string_validator,
+                                       bool directory, bool relative_path, bool disabled);
     void                FileOption(GG::ListBox* page, int indentation_level, std::string option_name,
                                    std::string text, std::filesystem::path path,
                                    std::function<bool (const std::string&)> string_validator = nullptr);
@@ -89,6 +94,8 @@ private:
                                    std::vector<std::pair<std::string, std::string>> filters,
                                    std::function<bool (const std::string&)> string_validator = nullptr);
     void                DirectoryOption(GG::ListBox* page, int indentation_level, std::string option_name,
+                                        std::string text, std::filesystem::path path, bool disabled = false);
+    void                DirectoryOption2(GG::ListBox* page, int indentation_level, std::string option_name,
                                         std::string text, std::filesystem::path path, bool disabled = false);
     void                SoundFileOption(GG::ListBox* page, int indentation_level,
                                         std::string option_name, std::string text);
