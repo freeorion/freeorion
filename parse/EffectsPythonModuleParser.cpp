@@ -91,14 +91,8 @@ namespace {
         }
 
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
-        if (kw.has_key("empire")) {
-            auto empire_args = py::extract<value_ref_wrapper<int>>(kw["empire"]);
-            if (empire_args.check()) {
-                empire = ValueRef::CloneUnique(empire_args().value_ref);
-            } else {
-                empire = std::make_unique<ValueRef::Constant<int>>(py::extract<int>(kw["empire"])());
-            }
-        }
+        if (kw.has_key("empire"))
+            empire = pyobject_to_vref<int>(kw["empire"]);
 
         EmpireAffiliationType affiliation = EmpireAffiliationType::AFFIL_ANY;
         if (kw.has_key("empire")) {
@@ -157,13 +151,7 @@ namespace {
     }
 
     effect_wrapper insert_set_meter_(const MeterType m, const py::tuple& args, const py::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<double>> value;
-        auto value_arg = py::extract<value_ref_wrapper<double>>(kw["value"]);
-        if (value_arg.check()) {
-            value = ValueRef::CloneUnique(value_arg().value_ref);
-        } else {
-            value = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["value"])());
-        }
+        auto value = pyobject_to_vref_or_cast<double, int>(kw["value"]);
 
         boost::optional<std::string> accountinglabel;
         if (kw.has_key("accountinglabel")) {
@@ -176,21 +164,8 @@ namespace {
     }
 
     effect_wrapper insert_ship_part_set_meter_(const MeterType m, const py::tuple& args, const py::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<double>> value;
-        auto value_arg = py::extract<value_ref_wrapper<double>>(kw["value"]);
-        if (value_arg.check()) {
-            value = ValueRef::CloneUnique(value_arg().value_ref);
-        } else {
-            value = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["value"])());
-        }
-
-        std::unique_ptr<ValueRef::ValueRef<std::string>> partname;
-        auto partname_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["partname"]);
-        if (partname_args.check()) {
-            partname = ValueRef::CloneUnique(partname_args().value_ref);
-        } else {
-            partname = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["partname"])());
-        }
+        auto value = pyobject_to_vref_or_cast<double, int>(kw["value"]);
+        auto partname = pyobject_to_vref<std::string>(kw["partname"]);
 
         return effect_wrapper(std::make_shared<Effect::SetShipPartMeter>(
             m,
@@ -254,16 +229,10 @@ namespace {
     effect_wrapper set_empire_meter(const boost::python::tuple& args, const boost::python::dict& kw) {
         auto meter = boost::python::extract<std::string>(kw["meter"])();
 
-        std::unique_ptr<ValueRef::ValueRef<double>> value;
-        auto value_args = boost::python::extract<value_ref_wrapper<double>>(kw["value"]);
-        if (value_args.check()) {
-            value = ValueRef::CloneUnique(value_args().value_ref);
-        } else {
-            value = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["value"])());
-        }
+        auto value = pyobject_to_vref_or_cast<double, int>(kw["value"]);
 
         if (kw.has_key("empire")) {
-            auto empire = ValueRef::CloneUnique(boost::python::extract<value_ref_wrapper<int>>(kw["empire"])().value_ref);
+            auto empire = pyobject_to_vref<int>(kw["empire"]);
             return effect_wrapper(std::make_shared<Effect::SetEmpireMeter>(std::move(empire),
                                                                            meter,
                                                                            std::move(value)));
@@ -276,24 +245,11 @@ namespace {
 
     effect_wrapper insert_set_empire_stockpile(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
-        if (kw.has_key("empire")) {
-            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
-            if (empire_args.check()) {
-                empire = ValueRef::CloneUnique(empire_args().value_ref);
-            } else {
-                empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
-            }
-        }
+        if (kw.has_key("empire"))
+            empire = pyobject_to_vref<int>(kw["empire"]);
 
         auto resource = boost::python::extract<enum_wrapper<ResourceType>>(kw["resource"])();
-
-        std::unique_ptr<ValueRef::ValueRef<double>> value;
-        auto value_args = boost::python::extract<value_ref_wrapper<double>>(kw["value"]);
-        if (value_args.check()) {
-            value = ValueRef::CloneUnique(value_args().value_ref);
-        } else {
-            value = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["value"])());
-        }
+        auto value = pyobject_to_vref_or_cast<double, int>(kw["value"]);
 
         if (empire)
             return effect_wrapper(std::make_shared<Effect::SetEmpireStockpile>(std::move(empire), resource.value, std::move(value)));
@@ -303,14 +259,8 @@ namespace {
 
     effect_wrapper insert_set_owner_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
-        if (kw.has_key("empire")) {
-            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
-            if (empire_args.check()) {
-                empire = ValueRef::CloneUnique(empire_args().value_ref);
-            } else {
-                empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
-            }
-        }
+        if (kw.has_key("empire"))
+            empire = pyobject_to_vref<int>(kw["empire"]);
 
         return effect_wrapper(std::make_shared<Effect::SetOwner>(std::move(empire)));
     }
@@ -325,13 +275,7 @@ namespace {
     }
 
     effect_wrapper insert_set_star_type_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef< ::StarType>> star_type;
-        auto star_type_arg = py::extract<value_ref_wrapper< ::StarType>>(kw["type"]);
-        if (star_type_arg.check()) {
-            star_type = ValueRef::CloneUnique(star_type_arg().value_ref);
-        } else {
-            star_type = std::make_unique<ValueRef::Constant< ::StarType>>(boost::python::extract<enum_wrapper< ::StarType>>(kw["type"])().value);
-        }
+        auto star_type = pyobject_to_vref_enum< ::StarType>(kw["type"]);
         return effect_wrapper(std::make_shared<Effect::SetStarType>(std::move(star_type)));
     }
 
@@ -341,34 +285,15 @@ namespace {
     }
 
     effect_wrapper insert_move_towards_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<double>> speed;
-        auto speed_args = boost::python::extract<value_ref_wrapper<double>>(kw["speed"]);
-        if (speed_args.check()) {
-            speed = ValueRef::CloneUnique(speed_args().value_ref);
-        } else {
-            speed = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["speed"])());
-        }
+        auto speed = pyobject_to_vref_or_cast<double, int>(kw["speed"]);
 
         if (kw.has_key("target")) {
             auto target = py::extract<condition_wrapper>(kw["target"])();
             return effect_wrapper(std::make_shared<Effect::MoveTowards>(std::move(speed),
                 ValueRef::CloneUnique(target.condition)));
         } else if (kw.has_key("x") && kw.has_key("y")) {
-            std::unique_ptr<ValueRef::ValueRef<double>> x;
-            auto x_args = boost::python::extract<value_ref_wrapper<double>>(kw["x"]);
-            if (x_args.check()) {
-                x = ValueRef::CloneUnique(x_args().value_ref);
-            } else {
-                x = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["x"])());
-            }
-
-            std::unique_ptr<ValueRef::ValueRef<double>> y;
-            auto y_args = boost::python::extract<value_ref_wrapper<double>>(kw["y"]);
-            if (y_args.check()) {
-                y = ValueRef::CloneUnique(y_args().value_ref);
-            } else {
-                y = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["y"])());
-            }
+            auto x = pyobject_to_vref_or_cast<double, int>(kw["x"]);
+            auto y = pyobject_to_vref_or_cast<double, int>(kw["y"]);
 
             return effect_wrapper(std::make_shared<Effect::MoveTowards>(std::move(speed),
                 std::move(x),
@@ -379,24 +304,12 @@ namespace {
     }
 
     effect_wrapper insert_set_planet_size_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<PlanetSize>> planetsize;
-        auto size_arg = boost::python::extract<value_ref_wrapper< ::PlanetSize>>(kw["planetsize"]);
-        if (size_arg.check()) {
-            planetsize = ValueRef::CloneUnique(size_arg().value_ref);
-        } else {
-            planetsize = std::make_unique<ValueRef::Constant< ::PlanetSize>>(boost::python::extract<enum_wrapper< ::PlanetSize>>(kw["planetsize"])().value);
-        }
+        auto planetsize = pyobject_to_vref_enum< ::PlanetSize>(kw["planetsize"]);
         return effect_wrapper(std::make_shared<Effect::SetPlanetSize>(std::move(planetsize)));
     }
 
     effect_wrapper insert_set_planet_type_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<PlanetType>> type;
-        auto type_arg = boost::python::extract<value_ref_wrapper< ::PlanetType>>(kw["type"]);
-        if (type_arg.check()) {
-            type = ValueRef::CloneUnique(type_arg().value_ref);
-        } else {
-            type = std::make_unique<ValueRef::Constant< ::PlanetType>>(boost::python::extract<enum_wrapper< ::PlanetType>>(kw["type"])().value);
-        }
+        auto type = pyobject_to_vref_enum< ::PlanetType>(kw["type"]);
         return effect_wrapper(std::make_shared<Effect::SetPlanetType>(std::move(type)));
     }
 
@@ -404,23 +317,14 @@ namespace {
         EmpireAffiliationType affiliation = EmpireAffiliationType::AFFIL_ANY;
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
         if (kw.has_key("empire")) {
-            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
-            if (empire_args.check())
-                empire = ValueRef::CloneUnique(empire_args().value_ref);
-            else
-                empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
+            empire = pyobject_to_vref<int>(kw["empire"]);
             affiliation = EmpireAffiliationType::AFFIL_SELF;
         }
 
         if (kw.has_key("affiliation"))
             affiliation = py::extract<enum_wrapper<EmpireAffiliationType>>(kw["affiliation"])().value;
 
-        std::unique_ptr<ValueRef::ValueRef<Visibility>> visibility;
-        auto vis_arg = boost::python::extract<value_ref_wrapper<Visibility>>(kw["visibility"]);
-        if (vis_arg.check())
-            visibility = ValueRef::CloneUnique(vis_arg().value_ref);
-        else
-            visibility = std::make_unique<ValueRef::Constant<Visibility>>(boost::python::extract<enum_wrapper<Visibility>>(kw["visibility"])().value);
+        auto visibility = pyobject_to_vref_enum<Visibility>(kw["visibility"]);
 
         std::unique_ptr<Condition::Condition> condition;
         if (kw.has_key("condition"))
@@ -446,22 +350,10 @@ namespace {
 
     effect_wrapper insert_give_empire_item_(UnlockableItemType item, const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
-        if (kw.has_key("empire")) {
-            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
-            if (empire_args.check()) {
-                empire = ValueRef::CloneUnique(empire_args().value_ref);
-            } else {
-                empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
-            }
-        }
+        if (kw.has_key("empire"))
+            empire = pyobject_to_vref<int>(kw["empire"]);
 
-        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
-        auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
-        if (name_args.check()) {
-            name = ValueRef::CloneUnique(name_args().value_ref);
-        } else {
-            name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
-        }
+        auto name = pyobject_to_vref<std::string>(kw["name"]);
 
         return effect_wrapper(std::make_shared<Effect::GiveEmpireContent>(std::move(name),
             item,
@@ -469,43 +361,18 @@ namespace {
     }
 
     effect_wrapper insert_set_species_opinion_(bool target, const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<std::string>> species_name;
-        auto species_name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["species"]);
-        if (species_name_args.check()) {
-            species_name = ValueRef::CloneUnique(species_name_args().value_ref);
-        } else {
-            species_name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["species"])());
-        }
-
-        std::unique_ptr<ValueRef::ValueRef<double>> opinion;
-        auto opinion_args = boost::python::extract<value_ref_wrapper<double>>(kw["opinion"]);
-        if (opinion_args.check()) {
-            opinion = ValueRef::CloneUnique(opinion_args().value_ref);
-        } else {
-            opinion = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["opinion"])());
-        }
+        auto species_name = pyobject_to_vref<std::string>(kw["species"]);
+        auto opinion = pyobject_to_vref_or_cast<double, int>(kw["opinion"]);
 
         if (kw.has_key("empire")) {
-            std::unique_ptr<ValueRef::ValueRef<int>> empire;
-            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
-            if (empire_args.check()) {
-                empire = ValueRef::CloneUnique(empire_args().value_ref);
-            } else {
-                empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
-            }
+            auto empire = pyobject_to_vref<int>(kw["empire"]);
 
             return effect_wrapper(std::make_shared<Effect::SetSpeciesEmpireOpinion>(std::move(species_name),
                 std::move(empire),
                 std::move(opinion),
                 target));
         } else if (kw.has_key("species2")) {
-            std::unique_ptr<ValueRef::ValueRef<std::string>> species2_name;
-            auto species2_name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["species2"]);
-            if (species2_name_args.check()) {
-                species2_name = ValueRef::CloneUnique(species2_name_args().value_ref);
-            } else {
-                species2_name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["species2"])());
-            }
+            auto species2_name = pyobject_to_vref<std::string>(kw["species2"]);
 
             return effect_wrapper(std::make_shared<Effect::SetSpeciesSpeciesOpinion>(std::move(species_name),
                 std::move(species2_name),
@@ -522,69 +389,33 @@ namespace {
     }
 
     effect_wrapper add_special(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
-        auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
-        if (name_args.check()) {
-            name = ValueRef::CloneUnique(name_args().value_ref);
-        } else {
-            name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
-        }
+        auto name = pyobject_to_vref<std::string>(kw["name"]);
 
         std::unique_ptr<ValueRef::ValueRef<double>> capacity;
-        if (kw.has_key("capacity")) {
-            auto capacity_args = boost::python::extract<value_ref_wrapper<double>>(kw["capacity"]);
-            if (capacity_args.check()) {
-                capacity = ValueRef::CloneUnique(capacity_args().value_ref);
-            } else {
-                capacity = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["capacity"])());
-            }
-        }
+        if (kw.has_key("capacity"))
+            capacity = pyobject_to_vref_or_cast<double, int>(kw["capacity"]);
 
         return effect_wrapper(std::make_shared<Effect::AddSpecial>(std::move(name), std::move(capacity)));
     }
 
     effect_wrapper remove_special(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
-        auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
-        if (name_args.check()) {
-            name = ValueRef::CloneUnique(name_args().value_ref);
-        } else {
-            name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
-        }
+        auto name = pyobject_to_vref<std::string>(kw["name"]);
 
         return effect_wrapper(std::make_shared<Effect::RemoveSpecial>(std::move(name)));
     }
 
     effect_wrapper create_ship(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> empire_id;
-        if (kw.has_key("empire")) {
-            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
-            if (empire_args.check()) {
-                empire_id = ValueRef::CloneUnique(empire_args().value_ref);
-            } else {
-                empire_id = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
-            }
-        }
+        if (kw.has_key("empire"))
+            empire_id = pyobject_to_vref<int>(kw["empire"]);
 
         std::unique_ptr<ValueRef::ValueRef<std::string>> species_name;
-        if (kw.has_key("species")) {
-            auto species_name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["species"]);
-            if (species_name_args.check()) {
-                species_name = ValueRef::CloneUnique(species_name_args().value_ref);
-            } else {
-                species_name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["species"])());
-            }
-        }
+        if (kw.has_key("species"))
+            species_name = pyobject_to_vref<std::string>(kw["species"]);
 
         std::unique_ptr<ValueRef::ValueRef<std::string>> ship_name;
-        if (kw.has_key("name")) {
-            auto ship_name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
-            if (ship_name_args.check()) {
-                ship_name = ValueRef::CloneUnique(ship_name_args().value_ref);
-            } else {
-                ship_name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
-            }
-        }
+        if (kw.has_key("name"))
+            ship_name = pyobject_to_vref<std::string>(kw["name"]);
 
         std::vector<std::unique_ptr<Effect::Effect>> effects_to_apply_after;
         if (kw.has_key("effects")) {
@@ -595,26 +426,14 @@ namespace {
         }
 
         if (kw.has_key("designid")) {
-            std::unique_ptr<ValueRef::ValueRef<int>> ship_design_id;
-            auto designid_args = boost::python::extract<value_ref_wrapper<int>>(kw["designid"]);
-            if (designid_args.check()) {
-                ship_design_id = ValueRef::CloneUnique(designid_args().value_ref);
-            } else {
-                ship_design_id = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["designid"])());
-            }
+            auto ship_design_id = pyobject_to_vref<int>(kw["designid"]);
             return effect_wrapper(std::make_shared<Effect::CreateShip>(std::move(ship_design_id),
                 std::move(empire_id),
                 std::move(species_name),
                 std::move(ship_name),
                 std::move(effects_to_apply_after)));
         } else if (kw.has_key("designname")) {
-            std::unique_ptr<ValueRef::ValueRef<std::string>> predefined_ship_design_name;
-            auto designname_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["designname"]);
-            if (designname_args.check()) {
-                predefined_ship_design_name = ValueRef::CloneUnique(designname_args().value_ref);
-            } else {
-                predefined_ship_design_name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["designname"])());
-            }
+            auto predefined_ship_design_name = pyobject_to_vref<std::string>(kw["designname"]);
             return effect_wrapper(std::make_shared<Effect::CreateShip>(std::move(predefined_ship_design_name),
                 std::move(empire_id),
                 std::move(species_name),
@@ -626,23 +445,11 @@ namespace {
     }
 
     effect_wrapper create_building(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<std::string>> type;
-        auto type_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["type"]);
-        if (type_args.check()) {
-            type = ValueRef::CloneUnique(type_args().value_ref);
-        } else {
-            type = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["type"])());
-        }
+        auto type = pyobject_to_vref<std::string>(kw["type"]);
 
         std::unique_ptr<ValueRef::ValueRef<std::string>> name;
-        if (kw.has_key("name")) {
-            auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
-            if (name_args.check()) {
-                name = ValueRef::CloneUnique(name_args().value_ref);
-            } else {
-                name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
-            }
-        }
+        if (kw.has_key("name"))
+            name = pyobject_to_vref<std::string>(kw["name"]);
 
         std::vector<std::unique_ptr<Effect::Effect>> effects_to_apply_after;
         if (kw.has_key("effects")) {
@@ -658,55 +465,24 @@ namespace {
     }
 
     effect_wrapper set_focus(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
-        auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
-        if (name_args.check()) {
-            name = ValueRef::CloneUnique(name_args().value_ref);
-        } else {
-            name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
-        }
+        auto name = pyobject_to_vref<std::string>(kw["name"]);
 
         return effect_wrapper(std::make_shared<Effect::SetFocus>(std::move(name)));
     }
 
     effect_wrapper set_species(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
-        auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
-        if (name_args.check()) {
-            name = ValueRef::CloneUnique(name_args().value_ref);
-        } else {
-            name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
-        }
+        auto name = pyobject_to_vref<std::string>(kw["name"]);
 
         return effect_wrapper(std::make_shared<Effect::SetSpecies>(std::move(name)));
     }
 
     effect_wrapper create_field(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<std::string>> type;
-        auto type_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["type"]);
-        if (type_args.check()) {
-            type = ValueRef::CloneUnique(type_args().value_ref);
-        } else {
-            type = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["type"])());
-        }
-
-        std::unique_ptr<ValueRef::ValueRef<double>> size;
-        auto size_arg = py::extract<value_ref_wrapper<double>>(kw["size"]);
-        if (size_arg.check()) {
-            size = ValueRef::CloneUnique(size_arg().value_ref);
-        } else {
-            size = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["size"])());
-        }
+        auto type = pyobject_to_vref<std::string>(kw["type"]);
+        auto size = pyobject_to_vref_or_cast<double, int>(kw["size"]);
 
         std::unique_ptr<ValueRef::ValueRef<std::string>> name;
-        if (kw.has_key("name")) {
-            auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
-            if (name_args.check()) {
-                name = ValueRef::CloneUnique(name_args().value_ref);
-            } else {
-                name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
-            }
-        }
+        if (kw.has_key("name"))
+            name = pyobject_to_vref<std::string>(kw["name"]);
 
         std::vector<std::unique_ptr<Effect::Effect>> effects;
         if (kw.has_key("effects")) {
@@ -717,21 +493,8 @@ namespace {
         }
 
         if (kw.has_key("x") && kw.has_key("y")) {
-            std::unique_ptr<ValueRef::ValueRef<double>> x;
-            auto x_arg = py::extract<value_ref_wrapper<double>>(kw["x"]);
-            if (x_arg.check()) {
-                x = ValueRef::CloneUnique(x_arg().value_ref);
-            } else {
-                x = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["x"])());
-            }
-
-            std::unique_ptr<ValueRef::ValueRef<double>> y;
-            auto y_arg = py::extract<value_ref_wrapper<double>>(kw["y"]);
-            if (y_arg.check()) {
-                y = ValueRef::CloneUnique(y_arg().value_ref);
-            } else {
-                y = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["y"])());
-            }
+            auto x = pyobject_to_vref_or_cast<double, int>(kw["x"]);
+            auto y = pyobject_to_vref_or_cast<double, int>(kw["y"]);
 
             return effect_wrapper(std::make_shared<Effect::CreateField>(std::move(type),
                                                                         std::move(x),
