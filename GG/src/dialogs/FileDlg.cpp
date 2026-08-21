@@ -135,7 +135,49 @@ struct IndexedStringEnd
 bool WindowsRoot(const std::string& root_name)
 { return root_name.size() == 2 && std::isalpha(root_name[0]) && root_name[1] == ':'; }
 
-const auto initial_path_root_string = std::filesystem::current_path().root_name().string();
+
+namespace fs = std::filesystem;
+
+namespace {
+    fs::path StringToPath(std::string_view str) {
+#if defined(_WIN32)
+        // convert UTF-8 path string to UTF-16
+        fs::path::string_type str_native;
+        utf8::utf8to16(str.begin(), str.end(), std::back_inserter(str_native));
+        return fs::path(str_native);
+#else
+        return fs::path(str);
+#endif
+    }
+    fs::path StringToPath(const std::string& str) { return StringToPath(std::string_view(str)); }
+    fs::path StringToPath(auto) = delete; // disable implicit conversions
+
+#if defined (_WIN32)
+    static_assert(std::is_same_v<fs::path::string_type, std::wstring>);
+    static_assert(std::is_same_v<std::wstring::value_type, wchar_t>);
+    static_assert(sizeof(wchar_t) == 2);
+    // convert UTF-16 path to UTF-8
+    std::string ToUTF8String(const fs::path::string_type& native_wstring) {
+        std::string u8_string;
+        utf8::utf16to8(native_wstring.begin(), native_wstring.end(), std::back_inserter(u8_string));
+        return u8_string;
+    }
+#else
+    static_assert(std::is_same_v<fs::path::string_type, std::string>);
+    static_assert(sizeof(std::string::value_type) == 1);
+#endif
+
+    std::string PathToString(const fs::path& p) {
+#if defined (_WIN32)
+        return ToUTF8String(p.native());
+#else
+        return p.string();
+#endif
+    }
+    std::string PathToString(auto) = delete; // disable implicit conversions
+}
+
+const auto initial_path_root_string = PathToString(std::filesystem::current_path().root_name());
 
 bool Win32Paths()
 { return WindowsRoot(initial_path_root_string); }
@@ -144,10 +186,8 @@ constexpr X H_SPACING{10};
 constexpr Y V_SPACING{10};
 constexpr X DEFAULT_WIDTH{500};  ///< default width for the dialog
 constexpr Y DEFAULT_HEIGHT{450}; ///< default height for the dialog
-
 }
 
-namespace fs = std::filesystem;
 
 // static member definition(s)
 fs::path FileDlg::s_working_dir = fs::current_path();
@@ -203,16 +243,9 @@ void FileDlg::CompleteConstruction()
     AttachChild(m_file_types_label);
 
     if (!m_init_directory.empty()) {
-#if defined(_WIN32)
-        // convert UTF-8 file name to UTF-16
-        std::filesystem::path::string_type directory_native;
-        utf8::utf8to16(m_init_directory.begin(), m_init_directory.end(), std::back_inserter(directory_native));
-        fs::path dir_path = fs::absolute(fs::path(directory_native));
-#else
-        fs::path dir_path = fs::absolute(fs::path(m_init_directory));
-#endif
+        const auto dir_path = fs::absolute(StringToPath(m_init_directory));
         if (!fs::exists(dir_path))
-            throw BadInitialDirectory("FileDlg::FileDlg() : Initial directory \"" + dir_path.string() + "\" does not exist.");
+            throw BadInitialDirectory("FileDlg::FileDlg() : Initial directory \"" + PathToString(dir_path) + "\" does not exist.");
         SetWorkingDirectory(dir_path);
     }
 
@@ -273,17 +306,6 @@ void FileDlg::SetFileFilters(const std::vector<std::pair<std::string, std::strin
     m_file_filters = filters;
     PopulateFilters();
     UpdateList();
-}
-
-const std::filesystem::path FileDlg::StringToPath(const std::string& str) {
-#if defined(_WIN32)
-    // convert UTF-8 path string to UTF-16
-    fs::path::string_type str_native;
-    utf8::utf8to16(str.begin(), str.end(), std::back_inserter(str_native));
-    return fs::path(str_native);
-#else
-    return fs::path(str);
-#endif
 }
 
 void FileDlg::DoLayout()
@@ -351,24 +373,9 @@ void FileDlg::OkHandler(bool double_click)
             {
                 save_file += m_file_filters[0].second.substr(1);
             }
-#if defined(_WIN32)
-            // convert UTF-8 file name to UTF-16
-            std::filesystem::path::string_type file_name_native;
-            utf8::utf8to16(save_file.begin(), save_file.end(), std::back_inserter(file_name_native));
-            fs::path p = s_working_dir / fs::path(file_name_native);
-#else
-            fs::path p = s_working_dir / fs::path(save_file);
-#endif
+            fs::path p = s_working_dir / StringToPath(save_file);
+            m_result.emplace(PathToString(p));
 
-#if defined (_WIN32)
-            // convert UTF-16 path back to UTF-8 for storage
-            std::filesystem::path::string_type path_native = p.native();
-            std::string path_string;
-            utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(path_string));
-            m_result.emplace(path_string);
-#else
-            m_result.emplace(p.string());
-#endif
             // check to see if file already exists; if so, ask if it's ok to overwrite
             if (fs::exists(p)) {
                 std::string msg_str = boost::str(boost::format(style.Translate("%1% exists.\nOk to overwrite it?")) % save_file);
@@ -384,14 +391,8 @@ void FileDlg::OkHandler(bool double_click)
             OpenDirectory();
         } else { // ensure the file(s) are valid before returning them
             for (const std::string& file_name : files) {
-#if defined(_WIN32)
-                // convert UTF-8 file name to UTF-16
-                std::filesystem::path::string_type file_name_native;
-                utf8::utf8to16(file_name.begin(), file_name.end(), std::back_inserter(file_name_native));
-                fs::path p = s_working_dir / fs::path(file_name_native);
-#else
-                fs::path p = s_working_dir / fs::path(file_name);
-#endif
+                fs::path p = s_working_dir / StringToPath(file_name);
+
                 if (fs::exists(p)) {
                     bool p_is_directory = fs::is_directory(p);
                     if (!m_select_directories && p_is_directory) {
@@ -403,16 +404,8 @@ void FileDlg::OkHandler(bool double_click)
                         results_valid = false;
                         break;
                     }
-#if defined(_WIN32)
-                    // convert UTF-16 path string to UTF-8
-                    std::filesystem::path::string_type file_name_native2 = p.native();
-                    std::string temp;
-                    temp.reserve(file_name_native2.size());
-                    utf8::utf16to8(file_name_native2.begin(), file_name_native2.end(), std::back_inserter(temp));
-                    m_result.emplace(std::move(temp));
-#else
-                    m_result.emplace(p.string());
-#endif
+                    m_result.emplace(PathToString(p));
+
                     results_valid = true; // indicate validity only if at least one good file was found
                 } else {
                     std::string msg_str = boost::str(boost::format(style.Translate("File \"%1%\"\ndoes not exist.")) % file_name);
@@ -571,8 +564,8 @@ void FileDlg::UpdateList()
 
     if (!m_in_win32_drive_selection) {
         // parent directory selector
-        if ((s_working_dir.string() != s_working_dir.root_path().string() &&
-             !s_working_dir.parent_path().string().empty()) ||
+        if ((s_working_dir != s_working_dir.root_path() &&
+             !PathToString(s_working_dir.parent_path()).empty()) ||
             Win32Paths())
         {
             auto row = Wnd::Create<ListBox::Row>();
@@ -599,21 +592,14 @@ void FileDlg::UpdateList()
         std::multimap<std::string, std::shared_ptr<ListBox::Row>> sorted_rows;
         for (fs::directory_iterator it(s_working_dir); it != end_it; ++it) {
             try {
-                if (fs::exists(*it) && fs::is_directory(*it) && it->path().filename().native()[0] != '.') {
-                    auto row = Wnd::Create<ListBox::Row>();
-
-#if defined(_WIN32)
-                    // convert UTF-16 path to UTF-8 for display
-                    std::filesystem::path::string_type file_name_native = it->path().filename().native();
-                    std::string row_text{"["};
-                    row_text.reserve(file_name_native.size()*2 + 3);
-                    utf8::utf16to8(file_name_native.begin(), file_name_native.end(), std::back_inserter(row_text));
-                    row_text += ']';
-#else
-                    std::string row_text = "[" + it->path().filename().string() + "]";
-#endif
-                    row->push_back(GetStyleFactory().NewTextControl(row_text, m_font, m_text_color, FORMAT_NOWRAP));
-                    sorted_rows.emplace(std::move(row_text), std::move(row));
+                if (fs::exists(*it) && fs::is_directory(*it)) {
+                    auto filename_string = PathToString(it->path().filename());
+                    if (!filename_string.empty() && filename_string.front() != '.') {
+                        auto row = Wnd::Create<ListBox::Row>();
+                        auto row_text = "[" + filename_string + "]";
+                        row->push_back(GetStyleFactory().NewTextControl(row_text, m_font, m_text_color, FORMAT_NOWRAP));
+                        sorted_rows.emplace(std::move(row_text), std::move(row));
+                    }
                 }
             } catch (const fs::filesystem_error&) {
             }
@@ -629,17 +615,20 @@ void FileDlg::UpdateList()
         if (!m_select_directories) {
             for (fs::directory_iterator it(s_working_dir); it != end_it; ++it) {
                 try {
-                    if (fs::exists(*it) && !fs::is_directory(*it) && it->path().filename().native()[0] != '.') {
-                        bool meets_filters = file_filters.empty();
-                        for (std::size_t i = 0; i < file_filters.size() && !meets_filters; ++i) {
-                            if (parse(it->path().filename().string().c_str(), file_filters[i]).full)
-                                meets_filters = true;
-                        }
-                        if (meets_filters) {
-                            auto row = Wnd::Create<ListBox::Row>();
-                            row->push_back(GetStyleFactory().NewTextControl(
-                                it->path().filename().string(), m_font, m_text_color, FORMAT_NOWRAP));
-                            sorted_rows.emplace(it->path().filename().string(), std::move(row));
+                    if (fs::exists(*it) && !fs::is_directory(*it)) {
+                        auto filename_string = PathToString(it->path().filename());
+                        if (!filename_string.empty() && filename_string.front() != '.') {
+                            bool meets_filters = file_filters.empty();
+                            for (std::size_t i = 0; i < file_filters.size() && !meets_filters; ++i) {
+                                if (parse(filename_string.c_str(), file_filters[i]).full)
+                                    meets_filters = true;
+                            }
+                            if (meets_filters) {
+                                auto row = Wnd::Create<ListBox::Row>();
+                                row->push_back(GetStyleFactory().NewTextControl(
+                                    filename_string, m_font, m_text_color, FORMAT_NOWRAP));
+                                sorted_rows.emplace(std::move(filename_string), std::move(row));
+                            }
                         }
                     }
                 } catch (const fs::filesystem_error&) {
@@ -654,8 +643,8 @@ void FileDlg::UpdateList()
                 fs::path path(c + std::string(":"));
                 if (fs::exists(path)) {
                     auto row = Wnd::Create<ListBox::Row>();
-                    row->push_back(GetStyleFactory().NewTextControl("[" + path.root_name().string() + "]",
-                                                                    m_font, m_text_color, FORMAT_NOWRAP));
+                    auto row_text = "[" + PathToString(path) + "]";
+                    row->push_back(GetStyleFactory().NewTextControl(row_text, m_font, m_text_color, FORMAT_NOWRAP));
                     m_files_list->Insert(std::move(row));
                 }
             } catch (const fs::filesystem_error&) {
@@ -666,15 +655,7 @@ void FileDlg::UpdateList()
 
 void FileDlg::UpdateDirectoryText()
 {
-#if defined(_WIN32)
-    // convert UTF-16 path to UTF-8 for display
-    std::filesystem::path::string_type working_dir_native = s_working_dir.native();
-    std::string str;
-    str.reserve(working_dir_native.size());
-    utf8::utf16to8(working_dir_native.begin(), working_dir_native.end(), std::back_inserter(str));
-#else
-    std::string str = s_working_dir.string();
-#endif
+    auto str = PathToString(s_working_dir);
     m_curr_dir_text->SetText(str);
     while (m_curr_dir_text->Width() > Width() - 2 * H_SPACING) {
         std::string::size_type slash_idx = str.find('/', 1);
@@ -726,8 +707,8 @@ void FileDlg::OpenDirectory()
 
     } else if (directory_sv == "..") {
         // move to parent directory of current directory
-        if (s_working_dir.string() != s_working_dir.root_path().string() &&
-            !s_working_dir.parent_path().string().empty())
+        if (s_working_dir != s_working_dir.root_path() &&
+            !PathToString(s_working_dir.parent_path()).empty())
         {
             // move to new directory
             SetWorkingDirectory(s_working_dir.parent_path());
@@ -746,19 +727,11 @@ void FileDlg::OpenDirectory()
     } else {
         // move to contained directory, which may be a drive selection...
         if (!m_in_win32_drive_selection) {
-#if defined(_WIN32)
-            // convert UTF-8 file name to UTF-16
-            std::filesystem::path::string_type directory_native;
-            utf8::utf8to16(directory_sv.begin(), directory_sv.end(), std::back_inserter(directory_native));
-            SetWorkingDirectory(s_working_dir / fs::path(directory_native));
-#else
-            SetWorkingDirectory(s_working_dir / fs::path(std::string{directory_sv}));
-#endif
-
+            SetWorkingDirectory(s_working_dir / StringToPath(directory_sv));
         } else {
             m_in_win32_drive_selection = false;
             try {
-                SetWorkingDirectory(fs::path(std::string{directory_sv} + "\\"));
+                SetWorkingDirectory(StringToPath(std::string{directory_sv} + "\\"));
             } catch (const fs::filesystem_error& e) {
                 if (e.code() != std::errc::io_error)
                     throw;

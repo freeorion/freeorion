@@ -101,9 +101,6 @@ public:
         the next invocation of FileDlg::Run()) */
     static const auto& WorkingDirectory() noexcept { return s_working_dir; }
 
-    /** Converts a string to a path in a cross platform safe manner. */
-    static const std::filesystem::path StringToPath(const std::string& str);
-
     /** The base class for FileDlg exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
 
