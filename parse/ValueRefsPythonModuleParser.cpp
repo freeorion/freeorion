@@ -20,12 +20,7 @@ namespace {
     value_ref_wrapper<std::vector<std::string>> insert_empire_adopted_policies_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
         if (kw.has_key("empire")) {
-            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
-            if (empire_args.check()) {
-                empire = ValueRef::CloneUnique(empire_args().value_ref);
-            } else {
-                empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
-            }
+            empire = pyobject_to_vref<int>(kw["empire"]);
         }
         return value_ref_wrapper<std::vector<std::string>>(std::make_shared<ValueRef::ComplexVariable<std::vector<std::string>>>(
             "EmpireAdoptedPolicies",
@@ -38,13 +33,7 @@ namespace {
     }
 
   value_ref_wrapper<int> insert_complex_i1(std::string&& vname, const boost::python::tuple& args, const boost::python::dict& kw, const std::string& keyint1) {
-        std::unique_ptr<ValueRef::ValueRef<int>> int1;
-        auto int1_args = boost::python::extract<value_ref_wrapper<int>>(kw[keyint1]);
-        if (int1_args.check()) {
-            int1 = ValueRef::CloneUnique(int1_args().value_ref);
-        } else {
-            int1 = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["keyint1"])());
-        }
+        auto int1 = pyobject_to_vref<int>(kw[keyint1]);
 
         return value_ref_wrapper<int>(std::make_shared<ValueRef::ComplexVariable<int>>(
             std::move(vname),
@@ -156,13 +145,7 @@ namespace {
     template<typename T>
     value_ref_wrapper<T> insert_named_(const boost::python::tuple& args, const boost::python::dict& kw) {
         auto name = boost::python::extract<std::string>(kw["name"])();
-        std::unique_ptr<ValueRef::ValueRef<T>> value;
-
-        auto value_arg = boost::python::extract<value_ref_wrapper<T>>(kw["value"]);
-        if (value_arg.check())
-            value = ValueRef::CloneUnique(value_arg().value_ref);
-        else
-            value = std::make_unique<ValueRef::Constant<T>>(boost::python::extract<T>(kw["value"])());
+        auto value = pyobject_to_vref<T>(kw["value"]);
 
         ::RegisterValueRef<T>(name, std::move(value));
 
@@ -229,12 +212,7 @@ namespace {
             std::unique_ptr<ValueRef::ValueRef<double>> operand = pyobject_to_vref_or_cast<double, int>(args[1]);
             return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Operation<double>>(op, std::move(operand))));
         } else if (args[0] == types.type_str) {
-            std::unique_ptr<ValueRef::ValueRef<std::string>> operand;
-            auto arg = boost::python::extract<value_ref_wrapper<std::string>>(args[1]);
-            if (arg.check())
-                operand = ValueRef::CloneUnique(arg().value_ref);
-            else
-                operand = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(args[1])());
+            auto operand = pyobject_to_vref<std::string>(args[1]);
             return boost::python::object(value_ref_wrapper<std::string>(std::make_shared<ValueRef::Operation<std::string>>(op, std::move(operand))));
         } else {
             ErrorLogger() << "Unsupported type for 1arg : " << boost::python::extract<std::string>(boost::python::str(args[0]))();
@@ -290,37 +268,11 @@ namespace {
         const auto type = args1.check() ? args1().value : boost::python::extract<enum_wrapper<ValueRef::StatisticType>>(args[2])().value;
 
         if (value_type == types.type_int) {
-            const auto value_arg = boost::python::extract<value_ref_wrapper<int>>(kw["value"]);
-            std::unique_ptr<ValueRef::ValueRef<int>> value;
-            if (value_arg.check()) {
-                value = ValueRef::CloneUnique(value_arg().value_ref);
-            } else {
-                value = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["value"])());
-            }
-            return insert_statictic_value_return_typed(types, return_type, std::move(value), type, ValueRef::CloneUnique(condition));
+            return insert_statictic_value_return_typed(types, return_type, pyobject_to_vref<int>(kw["value"]), type, ValueRef::CloneUnique(condition));
         } else if (value_type == types.type_float) {
-            const auto value_arg = boost::python::extract<value_ref_wrapper<double>>(kw["value"]);
-            std::unique_ptr<ValueRef::ValueRef<double>> value;
-            if (value_arg.check()) {
-                value = ValueRef::CloneUnique(value_arg().value_ref);
-            } else {
-                const auto value_int_arg = boost::python::extract<value_ref_wrapper<int>>(kw["value"]);
-                if (value_int_arg.check()) {
-                    value = std::make_unique<ValueRef::StaticCast<int, double>>(ValueRef::CloneUnique(value_int_arg().value_ref));
-                } else {
-                    value = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["value"])());
-               }
-            }
-            return insert_statictic_value_return_typed(types, return_type, std::move(value), type, ValueRef::CloneUnique(condition));
+            return insert_statictic_value_return_typed(types, return_type, pyobject_to_vref_or_cast<double, int>(kw["value"]), type, ValueRef::CloneUnique(condition));
         } else if (value_type == types.type_str) {
-            const auto value_arg = boost::python::extract<value_ref_wrapper<std::string>>(kw["value"]);
-            std::unique_ptr<ValueRef::ValueRef<std::string>> value;
-            if (value_arg.check()) {
-                value = ValueRef::CloneUnique(value_arg().value_ref);
-            } else {
-                value = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["value"])());
-            }
-            return insert_statictic_value_return_typed(types, return_type, std::move(value), type, ValueRef::CloneUnique(condition));
+            return insert_statictic_value_return_typed(types, return_type, pyobject_to_vref<std::string>(kw["value"]), type, ValueRef::CloneUnique(condition));
         }
         
         ErrorLogger() << "Unsupported type for statistic : " << boost::python::extract<std::string>(boost::python::str(return_type))() << ", " << boost::python::extract<std::string>(boost::python::str(value_type))();
@@ -333,22 +285,12 @@ namespace {
     {
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
         if (kw.has_key("empire")) {
-            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
-            if (empire_args.check()) {
-                empire = ValueRef::CloneUnique(empire_args().value_ref);
-            } else {
-                empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
-            }
+            empire = pyobject_to_vref<int>(kw["empire"]);
         }
 
         std::unique_ptr<ValueRef::ValueRef<std::string>> name;
         if (kw.has_key("name")) {
-            auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
-            if (name_args.check()) {
-                name = ValueRef::CloneUnique(name_args().value_ref);
-            } else {
-                name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
-            }
+            name = pyobject_to_vref<std::string>(kw["name"]);
         }
 
         return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::ComplexVariable<int>>(
@@ -363,12 +305,7 @@ namespace {
     value_ref_wrapper<double> insert_double_complex_variable_(const char* variable, const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<std::string>> name;
         if (kw.has_key("name")) {
-            auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
-            if (name_args.check()) {
-                name = ValueRef::CloneUnique(name_args().value_ref);
-            } else {
-                name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
-            }
+            name = pyobject_to_vref<std::string>(kw["name"]);
         }
 
         return value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
@@ -381,21 +318,8 @@ namespace {
     }
 
     value_ref_wrapper<double> insert_double_complex_variable_species_(const char* variable, const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<std::string>> species;
-        auto species_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["species"]);
-        if (species_args.check()) {
-            species = ValueRef::CloneUnique(species_args().value_ref);
-        } else {
-            species = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["species"])());
-        }
-
-        std::unique_ptr<ValueRef::ValueRef<int>> empire;
-        auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
-        if (empire_args.check()) {
-            empire = ValueRef::CloneUnique(empire_args().value_ref);
-        } else {
-            empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
-        }
+        auto species = pyobject_to_vref<std::string>(kw["species"]);
+        auto empire = pyobject_to_vref<int>(kw["empire"]);
 
         return value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
             variable,
@@ -408,21 +332,8 @@ namespace {
     }
 
       value_ref_wrapper<double> insert_double_complex_variable_object_i1_name_s1_(const char* variable, const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
-        auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
-        if (name_args.check()) {
-            name = ValueRef::CloneUnique(name_args().value_ref);
-        } else {
-            name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
-        }
-
-        std::unique_ptr<ValueRef::ValueRef<int>> object;
-        auto object_args = boost::python::extract<value_ref_wrapper<int>>(kw["object"]);
-        if (object_args.check()) {
-            object = ValueRef::CloneUnique(object_args().value_ref);
-        } else {
-            object = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["object"])());
-        }
+        auto name = pyobject_to_vref<std::string>(kw["name"]);
+        auto object = pyobject_to_vref<int>(kw["object"]);
 
         return value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
             variable,
@@ -435,21 +346,8 @@ namespace {
     }
 
     value_ref_wrapper<double> insert_direct_distance_between_(boost::python::object arg1, boost::python::object arg2) {
-        std::unique_ptr<ValueRef::ValueRef<int>> id1;
-        auto id1_args = boost::python::extract<value_ref_wrapper<int>>(arg1);
-        if (id1_args.check()) {
-            id1 = ValueRef::CloneUnique(id1_args().value_ref);
-        } else {
-            id1 = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(arg1)());
-        }
-
-        std::unique_ptr<ValueRef::ValueRef<int>> id2;
-        auto id2_args = boost::python::extract<value_ref_wrapper<int>>(arg2);
-        if (id2_args.check()) {
-            id2 = ValueRef::CloneUnique(id2_args().value_ref);
-        } else {
-            id2 = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(arg2)());
-        }
+        auto id1 = pyobject_to_vref<int>(arg1);
+        auto id2 = pyobject_to_vref<int>(arg2);
 
         return value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
             "DirectDistanceBetween",
@@ -476,21 +374,8 @@ namespace {
     }
 
     value_ref_wrapper<int> insert_jumps_between_(boost::python::object arg1, boost::python::object arg2) {
-        std::unique_ptr<ValueRef::ValueRef<int>> id1;
-        auto id1_args = boost::python::extract<value_ref_wrapper<int>>(arg1);
-        if (id1_args.check()) {
-            id1 = ValueRef::CloneUnique(id1_args().value_ref);
-        } else {
-            id1 = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(arg1)());
-        }
-
-        std::unique_ptr<ValueRef::ValueRef<int>> id2;
-        auto id2_args = boost::python::extract<value_ref_wrapper<int>>(arg2);
-        if (id2_args.check()) {
-            id2 = ValueRef::CloneUnique(id2_args().value_ref);
-        } else {
-            id2 = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(arg2)());
-        }
+        auto id1 = pyobject_to_vref<int>(arg1);
+        auto id2 = pyobject_to_vref<int>(arg2);
 
         return value_ref_wrapper<int>(std::make_shared<ValueRef::ComplexVariable<int>>(
             "JumpsBetween",
@@ -503,36 +388,17 @@ namespace {
     }
 
     value_ref_wrapper<std::string> insert_user_string(const boost::python::object& expr) {
-        std::unique_ptr<ValueRef::ValueRef<std::string>> expr_;
-        auto expr_args = boost::python::extract<value_ref_wrapper<std::string>>(expr);
-        if (expr_args.check()) {
-            expr_ = ValueRef::CloneUnique(expr_args().value_ref);
-        } else {
-            expr_ = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(expr)());
-        }
-
+        auto expr_ = pyobject_to_vref<std::string>(expr);
 
         return value_ref_wrapper<std::string>(std::make_shared<ValueRef::UserStringLookup<std::string>>(std::move(expr_)));
     }
 
     value_ref_wrapper<int> insert_parts_in_ship_design_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<std::string>> name;
-        if (kw.has_key("name")) {
-            auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
-            if (name_args.check()) {
-                name = ValueRef::CloneUnique(name_args().value_ref);
-            } else {
-                name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
-            }
-        }
+        if (kw.has_key("name"))
+            name = pyobject_to_vref<std::string>(kw["name"]);
 
-        std::unique_ptr<ValueRef::ValueRef<int>> design;
-        auto design_args = boost::python::extract<value_ref_wrapper<int>>(kw["design"]);
-        if (design_args.check()) {
-            design = ValueRef::CloneUnique(design_args().value_ref);
-        } else {
-            design = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["design"])());
-        }
+        auto design = pyobject_to_vref<int>(kw["design"]);
 
         return value_ref_wrapper<int>(std::make_shared<ValueRef::ComplexVariable<int>>(
             "PartsInShipDesign",
@@ -546,25 +412,12 @@ namespace {
 
     value_ref_wrapper<double> insert_ship_part_meter_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<std::string>> part;
-        if (kw.has_key("part")) {
-            auto part_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["part"]);
-            if (part_args.check()) {
-                part = ValueRef::CloneUnique(part_args().value_ref);
-            } else {
-                part = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["part"])());
-            }
-        }
+        if (kw.has_key("part"))
+            part = pyobject_to_vref<std::string>(kw["part"]);
 
         auto meter_name = MeterToName(boost::python::extract<enum_wrapper<MeterType>>(kw["meter"])().value);
         auto meter_type = std::make_unique<ValueRef::Constant<std::string>>(std::string{meter_name});
-
-        std::unique_ptr<ValueRef::ValueRef<int>> ship_id;
-        auto ship_args = boost::python::extract<value_ref_wrapper<int>>(kw["ship"]);
-        if (ship_args.check()) {
-            ship_id = ValueRef::CloneUnique(ship_args().value_ref);
-        } else {
-            ship_id = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["ship"])());
-        }
+        auto ship_id = pyobject_to_vref<int>(kw["ship"]);
 
         return value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
             "ShipPartMeter",
@@ -577,13 +430,7 @@ namespace {
     }
 
     value_ref_wrapper<double> insert_empire_meter_value_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<int>> empire;
-        auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
-        if (empire_args.check()) {
-            empire = ValueRef::CloneUnique(empire_args().value_ref);
-        } else {
-            empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
-        }
+        auto empire = pyobject_to_vref<int>(kw["empire"]);
 
         std::string meter = boost::python::extract<std::string>(kw["meter"])();
 
@@ -598,13 +445,7 @@ namespace {
     }
 
     value_ref_wrapper<double> insert_empire_stockpile_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<int>> empire;
-        auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
-        if (empire_args.check()) {
-            empire = ValueRef::CloneUnique(empire_args().value_ref);
-        } else {
-            empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
-        }
+        auto empire = pyobject_to_vref<int>(kw["empire"]);
         auto resource = boost::python::extract<enum_wrapper<ResourceType>>(kw["resource"])();
         std::string resource_str;
         switch (resource.value) {
@@ -629,21 +470,8 @@ namespace {
     }
 
     value_ref_wrapper<int> insert_planet_type_difference_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<PlanetType>> from;
-        auto from_args = boost::python::extract<value_ref_wrapper<PlanetType>>(kw["from_"]);
-        if (from_args.check()) {
-            from = ValueRef::CloneUnique(from_args().value_ref);
-        } else {
-            from = std::make_unique<ValueRef::Constant<PlanetType>>(boost::python::extract<enum_wrapper<PlanetType>>(kw["from_"])().value);
-        }
-
-        std::unique_ptr<ValueRef::ValueRef<PlanetType>> to;
-        auto to_args = boost::python::extract<value_ref_wrapper<PlanetType>>(kw["to"]);
-        if (to_args.check()) {
-            to = ValueRef::CloneUnique(to_args().value_ref);
-        } else {
-            to = std::make_unique<ValueRef::Constant<PlanetType>>(boost::python::extract<enum_wrapper<PlanetType>>(kw["to"])().value);
-        }
+        auto from = pyobject_to_vref_enum<PlanetType>(kw["from_"]);
+        auto to = pyobject_to_vref_enum<PlanetType>(kw["to"]);
 
         return value_ref_wrapper<int>(std::make_shared<ValueRef::ComplexVariable<int>>(
             "PlanetTypeDifference",
