@@ -208,25 +208,26 @@ private:
 /** \brief A singleton that loads and stores textures for use by GG.
 
     This class is essentially a very thin wrapper around a map of Texture
-    smart pointers, keyed on std::string texture names.  The user need only
-    request a texture through GetTexture(); if the texture is not already
-    resident, it will be loaded.  If the user would like to create her own
-    images and store them in the manager, that can be accomplished via
-    StoreTexture() calls.*/
+    smart pointers, keyed on std::string texture names or
+    std::filesystem::path pathes.  The user need only request a texture
+    through GetTexture(); if the texture is not already resident, it will
+    be loaded.  If the user would like to create her own images and store
+    them in the manager, that can be accomplished via StoreTexture() calls.*/
 class GG_API TextureManager
 {
 public:
-    const auto& Textures() const noexcept { return m_textures; }
+    const auto& NamedTextures() const noexcept { return m_named_textures; }
+    const auto& PathedTextures() const noexcept { return m_pathed_textures; }
 
-    /** Stores a pre-existing GG::Texture in the manager's texture pool, and
-        returns a shared_ptr to it. \warning Calling code <b>must not</b>
-        delete \a texture; \a texture becomes the property of the manager,
+    /** Stores a pre-existing GG::Texture in the manager's texture pool.
+        \warning Calling code <b>must not</b> delete \a texture;
+        \a texture becomes the property of the manager,
         which will eventually delete it. */
     void StoreTexture(Texture* texture, std::string texture_name);
 
-    /** Stores a pre-existing GG::Texture in the manager's texture pool, and
-        returns a shared_ptr to it. \warning Calling code <b>must not</b>
-        delete \a texture; \a texture becomes the property of the manager,
+    /** Stores a pre-existing GG::Texture in the manager's texture pool.
+        \warning Calling code <b>must not</b> delete \a texture;
+        \a texture becomes the property of the manager,
         which will eventually delete it. */
     void StoreTexture(std::shared_ptr<Texture> texture, std::string texture_name);
 
@@ -234,9 +235,12 @@ public:
         If the texture is not present in the manager's pool, it will be loaded
         from disk. */
     std::shared_ptr<Texture> GetTexture(const std::filesystem::path& path, bool mipmap = false);
+    std::shared_ptr<Texture> GetTexture(auto, bool) = delete;
 
     /** Returns if file \a path is a supported texture format. */
     static bool IsSupportedTextureFilenameExtension(const std::filesystem::path& path);
+    static bool IsSupportedTextureFilenameExtension(std::string_view extension) noexcept;
+    static bool IsSupportedTextureFilenameExtension(auto) = delete; // disable implicit conversions
 
     /** Returns a shared_ptr to the texture created/stored with name \a texture_name
         or nullptr if not present in the manager's pool. */
@@ -252,13 +256,17 @@ public:
         texture may not be deleted until much later. */
     void                     FreeTexture(const std::string& name);
 
+    void                     FreeTexture(auto) = delete; // disable implicit conversions
+
 private:
     TextureManager() = default;
     std::shared_ptr<Texture> LoadTexture(const std::filesystem::path& path, bool mipmap);
+    std::shared_ptr<Texture> LoadTexture(auto, bool) = delete; // disable implicit conversions
 
     /** Indexed by string, not path, because some textures may be stored by a
         name and not loaded from a path. */
-    std::map<std::string, std::shared_ptr<Texture>> m_textures;
+    std::map<std::string, std::shared_ptr<Texture>> m_named_textures;
+    std::map<std::filesystem::path, std::shared_ptr<Texture>> m_pathed_textures;
 
     mutable std::mutex m_texture_access_guard;
 
