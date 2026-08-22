@@ -495,24 +495,45 @@ void TextureManager::StoreTexture(Texture* texture, std::string texture_name)
 void TextureManager::StoreTexture(std::shared_ptr<Texture> texture, std::string texture_name)
 {
     std::scoped_lock lock(m_texture_access_guard);
-    m_textures.insert_or_assign(std::move(texture_name), std::move(texture));
+    m_named_textures.insert_or_assign(std::move(texture_name), std::move(texture));
+}
+
+namespace {
+#if defined(_WIN32)
+    std::string ToUTF8String(const std::filesystem::path::string_type& native_wstring) {
+        std::string u8_string;
+        utf8::utf16to8(native_wstring.begin(), native_wstring.end(), std::back_inserter(u8_string));
+        return u8_string;
+    }
+#endif
+
+    decltype(auto) PathToString(const std::filesystem::path& p) {
+#if defined (_WIN32)
+        return ToUTF8String(p.native());
+#else
+        return p.generic_string();
+#endif
+    }
+    std::string PathToString(auto) = delete; // disable implicit conversions
 }
 
 std::shared_ptr<Texture> TextureManager::GetTexture(const std::filesystem::path& path, bool mipmap)
 {
     std::scoped_lock lock(m_texture_access_guard);
 
-    auto it = m_textures.find(path.generic_string());
-    if (it != m_textures.end())
-        return it->second;
+    try {
+        auto it = m_pathed_textures.find(path);
+        if (it != m_pathed_textures.end())
+            return it->second;
+    } catch (...) {}
 
     // if no such texture was found, attempt to load it now, using name as the filename
     //std::cout << "TextureManager::GetTexture storing new texture under name: " << path.generic_string();
     return LoadTexture(path, mipmap);
 }
 
-bool TextureManager::IsSupportedTextureFilenameExtension(const std::filesystem::path& path) {
-    std::string extension = boost::algorithm::to_lower_copy(path.extension().string());
+bool TextureManager::IsSupportedTextureFilenameExtension(std::string_view extension) noexcept
+{
 #if GG_HAVE_LIBPNG
     if (extension == ".png")
         return true;
@@ -524,31 +545,41 @@ bool TextureManager::IsSupportedTextureFilenameExtension(const std::filesystem::
     return false;
 }
 
+bool TextureManager::IsSupportedTextureFilenameExtension(const std::filesystem::path& path)
+{
+    const std::string extension = boost::algorithm::to_lower_copy(PathToString(path.extension()));
+    return IsSupportedTextureFilenameExtension(std::string_view{extension});
+}
+
 std::shared_ptr<Texture> TextureManager::GetTextureByName(const std::string& texture_name) const
 {
     std::scoped_lock lock(m_texture_access_guard);
-    auto it = m_textures.find(texture_name);
-    return it == m_textures.end() ? nullptr : it->second;
+    auto it = m_named_textures.find(texture_name);
+    return it == m_named_textures.end() ? nullptr : it->second;
 }
 
 void TextureManager::FreeTexture(const std::filesystem::path& path)
-{ FreeTexture(path.generic_string()); }
+{
+    std::scoped_lock lock(m_texture_access_guard);
+    m_pathed_textures.erase(path);
+}
 
 void TextureManager::FreeTexture(const std::string& name)
 {
     std::scoped_lock lock(m_texture_access_guard);
-    auto it = m_textures.find(name);
-    if (it != m_textures.end())
-        m_textures.erase(it);
+    m_named_textures.erase(name);
 }
 
 std::shared_ptr<Texture> TextureManager::LoadTexture(const std::filesystem::path& path, bool mipmap)
 {
     // only called from other TextureManager functions that should already have locked m_texture_access_guard
-    auto temp = std::make_shared<Texture>();
-    temp->Load(path, mipmap);
-    auto it = m_textures.insert_or_assign(path.generic_string(), std::move(temp)).first;
-    return it->second;
+    try {
+        auto temp = std::make_shared<Texture>();
+        temp->Load(path, mipmap);
+        auto it = m_pathed_textures.insert_or_assign(path, std::move(temp)).first;
+        return it->second;
+    } catch (...) {}
+    return nullptr;
 }
 
 TextureManager& GG::GetTextureManager()
