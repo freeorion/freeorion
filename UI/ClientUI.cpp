@@ -610,7 +610,7 @@ ClientUI::ClientUI(GGHumanClientApp& app) :
     );
 
     // Set the root path for image tags in rich text.
-    GG::ImageBlock::SetDefaultImagePath(ArtDir().string());
+    GG::ImageBlock::SetDefaultImagePath(ArtDir());
 
 
     HotkeyManager& hkm = HotkeyManager::GetManager();
