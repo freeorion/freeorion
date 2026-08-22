@@ -225,8 +225,7 @@ void PythonCommon::HandleErrorAlreadySet() {
     }
 
     // Matches system exit
-    if (PyErr_ExceptionMatches(m_system_exit.ptr()))
-    {
+    if (PyErr_ExceptionMatches(m_system_exit.ptr())) {
         Finalize();
         ErrorLogger() << "Python interpreter exited with SystemExit(), sys.exit(), exit, quit or some other alias.";
         return;
