@@ -52,10 +52,12 @@ public:
 
     //! Set the root path from which to look for images with the factory.
     static bool SetImagePath(RichText::IBlockControlFactory* factory,   //!< The factory to set the path for. Should be an image block factory.
-                             std::filesystem::path path);             //!< The base path to look for images from.
+                             std::filesystem::path path);               //!< The base path to look for images from.
+    static bool SetImagePath(RichText::IBlockControlFactory*, auto) = delete; // disable implicit conversion to path
 
     //! Set the root path from which to look for images with the factory.
-    static bool SetDefaultImagePath(std::filesystem::path path);      //!< The base path to look for images from.
+    static bool SetDefaultImagePath(std::filesystem::path path);        //!< The base path to look for images from.
+    static bool SetDefaultImagePath(auto) = delete;                     //!< prevent implicit conversion from string
 
 private:
     std::shared_ptr<StaticGraphic> m_graphic; //! The StaticGraphic used to render the image.
