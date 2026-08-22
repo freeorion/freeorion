@@ -1,0 +1,16 @@
+Tech
+    name = "SHP_FIGHTERS_MISSILE"
+    description = "SHP_FIGHTERS_MISSILE_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    category = "SHIP_WEAPONS_CATEGORY"
+    researchcost = 6 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 3
+    tags = [ "PEDIA_FIGHTER_TECHS" ]
+    prerequisites = "SHP_ROOT_AGGRESSION"
+    unlock = [
+        Item type = ShipPart name = "FT_BAY_MISSILE"
+        Item type = ShipPart name = "FT_HANGAR_MISSILE"
+    ]
+    graphic = "icons/ship_parts/nuclear_missile.png"
+
+#include "/scripting/common/base_prod.macros"
