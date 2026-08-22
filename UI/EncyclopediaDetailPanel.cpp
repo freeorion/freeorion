@@ -650,7 +650,7 @@ namespace {
 
         }
         else if (dir_name == "ENC_TEXTURES") {
-             for (auto& [tex_name, tex] : GG::GetTextureManager().Textures()) {
+             for (auto& [tex_name, tex] : GG::GetTextureManager().NamedTextures()) {
                  auto texture_info_str = boost::io::str(
                      FlexibleFormat(UserString("ENC_TEXTURE_INFO")) %
                      Value(tex->Width()) %
@@ -661,6 +661,19 @@ namespace {
                                      std::forward_as_tuple(tex_name),
                                      std::forward_as_tuple(std::move(texture_info_str),
                                                            tex_name));
+             }
+             for (auto& [tex_path, tex] : GG::GetTextureManager().PathedTextures()) {
+                 const auto tex_path_string = PathToString(tex_path);
+                 auto texture_info_str = boost::io::str(
+                     FlexibleFormat(UserString("ENC_TEXTURE_INFO")) %
+                     Value(tex->Width()) %
+                     Value(tex->Height()) %
+                     tex->BytesPP() %
+                     tex_path_string);
+                 retval.emplace_back(std::piecewise_construct,
+                                     std::forward_as_tuple(tex_path_string),
+                                     std::forward_as_tuple(std::move(texture_info_str),
+                                                           tex_path_string));
              }
 
         }
