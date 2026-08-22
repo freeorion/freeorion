@@ -51,8 +51,7 @@ public:
     // Compiles and evaluates \a expression. Populates \a globals and returns result.
     static boost::python::object CompileEvalExpression(const char* expression, const boost::python::dict& globals);
 
-    void SetModulesDirs(const std::vector<std::filesystem::path>& modules_dirs);
-    void SetModulesDirs(std::vector<std::filesystem::path>&& modules_dirs);
+    void SetModulesDirs(std::vector<std::filesystem::path> modules_dirs);
 
     //! @name Modules finder and loader
     //! Methods exposed to Python as a meta path finder and a loader
