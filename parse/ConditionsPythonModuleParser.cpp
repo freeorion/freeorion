@@ -55,14 +55,8 @@ namespace {
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
         EmpireAffiliationType affiliation = EmpireAffiliationType::AFFIL_SELF;
 
-        if (kw.has_key("empire")) {
-            auto empire_args = extract<value_ref_wrapper<int>>(kw["empire"]);
-            if (empire_args.check()) {
-                empire = CloneUnique(empire_args().value_ref);
-            } else {
-                empire = make_constant<int>(extract<int>(kw["empire"])());
-            }
-        }
+        if (kw.has_key("empire"))
+            empire = pyobject_to_vref<int>(kw["empire"]);
 
         if (kw.has_key("affiliation")) {
             affiliation = extract<enum_wrapper<EmpireAffiliationType>>(kw["affiliation"])().value;
@@ -79,36 +73,21 @@ namespace {
 
     condition_wrapper insert_meter_value_(const boost::python::tuple& args, const boost::python::dict& kw, MeterType m) {
         std::unique_ptr<ValueRef::ValueRef<double>> low;
-        if (kw.has_key("low")) {
-            auto low_args = extract<value_ref_wrapper<double>>(kw["low"]);
-            if (low_args.check())
-                low = CloneUnique(low_args().value_ref);
-            else
-                low = make_constant<double>(extract<double>(kw["low"])());
-        }
+        if (kw.has_key("low"))
+            low = pyobject_to_vref_or_cast<double, int>(kw["low"]);
 
         std::unique_ptr<ValueRef::ValueRef<double>> high;
-        if (kw.has_key("high")) {
-            auto high_args = extract<value_ref_wrapper<double>>(kw["high"]);
-            if (high_args.check())
-                high = CloneUnique(high_args().value_ref);
-            else
-                high = make_constant<double>(extract<double>(kw["high"])());
-        }
+        if (kw.has_key("high"))
+            high = pyobject_to_vref_or_cast<double, int>(kw["high"]);
         return make_wrapped<Condition::MeterValue>(m, std::move(low), std::move(high));
     }
 
     condition_wrapper insert_sorted_number_of_(const boost::python::tuple& args, const boost::python::dict& kw, Condition::SortingMethod method) {
         std::unique_ptr<ValueRef::ValueRef<int>> number;
-        if (kw.has_key("number")) {
-            auto number_args = boost::python::extract<value_ref_wrapper<int>>(kw["number"]);
-            if (number_args.check())
-                number = ValueRef::CloneUnique(number_args().value_ref);
-            else
-                number = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["number"])());
-        } else {
+        if (kw.has_key("number"))
+            number = pyobject_to_vref<int>(kw["number"]);
+        else
             number = make_constant<int>(std::numeric_limits<int>::max());
-        }
 
         std::unique_ptr<ValueRef::ValueRef<double>> sortkey;
         std::unique_ptr<ValueRef::ValueRef<std::string>> sortkey_str;
@@ -141,12 +120,7 @@ namespace {
     }
 
     condition_wrapper insert_visible_to_empire_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<int>> empire;
-        auto empire_args = extract<value_ref_wrapper<int>>(kw["empire"]);
-        if (empire_args.check())
-            empire = CloneUnique(empire_args().value_ref);
-        else
-            empire = make_constant<int>(extract<int>(kw["empire"])());
+        auto empire = pyobject_to_vref<int>(kw["empire"]);
 
         if (kw.has_key("turn"))
             throw std::runtime_error(std::string("Not implemented ") + __func__);
@@ -282,14 +256,8 @@ namespace {
 
     condition_wrapper insert_has_tag_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<std::string>> name;
-        if (kw.has_key("name")) {
-            auto name_args = extract<value_ref_wrapper<std::string>>(kw["name"]);
-            if (name_args.check()) {
-                name = CloneUnique(name_args().value_ref);
-            } else {
-                name = make_constant<std::string>(extract<std::string>(kw["name"])());
-            }
-        }
+        if (kw.has_key("name"))
+            name = pyobject_to_vref<std::string>(kw["name"]);
         return make_wrapped<Condition::HasTag>(std::move(name));
     }
 
@@ -331,35 +299,16 @@ namespace {
     }
 
     condition_wrapper insert_empire_stockpile_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<int>> empire;
-        auto empire_args = extract<value_ref_wrapper<int>>(kw["empire"]);
-        if (empire_args.check()) {
-            empire = CloneUnique(empire_args().value_ref);
-        } else {
-            empire = make_constant<int>(extract<int>(kw["empire"])());
-        }
-
+        auto empire = pyobject_to_vref<int>(kw["empire"]);
         auto resource = extract<enum_wrapper<ResourceType>>(kw["resource"])();
 
         std::unique_ptr<ValueRef::ValueRef<double>> low;
-        if (kw.has_key("low")) {
-            auto low_args = extract<value_ref_wrapper<double>>(kw["low"]);
-            if (low_args.check()) {
-                low = CloneUnique(low_args().value_ref);
-            } else {
-                low = make_constant<double>(extract<double>(kw["low"])());
-            }
-        }
+        if (kw.has_key("low"))
+            low = pyobject_to_vref_or_cast<double, int>(kw["low"]);
 
         std::unique_ptr<ValueRef::ValueRef<double>> high;
-        if (kw.has_key("high")) {
-            auto high_args = extract<value_ref_wrapper<double>>(kw["high"]);
-            if (high_args.check()) {
-                high = CloneUnique(high_args().value_ref);
-            } else {
-                high = make_constant<double>(extract<double>(kw["high"])());
-            }
-        }
+        if (kw.has_key("high"))
+            high = pyobject_to_vref_or_cast<double, int>(kw["high"]);
 
         return make_wrapped<Condition::EmpireStockpileValue>(
             std::move(empire),
@@ -370,22 +319,10 @@ namespace {
 
     condition_wrapper insert_empire_has_adopted_policy_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
-        if (kw.has_key("empire")) {
-            auto empire_args = extract<value_ref_wrapper<int>>(kw["empire"]);
-            if (empire_args.check()) {
-                empire = CloneUnique(empire_args().value_ref);
-            } else {
-                empire = make_constant<int>(extract<int>(kw["empire"])());
-            }
-        }
+        if (kw.has_key("empire"))
+            empire = pyobject_to_vref<int>(kw["empire"]);
 
-        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
-        auto name_args = extract<value_ref_wrapper<std::string>>(kw["name"]);
-        if (name_args.check()) {
-            name = CloneUnique(name_args().value_ref);
-        } else {
-            name = make_constant<std::string>(extract<std::string>(kw["name"])());
-        }
+        auto name = pyobject_to_vref<std::string>(kw["name"]);
 
         return make_wrapped<Condition::EmpireHasAdoptedPolicy>(
             std::move(empire),
@@ -393,45 +330,21 @@ namespace {
     }
 
     condition_wrapper insert_resupplyable_by_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<int>> empire;
-        auto empire_args = extract<value_ref_wrapper<int>>(kw["empire"]);
-        if (empire_args.check()) {
-            empire = CloneUnique(empire_args().value_ref);
-        } else {
-            empire = make_constant<int>(extract<int>(kw["empire"])());
-        }
+        auto empire = pyobject_to_vref<int>(kw["empire"]);
 
         return make_wrapped<Condition::FleetSupplyableByEmpire>(std::move(empire));
     }
 
     condition_wrapper insert_design_has_part_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
-        auto name_args = extract<value_ref_wrapper<std::string>>(kw["name"]);
-        if (name_args.check()) {
-            name = CloneUnique(name_args().value_ref);
-        } else {
-            name = make_constant<std::string>(extract<std::string>(kw["name"])());
-        }
+        auto name = pyobject_to_vref<std::string>(kw["name"]);
 
         std::unique_ptr<ValueRef::ValueRef<int>> low;
-        if (kw.has_key("low")) {
-            auto low_args = extract<value_ref_wrapper<int>>(kw["low"]);
-            if (low_args.check()) {
-                low = CloneUnique(low_args().value_ref);
-            } else {
-                low = make_constant<int>(extract<int>(kw["low"])());
-            }
-        }
+        if (kw.has_key("low"))
+            low = pyobject_to_vref<int>(kw["low"]);
 
         std::unique_ptr<ValueRef::ValueRef<int>> high;
-        if (kw.has_key("high")) {
-            auto high_args = extract<value_ref_wrapper<int>>(kw["high"]);
-            if (high_args.check()) {
-                high = CloneUnique(high_args().value_ref);
-            } else {
-                high = make_constant<int>(extract<int>(kw["high"])());
-            }
-        }
+        if (kw.has_key("high"))
+            high = pyobject_to_vref<int>(kw["high"]);
 
         return make_wrapped<Condition::DesignHasPart>(
             std::move(name),
@@ -476,21 +389,11 @@ namespace {
     condition_wrapper insert_location_(const boost::python::tuple& args, const boost::python::dict& kw) {
         Condition::ContentType content_type = extract<enum_wrapper<Condition::ContentType>>(kw["type"])().value;
 
-        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
-        auto name_args = extract<value_ref_wrapper<std::string>>(kw["name"]);
-        if (name_args.check())
-            name = CloneUnique(name_args().value_ref);
-        else
-            name = make_constant<std::string>(extract<std::string>(kw["name"])());
+        auto name = pyobject_to_vref<std::string>(kw["name"]);
 
         std::unique_ptr<ValueRef::ValueRef<std::string>> name2;
-        if (kw.has_key("name2")) {
-            auto name2_args = extract<value_ref_wrapper<std::string>>(kw["name2"]);
-            if (name2_args.check())
-                name2 = CloneUnique(name2_args().value_ref);
-            else
-                name2 = make_constant<std::string>(extract<std::string>(kw["name2"])());
-        }
+        if (kw.has_key("name2"))
+            name2 = pyobject_to_vref<std::string>(kw["name2"]);
 
         return make_wrapped<Condition::Location>(
             content_type,
@@ -504,49 +407,24 @@ namespace {
             build_type = extract<enum_wrapper<BuildType>>(kw["type"])().value;
 
         std::unique_ptr<ValueRef::ValueRef<int>> low;
-        if (kw.has_key("low")) {
-            auto low_args = extract<value_ref_wrapper<int>>(kw["low"]);
-            if (low_args.check())
-                low = CloneUnique(low_args().value_ref);
-            else
-                low = make_constant<int>(extract<int>(kw["low"])());
-        }
+        if (kw.has_key("low"))
+            low = pyobject_to_vref<int>(kw["low"]);
 
         std::unique_ptr<ValueRef::ValueRef<int>> high;
-        if (kw.has_key("high")) {
-            auto high_args = extract<value_ref_wrapper<int>>(kw["high"]);
-            if (high_args.check())
-                high = CloneUnique(high_args().value_ref);
-            else
-                high = make_constant<int>(extract<int>(kw["high"])());
-        }
+        if (kw.has_key("high"))
+            high = pyobject_to_vref<int>(kw["high"]);
 
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
-        if (kw.has_key("empire")) {
-            auto empire_args = extract<value_ref_wrapper<int>>(kw["empire"]);
-            if (empire_args.check())
-                empire = CloneUnique(empire_args().value_ref);
-            else
-                empire = make_constant<int>(extract<int>(kw["empire"])());
-        }
+        if (kw.has_key("empire"))
+            empire = pyobject_to_vref<int>(kw["empire"]);
 
         std::unique_ptr<ValueRef::ValueRef<std::string>> name;
-        if (kw.has_key("name")) {
-            auto name_args = extract<value_ref_wrapper<std::string>>(kw["name"]);
-            if (name_args.check())
-                name = CloneUnique(name_args().value_ref);
-            else
-                name = make_constant<std::string>(extract<std::string>(kw["name"])());
-        }
+        if (kw.has_key("name"))
+            name = pyobject_to_vref<std::string>(kw["name"]);
 
         std::unique_ptr<ValueRef::ValueRef<int>> design;
-        if (kw.has_key("design")) {
-            auto design_args = extract<value_ref_wrapper<int>>(kw["design"]);
-            if (design_args.check())
-                design = CloneUnique(design_args().value_ref);
-            else
-                design = make_constant<int>(extract<int>(kw["design"])());
-        }
+        if (kw.has_key("design"))
+            design = pyobject_to_vref<int>(kw["design"]);
 
         BuildingType::SubType subtype = BuildingType::SubType::NONE;
         if (kw.has_key("subtype")) {
@@ -583,22 +461,12 @@ namespace {
 
     condition_wrapper insert_number_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> low;
-        if (kw.has_key("low")) {
-            auto low_args = extract<value_ref_wrapper<int>>(kw["low"]);
-            if (low_args.check())
-                low = CloneUnique(low_args().value_ref);
-            else
-                low = make_constant<int>(extract<int>(kw["low"])());
-        }
+        if (kw.has_key("low"))
+            low = pyobject_to_vref<int>(kw["low"]);
 
         std::unique_ptr<ValueRef::ValueRef<int>> high;
-        if (kw.has_key("high")) {
-            auto high_args = extract<value_ref_wrapper<int>>(kw["high"]);
-            if (high_args.check())
-                high = CloneUnique(high_args().value_ref);
-            else
-                high = make_constant<int>(extract<int>(kw["high"])());
-        }
+        if (kw.has_key("high"))
+            high = pyobject_to_vref<int>(kw["high"]);
 
         auto condition = CloneUnique(extract<condition_wrapper>(kw["condition"])().condition);
 
@@ -609,34 +477,18 @@ namespace {
     }
 
     condition_wrapper insert_produced_by_empire_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<int>> empire;
-        auto empire_args = extract<value_ref_wrapper<int>>(kw["empire"]);
-        if (empire_args.check())
-            empire = CloneUnique(empire_args().value_ref);
-        else
-            empire = make_constant<int>(extract<int>(kw["empire"])());
+        auto empire = pyobject_to_vref<int>(kw["empire"]);
 
         return make_wrapped<Condition::ProducedByEmpire>(std::move(empire));
     }
 
     condition_wrapper insert_owner_has_tech_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
-        auto name_args = extract<value_ref_wrapper<std::string>>(kw["name"]);
-        if (name_args.check())
-            name = CloneUnique(name_args().value_ref);
-        else
-            name = make_constant<std::string>(extract<std::string>(kw["name"])());
+        auto name = pyobject_to_vref<std::string>(kw["name"]);
         return make_wrapped<Condition::OwnerHasTech>(std::move(name));
     }
 
     condition_wrapper insert_random_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<double>> probability;
-        auto p_args = extract<value_ref_wrapper<double>>(kw["probability"]);
-        if (p_args.check()) {
-            probability = CloneUnique(p_args().value_ref);
-        } else {
-            probability = make_constant<double>(extract<double>(kw["probability"])());
-        }
+        auto probability = pyobject_to_vref_or_cast<double, int>(kw["probability"]);
         return make_wrapped<Condition::Chance>(std::move(probability));
     }
 
@@ -656,74 +508,34 @@ namespace {
 
     condition_wrapper insert_in_system_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> system_id;
-        if (kw.has_key("id")) {
-            auto id_args = extract<value_ref_wrapper<int>>(kw["id"]);
-            if (id_args.check()) {
-                system_id = CloneUnique(id_args().value_ref);
-            } else {
-                system_id = make_constant<int>(extract<int>(kw["id"])());
-            }
-        }
+        if (kw.has_key("id"))
+            system_id = pyobject_to_vref<int>(kw["id"]);
         
         return make_wrapped<Condition::InOrIsSystem>(std::move(system_id));
     }
 
     condition_wrapper insert_on_planet_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> planet_id;
-        if (kw.has_key("id")) {
-            auto id_args = extract<value_ref_wrapper<int>>(kw["id"]);
-            if (id_args.check()) {
-                planet_id = CloneUnique(id_args().value_ref);
-            } else {
-                planet_id = make_constant<int>(extract<int>(kw["id"])());
-            }
-        }
+        if (kw.has_key("id"))
+            planet_id = pyobject_to_vref<int>(kw["id"]);
 
         return make_wrapped<Condition::OnPlanet>(std::move(planet_id));
     }
 
     condition_wrapper insert_turn_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> low;
-        if (kw.has_key("low")) {
-            auto low_args = extract<value_ref_wrapper<int>>(kw["low"]);
-            if (low_args.check()) {
-                low = CloneUnique(low_args().value_ref);
-            } else {
-                auto low_args_double = extract<value_ref_wrapper<double>>(kw["low"]);
-                if (low_args_double.check()) {
-                    low = std::make_unique<ValueRef::StaticCast<double, int>>(CloneUnique(low_args_double().value_ref));
-                } else {
-                    low = make_constant<int>(extract<int>(kw["low"])());
-                }
-            }
-        }
+        if (kw.has_key("low"))
+            low = pyobject_to_vref_or_cast<int, double>(kw["low"]);
 
         std::unique_ptr<ValueRef::ValueRef<int>> high;
-        if (kw.has_key("high")) {
-            auto high_args = extract<value_ref_wrapper<int>>(kw["high"]);
-            if (high_args.check()) {
-                high = CloneUnique(high_args().value_ref);
-            } else {
-                auto high_args_double = extract<value_ref_wrapper<double>>(kw["high"]);
-                if (high_args_double.check()) {
-                    high = std::make_unique<ValueRef::StaticCast<double, int>>(CloneUnique(high_args_double().value_ref));
-                } else {
-                    high = make_constant<int>(extract<int>(kw["high"])());
-                }
-            }
-        }
+        if (kw.has_key("high"))
+            high = pyobject_to_vref_or_cast<int, double>(kw["high"]);
 
         return make_wrapped<Condition::Turn>(std::move(low), std::move(high));
     }
 
     condition_wrapper insert_resource_supply_connected_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<int>> empire;
-        auto empire_args = extract<value_ref_wrapper<int>>(kw["empire"]);
-        if (empire_args.check()) {
-            empire = CloneUnique(empire_args().value_ref);
-        } else {
-            empire = make_constant<int>(extract<int>(kw["empire"])());
-        }
+        auto empire = pyobject_to_vref<int>(kw["empire"]);
 
         auto condition = extract<condition_wrapper>(kw["condition"])();
         return make_wrapped<Condition::ResourceSupplyConnectedByEmpire>(
@@ -733,15 +545,7 @@ namespace {
 
     condition_wrapper insert_within_starlane_jumps_(const boost::python::tuple& args, const boost::python::dict& kw) {
         auto condition = extract<condition_wrapper>(kw["condition"])();
-
-        std::unique_ptr<ValueRef::ValueRef<int>> jumps;
-        auto jumps_args = extract<value_ref_wrapper<int>>(kw["jumps"]);
-        if (jumps_args.check()) {
-            jumps = CloneUnique(jumps_args().value_ref);
-        } else {
-            jumps = make_constant<int>(extract<int>(kw["jumps"])());
-        }
-
+        auto jumps = pyobject_to_vref<int>(kw["jumps"]);
         return make_wrapped<Condition::WithinStarlaneJumps>(
             std::move(jumps),
             CloneUnique(condition.condition));
@@ -749,14 +553,7 @@ namespace {
 
     condition_wrapper insert_within_distance_(const boost::python::tuple& args, const boost::python::dict& kw) {
         auto condition = extract<condition_wrapper>(kw["condition"])();
-
-        std::unique_ptr<ValueRef::ValueRef<double>> distance;
-        auto distance_args = extract<value_ref_wrapper<double>>(kw["distance"]);
-        if (distance_args.check()) {
-            distance = CloneUnique(distance_args().value_ref);
-        } else {
-            distance = make_constant<double>(extract<double>(kw["distance"])());
-        }
+        auto distance = pyobject_to_vref_or_cast<double, int>(kw["distance"]);
 
         return make_wrapped<Condition::WithinDistance>(
             std::move(distance),
@@ -764,13 +561,7 @@ namespace {
     }
 
     condition_wrapper insert_object_id_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<int>> id;
-        auto id_args = extract<value_ref_wrapper<int>>(kw["id"]);
-        if (id_args.check()) {
-            id = CloneUnique(id_args().value_ref);
-        } else {
-            id = make_constant<int>(extract<int>(kw["id"])());
-        }
+        auto id = pyobject_to_vref<int>(kw["id"]);
         return make_wrapped<Condition::ObjectID>(std::move(id));
     }
 
@@ -785,23 +576,11 @@ namespace {
 
     condition_wrapper insert_design_(const boost::python::tuple& args, const boost::python::dict& kw) {
         if (kw.has_key("name") && !kw.has_key("design")) {
-            std::unique_ptr<ValueRef::ValueRef<std::string>> name;
-            auto name_args = extract<value_ref_wrapper<std::string>>(kw["name"]);
-            if (name_args.check()) {
-                name = CloneUnique(name_args().value_ref);
-            } else {
-                name = make_constant<std::string>(extract<std::string>(kw["name"])());
-            }
+            auto name = pyobject_to_vref<std::string>(kw["name"]);
             return make_wrapped<Condition::PredefinedShipDesign>(std::move(name));
 
         } else if (kw.has_key("design") && !kw.has_key("name")) {
-            std::unique_ptr<ValueRef::ValueRef<int>> design;
-            auto design_args = extract<value_ref_wrapper<int>>(kw["design"]);
-            if (design_args.check()) {
-                design = CloneUnique(design_args().value_ref);
-            } else {
-                design = make_constant<int>(extract<int>(kw["design"])());
-            }
+            auto design = pyobject_to_vref<int>(kw["design"]);
             return make_wrapped<Condition::NumberedShipDesign>(std::move(design));
         }
 
@@ -810,22 +589,10 @@ namespace {
 
     condition_wrapper insert_species_opinion_(const boost::python::tuple& args, const boost::python::dict& kw, Condition::ComparisonType cmp) {
         std::unique_ptr<ValueRef::ValueRef<std::string>> species;
-        if (kw.has_key("species")) {
-            auto species_args = extract<value_ref_wrapper<std::string>>(kw["species"]);
-            if (species_args.check()) {
-                species = CloneUnique(species_args().value_ref);
-            } else {
-                species = make_constant<std::string>(extract<std::string>(kw["species"])());
-            }
-        }
+        if (kw.has_key("species"))
+            species = pyobject_to_vref<std::string>(kw["species"]);
 
-        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
-        auto name_args = extract<value_ref_wrapper<std::string>>(kw["name"]);
-        if (name_args.check()) {
-            name = CloneUnique(name_args().value_ref);
-        } else {
-            name = make_constant<std::string>(extract<std::string>(kw["name"])());
-        }
+        auto name = pyobject_to_vref<std::string>(kw["name"]);
         return make_wrapped<Condition::SpeciesOpinion>(
             std::move(species),
             std::move(name),
