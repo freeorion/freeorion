@@ -439,6 +439,12 @@ namespace {
             std::move(high));
     }
 
+    condition_wrapper insert_design_has_hull_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<std::string>> name = pyobject_to_vref<std::string>(kw["name"]);
+
+        return make_wrapped<Condition::DesignHasHull>(std::move(name));
+    }
+
     condition_wrapper insert_building_(const boost::python::tuple& args, const boost::python::dict& kw) {
         BuildingType::SubType subtype = BuildingType::SubType::NONE;
         if (kw.has_key("subtype")) {
@@ -858,6 +864,7 @@ BOOST_PYTHON_MODULE(_conditions) {
     py::def("OnPlanet", boost::python::raw_function(insert_on_planet_));
     py::def("ResupplyableBy", boost::python::raw_function(insert_resupplyable_by_));
     py::def("DesignHasPart", boost::python::raw_function(insert_design_has_part_));
+    py::def("DesignHasHull", boost::python::raw_function(insert_design_has_hull_));
     py::def("IsBuilding", boost::python::raw_function(insert_building_));
     py::def("Location", boost::python::raw_function(insert_location_));
     py::def("Enqueued", boost::python::raw_function(insert_enqueued_));
