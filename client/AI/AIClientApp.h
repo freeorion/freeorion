@@ -28,6 +28,7 @@ public:
 
     [[nodiscard]] [[noreturn]] int SelectedSystemID() const override { throw std::runtime_error{"AI client cannot access selected object ID"}; }
     [[nodiscard]] [[noreturn]] int SelectedPlanetID() const override { throw std::runtime_error{"AI client cannot access selected object ID"}; }
+    [[nodiscard]] [[noreturn]] int SelectedBuildingID() const override { throw std::runtime_error{"AI client cannot access selected object ID"}; }
     [[nodiscard]] [[noreturn]] int SelectedFleetID() const override { throw std::runtime_error{"AI client cannot access selected object ID"}; }
     [[nodiscard]] [[noreturn]] int SelectedShipID() const override { throw std::runtime_error{"AI client cannot access selected object ID"}; }
     [[nodiscard]] int              EffectsProcessingThreads() const override;
