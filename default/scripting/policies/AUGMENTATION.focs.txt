@@ -13,6 +13,7 @@ Policy
                 Planet
                 OwnedBy empire = Source.Owner
                 Not Planet environment = [Uninhabitable]
+                Species
             ]
             priority = [[TARGET_POPULATION_OVERRIDE_PRIORITY]]
             effects = SetTargetPopulation value = max(Value, Target.HabitableSize)
