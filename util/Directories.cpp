@@ -890,7 +890,7 @@ auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predica
 #endif
 
     if (retval.empty())
-        DebugLogger() << "ListDir: No paths found for " << path.string();
+        DebugLogger() << "ListDir: No paths found for " << PathToString(path);
 
     return retval;
 }
