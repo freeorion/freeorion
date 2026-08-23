@@ -36,6 +36,25 @@ namespace {
             value *= 2;
         return value;
     }
+
+    namespace {
+#if defined(_WIN32)
+        std::string ToUTF8String(const std::filesystem::path::string_type& native_wstring) {
+            std::string u8_string;
+            utf8::utf16to8(native_wstring.begin(), native_wstring.end(), std::back_inserter(u8_string));
+            return u8_string;
+        }
+#endif
+
+        decltype(auto) PathToString(const std::filesystem::path& p) {
+#if defined (_WIN32)
+            return ToUTF8String(p.native());
+#else
+            return p.generic_string();
+#endif
+        }
+        std::string PathToString(auto) = delete; // disable implicit conversions
+    }
 }
 
 ///////////////////////////////////////
@@ -141,26 +160,13 @@ void Texture::Load(const std::filesystem::path& path, bool mipmap)
     if (m_opengl_id)
         Clear();
 
-    // convert path into UTF-8 format filename string for potential error reporting
-    // but do the work only if actually throwing error to log
-    constexpr auto loggable_path = [](const fs::path& p) {
-#if defined (_WIN32)
-        std::filesystem::path::string_type path_native = p.native();
-        std::string filename;
-        utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(filename));
-        return filename;
-#else
-        return p.generic_string();
-#endif
-    };
-
     if (!fs::exists(path)) {
         std::cerr << "Texture::Load passed non-existant path: " << path.generic_string() << std::endl;
-        throw BadFile("Texture file \"" + loggable_path(path) + "\" does not exist");
+        throw BadFile("Texture file \"" + PathToString(path) + "\" does not exist");
     }
     if (!fs::is_regular_file(path)) {
         std::cerr << "Texture::Load passed non-file path: " << path.generic_string() << std::endl;
-        throw BadFile("Texture \"file\" \"" + loggable_path(path) + "\" is not a file");
+        throw BadFile("Texture \"file\" \"" + PathToString(path) + "\" is not a file");
     }
 
     static_assert(sizeof(gil::gray8_pixel_t) == 1, "gray8 pixel type does not match expected type size");
@@ -187,7 +193,7 @@ void Texture::Load(const std::filesystem::path& path, bool mipmap)
     typedef gil::any_image<ImageTypes> ImageType;
 #endif
 
-    std::string extension = boost::algorithm::to_lower_copy(path.extension().string());
+    std::string extension = boost::algorithm::to_lower_copy(PathToString(path.extension()));
     ImageType image;
     try {
         // First attempt -- try just to read the file in one of the default formats above.
@@ -206,7 +212,7 @@ void Texture::Load(const std::filesystem::path& path, bool mipmap)
         }
         else
 #endif
-            throw BadFile("Texture file \"" + loggable_path(path) + "\" does not have a supported file extension");
+            throw BadFile("Texture file \"" + PathToString(path) + "\" does not have a supported file extension");
     } catch (const std::ios_base::failure&) {
         // Second attempt -- If *_read_image() throws, see if we can convert
         // the image to RGBA.  This is needed for color-indexed images.
@@ -269,7 +275,7 @@ void Texture::Load(const std::filesystem::path& path, bool mipmap)
     case 2:  m_format = GL_LUMINANCE_ALPHA; break;
     case 3:  m_format = GL_RGB; break;
     case 4:  m_format = GL_RGBA; break;
-    default: throw BadFile("Texture file \"" + loggable_path(path) + "\" does not have a supported number of color channels (1-4)");
+    default: throw BadFile("Texture file \"" + PathToString(path) + "\" does not have a supported number of color channels (1-4)");
     }
 
     assert(image_data);
@@ -496,25 +502,6 @@ void TextureManager::StoreTexture(std::shared_ptr<Texture> texture, std::string 
 {
     std::scoped_lock lock(m_texture_access_guard);
     m_named_textures.insert_or_assign(std::move(texture_name), std::move(texture));
-}
-
-namespace {
-#if defined(_WIN32)
-    std::string ToUTF8String(const std::filesystem::path::string_type& native_wstring) {
-        std::string u8_string;
-        utf8::utf16to8(native_wstring.begin(), native_wstring.end(), std::back_inserter(u8_string));
-        return u8_string;
-    }
-#endif
-
-    decltype(auto) PathToString(const std::filesystem::path& p) {
-#if defined (_WIN32)
-        return ToUTF8String(p.native());
-#else
-        return p.generic_string();
-#endif
-    }
-    std::string PathToString(auto) = delete; // disable implicit conversions
 }
 
 std::shared_ptr<Texture> TextureManager::GetTexture(const std::filesystem::path& path, bool mipmap)
