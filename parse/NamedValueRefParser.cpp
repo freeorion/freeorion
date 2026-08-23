@@ -34,7 +34,7 @@ namespace parse {
         bool file_success = true;
         py_grammar p = py_grammar(parser);
         for (const auto& file : ListDir(path, IsFOCPyScript))
-            file_success = file_success && py_parse::detail::parse_file<py_grammar>(parser, file, p);
+            file_success = file_success && py_parse::detail::parse_file(parser, file);
 
         for (auto& k_v : named_value_refs)
             ErrorLogger() << "Should have not returned anything: named_value_refs : " << k_v.first;

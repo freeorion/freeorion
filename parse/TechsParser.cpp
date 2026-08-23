@@ -211,13 +211,14 @@ namespace parse {
 
         ScopedTimer timer("Techs Parsing");
 
-        bool file_success = py_parse::detail::parse_file<py_grammar_categories>(
-            parser, path / "Categories.inf.py", py_grammar_categories(parser));
+        auto p_categories = py_grammar_categories(parser);
+        bool file_success = py_parse::detail::parse_file(
+            parser, path / "Categories.inf.py");
 
         py_grammar p = py_grammar(parser, techs_);
 
         for (const auto& file : ListDir(path, IsFOCPyScript))
-            file_success = py_parse::detail::parse_file<py_grammar>(parser, file, p) && file_success;
+            file_success = py_parse::detail::parse_file(parser, file) && file_success;
 
         TechManager::TechCategoryContainer cats;
         cats.reserve(categories.size());

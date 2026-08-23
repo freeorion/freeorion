@@ -83,7 +83,7 @@ namespace parse {
         py_grammar p = py_grammar(parser, stats_);
         for (const auto& file : ListDir(path, IsFOCPyScript)) {
             stats_.clear();
-            if (py_parse::detail::parse_file<py_grammar>(parser, file, p)) {
+            if (py_parse::detail::parse_file(parser, file)) {
                 for (auto& stat : stats_) {
                     auto maybe_inserted = all_stats.emplace(stat.first, std::move(stat.second));
                     if (!maybe_inserted.second) {

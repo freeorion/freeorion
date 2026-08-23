@@ -120,7 +120,8 @@ BOOST_PYTHON_MODULE(_game_rules) {
 namespace parse {
     GameRulesTypeMap game_rules(const PythonParser& parser, const std::filesystem::path& path, bool& success) {
         GameRulesTypeMap game_rules;
-        success = py_parse::detail::parse_file<py_grammar>(parser, path, py_grammar(parser, game_rules));
+        auto p = py_grammar(parser, game_rules);
+        success = py_parse::detail::parse_file(parser, path);
         return game_rules;
     }
 }
