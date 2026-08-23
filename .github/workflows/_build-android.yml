@@ -3,7 +3,7 @@ name: "Android"
 on:
   workflow_call:
 env:
-  GODOT_VERSION: "3.6.2"
+  GODOT_VERSION: "3.6.3"
 jobs:
   generate-godot-api:
     name: Generate Godot API
