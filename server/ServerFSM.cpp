@@ -1708,7 +1708,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         std::filesystem::path save_dir(GetServerSaveDir());
         std::vector<PlayerSaveHeaderData> player_save_header_data;
         try {
-            LoadEmpireSaveGameData((save_dir / m_lobby_data->save_game).string(),
+            LoadEmpireSaveGameData(save_dir / m_lobby_data->save_game,
                                    m_lobby_data->save_game_empire_data,
                                    player_save_header_data,
                                    *m_lobby_data,
