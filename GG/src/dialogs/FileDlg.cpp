@@ -264,7 +264,7 @@ void FileDlg::CompleteConstruction()
 
     if (!m_init_filename.empty()) {
         fs::path filename_path = fs::absolute(fs::path(m_init_filename));
-        m_files_edit->SetText(filename_path.filename().string());
+        m_files_edit->SetText(PathToString(filename_path.filename()));
     }
 }
 
