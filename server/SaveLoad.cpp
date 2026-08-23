@@ -156,7 +156,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
                 try {
                     // ensure save directory exists
                     if (!exists(path.parent_path())) {
-                        WarnLogger() << "Creating save directories " << path.parent_path().string();
+                        WarnLogger() << "Creating save directories " << PathToString(path.parent_path());
                         std::filesystem::create_directories(path.parent_path());
                     }
                 } catch (const std::exception& e) {
@@ -595,7 +595,7 @@ void LoadPlayerSaveHeaderData(const std::string& filename, std::vector<PlayerSav
     }
 }
 
-void LoadEmpireSaveGameData(const std::string& filename,
+void LoadEmpireSaveGameData(const std::filesystem::path& file_path,
                             std::map<int, SaveGameEmpireData>& empire_save_game_data,
                             std::vector<PlayerSaveHeaderData>& player_save_header_data,
                             GalaxySetupData& galaxy_setup_data,
@@ -605,12 +605,11 @@ void LoadEmpireSaveGameData(const std::string& filename,
     ServerSaveGameData  saved_server_save_game_data;
     GalaxySetupData     saved_galaxy_setup_data;
 
-    ScopedTimer timer("LoadEmpireSaveGameData: " + filename);
+    ScopedTimer timer("LoadEmpireSaveGameData: " + PathToString(file_path));
 
     try {
-        fs::path path = FilenameToPath(filename);
-        DebugLogger() << "LoadEmpireSaveGameData: filename: " << filename << " path:" << path;
-        std::ifstream ifs(path, std::ios_base::binary);
+        DebugLogger() << "LoadEmpireSaveGameData: path:" << PathToString(file_path);
+        std::ifstream ifs(file_path, std::ios_base::binary);
 
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
