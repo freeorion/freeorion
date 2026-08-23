@@ -202,27 +202,27 @@ void ServerApp::StartBackgroundParsing(const PythonParser& python) {
     if (fs::exists(rdir / "scripting/starting_unlocks/items.inf"))
         m_universe.SetInitiallyUnlockedItems(Pending::StartAsyncParsing(parse::items, rdir / "scripting/starting_unlocks/items.inf"));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/items.inf").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/starting_unlocks/items.inf");
 
     if (fs::exists(rdir / "scripting/starting_unlocks/buildings.inf"))
         m_universe.SetInitiallyUnlockedBuildings(Pending::StartAsyncParsing(parse::starting_buildings, rdir / "scripting/starting_unlocks/buildings.inf"));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/buildings.inf").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/starting_unlocks/buildings.inf");
 
     if (fs::exists(rdir / "scripting/starting_unlocks/fleets.inf"))
         m_universe.SetInitiallyUnlockedFleetPlans(Pending::StartAsyncParsing(parse::fleet_plans, rdir / "scripting/starting_unlocks/fleets.inf"));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/fleets.inf").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/starting_unlocks/fleets.inf");
 
     if (fs::exists(rdir / "scripting/monster_fleets.inf"))
         m_universe.SetMonsterFleetPlans(Pending::StartAsyncParsing(parse::monster_fleet_plans, rdir / "scripting/monster_fleets.inf"));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/monster_fleets.inf").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/monster_fleets.inf");
 
     if (fs::exists(rdir / "scripting/empire_statistics"))
         m_universe.SetEmpireStats(Pending::ParseSynchronously(parse::statistics, python, rdir / "scripting/empire_statistics"));
     else {
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/empire_statistics").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/empire_statistics");
     }
 }
 
