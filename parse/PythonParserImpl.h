@@ -8,9 +8,7 @@
 #include <boost/python/extract.hpp>
 
 namespace py_parse { namespace detail {
-
-    template <typename Grammar>
-    [[nodiscard]] bool parse_file(const PythonParser& parser, const std::filesystem::path& path, const Grammar& grammar) {
+    [[nodiscard]] inline bool parse_file(const PythonParser& parser, const std::filesystem::path& path) {
         ScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::milliseconds(1));
 
         std::string filename;

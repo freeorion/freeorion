@@ -74,7 +74,7 @@ namespace parse {
         bool file_success = true;
         py_grammar p = py_grammar(parser, articles);
         for (const auto& file : ListDir(path, IsFOCPyScript)) {
-            if (!py_parse::detail::parse_file<py_grammar>(parser, file, p)) {
+            if (!py_parse::detail::parse_file(parser, file)) {
                 file_success = false;
             }
         }

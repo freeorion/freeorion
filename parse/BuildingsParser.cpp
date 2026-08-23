@@ -166,7 +166,7 @@ namespace parse {
         bool file_success = true;
         py_grammar p = py_grammar(parser, building_types);
         for (const auto& file : ListDir(path, IsFOCPyScript))
-            file_success = py_parse::detail::parse_file<py_grammar>(parser, file, p) && file_success;
+            file_success = py_parse::detail::parse_file(parser, file) && file_success;
 
         TraceLogger(parsing) << "Start parsing FOCS for BuildingTypes: " << building_types.size();
         for (auto& [building_name, bt] : building_types)

@@ -234,7 +234,7 @@ namespace parse {
                 continue;
             }
 
-            file_success = py_parse::detail::parse_file<py_grammar>(parser, file, p) && file_success;
+            file_success = py_parse::detail::parse_file(parser, file) && file_success;
         }
 
         TraceLogger(parsing) << "Start parsing FOCS for Species: " << species_.size();
@@ -244,8 +244,9 @@ namespace parse {
 
         if (!manifest_file.empty()) {
             try {
-                file_success = py_parse::detail::parse_file<py_manifest_grammar>(
-                    parser, manifest_file, py_manifest_grammar(parser, ordering)) && file_success;
+                auto p_grammar = py_manifest_grammar(parser, ordering);
+                file_success = py_parse::detail::parse_file(
+                    parser, manifest_file) && file_success;
 
             } catch (const std::runtime_error& e) {
                 ErrorLogger() << "Failed to species census manifest in " << manifest_file << " from " << path
