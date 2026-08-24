@@ -1,4 +1,4 @@
-//! GiGi - A GUI for OpenGL
+﻿//! GiGi - A GUI for OpenGL
 //!
 //!  Copyright (C) 2003-2008 T. Zachary Laine <whatwasthataddress@gmail.com>
 //!  Copyright (C) 2013-2020 The FreeOrion Project
@@ -48,7 +48,7 @@ namespace {
 
         decltype(auto) PathToString(const std::filesystem::path& p) {
 #if defined (_WIN32)
-            return ToUTF8String(p.native());
+            return ToUTF8String(p.generic_wstring());
 #else
             return p.generic_string();
 #endif
@@ -161,11 +161,11 @@ void Texture::Load(const std::filesystem::path& path, bool mipmap)
         Clear();
 
     if (!fs::exists(path)) {
-        std::cerr << "Texture::Load passed non-existant path: " << path.generic_string() << std::endl;
+        std::cerr << "Texture::Load passed non-existant path: " << PathToString(path) << std::endl;
         throw BadFile("Texture file \"" + PathToString(path) + "\" does not exist");
     }
     if (!fs::is_regular_file(path)) {
-        std::cerr << "Texture::Load passed non-file path: " << path.generic_string() << std::endl;
+        std::cerr << "Texture::Load passed non-file path: " << PathToString(path) << std::endl;
         throw BadFile("Texture \"file\" \"" + PathToString(path) + "\" is not a file");
     }
 
