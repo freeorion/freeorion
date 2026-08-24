@@ -31,7 +31,7 @@ int SaveGame(const std::string& filename,
              bool multiplayer);
 
 /** Loads the indicated data from savefile \a filename. */
-[[nodiscard]] bool LoadGame(const std::string& filename,
+[[nodiscard]] bool LoadGame(const std::filesystem::path& path,
                             ServerSaveGameData& server_save_game_data,
                             std::vector<PlayerSaveGameData>& player_save_game_data,
                             Universe& universe,
