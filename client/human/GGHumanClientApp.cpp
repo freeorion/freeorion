@@ -1763,15 +1763,24 @@ void GGHumanClientApp::BrowsePath(const std::filesystem::path& browse_path) {
     }
 
     if (full_path.empty()) {
-        ErrorLogger() << "Unable to determine directory for path " << PathToString(full_path);
+        ErrorLogger() << "Unable to determine directory for empty path " << PathToString(full_path);
         return;
     }
 
     full_path.make_preferred();
     // Trailing slash post-fixed to prevent executing a file with same name(minus extension) as folder
     full_path += std::filesystem::path::preferred_separator;
-    auto target(full_path.native());
-    decltype(target) command;
+
+    const auto target = [&full_path]() -> std::filesystem::path::string_type {
+        try {
+            return full_path.native();
+        } catch(...) {
+            ErrorLogger() << "Unable to get native path string for path " << PathToString(full_path);
+            return {};
+        }
+    }();
+    if (target.empty())
+        return;
 
     // Double quotes around target to support paths containing spaces
     // Non-Windows platforms: Post-fix ampersand to prevent blocking until process exits
@@ -1783,12 +1792,13 @@ void GGHumanClientApp::BrowsePath(const std::filesystem::path& browse_path) {
     //    Contrary to official documentation for start, the first argument (title) is not always optional.
     //    The argument for window title is left as an empty string.
     //    see https://ss64.com/nt/start.html
+    decltype(target) command =
 #ifdef _WIN32
-    command = L"start \"\" \"" + target + L"\\\\\"";
+    L"start \"\" \"" + target + L"\\\\\"";
 #elif __APPLE__
-    command = "open \"" + target + "\" &";
+    "open \"" + target + "\" &";
 #else
-    command = "xdg-open \"" + target + "\" &";
+    "xdg-open \"" + target + "\" &";
 #endif
 
 #ifdef _WIN32
