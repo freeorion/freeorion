@@ -158,7 +158,7 @@ namespace parse {
                 if (macro_lookup_it != macros.end()) {
                     // verify that macro is safe: check for cyclic reference of macro to itself
                     if (macro_deep_referenced_in_text(macro_key, macro_lookup_it->second, macros)) {
-                        ErrorLogger() << file_path.generic_string() << ": Skipping cyclic macro reference: " << macro_key;
+                        ErrorLogger() << PathToString(file_path) << ": Skipping cyclic macro reference: " << macro_key;
                         position += match.length();
                     } else {
                         // insert macro text in place of reference
@@ -181,13 +181,13 @@ namespace parse {
                         // be matched on the next pass
                     }
                 } else {
-                    ErrorLogger() << file_path.generic_string() << ": Unresolved macro reference: " << macro_key;
+                    ErrorLogger() << PathToString(file_path) << ": Unresolved macro reference: " << macro_key;
                     position += match.length();
                 }
             }
         } catch (const std::exception& e) {
-            ErrorLogger() << file_path.generic_string() << ": Exception caught regex parsing script file: " << e.what();
-            std::cerr << file_path.generic_string() << ": Exception caught regex parsing script file: " << e.what() << std::endl;
+            ErrorLogger() << PathToString(file_path) << ": Exception caught regex parsing script file: " << e.what();
+            std::cerr << PathToString(file_path) << ": Exception caught regex parsing script file: " << e.what() << std::endl;
             return;
         }
     }
