@@ -821,7 +821,7 @@ void SaveFileDialog::Confirm() {
         return;
     }
 
-    if (m_server_previews && choice_path.generic_string().find(SERVER_LABEL) == 0) {
+    if (m_server_previews && PathToString(choice_path).find(SERVER_LABEL) == 0) {
         UpdateDirectory(std::move(choice));
         return;
     }

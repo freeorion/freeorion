@@ -772,7 +772,7 @@ auto PathToString(fs::path const& path) -> std::string
                             utf8_string.data(), utf8_sz, NULL, NULL);
     return utf8_string;
 #else
-    return path.string();
+    return path.generic_string();
 #endif
 }
 

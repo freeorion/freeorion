@@ -1110,7 +1110,7 @@ std::shared_ptr<GG::Texture> ClientUI::GetTexture(const std::filesystem::path& p
     try {
         retval = GGHumanClientApp::GetTexture(path, mipmap);
     } catch (const std::exception& e) {
-        ErrorLogger() << "Unable to load texture \"" + path.generic_string() + "\"\n"
+        ErrorLogger() << "Unable to load texture \"" + PathToString(path) + "\"\n"
             "reason: " << e.what();
         try {
             retval = GGHumanClientApp::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", mipmap);
@@ -1118,7 +1118,7 @@ std::shared_ptr<GG::Texture> ClientUI::GetTexture(const std::filesystem::path& p
             return retval;
         }
     } catch (...) {
-        ErrorLogger() << "Unable to load texture \"" + path.generic_string() + "\"\n"
+        ErrorLogger() << "Unable to load texture \"" + PathToString(path) + "\"\n"
             "reason unknown...?";
         try {
             retval = GGHumanClientApp::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", mipmap);
