@@ -133,6 +133,16 @@ bool PythonCommon::Initialize() {
     DebugLogger() << "Initializing FreeOrion Python interface";
 
     try {
+        PyPreConfig preconfig;
+        PyPreConfig_InitPythonConfig(&preconfig);
+
+        PyStatus status = Py_PreInitialize(&preconfig);
+        if (PyStatus_Exception(status)) {
+            ErrorLogger() << "Unable to pre-initialize Python from pre-config";
+            return false;
+        }
+        PyConfig config;
+        PyConfig_InitPythonConfig(&config);
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32) || defined(FREEORION_ANDROID)
         // There have been recurring issues on Windows and OSX to get FO to use the
         // Python framework shipped with the app (instead of falling back on the ones
@@ -141,12 +151,12 @@ bool PythonCommon::Initialize() {
         // than sorry... ;)
 
         m_home_dir = GetFilePath(GetPythonHome());
-        Py_SetPythonHome(m_home_dir);
-        DebugLogger() << "Python home set to " << GetLoggableString(Py_GetPythonHome());
+        PyConfig_SetString(&config, &config.home, m_home_dir);
+        DebugLogger() << "Python home set to " << GetLoggableString(m_home_dir);
 
         m_program_name = GetFilePath(GetPythonHome() / "Python");
-        Py_SetProgramName(m_program_name);
-        DebugLogger() << "Python program name set to " << GetLoggableString(Py_GetProgramName());
+        PyConfig_SetString(&config, &config.program_name, m_program_name);
+        DebugLogger() << "Python program name set to " << GetLoggableString(m_program_name);
 #endif
 
 #if defined(FREEORION_ANDROID)
@@ -163,7 +173,13 @@ bool PythonCommon::Initialize() {
             return false;
         }
         // initializes Python interpreter, allowing Python functions to be called from C++
-        Py_Initialize();
+        status = Py_InitializeFromConfig(&config);
+        PyConfig_Clear(&config);
+
+        if (PyStatus_Exception(status)) {
+            ErrorLogger() << "Unable to initialize Python interpreter from config";
+            return false;
+        }
         DebugLogger() << "Python initialized";
         DebugLogger() << "Python program: " << GetPythonExecutable();
         DebugLogger() << "Python version: " << Py_GetVersion();
