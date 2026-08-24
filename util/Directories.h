@@ -218,6 +218,7 @@ FO_COMMON_API auto IsExistingFile(std::filesystem::path const& path) -> bool;
 //! Returns true iff path exists and is a directory
 FO_COMMON_API auto IsExistingDir(std::filesystem::path const& path) -> bool;
 
-//! Reads text file content from @p path and returs true if success
+//! Reads text file content from @p path and returns true if success
 FO_COMMON_API auto ReadFile(std::filesystem::path const& path, std::string& file_contents) -> bool;
+auto ReadFile(auto path, std::string&) = delete; // disable implicit conversion
 #endif
