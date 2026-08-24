@@ -30,6 +30,7 @@ namespace {
 # endif
     }
 #endif
+    wchar_t* GetFilePath(auto) = delete; // disable implicit conversions to path
 
     auto GetLoggableString(const wchar_t* const original)
     {
@@ -262,11 +263,11 @@ void PythonCommon::Finalize() {
         try {
             // According to boost.python 1.69 docs python Py_Finalize must not be called
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
-            if (m_home_dir != nullptr) {
+            if (m_home_dir) {
                 PyMem_RawFree(m_home_dir);
                 m_home_dir = nullptr;
             }
-            if (m_program_name != nullptr) {
+            if (m_program_name) {
                 PyMem_RawFree(m_program_name);
                 m_program_name = nullptr;
             }
@@ -408,7 +409,7 @@ py::object PythonCommon::exec_module(py::object& module) {
         std::string file_contents;
         bool read_success = ReadFile(module_path, file_contents);
         if (!read_success) {
-            ErrorLogger() << "Unable to open data file " << module_path.string();
+            ErrorLogger() << "Unable to open data file " << PathToString(module_path);
             throw import_error("Unreadable module " + fullname);
         }
 
@@ -428,16 +429,16 @@ py::object PythonCommon::exec_module(py::object& module) {
                     globals["__package__"] = spec.parent;
                 }
             } else {
-                WarnLogger() << "Wrong spec in module " << module_path.string();
+                WarnLogger() << "Wrong spec in module " << PathToString(module_path);
             }
         } else {
-            WarnLogger() << "No spec in module " << module_path.string();
+            WarnLogger() << "No spec in module " << PathToString(module_path);
         }
 
         // store globals content in module namespace
         // it is required so functions in the same module will see each other
         // and still import will work
-        DebugLogger() << "Executing module file " << module_path.string();
+        DebugLogger() << "Executing module file " << PathToString(module_path);
         try {
             CompileEval(file_contents.c_str(), module_path.native(), globals);
         } catch (const boost::python::error_already_set&) {
