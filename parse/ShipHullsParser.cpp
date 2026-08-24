@@ -3,6 +3,13 @@
 
 #include "Parse.h"
 
+#include "PythonParserImpl.h"
+#include "ValueRefPythonParser.h"
+#include "ConditionPythonParser.h"
+#include "EffectPythonParser.h"
+#include "EnumPythonParser.h"
+#include "SourcePythonParser.h"
+
 #include "ParseImpl.h"
 #include "EnumParser.h"
 #include "ConditionParserImpl.h"
@@ -16,6 +23,14 @@
 
 #include <boost/phoenix.hpp>
 
+#include <boost/python/class.hpp>
+#include <boost/python/def.hpp>
+#include <boost/python/docstring_options.hpp>
+#include <boost/python/import.hpp>
+#include <boost/python/make_function.hpp>
+#include <boost/python/module.hpp>
+#include <boost/python/raw_function.hpp>
+#include <boost/python/scope.hpp>
 
 #define DEBUG_PARSERS 0
 
