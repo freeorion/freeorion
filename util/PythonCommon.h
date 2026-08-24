@@ -73,7 +73,7 @@ private:
     //! @{
     std::vector<std::filesystem::path> m_modules_dirs;
     boost::optional<boost::python::list> m_meta_path;
-    int m_meta_path_len;
+    int m_meta_path_len = 0;
     //! @}
 };
 
