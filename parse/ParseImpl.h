@@ -2,6 +2,7 @@
 #define _ParseImpl_h_
 
 #include "ReportParseError.h"
+#include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/ScopedTimer.h"
 #include "../util/ranges.h"
@@ -195,7 +196,7 @@ namespace parse::detail {
 
     template <typename Grammar, typename Arg1>
     bool parse_file(const lexer& lexer, const std::filesystem::path& path, Arg1& arg1) {
-        ScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::milliseconds(100));
+        ScopedTimer timer("parse_file \"" + PathToString(path.filename())  + "\"", std::chrono::milliseconds(100));
 
         std::string filename;
         std::string file_contents;
@@ -205,7 +206,7 @@ namespace parse::detail {
 
         parse_file_common(path, lexer, filename, file_contents, first, last, it);
 
-        //TraceLogger() << "Parse: parsed contents for " << path.string() << " : \n" << file_contents;
+        //TraceLogger() << "Parse: parsed contents for " << PathToString(path) << " : \n" << file_contents;
 
         boost::spirit::qi::in_state_type in_state;
 
@@ -219,7 +220,7 @@ namespace parse::detail {
 
     template <typename Grammar, typename Arg1, typename Arg2>
     bool parse_file(const lexer& lexer, const std::filesystem::path& path, Arg1& arg1, Arg2& arg2) {
-        ScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::milliseconds(10));
+        ScopedTimer timer("parse_file \"" + PathToString(path.filename())  + "\"", std::chrono::milliseconds(10));
 
         std::string filename;
         std::string file_contents;
@@ -229,7 +230,7 @@ namespace parse::detail {
 
         parse_file_common(path, lexer, filename, file_contents, first, last, it);
 
-        //TraceLogger() << "Parse: parsed contents for " << path.string() << " : \n" << file_contents;
+        //TraceLogger() << "Parse: parsed contents for " << PathToString(path) << " : \n" << file_contents;
 
         boost::spirit::qi::in_state_type in_state;
 
