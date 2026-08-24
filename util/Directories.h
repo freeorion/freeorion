@@ -181,12 +181,14 @@ FO_COMMON_API auto GetServerSaveDir() -> std::filesystem::path const;
 
 //! Returns an utf-8 encoded string from the given filesystem path.
 FO_COMMON_API auto PathToString(std::filesystem::path const& path) -> std::string;
+auto PathToString(auto) = delete; // disable implicit conversions
 
 //! Returns current timestamp in a form that can be used in file names
 FO_COMMON_API auto FilenameTimestamp() -> std::string;
 
 //! Returns the path to @p to, as it appears from @p from.
 FO_COMMON_API auto RelativePath(std::filesystem::path const& from, std::filesystem::path const& to) -> std::filesystem::path;
+auto RelativePath(auto, auto) = delete; // disable implicit conversions
 
 //! Returns true if the given @p path referrs to a FO content script and false
 //! otherwise.
