@@ -1885,12 +1885,12 @@ sc::result MPLobby::react(const StartMPGame& msg) {
 
         } else {
             // Load game...
-            std::string save_filename = (GetServerSaveDir() / m_lobby_data->save_game).string();
+            auto save_path = GetServerSaveDir() / m_lobby_data->save_game;
 
             try {
                 server.Networking().SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::LOADING_GAME));
 
-                bool load_success = LoadGame(save_filename,             *m_server_save_game_data,
+                bool load_success = LoadGame(save_path,                 *m_server_save_game_data,
                                              m_player_save_game_data,   server.GetUniverse(),
                                              server.Empires(),          server.GetSpeciesManager(),
                                              GetCombatLogManager(),     server.m_galaxy_setup_data);

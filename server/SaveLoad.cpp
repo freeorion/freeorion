@@ -462,7 +462,7 @@ namespace {
     }
 }
 
-bool LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_data,
+bool LoadGame(const std::filesystem::path& path, ServerSaveGameData& server_save_game_data,
               std::vector<PlayerSaveGameData>& player_save_game_data, Universe& universe,
               EmpireManager& empire_manager, SpeciesManager& species_manager,
               CombatLogManager& combat_log_manager, GalaxySetupData& galaxy_setup_data)
@@ -476,7 +476,6 @@ bool LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
 
     try {
         // set up input archive / stream for loading
-        const fs::path path = FilenameToPath(filename);
         std::ifstream ifs(path, std::ios_base::binary);
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
@@ -504,7 +503,7 @@ bool LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
         ErrorLogger() << "LoadGame(...) failed!  Error: " << err.what();
         return false;
     }
-    DebugLogger() << "LoadGame : Successfully loaded save file: " + filename;
+    DebugLogger() << "LoadGame : Successfully loaded save file: " << PathToString(path);
     return true;
 }
 
