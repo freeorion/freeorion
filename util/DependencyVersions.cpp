@@ -18,6 +18,12 @@
 #   include <GL/glew.h>
 #endif
 
+#if defined(FREEORION_BUILD_HUMAN_GODOT4)
+#   include <godot_cpp/classes/engine.hpp>
+#   include <godot_cpp/variant/dictionary.hpp>
+#   include <godot_cpp/variant/string.hpp>
+#endif
+
 
 /** @file
  * @brief  Implement free functions to access the dependency versions.
@@ -61,6 +67,16 @@ namespace {
         return ss.str();
     }
 #endif
+
+#if defined(FREEORION_BUILD_HUMAN_GODOT4)
+    std::string GodotVersionString() {
+        const auto *engine = godot::Engine::get_singleton();
+        const auto v_info = engine->get_version_info();
+        const godot::String version_string = v_info["string"];
+        const auto utf8_str = version_string.utf8();
+        return utf8_str.get_data();
+    }
+#endif
 }
 
 std::map<std::string, std::string> DependencyVersions() {
@@ -76,6 +92,10 @@ std::map<std::string, std::string> DependencyVersions() {
     retval["PNG"] =         PNGVersionString();
     retval["libvorbis"] =   VorbisVersionString();
     retval["GLEW"] =        GLEWVersionString();
+#endif
+
+#if defined(FREEORION_BUILD_HUMAN_GODOT4)
+    retval["Godot"] =       GodotVersionString();
 #endif
 
     return retval;
