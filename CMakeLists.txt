@@ -831,6 +831,11 @@ elseif(BUILD_CLIENT_GODOT EQUAL "4")
     else()
         # Not implemented yet
     endif()
+
+    target_compile_definitions(freeoriongodot
+        PRIVATE
+            -DFREEORION_BUILD_HUMAN_GODOT4
+    )
 endif()
 
 if(WIN32 AND BUILD_CLIENT_GG)
