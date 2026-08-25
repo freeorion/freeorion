@@ -653,10 +653,10 @@ void CompleteXDGMigration()
     if (exists(sentinel)) {
         fs::remove(sentinel);
         // Update data dir in config file
-        const std::string options_save_dir = GetOptionsDB().Get<std::string>("save.path");
+        const fs::path options_save_dir = GetOptionsDB().Get<fs::path>("save.path");
         const fs::path old_path = fs::path(getenv("HOME")) / ".freeorion";
-        if (fs::path(options_save_dir) == old_path)
-            GetOptionsDB().Set("save.path", GetUserDataDir().string());
+        if (options_save_dir == old_path)
+            GetOptionsDB().Set("save.path", GetUserDataDir());
     }
 }
 
@@ -707,10 +707,10 @@ auto GetSaveDir() -> fs::path const
 {
     // if save dir option has been set, use specified location.  otherwise,
     // use default location
-    std::string options_save_dir = GetOptionsDB().Get<std::string>("save.path");
+    fs::path options_save_dir = GetOptionsDB().Get<fs::path>("save.path");
     if (options_save_dir.empty())
-        options_save_dir = GetOptionsDB().GetDefault<std::string>("save.path");
-    return FilenameToPath(options_save_dir);
+        options_save_dir = GetOptionsDB().GetDefault<fs::path>("save.path");
+    return options_save_dir;
 }
 
 auto GetServerSaveDir() -> fs::path const

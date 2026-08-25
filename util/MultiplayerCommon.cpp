@@ -26,7 +26,7 @@ namespace {
 #else
         db.Add<std::filesystem::path>("resource.path",      UserStringNop("OPTIONS_DB_RESOURCE_DIR"),           GetRootDataDir() / "default");
 #endif
-        db.Add<std::string>('S', "save.path",               UserStringNop("OPTIONS_DB_SAVE_DIR"),               PathToString(GetUserDataDir() / "save"));
+        db.Add<std::filesystem::path>('S', "save.path",     UserStringNop("OPTIONS_DB_SAVE_DIR"),               GetUserDataDir() / "save");
         db.Add<std::string>("save.server.path",             UserStringNop("OPTIONS_DB_SERVER_SAVE_DIR"),        PathToString(GetUserDataDir() / "save"));
         db.Add<std::string>("log-level",                    UserStringNop("OPTIONS_DB_LOG_LEVEL"),              "",
                             OrValidator<std::string>(LogLevelValidator(), std::make_unique<DiscreteValidator<std::string>>("")),
