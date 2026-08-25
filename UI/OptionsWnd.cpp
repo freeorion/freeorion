@@ -648,7 +648,7 @@ void OptionsWnd::CompleteConstruction() {
     /** GetRootDataDir() returns the default browse path when modifying this directory option.
      *  The actual default directory (before modifying) is gotten from the specified option name "resource.path" */
     DirectoryOption2(current_page, 0, "resource.path",                   UserString("OPTIONS_FOLDER_SETTINGS"),      GetRootDataDir(), is_game_running);
-    DirectoryOption(current_page, 0, "save.path",                       UserString("OPTIONS_FOLDER_SAVE"),          GetUserDataDir());
+    DirectoryOption2(current_page, 0, "save.path",                       UserString("OPTIONS_FOLDER_SAVE"),          GetUserDataDir());
     DirectoryOption(current_page, 0, "save.server.path",                UserString("OPTIONS_SERVER_FOLDER_SAVE"),   GetUserDataDir());
     PathDisplay(    current_page, 0,                                    UserString("OPTIONS_FOLDER_CONFIG_LOG"),    GetUserConfigDir());
     FileOption(     current_page, 0, "misc.server-local-binary.path",   UserString("OPTIONS_SERVER_EXE"),           GetBinDir(),
