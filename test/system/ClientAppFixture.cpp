@@ -15,6 +15,8 @@
 #include <boost/thread/thread.hpp>
 #include <boost/test/unit_test.hpp>
 
+#include <cstdlib>
+
 ClientAppFixture::ClientAppFixture() :
     m_cookie(boost::uuids::nil_uuid())
 {
@@ -54,7 +56,17 @@ ClientAppFixture::ClientAppFixture() :
     InfoLogger() << FreeOrionVersionString();
     DebugLogger() << "Test client initialized";
 
-    GetOptionsDB().Set<std::filesystem::path>("resource.path", GetBinDir() / "default");
+    std::filesystem::path resource_dir = GetBinDir() / "default";
+
+#if defined(FREEORION_WIN32)
+    if (const wchar_t* resource_path_env = _wgetenv(L"FO_TEST_RESOURCE_PATH"))
+        resource_dir = std::filesystem::path(resource_path_env);
+#else
+    if (const char* resource_path_env = std::getenv("FO_TEST_RESOURCE_PATH"))
+        resource_dir = FilenameToPath(resource_path_env);
+#endif
+
+    GetOptionsDB().Set<std::filesystem::path>("resource.path", std::move(resource_dir));
 
     std::thread background([this] () {
         DebugLogger() << "Started background parser thread";
