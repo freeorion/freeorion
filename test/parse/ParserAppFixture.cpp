@@ -3,6 +3,8 @@
 #include "util/Directories.h"
 #include <boost/test/unit_test.hpp>
 
+#include <cstdlib>
+
 namespace fs = std::filesystem;
 
 ParserAppFixture::ParserAppFixture(bool test_scripting) :
@@ -20,6 +22,15 @@ ParserAppFixture::ParserAppFixture(bool test_scripting) :
 #else
     std::filesystem::path resource_dir = GetBinDir() / "default";
 #endif
+
+#if defined(FREEORION_WIN32)
+    if (const wchar_t* resource_path_env = _wgetenv(L"FO_TEST_RESOURCE_PATH"))
+        resource_dir = std::filesystem::path(resource_path_env);
+#else
+    if (const char* resource_path_env = std::getenv("FO_TEST_RESOURCE_PATH"))
+        resource_dir = FilenameToPath(resource_path_env);
+#endif
+
     GetOptionsDB().Set("resource.path", resource_dir);
 
     if (test_scripting) {
