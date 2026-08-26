@@ -727,7 +727,7 @@ if(BUILD_CLIENT_GG)
     target_dependent_data_symlink_to_build(freeorion ${PROJECT_SOURCE_DIR}/default)
 endif()
 
-if(NOT BUILD_CLIENT_GODOT EQUAL "OFF")
+if(NOT BUILD_CLIENT_GODOT STREQUAL "OFF")
     add_library(freeoriongodot SHARED "")
 
     target_link_libraries(freeoriongodot
@@ -737,7 +737,7 @@ if(NOT BUILD_CLIENT_GODOT EQUAL "OFF")
     )
 endif()
 
-if(BUILD_CLIENT_GODOT EQUAL "3")
+if(BUILD_CLIENT_GODOT STREQUAL "3")
     set(GODOT_PROJECT_DIR "godot")
     if(CMAKE_BUILD_TYPE MATCHES Debug)
         set(GODOT_CPP_BUILD_TYPE Debug)
@@ -815,7 +815,7 @@ if(BUILD_CLIENT_GODOT EQUAL "3")
     )
 
     target_dependencies_copy_to_build(freeoriongodot)
-elseif(BUILD_CLIENT_GODOT EQUAL "4")
+elseif(BUILD_CLIENT_GODOT STREQUAL "4")
     set(GODOT_PROJECT_DIR "godot4")
 
     if(NOT GODOT_CPP_ROOT)
@@ -910,7 +910,7 @@ if(APPLE AND BUILD_CLIENT_GG)
     endif()
 endif()
 
-if(NOT BUILD_CLIENT_GODOT EQUAL "OFF")
+if(NOT BUILD_CLIENT_GODOT STREQUAL "OFF")
     add_custom_command(TARGET freeoriongodot POST_BUILD
         COMMAND
            ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/${GODOT_PROJECT_DIR}/assets
@@ -967,7 +967,7 @@ endif()
 ## Recurse into sources.
 ##
 
-if(BUILD_AI OR BUILD_CLIENT_GG OR NOT BUILD_CLIENT_GODOT EQUAL "OFF")
+if(BUILD_AI OR BUILD_CLIENT_GG OR NOT BUILD_CLIENT_GODOT STREQUAL "OFF")
     add_subdirectory(client)
 endif()
 add_subdirectory(combat)
@@ -1108,7 +1108,7 @@ if(NOT APPLE AND NOT ANDROID)
         endif()
     endif()
 
-    if(BUILD_CLIENT_GODOT EQUAL "3")
+    if(BUILD_CLIENT_GODOT STREQUAL "3")
         install(
             TARGETS
                 freeoriongodot
