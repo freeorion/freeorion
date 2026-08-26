@@ -209,7 +209,7 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Simulta
 
 
 namespace {
-    template <typename Archive, typename ContainerT> requires std::is_same_v<typename ContainerT::value_type, int>
+    template <typename Archive, typename ContainerT> // requires std::is_same_v<typename ContainerT::value_type, int>
     void Serialize(Archive& ar, ContainerT& container, const char* tag, bool old_non_string_format)
     {
         if constexpr (Archive::is_loading::value) {
@@ -292,7 +292,7 @@ namespace {
 
 
     CONSTEXPR_FROM_CHARS void FillCombatStates(auto& container, std::string_view buffer)
-        requires requires { container.emplace(1, CombatParticipantState{}); }
+        requires requires { container.emplace(UniverseObjectID{1}, CombatParticipantState{}); }
     {
         if (buffer.empty() || !buffer.data())
             return;
@@ -316,11 +316,11 @@ namespace {
         { return GetIntFromChars<int>(buffer_end, next, default_val); };
 
         for (std::size_t idx = 0; idx < static_cast<std::size_t>(count) && next != buffer_end; ++idx) {
-            int obj_id = Value(INVALID_OBJECT_ID);
+            UniverseObjectID obj_id = INVALID_OBJECT_ID;
             int cur_int = Meter::DEFAULT_INT;
             int max_int = Meter::DEFAULT_INT;
 
-            std::tie(obj_id, success, next) = get_int_from_chars(next, Value(INVALID_OBJECT_ID));
+            std::tie(obj_id, success, next) = get_int_from_chars(next, INVALID_OBJECT_ID);
             if (!success)
                 break;
             std::tie(cur_int, success, next) = get_int_from_chars(next, Meter::DEFAULT_INT);
@@ -338,7 +338,7 @@ namespace {
 
     template <typename Archive>
     void Serialize(Archive& ar, auto& states, const char* tag, bool old_non_string_format)
-        requires std::is_same_v<int, std::decay_t<decltype(states.begin()->first)>> &&
+        requires std::is_same_v<UniverseObjectID, std::decay_t<decltype(states.begin()->first)>> &&
                  std::is_same_v<CombatParticipantState, std::decay_t<decltype(states.begin()->second)>>
     {
         if constexpr (Archive::is_loading::value) {
@@ -575,11 +575,11 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Stealth
 template <typename Archive>
 void serialize(Archive& ar, StealthChangeEvent::StealthChangeEventDetail& obj, unsigned int const version)
 {
-    ar  & make_nvp("attacker_id", obj.attacker_id)
-        & make_nvp("target_id", obj.target_id)
-        & make_nvp("attacker_empire_id", obj.attacker_empire_id)
-        & make_nvp("target_empire_id", obj.target_observer_empire_id)
-        & make_nvp("visibility", obj.visibility);
+    ar  & make_nvp("attacker_id",           obj.attacker_id)
+        & make_nvp("target_id",             obj.target_id)
+        & make_nvp("attacker_empire_id",    obj.attacker_empire_id)
+        & make_nvp("target_empire_id",      obj.target_observer_empire_id)
+        & make_nvp("visibility",            obj.visibility);
     if (version >= 5)
         ar  & make_nvp("is_fighter_launch", obj.is_fighter_launch);
 }
@@ -1278,11 +1278,11 @@ void serialize(Archive& ar, CombatLog& obj, const unsigned int version)
     {
         static_assert(std::is_same_v<std::pair<UniverseObjectID, CombatParticipantState>,
                                      std::decay_t<decltype(*obj.participant_states.begin())>>);
-        flat_map<int, CombatParticipantState> scratch;
+        flat_map<UniverseObjectID, CombatParticipantState> scratch;
         Serialize(ar, scratch, "participant_states", version < 3);
         obj.participant_states.clear();
         for (auto& [key, vals] : scratch.extract_sequence())
-            obj.participant_states.emplace(UniverseObjectID{key}, std::move(vals));
+            obj.participant_states.emplace(key, std::move(vals));
     }
 }
 

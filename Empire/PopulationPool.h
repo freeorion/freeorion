@@ -34,14 +34,7 @@ private:
 
 template <typename Archive>
 void PopulationPool::serialize(Archive& ar, const unsigned int version)
-{
-    std::vector<int> ids;
-    if constexpr (Archive::is_saving::value)
-        ids = m_pop_center_ids | range_transform([](const auto& id) noexcept { return Value(id); }) | range_to_vec;
-    ar  & boost::serialization::make_nvp("m_pop_center_ids", ids);
-    if constexpr (Archive::is_loading::value)
-        m_pop_center_ids = ids | range_transform([](const auto& id) noexcept { return UniverseObjectID{id}; }) | range_to_vec;
-}
+{ ar  & BOOST_SERIALIZATION_NVP(m_pop_center_ids); }
 
 
 #endif

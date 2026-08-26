@@ -98,7 +98,7 @@ private:
 
     void InsertEmpire(std::shared_ptr<Empire>&& empire); //!< Adds the given empire to the manager
 
-    std::map<std::pair<int, int>, DiplomaticMessage> GetDiplomaticMessagesToSerialize(EmpireID encoding_empire) const;
+    std::map<std::pair<EmpireID, EmpireID>, DiplomaticMessage> GetDiplomaticMessagesToSerialize(EmpireID encoding_empire) const;
 
     boost::container::flat_set<EmpireID>             m_empire_ids;
     boost::container::flat_set<UniverseObjectID>     m_capital_ids;

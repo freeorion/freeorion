@@ -13,6 +13,7 @@
 #include <boost/serialization/array.hpp>
 #include <boost/serialization/version.hpp>
 
+using boost::serialization::make_nvp;
 
 template <typename Archive>
 void Empire::PolicyAdoptionInfo::serialize(Archive& ar, const unsigned int version)
@@ -97,18 +98,18 @@ namespace {
         static_assert(N < std::numeric_limits<std::decay_t<decltype(count)>>::max());
 
         if constexpr (Archive::is_loading::value) {
-            ar >> boost::serialization::make_nvp("m_strings_count", count);
+            ar >> make_nvp("m_strings_count", count);
 
             std::vector<std::pair<uint16_t, uint16_t>> data_vec;
-            ar >> boost::serialization::make_nvp("m_string_offsets_sizes", data_vec);
+            ar >> make_nvp("m_string_offsets_sizes", data_vec);
             const std::size_t clamped_count = std::min(data_vec.size(), std::min(static_cast<std::size_t>(count), N));
             std::copy_n(data_vec.begin(), clamped_count, data.begin());
 
         } else {
             uint8_t clamped_count = static_cast<uint8_t>(std::min(static_cast<std::size_t>(count), N));
-            ar << boost::serialization::make_nvp("m_strings_count", clamped_count);
+            ar << make_nvp("m_strings_count", clamped_count);
             std::vector<std::pair<uint16_t, uint16_t>> data_vec(data.begin(), data.begin() + clamped_count);
-            ar << boost::serialization::make_nvp("m_string_offsets_sizes", data_vec);
+            ar << make_nvp("m_string_offsets_sizes", data_vec);
         }
     }
 
@@ -140,7 +141,7 @@ namespace {
         const auto buffer_next_dist = static_cast<std::size_t>(std::distance(buffer.data(), buffer_next));
         const std::size_t string_size = std::min(buffer_size, buffer_next_dist);
         std::string s(buffer.data(), string_size);
-        ar << boost::serialization::make_nvp("ct_ofst_szs", s);
+        ar << make_nvp("ct_ofst_szs", s);
     }
 
     template <std::size_t N>
@@ -148,7 +149,7 @@ namespace {
     {
         std::string buffer;
         buffer.reserve(buffer_size);
-        ar >> boost::serialization::make_nvp("ct_ofst_szs", buffer); // ct_ofst_szs = abbreviation for "count & (offsets & sizes)
+        ar >> make_nvp("ct_ofst_szs", buffer); // ct_ofst_szs = abbreviation for "count & (offsets & sizes)
 
         unsigned int count_scratch = 0U;
         const char* const buffer_end = buffer.c_str() + buffer.size();
@@ -217,7 +218,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
 
     if (Archive::is_loading::value && version < 13) {
         std::set<std::string> victories;
-        ar  & boost::serialization::make_nvp("m_victories", victories);
+        ar  & make_nvp("m_victories", victories);
         m_victories.clear();
         m_victories.insert(boost::container::ordered_unique_range, victories.begin(), victories.end());
     } else {
@@ -231,20 +232,20 @@ void Empire::serialize(Archive& ar, const unsigned int version)
 
     if (Archive::is_loading::value && version < 11) {
         std::map<std::string, int> techs;
-        ar  & boost::serialization::make_nvp("m_techs", techs);
+        ar  & make_nvp("m_techs", techs);
         m_techs.insert(boost::container::ordered_unique_range, techs.begin(), techs.end());
 
     } else if (Archive::is_loading::value && version < 13) {
         std::map<std::string, int, std::less<>> techs;
-        ar  & boost::serialization::make_nvp("m_techs", techs);
+        ar  & make_nvp("m_techs", techs);
         m_techs.insert(boost::container::ordered_unique_range, techs.begin(), techs.end());
 
     } else if constexpr (Archive::is_loading::value) {
-        ar  & boost::serialization::make_nvp("m_techs", m_techs);
+        ar  & make_nvp("m_techs", m_techs);
 
     } else {
         const auto& techs_to_serialize = GetTechsToSerialize(encoding_empire);
-        ar  & boost::serialization::make_nvp("m_techs", techs_to_serialize);
+        ar  & make_nvp("m_techs", techs_to_serialize);
     }
 
     if (Archive::is_loading::value && version < 10) {
@@ -252,15 +253,15 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         std::map<std::string, PolicyAdoptionInfo> initial_adopted_policies;
         std::set<std::string>                     available_policies;
 
-        ar  & boost::serialization::make_nvp("m_adopted_policies", adopted_policies);
+        ar  & make_nvp("m_adopted_policies", adopted_policies);
         m_adopted_policies.clear();
         m_adopted_policies.insert(adopted_policies.begin(), adopted_policies.end());
 
-        ar  & boost::serialization::make_nvp("m_initial_adopted_policies", initial_adopted_policies);
+        ar  & make_nvp("m_initial_adopted_policies", initial_adopted_policies);
         m_initial_adopted_policies.clear();
         m_initial_adopted_policies.insert(initial_adopted_policies.begin(), initial_adopted_policies.end());
 
-        ar  & boost::serialization::make_nvp("m_available_policies", available_policies);
+        ar  & make_nvp("m_available_policies", available_policies);
         m_available_policies.clear();
         m_available_policies.insert(available_policies.begin(), available_policies.end());
 
@@ -272,16 +273,16 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         const auto& adopted_to_serialize = GetAdoptedPoliciesToSerialize(encoding_empire);
         const auto& initial_to_serialize = GetInitialPoliciesToSerialize(encoding_empire);
         const auto& available_to_serialize = GetAvailablePoliciesToSerialize(encoding_empire);
-        ar  & boost::serialization::make_nvp("m_adopted_policies", adopted_to_serialize)
-            & boost::serialization::make_nvp("m_initial_adopted_policies", initial_to_serialize)
-            & boost::serialization::make_nvp("m_available_policies", available_to_serialize);
+        ar  & make_nvp("m_adopted_policies", adopted_to_serialize)
+            & make_nvp("m_initial_adopted_policies", initial_to_serialize)
+            & make_nvp("m_available_policies", available_to_serialize);
     }
 
     if constexpr (Archive::is_loading::value) {
         ar  & BOOST_SERIALIZATION_NVP(m_policy_adoption_total_duration);
     } else {
         const auto& adopted_durations_to_serialize = GetAdoptionTotalDurationsToSerialize(encoding_empire);
-        ar  & boost::serialization::make_nvp("m_policy_adoption_total_duration", adopted_durations_to_serialize);
+        ar  & make_nvp("m_policy_adoption_total_duration", adopted_durations_to_serialize);
     }
 
     if (Archive::is_loading::value && version < 7) {
@@ -299,7 +300,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
 
     } else {
         const auto& current_durations_to_serialize = GetAdoptionCurrentDurationsToSerialize(encoding_empire);
-        ar  & boost::serialization::make_nvp("m_policy_adoption_current_duration", current_durations_to_serialize);
+        ar  & make_nvp("m_policy_adoption_current_duration", current_durations_to_serialize);
     }
 
     if (Archive::is_loading::value && version < 14) {
@@ -317,18 +318,18 @@ void Empire::serialize(Archive& ar, const unsigned int version)
 
     } else {
         const auto& adopted_last_turns_to_serialize = GetAdoptionLatestTurnsToSerialize(encoding_empire);
-        ar  & boost::serialization::make_nvp("m_policy_latest_turn_adopted", adopted_last_turns_to_serialize);
+        ar  & make_nvp("m_policy_latest_turn_adopted", adopted_last_turns_to_serialize);
     }
 
 
     if (Archive::is_loading::value && version < 11) {
         std::map<std::string, Meter> meters;
-        ar  & boost::serialization::make_nvp("m_meters", meters);
+        ar  & make_nvp("m_meters", meters);
         m_meters.insert(boost::container::ordered_unique_range, meters.begin(), meters.end());
 
     } else if (Archive::is_loading::value && version < 13) {
         std::vector<std::pair<std::string, Meter>> meters;
-        ar  & boost::serialization::make_nvp("m_meters", meters);
+        ar  & make_nvp("m_meters", meters);
         std::sort(meters.begin(), meters.end());
         m_meters.insert(std::make_move_iterator(meters.begin()), std::make_move_iterator(meters.end()));
 
@@ -345,19 +346,19 @@ void Empire::serialize(Archive& ar, const unsigned int version)
 
         if (version < 13) {
             std::set<std::string> buf;
-            ar  & boost::serialization::make_nvp("m_available_building_types", buf);
+            ar  & make_nvp("m_available_building_types", buf);
             m_available_building_types.insert(boost::container::ordered_unique_range, buf.begin(), buf.end());
             buf.clear();
-            ar  & boost::serialization::make_nvp("m_available_part_types", buf);
+            ar  & make_nvp("m_available_part_types", buf);
             m_available_ship_parts.insert(boost::container::ordered_unique_range, buf.begin(), buf.end());
             buf.clear();
-            ar  & boost::serialization::make_nvp("m_available_hull_types", buf);
+            ar  & make_nvp("m_available_hull_types", buf);
             m_available_ship_hulls.insert(boost::container::ordered_unique_range, buf.begin(), buf.end());
 
         } else {
-            ar  & boost::serialization::make_nvp("m_available_building_types", m_available_building_types)
-                & boost::serialization::make_nvp("m_available_part_types", m_available_ship_parts)
-                & boost::serialization::make_nvp("m_available_hull_types", m_available_ship_hulls);
+            ar  & make_nvp("m_available_building_types", m_available_building_types)
+                & make_nvp("m_available_part_types", m_available_ship_parts)
+                & make_nvp("m_available_hull_types", m_available_ship_hulls);
         }
 
     } else {
@@ -369,16 +370,16 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         const auto& parts = GetAvailablePartsToSerialize(encoding_empire);
         const auto& hulls = GetAvailableHullsToSerialize(encoding_empire);
 
-        ar  & boost::serialization::make_nvp("m_research_queue", research_queue)
-            & boost::serialization::make_nvp("m_research_progress", research_progress)
-            & boost::serialization::make_nvp("m_production_queue", prod_queue)
-            & boost::serialization::make_nvp("m_influence_queue", influence_queue)
-            & boost::serialization::make_nvp("m_available_building_types", buildings)
-            & boost::serialization::make_nvp("m_available_part_types", parts)
-            & boost::serialization::make_nvp("m_available_hull_types", hulls);
+        ar  & make_nvp("m_research_queue", research_queue)
+            & make_nvp("m_research_progress", research_progress)
+            & make_nvp("m_production_queue", prod_queue)
+            & make_nvp("m_influence_queue", influence_queue)
+            & make_nvp("m_available_building_types", buildings)
+            & make_nvp("m_available_part_types", parts)
+            & make_nvp("m_available_hull_types", hulls);
     }
 
-    ar  & BOOST_SERIALIZATION_NVP(m_supply_system_ranges);
+    ar  & BOOST_SERIALIZATION_NVP(m_supply_system_ranges); // !!? indexed by UniverseObject!
     ar  & BOOST_SERIALIZATION_NVP(m_supply_unobstructed_systems);
     ar  & BOOST_SERIALIZATION_NVP(m_preserved_system_exit_lanes);
 
@@ -387,21 +388,21 @@ void Empire::serialize(Archive& ar, const unsigned int version)
 
     if (visible) {
         try {
-            ar  & boost::serialization::make_nvp("m_ship_designs", m_known_ship_designs);
+            ar  & make_nvp("m_ship_designs", m_known_ship_designs);
 
             if (Archive::is_loading::value && version < 15) {
                 DebugLogger() << "fallback sitrep load";
                 std::vector<SitRepEntry> sitreps;
-                ar  & boost::serialization::make_nvp("m_sitrep_entries", sitreps);
+                ar  & make_nvp("m_sitrep_entries", sitreps);
                 MoveSitrepsToBlob(std::move(sitreps));
             } else {
-                ar  & boost::serialization::make_nvp("m_sitrep_blob", m_blobbed_sitreps)
+                ar  & make_nvp("m_sitrep_blob", m_blobbed_sitreps)
                     & BOOST_SERIALIZATION_NVP(m_blobbed_sitrep_fixed_infos);
             }
 
             if (Archive::is_loading::value && version < 12) {
                 std::map<ResourceType, std::shared_ptr<ResourcePool>> scratch;
-                ar  & boost::serialization::make_nvp("m_resource_pools", scratch);
+                ar  & make_nvp("m_resource_pools", scratch);
                 auto it = scratch.find(ResourceType::RE_INDUSTRY);
                 if (it != scratch.end())
                     m_industry_pool = std::move(*it->second);
@@ -421,7 +422,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
 
             if (Archive::is_loading::value && version < 8) {
                 std::set<int> explored_system_ids;
-                ar  & boost::serialization::make_nvp("m_explored_systems", explored_system_ids);
+                ar  & make_nvp("m_explored_systems", explored_system_ids);
                 m_explored_systems.clear();
                 for (auto id : explored_system_ids)
                     m_explored_systems.emplace(id, 0);
@@ -432,7 +433,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             ar  & BOOST_SERIALIZATION_NVP(m_ship_names_used)
                 & BOOST_SERIALIZATION_NVP(m_species_ships_owned)
                 & BOOST_SERIALIZATION_NVP(m_ship_designs_owned)
-                & boost::serialization::make_nvp("m_ship_part_types_owned", m_ship_parts_owned)
+                & make_nvp("m_ship_part_types_owned", m_ship_parts_owned)
                 & BOOST_SERIALIZATION_NVP(m_ship_part_class_owned)
                 & BOOST_SERIALIZATION_NVP(m_species_colonies_owned)
                 & BOOST_SERIALIZATION_NVP(m_outposts_owned)
@@ -497,14 +498,12 @@ namespace {
 template <typename Archive>
 void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
 {
-    using boost::serialization::make_nvp;
-
     TraceLogger() << "Serializing EmpireManager encoding empire: " << GlobalSerializationEncodingForEmpire();
 
     if constexpr (Archive::is_loading::value)
         em.Clear();    // clean up any existing dynamically allocated contents before replacing containers with deserialized data
 
-    std::map<std::pair<int, int>, DiplomaticMessage> messages;
+    std::map<std::pair<EmpireID, EmpireID>, DiplomaticMessage> messages;
     if constexpr (Archive::is_saving::value)
         messages = em.GetDiplomaticMessagesToSerialize(GlobalSerializationEncodingForEmpire());
 
@@ -540,7 +539,8 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
         ar  & make_nvp("m_empire_map", em.m_empire_map);
         TraceLogger() << "EmpireManager serialized " << em.m_empire_map.size() << " empires";
     }
-    ar  & BOOST_SERIALIZATION_NVP(messages);
+
+    ar  & make_nvp("messages", messages);
 
     if constexpr (Archive::is_loading::value) {
         for (const auto& [empire_id, empire_ptr] : em.m_empire_map) {
@@ -550,9 +550,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
 
         em.RefreshCapitalIDs();
 
-        static constexpr auto to_eids = [](std::pair<int, int> ids) noexcept { return std::pair{EmpireID{ids.first}, EmpireID{ids.second}}; };
-        static constexpr auto to_eids_msg = [](const auto& ids_msg) noexcept { return std::pair{to_eids(ids_msg.first), ids_msg.second}; };
-        em.m_diplomatic_messages = messages | range_transform(to_eids_msg) | range_to<decltype(em.m_diplomatic_messages)>();
+        em.m_diplomatic_messages = std::move(messages);
 
         // erase invalid empire diplomatic statuses
         std::vector<std::pair<EmpireID, EmpireID>> to_erase;

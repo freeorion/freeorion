@@ -10,7 +10,6 @@
 #include <boost/serialization/version.hpp>
 #include <boost/uuid/random_generator.hpp>
 
-
 template <typename Archive>
 void ResearchQueue::Element::serialize(Archive& ar, const unsigned int version)
 {
@@ -130,22 +129,6 @@ namespace {
         }
         return retval;
     }
-
-    using int_flat_set = boost::container::flat_set<int>;
-    using int_flat_set_float_map = std::map<int_flat_set, float>;
-
-    int_flat_set ToIntValueFlatSet(const auto& in)
-    { return in | range_transform(to_int_value) | range_to<int_flat_set>(); }
-
-    int_flat_set_float_map ToIntFlatSetFloatMap(const auto& in) {
-        int_flat_set_float_map retval;
-        for (const auto& [keys, vals] : in) {
-            retval.emplace(std::piecewise_construct,
-                           std::forward_as_tuple(ToIntValueFlatSet(keys)),
-                           std::forward_as_tuple(vals));
-        }
-        return retval;
-    }
 }
 
 static_assert(boost::serialization::version<ProductionQueue>::value > 0);
@@ -156,29 +139,21 @@ void ProductionQueue::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_queue);
     ar  & BOOST_SERIALIZATION_NVP(m_projects_in_progress);
 
+    using boost::serialization::make_nvp;
+
     if (Archive::is_loading::value && version < 1) {
-        std::map<std::set<int>, float> temp;
-        ar  & boost::serialization::make_nvp("m_object_group_allocated_pp", temp);
-        m_object_group_allocated_pp = ToIDFlatSetFloatMap(temp);
-        temp.clear();
-        ar  & boost::serialization::make_nvp("m_object_group_allocated_stockpile_pp", temp);
-        m_object_group_allocated_stockpile_pp = ToIDFlatSetFloatMap(temp);
+        std::map<std::set<int>, float> temp1;
+        ar &  make_nvp("m_object_group_allocated_pp", temp1);
+        m_object_group_allocated_pp = ToIDFlatSetFloatMap(temp1);
+        std::map<std::set<int>, float> temp2;
+        ar &  make_nvp("m_object_group_allocated_stockpile_pp", temp2);
+        m_object_group_allocated_stockpile_pp = ToIDFlatSetFloatMap(temp2);
 
     } else {
-        int_flat_set_float_map scratch;
-
-        if (Archive::is_saving::value)
-            scratch = ToIntFlatSetFloatMap(m_object_group_allocated_pp);
-        ar  & boost::serialization::make_nvp("m_object_group_allocated_pp", scratch);
-        if (Archive::is_loading::value)
-            m_object_group_allocated_pp = ToIDFlatSetFloatMap(scratch);
-
-        if (Archive::is_saving::value)
-            scratch = ToIntFlatSetFloatMap(m_object_group_allocated_stockpile_pp);
-        ar  & boost::serialization::make_nvp("m_object_group_allocated_stockpile_pp", scratch);
-        if (Archive::is_loading::value)
-            m_object_group_allocated_stockpile_pp = ToIDFlatSetFloatMap(scratch);
+        ar  & BOOST_SERIALIZATION_NVP(m_object_group_allocated_pp);
+        ar  & BOOST_SERIALIZATION_NVP(m_object_group_allocated_stockpile_pp);
     }
+
     ar  & BOOST_SERIALIZATION_NVP(m_expected_new_stockpile_amount);
     ar  & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
