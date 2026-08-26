@@ -83,7 +83,7 @@ if(BUILD_CLIENT_GG)
     )
 endif()
 
-if(NOT BUILD_CLIENT_GODOT EQUAL "OFF")
+if(NOT BUILD_CLIENT_GODOT STREQUAL "OFF")
     target_sources(freeoriongodot
         PRIVATE
             ${CMAKE_CURRENT_LIST_DIR}/DependencyVersions.cpp
