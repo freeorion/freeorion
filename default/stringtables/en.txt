@@ -1325,6 +1325,28 @@ RULE_BASIC_VIS_SYSTEM_INFO_SHOWN_DESC
 
 <u>If Off</u>: Basic level visible systems that have never been detected at higher visibility have unknown name and star type.'''
 
+
+RULE_MINIMAL_DISTANCE_TO_STARTING_POSITION_FOR_SPECIALS
+Minimal distance from any player's Starting Position where Specials will spawn
+
+RULE_MINIMAL_DISTANCE_TO_STARTING_POSITION_FOR_SPECIALS_DESC
+'''
+No Special will be placed in systems or planets that are closer to this parameter's value from any Player's starting position (that is, Capital and Homeworld).
+A high value for this parameter (more than half the mean distance between two player's starting position) may result in no Special being placed in the Galaxy at all, or at least result in Galaxies where large parts have zero Specials in them.
+Use a higher value than five (5) only if you understand what you're doing.
+'''
+
+RULE_MINIMAL_DISTANCE_TO_STARTING_POSITION_FOR_NATIVES
+Minimal distance from any player's Starting Position where Natives will spawn
+
+RULE_MINIMAL_DISTANCE_TO_STARTING_POSITION_FOR_NATIVES_DESC
+'''
+No Native will spawn in systems or planets that are closer to this parameter's value from any Player's starting position (that is, Capital and Homeworld).
+A high value for this parameter (more than half the mean distance between two player's starting position) may result in no Native spawning in the Galaxy at all, or at least result in Galaxies where large parts have zero Natives in them.
+Use a higher value than five (5) only if you understand what you're doing.'''
+
+
+
 RULE_HIDDEN_POLICIES
 Hide Empire Policies
 

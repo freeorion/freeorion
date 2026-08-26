@@ -17,8 +17,7 @@ import universe_tables
 REPEAT_RATE = {1: 0.08, 2: 0.05, 3: 0.01, 4: 0.00}
 
 # create a minimum distance from a player's starting position to any Special created at game generation
-# TODO make it a parameter rather than a hardcoded value
-EMPIRE_TO_SPECIALS_MIN_DIST = 5
+EMPIRE_TO_SPECIALS_MIN_DIST = fo.getGameRules().getInt("RULE_MINIMAL_DISTANCE_TO_STARTING_POSITION_FOR_SPECIALS")
 
 def calculate_number_of_specials_to_place(objs):
     """Return a list of number of specials to be placed at each obj"""

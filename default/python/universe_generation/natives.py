@@ -26,7 +26,7 @@ def generate_natives(native_freq, systems, empire_home_systems):  # noqa: C901
     # compile a list of systems where natives can be placed
     # select only systems sufficiently far away from player home systems
     # list of systems safe for natives
-    EMPIRE_TO_NATIVE_MIN_DIST = 2
+    EMPIRE_TO_NATIVE_MIN_DIST = fo.getGameRules().getInt("RULE_MINIMAL_DISTANCE_TO_STARTING_POSITION_FOR_NATIVES")
 
     # changing the value to 5 for the MP games
     # TODO make this a game parameter rather than a hardcoded value
