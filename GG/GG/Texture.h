@@ -97,6 +97,8 @@ public:
         path.  \throw GG::Texture::BadFile Throws if the texture creation
         fails. */
     void Load(const std::filesystem::path& path, bool mipmap = false);
+    void Load(auto, bool) = delete; // disable implicit conversion
+    void Load(auto) = delete;
 
     /** Frees any currently-held memory and creates a texture from supplied
         array \a image.  \throw GG::Texture::Exception Throws applicable
@@ -235,7 +237,8 @@ public:
         If the texture is not present in the manager's pool, it will be loaded
         from disk. */
     std::shared_ptr<Texture> GetTexture(const std::filesystem::path& path, bool mipmap = false);
-    std::shared_ptr<Texture> GetTexture(auto, bool) = delete;
+    std::shared_ptr<Texture> GetTexture(auto, bool) = delete; // disable implicit conversions
+    std::shared_ptr<Texture> GetTexture(auto) = delete;
 
     /** Returns if file \a path is a supported texture format. */
     static bool IsSupportedTextureFilenameExtension(const std::filesystem::path& path);

@@ -820,7 +820,8 @@ void GGHumanClientApp::LoadSinglePlayerGame(std::string filename) {
     DebugLogger() << "GGHumanClientApp::LoadSinglePlayerGame";
 
     if (!filename.empty()) {
-        if (!exists(FilenameToPath(filename))) {
+        std::error_code ec;
+        if (!exists(FilenameToPath(filename)), ec) {
             std::string msg = "GGHumanClientApp::LoadSinglePlayerGame() given a nonexistent file \""
                             + filename + "\" to load. Aborting load.";
             DebugLogger() << msg;
@@ -1279,7 +1280,8 @@ namespace {
 
                 for (directory_iterator dir_it(path); dir_it != directory_iterator(); ++dir_it) {
                     const auto& file_path = dir_it->path();
-                    if (!is_regular_file(file_path))
+                    std::error_code ec;
+                    if (!is_regular_file(file_path, ec))
                         continue;
                     if (file_path.extension() != SP_SAVE_FILE_EXTENSION)
                         continue;
@@ -1325,7 +1327,8 @@ namespace {
 
             for (directory_iterator dir_it(p); dir_it != directory_iterator(); ++dir_it) {
                 const path& file_path = dir_it->path();
-                if (!is_regular_file(file_path))
+                std::error_code ec;
+                if (!is_regular_file(file_path, ec))
                     continue;
                 if (file_path.extension() != SP_SAVE_FILE_EXTENSION &&
                     file_path.extension() != MP_SAVE_FILE_EXTENSION)
@@ -1397,9 +1400,10 @@ namespace {
         std::filesystem::path save_path(autosave_dir_path / save_filename);
 
         try {
+            std::error_code ec;
             // ensure autosave directory exists
-            if (!exists(autosave_dir_path))
-                std::filesystem::create_directories(autosave_dir_path);
+            if (!exists(autosave_dir_path, ec))
+                std::filesystem::create_directories(autosave_dir_path); // allow throw
         } catch (const std::exception& e) {
             ErrorLogger() << "Autosave unable to check / create autosave directory: " << e.what();
         }
@@ -1728,8 +1732,8 @@ void GGHumanClientApp::BrowsePath(const std::filesystem::path& browse_path) {
     std::filesystem::path full_path(browse_path);
 
     try {
-        std::filesystem::file_status status = std::filesystem::status(full_path);
-        if (!std::filesystem::exists(status)) {
+        std::error_code ec;
+        if (!std::filesystem::exists(full_path, ec)) {
             std::string exists_debug_msg("Non-existant path: " + PathToString(full_path));
             if (full_path.has_parent_path()) {
                 DebugLogger() << exists_debug_msg << ", trying parent directory";
@@ -1741,24 +1745,24 @@ void GGHumanClientApp::BrowsePath(const std::filesystem::path& browse_path) {
         }
 
         // Validate as a canonical path
-        if (std::filesystem::is_directory(status)) {
-            full_path = std::filesystem::canonical(full_path);
+        if (std::filesystem::is_directory(full_path, ec)) {
+            full_path = std::filesystem::canonical(full_path, ec);
         } else {
             // If given a file, use the files containing directory
             DebugLogger() << "Non-directory target: " << PathToString(full_path) << ", using parent directory";
-            full_path = std::filesystem::canonical(full_path.parent_path());
+            full_path = std::filesystem::canonical(full_path.parent_path(), ec);
         }
 
         // Verify not a regular file
-        if (std::filesystem::is_regular_file(full_path)) {
+        if (std::filesystem::is_regular_file(full_path, ec)) {
             ErrorLogger() << "Target directory " << PathToString(full_path) << " is a regular file, given path argument: "
                           << PathToString(browse_path);
             return;
         }
 
-    } catch (const std::filesystem::filesystem_error& ec) {
+    } catch (const std::filesystem::filesystem_error& e) {
         ErrorLogger() << "Filesystem error when attempting to browse directory " << PathToString(full_path)
-                      << ": " << ec.what();
+                      << ": " << e.what();
         return;
     }
 
@@ -1767,7 +1771,9 @@ void GGHumanClientApp::BrowsePath(const std::filesystem::path& browse_path) {
         return;
     }
 
-    full_path.make_preferred();
+    try {
+        full_path.make_preferred();
+    } catch (...) {}
     // Trailing slash post-fixed to prevent executing a file with same name(minus extension) as folder
     full_path += std::filesystem::path::preferred_separator;
 

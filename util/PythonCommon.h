@@ -47,6 +47,7 @@ public:
 
     // Compiles and evaluates \a code with defined \a filename. Populates \a globals
     static void CompileEval(const char* code, const std::filesystem::path& filename, const boost::python::object& globals);
+    static void CompileEval(const char*, auto, const boost::python::object&) = delete; // disable implicit conversion
 
     void SetModulesDirs(std::vector<std::filesystem::path> modules_dirs);
 

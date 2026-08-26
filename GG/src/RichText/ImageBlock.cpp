@@ -99,7 +99,8 @@ public:
 
         // Get the path from the parameters, with or without prepending root path
         fs::path param_path = NameToPath(tex_name);
-        fs::path combined_path = fs::exists(param_path) ? param_path : (m_root_path / param_path);
+        std::error_code ec;
+        fs::path combined_path = fs::exists(param_path, ec) ? param_path : (m_root_path / param_path);
 
         try {
             if (auto tex = tm.GetTexture(combined_path, true)) // throws if texture not loaded and path doesn't exist or is invalid

@@ -37,6 +37,8 @@ public:
     /** Plays a music file.  The file will be played in an infinitve loop if \a loop is < 0, and it will be played \a
         loops + 1 times otherwise. */
     void PlayMusic(const std::filesystem::path& path, int loops = 0);
+    void PlayMusic(auto, int) = delete;
+    void PlayMusic(auto) = delete;
 
     /** Pauses music play, to be continued from the same position */
     void PauseMusic();
@@ -49,9 +51,12 @@ public:
 
     /** Plays a sound file. */
     void PlaySound(const std::filesystem::path& path, bool is_ui_sound = false);
+    void PlaySound(auto, bool) = delete;
+    void PlaySound(auto) = delete;
 
     /** Frees the cached sound data associated with the filename. */
     void FreeSound(const std::filesystem::path& path);
+    void FreeSound(auto) = delete;
 
     /** Frees all cached sound data. */
     void FreeAllSounds();

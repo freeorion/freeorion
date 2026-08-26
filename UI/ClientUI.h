@@ -108,6 +108,8 @@ public:
     std::shared_ptr<GG::Texture> GetRandomTexture(const std::filesystem::path& dir,
                                                   std::string_view prefix,
                                                   bool mipmap = false);
+    void GetRandomTexture(auto, std::string_view, bool) = delete;
+    void GetRandomTexture(auto, std::string_view) = delete;
 
     /** Loads texture \a n % N from the set of files starting with \a prefix in
         directory \a dir, where N is the number of files found in \a dir with
@@ -115,11 +117,15 @@ public:
     std::shared_ptr<GG::Texture> GetModuloTexture(const std::filesystem::path& dir,
                                                   std::string_view prefix, int n,
                                                   bool mipmap = false);
+    void GetModuloTexture(auto, std::string_view, int, bool) = delete;
+    void GetModuloTexture(auto, std::string_view, int) = delete;
 
     /** Returns all textures in the set of files starting with \a prefix in
         directory \a dir. */
     const std::vector<std::shared_ptr<GG::Texture>>& GetPrefixedTextures(
         const std::filesystem::path& dir, std::string_view prefix, bool mipmap = false);
+    void GetPrefixedTextures(auto, std::string_view, bool) = delete;
+    void GetPrefixedTextures(auto, std::string_view) = delete;
 
     /** Shows a message dialog box with the given message; if
       * \a play_alert_sound is true, and UI sound effects are currently enabled,
@@ -130,6 +136,9 @@ public:
       * generated if \a mipmap is true; loads default missing.png if name isn't
       * found. */
     static std::shared_ptr<GG::Texture> GetTexture(const std::filesystem::path& path, bool mipmap = false);
+    static std::shared_ptr<GG::Texture> GetMissingTexture(bool mipmap = false); // loads default missing.png
+    static void GetTexture(auto, bool) = delete;
+    static void GetTexture(auto) = delete;
 
     /** Returns the default font in the specified point size. Uses "ui.font.path"
       * option setting as the font filename, and provides Unicode character sets

@@ -54,9 +54,7 @@ namespace {
             raw_py_str = PyUnicode_FromWideChar(filename.c_str(), filename.size());
         else
             raw_py_str = PyUnicode_FromStringAndSize(filename.c_str(), filename.size());
-        if (!raw_py_str)
-            return py::object();
-        return py::object(py::handle<>(raw_py_str));
+        return raw_py_str ? py::object(py::handle<>(raw_py_str)) : py::object();
     }
 
     template<typename T = std::filesystem::path::value_type>
@@ -318,8 +316,9 @@ void PythonCommon::CompileEval(const char* code, const std::filesystem::path& fi
 void PythonCommon::SetModulesDirs(std::vector<std::filesystem::path> modules_dirs) {
     m_modules_dirs = modules_dirs;
     DebugLogger() << "Set Python Modules Directories (" << m_modules_dirs.size() << "):";
+    std::error_code ec;
     for (const auto& dir : m_modules_dirs)
-        DebugLogger() << "   " << PathToString(dir) << (std::filesystem::exists(dir) ? " exists" : " does not exist");
+        DebugLogger() << "   " << PathToString(dir) << (std::filesystem::exists(dir, ec) ? " exists" : " does not exist");
 }
 
 py::object PythonCommon::find_spec(const std::string& fullname, const py::object& path, const py::object& target) const {
@@ -440,7 +439,7 @@ py::object PythonCommon::exec_module(py::object& module) {
         // and still import will work
         DebugLogger() << "Executing module file " << PathToString(module_path);
         try {
-            CompileEval(file_contents.c_str(), module_path.native(), globals);
+            CompileEval(file_contents.c_str(), module_path, globals);
         } catch (const boost::python::error_already_set&) {
             HandleErrorAlreadySet();
             ErrorLogger() << "Unable to parse module file " << PathToString(module_path);

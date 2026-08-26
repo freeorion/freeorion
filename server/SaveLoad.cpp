@@ -107,7 +107,7 @@ namespace {
     static_assert(Pow(0,0) == 1);
 }
 
-int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_game_data,
+int SaveGame(std::filesystem::path path, const ServerSaveGameData& server_save_game_data,
              const std::vector<PlayerSaveGameData>& player_save_game_data, const Universe& universe,
              const EmpireManager& empire_manager, const SpeciesManager& species_manager,
              const CombatLogManager& combat_log_manager, GalaxySetupData galaxy_setup_data,
@@ -117,7 +117,8 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
 
     bool use_binary = GetOptionsDB().Get<bool>("save.format.binary.enabled");
     bool use_zlib_for_zml = GetOptionsDB().Get<bool>("save.format.xml.zlib.enabled");
-    DebugLogger() << "SaveGame(" << (use_binary ? "binary" : (use_zlib_for_zml ? "zlib-xml" : "raw-xml")) << ") filename: " << filename;
+    DebugLogger() << "SaveGame(" << (use_binary ? "binary" : (use_zlib_for_zml ? "zlib-xml" : "raw-xml")) << ") filename: "
+                  << PathToString(path.filename());
     GlobalSerializationEncodingForEmpire() = ALL_EMPIRES;
 
     DebugLogger() << "Compiling save empire and preview data";
@@ -138,24 +139,23 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
 
     try {
         timer.EnterSection("path management");
-        fs::path path = FilenameToPath(filename);
 
         // A relative path should be relative to the save directory.
         if (path.is_relative()) {
             path = (multiplayer ? GetServerSaveDir() : GetSaveDir()) / path;
-            DebugLogger() << "Made save path relative to save dir. Is now: " << path;
+            DebugLogger() << "Made save path relative to save dir. Is now: " << PathToString(path);
         }
 
         if (multiplayer) {
             // Make sure the path points into our save directory
             if (!IsInDir(GetServerSaveDir(), path.parent_path())) {
-                WarnLogger() << "Path \"" << path << "\" is not in server save directory.";
+                WarnLogger() << "Path \"" << PathToString(path) << "\" is not in server save directory.";
                 path = GetServerSaveDir() / path.filename();
-                WarnLogger() << "Path changed to \"" << path << "\"";
+                WarnLogger() << "Path changed to \"" << PathToString(path) << "\"";
             } else {
                 try {
                     // ensure save directory exists
-                    if (!exists(path.parent_path())) {
+                    if (!exists(path.parent_path())) { // allow throw
                         WarnLogger() << "Creating save directories " << PathToString(path.parent_path());
                         std::filesystem::create_directories(path.parent_path());
                     }

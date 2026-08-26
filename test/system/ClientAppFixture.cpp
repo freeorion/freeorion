@@ -314,8 +314,9 @@ void ClientAppFixture::SaveGame() {
                                                % m_current_turn % FilenameTimestamp() % SP_SAVE_FILE_EXTENSION);
     std::filesystem::path save_dir_path(GetSaveDir() / "test");
     std::filesystem::path save_path(save_dir_path / save_filename);
-    if (!exists(save_dir_path))
-        std::filesystem::create_directories(save_dir_path);
+    std::error_code ec;
+    if (!exists(save_dir_path, ec))
+        std::filesystem::create_directories(save_dir_path, ec);
 
     auto path_string = PathToString(save_path);
     m_save_completed = false;

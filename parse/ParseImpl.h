@@ -185,6 +185,8 @@ namespace parse::detail {
                            text_iterator& first,
                            text_iterator& last,
                            token_iterator& it);
+    void parse_file_common(auto, const lexer&, std::string&, std::string&,
+                           text_iterator&, text_iterator&, token_iterator&) = delete; // disable implicit conversions
 
     /** Report warnings about unparsed end of file and return true for a good
         parse. */
@@ -217,6 +219,7 @@ namespace parse::detail {
 
         return parse_file_end_of_file_warnings(path, success, file_contents, first, last);
     }
+    bool parse_file(const lexer&, auto, auto) = delete; // disable implicit conversions
 
     template <typename Grammar, typename Arg1, typename Arg2>
     bool parse_file(const lexer& lexer, const std::filesystem::path& path, Arg1& arg1, Arg2& arg2) {
@@ -241,7 +244,7 @@ namespace parse::detail {
 
         return parse_file_end_of_file_warnings(path, success, file_contents, first, last);
     }
-
+    bool parse_file(const lexer&, auto, auto, auto) = delete; // disable implicit conversions
 }
 
 #endif
