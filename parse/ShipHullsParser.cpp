@@ -45,36 +45,36 @@ namespace std {
 #endif
 
 namespace {
-struct ShipHullStats {
-    ShipHullStats() = default;
+    struct ShipHullStats {
+        ShipHullStats() = default;
 
-    ShipHullStats(float fuel_,
-                  float speed_,
-                  float stealth_,
-                  float structure_,
-                  bool default_fuel_effects_,
-                  bool default_speed_effects_,
-                  bool default_stealth_effects_,
-                  bool default_structure_effects_) :
-        fuel(fuel_),
-        speed(speed_),
-        stealth(stealth_),
-        structure(structure_),
-        default_fuel_effects(default_fuel_effects_),
-        default_speed_effects(default_speed_effects_),
-        default_stealth_effects(default_stealth_effects_),
-        default_structure_effects(default_structure_effects_)
-    {}
+        ShipHullStats(float fuel_,
+                    float speed_,
+                    float stealth_,
+                    float structure_,
+                    bool default_fuel_effects_,
+                    bool default_speed_effects_,
+                    bool default_stealth_effects_,
+                    bool default_structure_effects_) :
+            fuel(fuel_),
+            speed(speed_),
+            stealth(stealth_),
+            structure(structure_),
+            default_fuel_effects(default_fuel_effects_),
+            default_speed_effects(default_speed_effects_),
+            default_stealth_effects(default_stealth_effects_),
+            default_structure_effects(default_structure_effects_)
+        {}
 
-    float   fuel = 0.0f;
-    float   speed = 0.0f;
-    float   stealth = 0.0f;
-    float   structure = 0.0f;
-    bool    default_fuel_effects = true;
-    bool    default_speed_effects = true;
-    bool    default_stealth_effects = true;
-    bool    default_structure_effects = true;
-};
+        float   fuel = 0.0f;
+        float   speed = 0.0f;
+        float   stealth = 0.0f;
+        float   structure = 0.0f;
+        bool    default_fuel_effects = true;
+        bool    default_speed_effects = true;
+        bool    default_stealth_effects = true;
+        bool    default_structure_effects = true;
+    };
 
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
