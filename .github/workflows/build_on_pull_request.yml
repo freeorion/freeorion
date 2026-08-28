@@ -23,10 +23,15 @@ jobs:
       lint_python: ${{ steps.set_files_changed.outputs.output-07 }}
       lint_string_tables: ${{ steps.set_files_changed.outputs.output-08 }}
       lint_codeql: ${{ steps.set_files_changed.outputs.output-09 }}
+      build_android_godot4: ${{ steps.set_files_changed.outputs.output-10 }}
   android:
     needs: detect_changed_files
     if: ${{ needs.detect_changed_files.outputs.build_android == 'true' }}
     uses: ./.github/workflows/_build-android.yml
+  android-godot4:
+    needs: detect_changed_files
+    if: ${{ needs.detect_changed_files.outputs.build_android_godot4 == 'true' }}
+    uses: ./.github/workflows/_build-android-godot4.yml
   macos:
     needs: detect_changed_files
     if: ${{ needs.detect_changed_files.outputs.build_macos == 'true' }}

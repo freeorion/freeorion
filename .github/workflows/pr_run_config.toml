@@ -9,6 +9,7 @@ lint_py_focs = ['focs_py', 'pyproject_toml', 'python_dev_requirements', 'workflo
 lint_python = ['focs_py', 'pyproject_toml', 'python_dev_requirements', 'workflows', 'python']
 lint_string_tables = ['stringtables', 'workflows']
 lint_codeql = ['cpp', 'workflows']
+build_android_godot4 = ['cpp', 'godot', 'workflows']
 noop = ['ignored']
 
 [group.focs_py]
@@ -72,7 +73,7 @@ patterns = ['^default/stringtables', '^check/st-tool.py$']
 
 [group.godot]
 examples = ['godot/FleetWindow.gd']
-patterns = ['^godot/.*.\.gd$']
+patterns = ['^godot/.*.\.gd$', '^godot4/.*.\.gd$']
 
 [group.ignored]
 examples = [
