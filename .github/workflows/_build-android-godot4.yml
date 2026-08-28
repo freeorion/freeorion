@@ -1,0 +1,57 @@
+name: "Android Godot4"
+
+on:
+  workflow_call:
+env:
+  GODOT_VERSION: "4.7.2"
+jobs:
+  android:
+    name: ${{ matrix.arch }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [x86, x86_64, armeabi-v7a, arm64-v8a]
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v6
+      - name: Download SDK
+        id: download-sdk
+        uses: suisei-cn/actions-download-file@v1
+        with:
+          url: https://github.com/freeorion/freeorion-sdk/releases/download/v19/FreeOrionSDK_19_Android-${{ matrix.arch }}.zip
+          target: ../
+      - uses: nttld/setup-ndk@v1
+        id: setup-ndk
+        with:
+          ndk-version: r24
+          add-to-path: false
+      - name: Configure
+        run: |
+          unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
+          mkdir build
+          pushd build
+          FO_SDK=$(realpath ../..)
+          cmake -DANDROID_ABI=${{ matrix.arch }} -DANDROID_PLATFORM=24 -DANDROID_NDK=${{ steps.setup-ndk.outputs.ndk-path }} -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake -DCMAKE_CXX_FLAGS=-std=c++14 -DANDROID_ALLOW_UNDEFINED_SYMBOLS=Off -DBUILD_SERVER=ON -DBUILD_AI=ON -DBUILD_CLIENT_GG=OFF -DBoost_INCLUDE_DIR=${FO_SDK}/include/ -DBoost_USE_STATIC_LIBS=On -DBoost_LIBRARY_DIR=${FO_SDK}/lib/ -DBUILD_CLIENT_GODOT=4 -DICUI18N_LIBRARY=${FO_SDK}/lib/libicui18n.a -DICUUC_LIBRARY=${FO_SDK}/lib/libicuuc.a -DICUDATA_LIBRARY=${FO_SDK}/lib/libicudata.a -DICONV_LIBRARY=${FO_SDK}/lib/libiconv.so -DPython3_LIBRARY=${FO_SDK}/lib/libpython3.11.a -DPython3_INCLUDE_DIR=${FO_SDK}/include/python3.11/ -DGODOTCPP_API_VERSION=4.4 ..
+      - name: Build
+        run: |
+          pushd build
+          cmake --build . -- -j4
+      - name: Upload binaries
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-binaries-godot4-${{ matrix.arch }}
+          path: godot4/bin/
+          if-no-files-found: error
+          retention-days: 1
+  merge-binaries:
+    name: Merge binaries
+    runs-on: ubuntu-latest
+    needs: android
+    steps:
+      - name: Merge binaries
+        uses: actions/upload-artifact/merge@v7
+        with:
+          name: android-binaries-godot4
+          pattern: android-binaries-godot4-*
+          delete-merged: true
+          retention-days: 1
