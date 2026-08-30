@@ -735,6 +735,20 @@ if(NOT BUILD_CLIENT_GODOT STREQUAL "OFF")
         freeorionparse
         ${ICONV_LIBRARY}
     )
+
+    # Create the correct name (godot.os.build_type.system_bits)
+    # Synchronized with godot-cpp's CMakeLists.txt
+
+    set(BITS 32)
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(BITS 64)
+    endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+
+    string(TOLOWER ${CMAKE_SYSTEM_NAME} SYSTEM_NAME)
+    if(ANDROID)
+        # Added the android abi after system name
+        set(SYSTEM_NAME ${SYSTEM_NAME}.${ANDROID_ABI})
+    endif()
 endif()
 
 if(BUILD_CLIENT_GODOT STREQUAL "3")
@@ -793,18 +807,7 @@ if(BUILD_CLIENT_GODOT STREQUAL "3")
     # Create the correct name (godot.os.build_type.system_bits)
     # Synchronized with godot-cpp's CMakeLists.txt
 
-    set(BITS 32)
-    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-        set(BITS 64)
-    endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
-
-    string(TOLOWER ${CMAKE_SYSTEM_NAME} SYSTEM_NAME)
     string(TOLOWER ${GODOT_CPP_BUILD_TYPE} BUILD_TYPE)
-
-    if(ANDROID)
-        # Added the android abi after system name
-        set(SYSTEM_NAME ${SYSTEM_NAME}.${ANDROID_ABI})
-    endif()
 
     target_link_directories(freeoriongodot
         PRIVATE

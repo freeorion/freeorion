@@ -7,5 +7,5 @@ reloadable = true
 [libraries]
 macos.debug = "./libfreeoriongodot.dylib"
 macos.release = "./libfreeoriongodot.dylib"
-linux.debug.x86_64 = "./libfreeoriongodot.so"
-linux.release.x86_64 = "./libfreeoriongodot.so"
+linux.debug.x86_64 = "./linux.64/libfreeoriongodot.so"
+linux.release.x86_64 = "./linux.64/libfreeoriongodot.so"
