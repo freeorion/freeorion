@@ -44,6 +44,8 @@ namespace std {
 }
 #endif
 
+extern "C" BOOST_SYMBOL_EXPORT PyObject* PyInit__ship_hulls();
+
 namespace {
     struct ShipHullStats {
         ShipHullStats() = default;
@@ -222,10 +224,12 @@ namespace {
 
     struct py_grammar {
         const PythonParser& parser;
+        boost::python::object module;
         start_rule_payload& hulls;
 
         py_grammar(const PythonParser& parser_, start_rule_payload& hulls_) :
             parser(parser_),
+            module(parser_.LoadModule(&PyInit__ship_hulls)),
             hulls(hulls_)
         {
             parser.LoadValueRefsModule();
@@ -233,8 +237,20 @@ namespace {
             parser.LoadConditionsModule();
             parser.LoadSourcesModule();
             parser.LoadEnumsModule();
+
+            module.attr("__grammar") = boost::cref(*this);
+        }
+
+        ~py_grammar() {
+            parser.UnloadModule(module);
         }
     };
+}
+
+BOOST_PYTHON_MODULE(_ship_hulls) {
+    boost::python::docstring_options doc_options(true, true, false);
+
+    boost::python::class_<py_grammar, boost::python::bases<>, py_grammar, boost::noncopyable>("__Grammar", boost::python::no_init);
 }
 
 namespace parse {
