@@ -219,16 +219,39 @@ struct ShipHullStats {
         hull_rule                           hull;
         start_rule                          start;
     };
+
+    struct py_grammar {
+        const PythonParser& parser;
+        start_rule_payload& hulls;
+
+        py_grammar(const PythonParser& parser_, start_rule_payload& hulls_) :
+            parser(parser_),
+            hulls(hulls_)
+        {
+            parser.LoadValueRefsModule();
+            parser.LoadEffectsModule();
+            parser.LoadConditionsModule();
+            parser.LoadSourcesModule();
+            parser.LoadEnumsModule();
+        }
+    };
 }
 
 namespace parse {
     start_rule_payload ship_hulls(const PythonParser& parser, const std::filesystem::path& path, bool& success) {
         start_rule_payload hulls;
 
+        ScopedTimer timer("Ship Hulls Parsing");
+
         for (const auto& file : ListDir(path, IsFOCScript))
             detail::parse_file<grammar, start_rule_payload>(GetLexer(), file, hulls);
+        
+        bool file_success = true;
+        py_grammar p = py_grammar(parser, hulls);
+        for (const auto& file : ListDir(path, IsFOCPyScript))
+            file_success = py_parse::detail::parse_file(parser, file) && file_success;
 
-        success = true;
+        success = file_success;
         return hulls;
     }
 }
