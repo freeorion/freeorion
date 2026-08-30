@@ -199,30 +199,31 @@ void ServerApp::StartBackgroundParsing(const PythonParser& python) {
     parse::StartBackgroundParsing(python, m_species_manager);
     const auto& rdir = GetResourceDir();
 
-    if (fs::exists(rdir / "scripting/starting_unlocks/items.inf"))
+    std::error_code ec;
+    if (fs::exists(rdir / "scripting/starting_unlocks/items.inf"), ec)
         m_universe.SetInitiallyUnlockedItems(Pending::StartAsyncParsing(parse::items, rdir / "scripting/starting_unlocks/items.inf"));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/items.inf").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/starting_unlocks/items.inf");
 
-    if (fs::exists(rdir / "scripting/starting_unlocks/buildings.inf"))
+    if (fs::exists(rdir / "scripting/starting_unlocks/buildings.inf"), ec)
         m_universe.SetInitiallyUnlockedBuildings(Pending::StartAsyncParsing(parse::starting_buildings, rdir / "scripting/starting_unlocks/buildings.inf"));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/buildings.inf").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/starting_unlocks/buildings.inf");
 
-    if (fs::exists(rdir / "scripting/starting_unlocks/fleets.inf"))
+    if (fs::exists(rdir / "scripting/starting_unlocks/fleets.inf"), ec)
         m_universe.SetInitiallyUnlockedFleetPlans(Pending::StartAsyncParsing(parse::fleet_plans, rdir / "scripting/starting_unlocks/fleets.inf"));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/fleets.inf").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/starting_unlocks/fleets.inf");
 
-    if (fs::exists(rdir / "scripting/monster_fleets.inf"))
+    if (fs::exists(rdir / "scripting/monster_fleets.inf"), ec)
         m_universe.SetMonsterFleetPlans(Pending::StartAsyncParsing(parse::monster_fleet_plans, rdir / "scripting/monster_fleets.inf"));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/monster_fleets.inf").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/monster_fleets.inf");
 
-    if (fs::exists(rdir / "scripting/empire_statistics"))
+    if (fs::exists(rdir / "scripting/empire_statistics"), ec)
         m_universe.SetEmpireStats(Pending::ParseSynchronously(parse::statistics, python, rdir / "scripting/empire_statistics"));
     else {
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/empire_statistics").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/empire_statistics");
     }
 }
 
@@ -949,26 +950,30 @@ namespace {
     /** Check that \p path is a file or directory in the server save
     directory. */
     bool IsInServerSaveDir(const fs::path& path) {
-        if (!fs::exists(path))
+        std::error_code ec;
+        if (!fs::exists(path, ec))
             return false;
 
         return IsInDir(GetServerSaveDir(),
-                       (fs::is_regular_file(path) ? path.parent_path() : path));
+                       (fs::is_regular_file(path, ec) ? path.parent_path() : path));
     }
+    bool IsInServerSaveDir(auto) = delete;
 
     /// Generates information on the subdirectories of \p directory
     std::vector<std::string> ListSaveSubdirectories(const fs::path& directory) {
         std::vector<std::string> list;
-        if (!fs::is_directory(directory))
+        std::error_code ec;
+        if (!fs::is_directory(directory, ec))
             return list;
 
-        auto server_dir_str = PathToString(fs::canonical(GetServerSaveDir()));
+        auto server_dir_str = PathToString(fs::canonical(GetServerSaveDir(), ec));
 
         // Adds \p subdir to the list
         auto add_to_list = [&list, &server_dir_str](const fs::path& subdir) {
-            auto subdir_str = PathToString(fs::canonical(subdir));
+            std::error_code ec;
+            auto subdir_str = PathToString(fs::canonical(subdir, ec));
             auto rel_path = subdir_str.substr(server_dir_str.length()); // .erase(0, server_dir_str.length()) might avoid an allocation, but I suppose this is safer...
-            TraceLogger() << "Added relative path " << rel_path << " in " << subdir
+            TraceLogger() << "Added relative path " << rel_path << " in " << PathToString(subdir)
                           << " to save preview directories";
             list.push_back(std::move(rel_path));
         };
@@ -980,12 +985,13 @@ namespace {
 
         // Add all directories to list
         fs::directory_iterator end;
-        for (fs::directory_iterator it(fs::canonical(directory)); it != end; ++it) {
-            if (fs::is_directory(it->path()) && IsInServerSaveDir(it->path()))
+        for (fs::directory_iterator it(fs::canonical(directory, ec)); it != end; ++it) {
+            if (fs::is_directory(it->path(), ec) && IsInServerSaveDir(it->path()))
                 add_to_list(it->path());
         }
         return list;
     }
+    void ListSaveSubdirectories(auto) = delete;
 }
 
 void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection) {

@@ -116,6 +116,9 @@ void CopyInitialResourceAndroid(const std::string& rel_path) {
 #endif
 
 #if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU)
+    static_assert(
+# !defined(_WIN32)
+    );
     //! Copy directory from to directory to only to a depth of safe_depth
     void copy_directory_safe(fs::path from, fs::path to, int safe_depth)
     {
@@ -126,7 +129,8 @@ void CopyInitialResourceAndroid(const std::string& rel_path) {
         fs::directory_iterator it(from);
         while (it != fs::directory_iterator()) {
             const fs::path p = *it++;
-            if (fs::is_directory(p)) {
+            std::error_code ec;
+            if (fs::is_directory(p, ec)) {
                 copy_directory_safe(p, to / p.filename(), safe_depth - 1);
             } else {
                 fs::copy(p, to / p.filename());
@@ -143,11 +147,12 @@ void CopyInitialResourceAndroid(const std::string& rel_path) {
     //! It also updates the data dir in the config.xml and persisten_config.xml files.
     void MigrateOldConfigDirsToXDGLocation()
     {
-        const fs::path old_path = fs::path(getenv("HOME")) / ".freeorion";
+        const fs::path old_path = FilenameToPath(getenv("HOME")) / ".freeorion";
         const fs::path config_path = GetUserConfigDir();
         const fs::path data_path = GetUserDataDir();
 
-        bool dont_migrate = !exists(old_path) || exists(config_path) || exists(data_path);
+        std::error_code ec;
+        bool dont_migrate = !exists(old_path, ec) || exists(config_path, ec) || exists(data_path, ec);
         if (dont_migrate)
             return;
 
@@ -161,15 +166,15 @@ void CopyInitialResourceAndroid(const std::string& rel_path) {
             << "If your save.path option in persistent_config.xml was ~/.config, then you need to update it.\n";
 
         try {
-            fs::create_directories(config_path);
+            fs::create_directories(config_path); // allow throw
             fs::create_directories(data_path);
 
             const fs::path old_config_file = old_path / "config.xml";
             const fs::path old_persistent_file = old_path / "persistent_config.xml";
 
-            if (exists(old_config_file))
+            if (exists(old_config_file, ec))
                 fs::copy(old_config_file, config_path / old_config_file.filename());
-            if (exists(old_persistent_file))
+            if (exists(old_persistent_file, ec))
                 fs::copy(old_persistent_file, config_path / old_persistent_file.filename());
 
             fs::directory_iterator it(old_path);
@@ -178,7 +183,7 @@ void CopyInitialResourceAndroid(const std::string& rel_path) {
                 if (p == old_config_file || p == old_persistent_file)
                     continue;
 
-                if (fs::is_directory(p)) {
+                if (fs::is_directory(p, ec)) {
                     int arbitrary_safe_depth = 6;
                     copy_directory_safe(p, data_path / p.filename(), arbitrary_safe_depth);
                 } else {
@@ -188,7 +193,7 @@ void CopyInitialResourceAndroid(const std::string& rel_path) {
 
             //Start update of save.path in config file and complete it in CompleteXDGMigration()
             fs::path sentinel = GetUserDataDir() / "MIGRATION_TO_XDG_IN_PROGRESS";
-            if (!exists(sentinel)) {
+            if (!exists(sentinel, ec)) {
                 std::ofstream touchfile(sentinel);
                 touchfile << " ";
             }
@@ -265,9 +270,10 @@ auto PathTypeStrings() noexcept -> const std::array<std::string_view, NUM_PATH_T
 
 void InitBinDir(std::string const& argv0)
 {
+    std::error_code ec;
 #if defined(FREEORION_WIN32)
     try {
-        fs::path binary_file = fs::absolute(FilenameToPath(argv0));
+        fs::path binary_file = fs::absolute(FilenameToPath(argv0), ec);
         bin_dir = binary_file.parent_path();
     } catch (const fs::filesystem_error &) {
         bin_dir = initial_path;
@@ -314,21 +320,21 @@ void InitBinDir(std::string const& argv0)
 
         if (!problem) {
             buf[sizeof(buf) - 1] = '\0';              // to be safe, else initializing an std::string with a non-null-terminated string could read invalid data outside the buffer range
-            std::string path_text(buf);
-
-            fs::path binary_file = fs::absolute(fs::path(path_text));
+            const std::string path_text(buf);
+            const fs::path binary_file = fs::absolute(fs::path(path_text), ec);
             bin_dir = binary_file.parent_path();
 
             // check that a "freeoriond" file (hopefully the freeorion server binary) exists in the found directory
-            fs::path p(bin_dir);
-            p /= "freeoriond";
-            if (!exists(p))
+            if (!exists(bin_dir / "freeoriond", ec))
                 problem = true;
         }
-
     } catch (...) {
         problem = true;
     }
+
+    static_assert(
+#!defined(_WIN32)
+    ); // various path manipulations in this code that could have issues in Windows with UTF-16 path encoding
 
     if (problem) {
         // failed trying to parse the call path, so try hard-coded standard location...
@@ -337,7 +343,7 @@ void InitBinDir(std::string const& argv0)
         std::free(dir_name);
 
         // if the path does not exist, fall back to the working directory
-        if (!exists(p)) {
+        if (!exists(p, ec)) {
             bin_dir = initial_path;
         } else {
             bin_dir = p;
@@ -352,6 +358,7 @@ void InitDirs(std::string const& argv0, bool test)
 {
     if (g_initialized)
         return;
+    std::error_code ec;
 
 #if defined(FREEORION_MACOSX)
     fs::path bundle_path;
@@ -401,12 +408,12 @@ void InitDirs(std::string const& argv0, bool test)
     s_user_dir      =   fs::path(getenv("HOME")) / "Library" / "Application Support" / "FreeOrion";
 
     fs::path p = s_user_dir;
-    if (!exists(p))
-        fs::create_directories(p);
+    if (!exists(p, ec))
+        fs::create_directories(p, ec);
 
     p /= "save";
-    if (!exists(p))
-        fs::create_directories(p);
+    if (!exists(p, ec))
+        fs::create_directories(p, ec);
 
     // Intentionally do not create the server save dir.
     // The server save dir is publically accessible and should not be
@@ -417,23 +424,23 @@ void InitDirs(std::string const& argv0, bool test)
     MigrateOldConfigDirsToXDGLocation();
 
     fs::path cp = GetUserConfigDir();
-    if (!exists(cp)) {
-        fs::create_directories(cp);
+    if (!exists(cp, ec)) {
+        fs::create_directories(cp, ec);
     }
 
     fs::path ca = GetUserCacheDir();
-    if (!exists(ca)) {
-        fs::create_directories(ca);
+    if (!exists(ca, ec)) {
+        fs::create_directories(ca, ec);
     }
 
     fs::path p = GetUserDataDir();
-    if (!exists(p)) {
-        fs::create_directories(p);
+    if (!exists(p, ec)) {
+        fs::create_directories(p, ec);
     }
 
     p /= "save";
-    if (!exists(p)) {
-        fs::create_directories(p);
+    if (!exists(p, ec)) {
+        fs::create_directories(p, ec);
     }
 
     // Intentionally do not create the server save dir.
@@ -443,12 +450,12 @@ void InitDirs(std::string const& argv0, bool test)
     InitBinDir(argv0);
 #elif defined(FREEORION_WIN32)
     fs::path local_dir = GetUserConfigDir();
-    if (!exists(local_dir))
-        fs::create_directories(local_dir);
+    if (!exists(local_dir, ec))
+        fs::create_directories(local_dir, ec);
 
     fs::path p(GetSaveDir());
-    if (!exists(p))
-        fs::create_directories(p);
+    if (!exists(p, ec))
+        fs::create_directories(p, ec);
 
     // Intentionally do not create the server save dir.
     // The server save dir is publically accessible and should not be
@@ -568,7 +575,8 @@ auto GetRootDataDir() -> fs::path const
     std::free(dir_name);
     p /= "freeorion";
     // if the path does not exist, we fall back to the working directory
-    if (!exists(p)) {
+    std::error_code ec;
+    if (!exists(p, ec)) {
         return initial_path;
     } else {
         return p;
@@ -650,13 +658,14 @@ std::string GetAndroidLang()
 void CompleteXDGMigration()
 {
     fs::path sentinel = GetUserDataDir() / "MIGRATION_TO_XDG_IN_PROGRESS";
-    if (exists(sentinel)) {
-        fs::remove(sentinel);
+    std::error_code ec;
+    if (exists(sentinel, ec)) {
+        fs::remove(sentinel, ec);
         // Update data dir in config file
         const std::string options_save_dir = GetOptionsDB().Get<std::string>("save.path");
-        const fs::path old_path = fs::path(getenv("HOME")) / ".freeorion";
-        if (fs::path(options_save_dir) == old_path)
-            GetOptionsDB().Set("save.path", GetUserDataDir().string());
+        const fs::path old_path = FilenameToPath(getenv("HOME")) / ".freeorion";
+        if (FilenameToPath(options_save_dir) == old_path)
+            GetOptionsDB().Set("save.path", PathToString(GetUserDataDir())); // TODO: pass path when save.path type is changed...
     }
 }
 
@@ -670,7 +679,8 @@ namespace {
         // if resource dir option has been set, use specified location. otherwise,
         // use default location
         res_dir = GetOptionsDB().Get<fs::path>("resource.path");
-        if (!fs::exists(res_dir) || !fs::is_directory(res_dir))
+        std::error_code ec;
+        if (!fs::exists(res_dir, ec) || !fs::is_directory(res_dir, ec))
             res_dir = GetOptionsDB().GetDefault<fs::path>("resource.path");
         DebugLogger() << "Refreshed ResDir";
     }
@@ -683,7 +693,8 @@ auto GetResourceDir() -> fs::path const
         [[unlikely]]
         init = false;
         res_dir = GetOptionsDB().Get<fs::path>("resource.path");
-        if (!fs::exists(res_dir) || !fs::is_directory(res_dir))
+        std::error_code ec;
+        if (!fs::exists(res_dir, ec) || !fs::is_directory(res_dir, ec))
             res_dir = GetOptionsDB().GetDefault<fs::path>("resource.path");
         GetOptionsDB().OptionChangedSignal("resource.path").connect(&RefreshResDir);
         TraceLogger() << "Initialized ResDir and connected change signal";
@@ -723,30 +734,10 @@ auto GetServerSaveDir() -> fs::path const
     return FilenameToPath(options_save_dir);
 }
 
-auto RelativePath(fs::path const& from, fs::path const& to) -> fs::path
-{
-    fs::path retval;
-    fs::path from_abs = fs::absolute(from);
-    fs::path to_abs = fs::absolute(to);
-    auto from_it = from_abs.begin();
-    auto end_from_it = from_abs.end();
-    auto to_it = to_abs.begin();
-    auto end_to_it = to_abs.end();
-    while (from_it != end_from_it && to_it != end_to_it && *from_it == *to_it) {
-        ++from_it;
-        ++to_it;
-    }
-    for (; from_it != end_from_it; ++from_it)
-        retval /= "..";
-    for (; to_it != end_to_it; ++to_it)
-        retval /= *to_it;
-    return retval;
-}
-
-auto FilenameToPath(std::string const& path_str) -> fs::path
+auto FilenameToPath(std::string_view path_str) -> fs::path
 {
 #if defined(FREEORION_WIN32)
-    // convert UTF-8 directory string to UTF-16
+    // convert UTF-8 string to UTF-16
     int utf16_sz = MultiByteToWideChar(CP_UTF8, 0, path_str.data(), path_str.length(), NULL, 0);
     std::wstring utf16_string(utf16_sz, 0);
     if (utf16_sz > 0)
@@ -772,7 +763,7 @@ auto PathToString(fs::path const& path) -> std::string
                             utf8_string.data(), utf8_sz, NULL, NULL);
     return utf8_string;
 #else
-    return path.string();
+    return path.generic_string();
 #endif
 }
 
@@ -782,7 +773,7 @@ auto FilenameTimestamp() -> std::string
     std::time_t now = std::time(nullptr);
     std::tm local_time;
     localtime_r(&now, &local_time);
-    char buffer[20];
+    char buffer[20] = {0};
     std::strftime(buffer, sizeof(buffer), "%Y%m%d_%H%M%S", &local_time);
     std::string retval(buffer);
 #else
@@ -873,10 +864,11 @@ auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predica
 
 #else
     bool is_rel = path.is_relative();
-    if (!is_rel && (fs::is_empty(path) || !fs::is_directory(path))) {
+    std::error_code ec;
+    if (!is_rel && (fs::is_empty(path, ec) || !fs::is_directory(path, ec))) {
         DebugLogger() << "ListDir: File " << PathToString(path) << " was not included as it is empty or not a directory";
     } else {
-        const fs::path& default_path = is_rel ? GetResourceDir() / path : path;
+        const fs::path default_path = is_rel ? GetResourceDir() / path : path;
 
         for (fs::recursive_directory_iterator dir_it(default_path);
              dir_it != fs::recursive_directory_iterator(); ++dir_it)
@@ -890,24 +882,26 @@ auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predica
 #endif
 
     if (retval.empty())
-        DebugLogger() << "ListDir: No paths found for " << path.string();
+        DebugLogger() << "ListDir: No paths found for " << PathToString(path);
 
     return retval;
 }
 
 auto IsInDir(fs::path const& dir, fs::path const& test_dir) -> bool
 {
-    if (!fs::exists(dir) || !fs::is_directory(dir))
+    std::error_code ec;
+
+    if (!fs::exists(dir, ec) || !fs::is_directory(dir, ec))
         return false;
 
-    if (fs::exists(test_dir) && !fs::is_directory(test_dir))
+    if (fs::exists(test_dir, ec) && !fs::is_directory(test_dir, ec))
         return false;
 
     // Resolve any symbolic links, dots or dot-dots
-    const auto canon_dir = fs::canonical(dir);
+    const auto canon_dir = fs::canonical(dir, ec);
     // Don't resolve path if directory doesn't exist
     // TODO: Change to fs::weakly_canonical after bump boost version above 1.60
-    const auto canon_path = fs::exists(test_dir) ? fs::canonical(test_dir) : test_dir;
+    const auto canon_path = fs::exists(test_dir, ec) ? fs::canonical(test_dir, ec) : test_dir;
 
     // Paths shorter than dir are not in dir
     auto dir_length = std::distance(canon_dir.begin(), canon_dir.end());
@@ -964,14 +958,9 @@ auto IsExistingFile(const fs::path& path) -> bool
     AAsset_close(asset);
     return asset_length > 0;
 #else
-    try {
-        auto stat = fs::status(path);
-        return fs::exists(stat) && fs::is_regular_file(stat) && (fs::file_size(path) > 0);
-    } catch(fs::filesystem_error& ec) {
-        ErrorLogger() << "Filesystem error during stat of " << PathToString(path) << " : " << ec.what();
-    }
-
-    return false;
+    std::error_code ec;
+    const auto stat = fs::status(path, ec);
+    return fs::exists(stat) && fs::is_regular_file(stat) && (fs::file_size(path, ec) > 0);
 #endif
 }
 
@@ -1011,7 +1000,8 @@ auto IsExistingDir(std::filesystem::path const& path) -> bool
 
     return length > 0;
 #else
-    return fs::exists(path) && fs::is_directory(path);
+    std::error_code ec;
+    return fs::exists(path, ec) && fs::is_directory(path, ec);
 #endif
 }
 

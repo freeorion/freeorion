@@ -30,6 +30,7 @@ namespace {
 # endif
     }
 #endif
+    wchar_t* GetFilePath(auto) = delete; // disable implicit conversions to path
 
     auto GetLoggableString(const wchar_t* const original)
     {
@@ -53,9 +54,7 @@ namespace {
             raw_py_str = PyUnicode_FromWideChar(filename.c_str(), filename.size());
         else
             raw_py_str = PyUnicode_FromStringAndSize(filename.c_str(), filename.size());
-        if (!raw_py_str)
-            return py::object();
-        return py::object(py::handle<>(raw_py_str));
+        return raw_py_str ? py::object(py::handle<>(raw_py_str)) : py::object();
     }
 
     template<typename T = std::filesystem::path::value_type>
@@ -225,8 +224,7 @@ void PythonCommon::HandleErrorAlreadySet() {
     }
 
     // Matches system exit
-    if (PyErr_ExceptionMatches(m_system_exit.ptr()))
-    {
+    if (PyErr_ExceptionMatches(m_system_exit.ptr())) {
         Finalize();
         ErrorLogger() << "Python interpreter exited with SystemExit(), sys.exit(), exit, quit or some other alias.";
         return;
@@ -263,11 +261,11 @@ void PythonCommon::Finalize() {
         try {
             // According to boost.python 1.69 docs python Py_Finalize must not be called
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
-            if (m_home_dir != nullptr) {
+            if (m_home_dir) {
                 PyMem_RawFree(m_home_dir);
                 m_home_dir = nullptr;
             }
-            if (m_program_name != nullptr) {
+            if (m_program_name) {
                 PyMem_RawFree(m_program_name);
                 m_program_name = nullptr;
             }
@@ -315,12 +313,12 @@ void PythonCommon::CompileEval(const char* code, const std::filesystem::path& fi
     py::object o_result{py::handle<>(result)};
 }
 
-void PythonCommon::SetModulesDirs(const std::vector<std::filesystem::path>& modules_dirs) {
+void PythonCommon::SetModulesDirs(std::vector<std::filesystem::path> modules_dirs) {
     m_modules_dirs = modules_dirs;
-}
-
-void PythonCommon::SetModulesDirs(std::vector<std::filesystem::path>&& modules_dirs) {
-    m_modules_dirs = std::move(modules_dirs);
+    DebugLogger() << "Set Python Modules Directories (" << m_modules_dirs.size() << "):";
+    std::error_code ec;
+    for (const auto& dir : m_modules_dirs)
+        DebugLogger() << "   " << PathToString(dir) << (std::filesystem::exists(dir, ec) ? " exists" : " does not exist");
 }
 
 py::object PythonCommon::find_spec(const std::string& fullname, const py::object& path, const py::object& target) const {
@@ -410,7 +408,7 @@ py::object PythonCommon::exec_module(py::object& module) {
         std::string file_contents;
         bool read_success = ReadFile(module_path, file_contents);
         if (!read_success) {
-            ErrorLogger() << "Unable to open data file " << module_path.string();
+            ErrorLogger() << "Unable to open data file " << PathToString(module_path);
             throw import_error("Unreadable module " + fullname);
         }
 
@@ -430,18 +428,18 @@ py::object PythonCommon::exec_module(py::object& module) {
                     globals["__package__"] = spec.parent;
                 }
             } else {
-                WarnLogger() << "Wrong spec in module " << module_path.string();
+                WarnLogger() << "Wrong spec in module " << PathToString(module_path);
             }
         } else {
-            WarnLogger() << "No spec in module " << module_path.string();
+            WarnLogger() << "No spec in module " << PathToString(module_path);
         }
 
         // store globals content in module namespace
         // it is required so functions in the same module will see each other
         // and still import will work
-        DebugLogger() << "Executing module file " << module_path.string();
+        DebugLogger() << "Executing module file " << PathToString(module_path);
         try {
-            CompileEval(file_contents.c_str(), module_path.native(), globals);
+            CompileEval(file_contents.c_str(), module_path, globals);
         } catch (const boost::python::error_already_set&) {
             HandleErrorAlreadySet();
             ErrorLogger() << "Unable to parse module file " << PathToString(module_path);

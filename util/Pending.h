@@ -11,6 +11,9 @@
 #include <optional>
 #include <string>
 
+std::string PathToString(const std::filesystem::path& path);
+std::string PathToString(auto) = delete; // disable implicit conversions
+
 /** namespace Pending collection classes and functions used for
     asynchronously parsing universe types, statistics etc.*/
 namespace Pending {
@@ -19,8 +22,7 @@ namespace Pending {
     struct FO_COMMON_API Pending {
         using result_type = T;
 
-        Pending(std::optional<std::future<T>>&& pending_,
-                const std::string& name_) :
+        Pending(std::optional<std::future<T>>&& pending_, const std::string& name_) :
             pending(std::move(pending_)),
             filename(name_)
         {}
@@ -47,6 +49,8 @@ namespace Pending {
 
     template <typename T>
     [[nodiscard]] std::optional<T> WaitForPendingUnlocked(Pending<T>&& pending, bool do_not_care_about_result = false) {
+        static_assert(std::is_same_v<decltype(pending.filename), std::string>);
+
         std::future_status status = std::future_status::deferred;
         do {
             if (!pending.pending->valid())
@@ -124,12 +128,11 @@ namespace Pending {
         -> Pending<decltype(parser(path))>
     {
         return Pending<decltype(parser(path))>(
-            std::async(std::launch::async, parser, path), path.filename().string());
+            std::async(std::launch::async, parser, path), PathToString(path.filename()));
     }
 
     /** Return a Pending<T> constructed with \p parser, \p arg1, and \p path*/
-    template <typename Func, typename Arg1>
-    [[nodiscard]] auto ParseSynchronously(const Func& parser, const Arg1& arg1, const std::filesystem::path& path)
+    [[nodiscard]] auto ParseSynchronously(const auto& parser, const auto& arg1, const std::filesystem::path& path)
         -> Pending<decltype(parser(arg1, path, std::declval<bool&>()))>
     {
         bool success = true;
@@ -139,8 +142,9 @@ namespace Pending {
             promise.set_value(std::move(result));
         else
             promise.set_exception(std::make_exception_ptr(std::runtime_error(path.string())));
-        return Pending<decltype(parser(arg1, path, std::declval<bool&>()))>(promise.get_future(), path.filename().string());
+        return Pending<decltype(parser(arg1, path, std::declval<bool&>()))>(promise.get_future(), PathToString(path.filename()));
     }
+    void ParseSynchronously(auto, auto, auto) = delete; // disable implicit conversions
 
     /** Return a Pending<T> constructed with \p parser and \p path which
       * executes the parser in the calling thread and stores the result
@@ -151,8 +155,9 @@ namespace Pending {
     {
         auto retval = std::async(std::launch::deferred, parser, path);
         retval.wait();
-        return Pending<decltype(parser(path))>(std::move(retval), path.filename().string());
+        return Pending<decltype(parser(path))>(std::move(retval), PathToString(path.filename()));
     }
+    void ParseSynchronously(auto, auto) = delete; // disable implicit conversions
 }
 
 

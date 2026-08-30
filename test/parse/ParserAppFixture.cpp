@@ -22,19 +22,21 @@ ParserAppFixture::ParserAppFixture(bool test_scripting) :
 #endif
     GetOptionsDB().Set("resource.path", resource_dir);
 
+    std::error_code ec;
+
     if (test_scripting) {
 #if defined(FREEORION_MACOSX)
         m_scripting_dir = GetRootDataDir() / "test-scripting";
 #else
-        m_scripting_dir = fs::absolute(GetBinDir() / "test-scripting");
+        m_scripting_dir = fs::absolute(GetBinDir() / "test-scripting", ec);
 #endif
     } else {
         m_scripting_dir = resource_dir / "scripting";
     }
     BOOST_TEST_MESSAGE("Test scripting directory: " << m_scripting_dir);
     BOOST_REQUIRE(m_scripting_dir.is_absolute());
-    BOOST_REQUIRE(fs::exists(m_scripting_dir));
-    BOOST_REQUIRE(fs::is_directory(m_scripting_dir));
+    BOOST_REQUIRE(fs::exists(m_scripting_dir, ec));
+    BOOST_REQUIRE(fs::is_directory(m_scripting_dir, ec));
 
     m_python.SetModulesDirs({m_scripting_dir});
 }

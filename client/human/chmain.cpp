@@ -196,22 +196,24 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
 
         CompleteXDGMigration();
 
+        std::error_code ec;
+
         // Handle the case where the resource.path does not exist anymore
         // gracefully by resetting it to the standard path into the
         // application bundle.  This may happen if a previous installed
         // version of FreeOrion was residing in a different directory.
-        if (!std::filesystem::exists(GetResourceDir()) ||
-            !std::filesystem::exists(GetResourceDir() / "credits.xml") ||
-            !std::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png"))
+        if (!std::filesystem::exists(GetResourceDir(), ec) ||
+            !std::filesystem::exists(GetResourceDir() / "credits.xml", ec) ||
+            !std::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png", ec))
         {
             DebugLogger() << "Resources directory from config.xml missing or does not contain expected files. Resetting to default.";
 
             db.Set<std::filesystem::path>("resource.path", {});
 
             // double-check that resetting actually fixed things...
-            if (!std::filesystem::exists(GetResourceDir()) ||
-                !std::filesystem::exists(GetResourceDir() / "credits.xml") ||
-                !std::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png"))
+            if (!std::filesystem::exists(GetResourceDir(), ec) ||
+                !std::filesystem::exists(GetResourceDir() / "credits.xml", ec) ||
+                !std::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png", ec))
             {
                 DebugLogger() << "Default Resources directory missing or does not contain expected files. Cannot start game.";
                 throw std::runtime_error("Unable to load game resources at default location: " +

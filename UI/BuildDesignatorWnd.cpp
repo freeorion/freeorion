@@ -192,7 +192,7 @@ namespace {
             }
             default:
                 ErrorLogger() << "ProductionItemPanel::Init got invalid item type";
-                texture = ui.GetTexture("");
+                texture = ui.GetMissingTexture();
             }
 
             float local_pp_output = 0.0f;
