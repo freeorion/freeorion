@@ -1004,10 +1004,10 @@ int Variable<int>::Eval(const ScriptingContext& context) const
             return IApp::GetApp()->SelectedSystemID();
         else if (m_property == Property::SelectedPlanetID)
             return IApp::GetApp()->SelectedPlanetID();
+        else if (m_property == Property::SelectedBuildingID)
+            return IApp::GetApp()->SelectedBuildingID();
         else if (m_property == Property::SelectedFleetID)
             return IApp::GetApp()->SelectedFleetID();
-        else if (m_property == Property::SelectedPlanetID)
-            return IApp::GetApp()->SelectedPlanetID();
         else if (m_property == Property::ThisClientEmpireID)
             return IApp::GetApp()->EmpireID();
 
