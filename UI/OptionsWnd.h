@@ -95,8 +95,6 @@ private:
                                    std::function<bool (const std::string&)> string_validator = nullptr);
     void                DirectoryOption(GG::ListBox* page, int indentation_level, std::string option_name,
                                         std::string text, std::filesystem::path path, bool disabled = false);
-    void                DirectoryOption2(GG::ListBox* page, int indentation_level, std::string option_name,
-                                        std::string text, std::filesystem::path path, bool disabled = false);
     void                SoundFileOption(GG::ListBox* page, int indentation_level,
                                         std::string option_name, std::string text);
     void                ColorOption(GG::ListBox* page, int indentation_level,
