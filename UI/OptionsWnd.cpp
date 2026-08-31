@@ -1195,6 +1195,31 @@ void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, std::strin
                    std::move(filters), std::move(string_validator), false, false, false);
 }
 
+void OptionsWnd::FileOption2(GG::ListBox* page, int indentation_level, std::string option_name,
+                            std::string text, std::filesystem::path path,
+                            std::function<bool (const std::string&)> string_validator)
+{
+    FileOption2(page, indentation_level, std::move(option_name), std::move(text), std::move(path),
+               std::vector<std::pair<std::string, std::string>>(), std::move(string_validator)); }
+
+void OptionsWnd::FileOption2(GG::ListBox* page, int indentation_level, std::string option_name,
+                            std::string text, std::filesystem::path path,
+                            std::pair<std::string, std::string> filter,
+                            std::function<bool (const std::string&)> string_validator)
+{
+    FileOption2(page, indentation_level, std::move(option_name), std::move(text), std::move(path),
+               std::vector<std::pair<std::string, std::string>>(1, filter), std::move(string_validator));
+}
+
+void OptionsWnd::FileOption2(GG::ListBox* page, int indentation_level, std::string option_name,
+                            std::string text, std::filesystem::path path,
+                            std::vector<std::pair<std::string, std::string>> filters,
+                            std::function<bool (const std::string&)> string_validator)
+{
+    FileOptionImpl2(page, indentation_level, std::move(option_name), std::move(text), std::move(path),
+                   std::move(filters), std::move(string_validator), false, false, false);
+}
+
 void OptionsWnd::SoundFileOption(GG::ListBox* page, int indentation_level, std::string option_name,
                                  std::string text)
 {
