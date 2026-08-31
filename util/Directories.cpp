@@ -717,10 +717,10 @@ auto GetServerSaveDir() -> fs::path const
 {
     // if server save dir option has been set, use specified location.  otherwise,
     // use default location
-    std::string options_save_dir = GetOptionsDB().Get<std::string>("save.server.path");
+    fs::path options_save_dir = GetOptionsDB().Get<fs::path>("save.server.path");
     if (options_save_dir.empty())
-        options_save_dir = GetOptionsDB().GetDefault<std::string>("save.server.path");
-    return FilenameToPath(options_save_dir);
+        options_save_dir = GetOptionsDB().GetDefault<fs::path>("save.server.path");
+    return options_save_dir;
 }
 
 auto RelativePath(fs::path const& from, fs::path const& to) -> fs::path
