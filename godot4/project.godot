@@ -16,15 +16,16 @@ run/main_scene="uid://badnwt3uvk5lb"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="uid://cj7u2a5f57ueg"
 
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/gut/plugin.cfg")
-
 [autoload]
 
 GlobalFreeOrionNode="*res://FreeOrionNode.tscn"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gut/plugin.cfg")
 
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
