@@ -331,6 +331,22 @@ void PythonCommon::CompileEval(const char* code, const std::filesystem::path& fi
     py::object o_result{py::handle<>(result)};
 }
 
+py::object PythonCommon::CompileEvalExpression(const char* expression, const py::dict& globals) {
+    py::object o_filename_str = py::str("<string>");
+    PyObject* compiled_code = Py_CompileStringObject(expression, o_filename_str.ptr(), Py_eval_input, nullptr, 2);
+    if (!compiled_code) {
+        ErrorLogger() << "Failed to compile expression: " << expression;
+        py::throw_error_already_set();
+    }
+    py::object o_code{py::handle<>(compiled_code)};
+    PyObject* result = PyEval_EvalCode(o_code.ptr(), globals.ptr(), globals.ptr());
+    if (!result) {
+        ErrorLogger() << "Failed to eval expression: " << expression;
+        py::throw_error_already_set();
+    }
+    return py::object{py::handle<>(result)};
+}
+
 void PythonCommon::SetModulesDirs(const std::vector<std::filesystem::path>& modules_dirs) {
     m_modules_dirs = modules_dirs;
 }
