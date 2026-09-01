@@ -46,7 +46,7 @@ public:
     void FinalizeModuleLoader();  // removes module loader
 
     // Compiles and evaluates \a code with defined \a filename. Populates \a globals
-    static void CompileEval(const char* code, const std::filesystem::path& filename, const boost::python::object& globals);
+    static void CompileEval(const char* code, const std::filesystem::path& filename, const boost::python::dict& globals);
 
     // Compiles and evaluates \a expression. Populates \a globals and returns result.
     static boost::python::object CompileEvalExpression(const char* expression, const boost::python::dict& globals);

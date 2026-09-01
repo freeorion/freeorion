@@ -311,7 +311,7 @@ void PythonCommon::FinalizeModuleLoader() {
     }
 }
 
-void PythonCommon::CompileEval(const char* code, const std::filesystem::path& filename, const py::object& globals) {
+void PythonCommon::CompileEval(const char* code, const std::filesystem::path& filename, const py::dict& globals) {
     py::object o_filename_str = path_to_pyobject(filename.native());
     if (o_filename_str.is_none()) {
         ErrorLogger() << "Failed to convert path to str: " << PathToString(filename);
