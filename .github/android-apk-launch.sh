@@ -3,11 +3,32 @@
 echo "::group::Installing APK"
 adb devices
 adb install freeorion.apk
+sleep 1
 adb logcat -c
 echo "::endgroup::"
 
+echo "::group::Search APK lanucher"
+LAUNCHER=""
+for i in $(seq 1 30); do
+  LAUNCHER=$(adb shell cmd package resolve-activity --brief --user 0 -a android.intent.action.MAIN -c android.intent.category.LAUNCHER org.godotengine.freeoriongodotclient 2>/dev/null | tail -1)
+  case "$LAUNCHER" in
+    */*) break ;;
+    *) LAUNCHER="" ;;
+  esac
+  if [ -z "$LAUNCHER" ]; then
+    echo "Waiting for APK launcher to be resolvable (attempt $i / 30)..."
+    sleep 2
+  fi
+done
+if [ -z "$LAUNCHER" ]; then
+  echo "::error title=Launch::APK launcher could not be resolved"
+  echo "::endgroup::"
+  exit 1
+fi
+echo "::endgroup::"
+
 echo "::group::Starting APK"
-adb shell am start -W -n org.godotengine.freeoriongodotclient/com.godot.game.GodotApp
+adb shell am start -W -n "$LAUNCHER"
 echo "::endgroup::"
 
 sleep 180
