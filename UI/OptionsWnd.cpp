@@ -403,7 +403,7 @@ void OptionsWnd::CompleteConstruction() {
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_VOLUME_AND_MUSIC"));
     MusicVolumeOption(current_page, 0, m_sound_feedback);
     VolumeOption(current_page, 0, "audio.effects.enabled", "audio.effects.volume", UserString("OPTIONS_UI_SOUNDS"), UI_sound_enabled, m_sound_feedback);
-    FileOption(current_page, 0, "audio.music.path", UserString("OPTIONS_BACKGROUND_MUSIC"), ClientUI::SoundDir(),
+    FileOption2(current_page, 0, "audio.music.path", UserString("OPTIONS_BACKGROUND_MUSIC"), ClientUI::SoundDir(),
                {UserString("OPTIONS_MUSIC_FILE"), "*" + MUSIC_FILE_SUFFIX},
                ValidMusicFile);
 
@@ -647,8 +647,8 @@ void OptionsWnd::CompleteConstruction() {
     current_page = CreatePage(UserString("OPTIONS_PAGE_DIRECTORIES"));
     /** GetRootDataDir() returns the default browse path when modifying this directory option.
      *  The actual default directory (before modifying) is gotten from the specified option name "resource.path" */
-    DirectoryOption2(current_page, 0, "resource.path",                   UserString("OPTIONS_FOLDER_SETTINGS"),      GetRootDataDir(), is_game_running);
-    DirectoryOption2(current_page, 0, "save.path",                       UserString("OPTIONS_FOLDER_SAVE"),          GetUserDataDir());
+    DirectoryOption(current_page, 0, "resource.path",                   UserString("OPTIONS_FOLDER_SETTINGS"),      GetRootDataDir(), is_game_running);
+    DirectoryOption(current_page, 0, "save.path",                       UserString("OPTIONS_FOLDER_SAVE"),          GetUserDataDir());
     DirectoryOption(current_page, 0, "save.server.path",                UserString("OPTIONS_SERVER_FOLDER_SAVE"),   GetUserDataDir());
     PathDisplay(    current_page, 0,                                    UserString("OPTIONS_FOLDER_CONFIG_LOG"),    GetUserConfigDir());
     FileOption(     current_page, 0, "misc.server-local-binary.path",   UserString("OPTIONS_SERVER_EXE"),           GetBinDir(),
@@ -1195,6 +1195,31 @@ void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, std::strin
                    std::move(filters), std::move(string_validator), false, false, false);
 }
 
+void OptionsWnd::FileOption2(GG::ListBox* page, int indentation_level, std::string option_name,
+                            std::string text, std::filesystem::path path,
+                            std::function<bool (const std::string&)> string_validator)
+{
+    FileOption2(page, indentation_level, std::move(option_name), std::move(text), std::move(path),
+               std::vector<std::pair<std::string, std::string>>(), std::move(string_validator)); }
+
+void OptionsWnd::FileOption2(GG::ListBox* page, int indentation_level, std::string option_name,
+                            std::string text, std::filesystem::path path,
+                            std::pair<std::string, std::string> filter,
+                            std::function<bool (const std::string&)> string_validator)
+{
+    FileOption2(page, indentation_level, std::move(option_name), std::move(text), std::move(path),
+               std::vector<std::pair<std::string, std::string>>(1, filter), std::move(string_validator));
+}
+
+void OptionsWnd::FileOption2(GG::ListBox* page, int indentation_level, std::string option_name,
+                            std::string text, std::filesystem::path path,
+                            std::vector<std::pair<std::string, std::string>> filters,
+                            std::function<bool (const std::string&)> string_validator)
+{
+    FileOptionImpl2(page, indentation_level, std::move(option_name), std::move(text), std::move(path),
+                   std::move(filters), std::move(string_validator), false, false, false);
+}
+
 void OptionsWnd::SoundFileOption(GG::ListBox* page, int indentation_level, std::string option_name,
                                  std::string text)
 {
@@ -1203,14 +1228,6 @@ void OptionsWnd::SoundFileOption(GG::ListBox* page, int indentation_level, std::
 }
 
 void OptionsWnd::DirectoryOption(GG::ListBox* page, int indentation_level, std::string option_name,
-                                 std::string text, fs::path path, bool disabled)
-{
-    FileOptionImpl(page, indentation_level, std::move(option_name), std::move(text),
-                   std::move(path), std::vector<std::pair<std::string, std::string>>(),
-                   ValidDirectory, true, false, disabled);
-}
-
-void OptionsWnd::DirectoryOption2(GG::ListBox* page, int indentation_level, std::string option_name,
                                  std::string text, fs::path path, bool disabled)
 {
     FileOptionImpl2(page, indentation_level, std::move(option_name), std::move(text),
@@ -1461,7 +1478,7 @@ void OptionsWnd::SoundOptionsFeedback::MusicClicked(bool checked) {
         try {
             Sound::GetSound().Enable();
             GetOptionsDB().Set("audio.music.enabled", true);
-            Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("audio.music.path"), -1);
+            Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::filesystem::path>("audio.music.path"), -1);
         } catch (Sound::InitializationFailureException const &e) {
             SoundInitializationFailure(e);
         }

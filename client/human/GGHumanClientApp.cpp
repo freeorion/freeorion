@@ -376,7 +376,7 @@ void GGHumanClientApp::Initialize() {
             Sound::GetSound().Enable();
 
         if ((GetOptionsDB().Get<bool>("audio.music.enabled")))
-            Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("audio.music.path"), -1);
+            Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::filesystem::path>("audio.music.path"), -1);
 
         Sound::GetSound().SetMusicVolume(GetOptionsDB().Get<int>("audio.music.volume"));
         Sound::GetSound().SetUISoundsVolume(GetOptionsDB().Get<int>("audio.effects.volume"));
