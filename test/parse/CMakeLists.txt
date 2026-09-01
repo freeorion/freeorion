@@ -48,6 +48,7 @@ set(FO_TEST_PARSE
     #TestScriptParser
     TestPythonParser
     TestDefaultPythonParser
+    TestExpressionsPythonParser
 )
 
 foreach(_TEST ${FO_TEST_PARSE})
