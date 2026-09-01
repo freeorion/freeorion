@@ -2,6 +2,11 @@
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
+#ifdef FREEORION_ANDROID
+# include <jni.h>
+# include "../../util/Directories.h"
+#endif
+
 #include "FreeOrionNode.h"
 
 void initialize_freeorion_module(godot::ModuleInitializationLevel p_level) {
@@ -30,3 +35,11 @@ extern "C" GDExtensionBool GDE_EXPORT freeorion_library_init(GDExtensionInterfac
 
 	return init_obj.init();
 }
+
+#ifdef FREEORION_ANDROID
+// Called by org.freeorion.godot.FreeOrionPlugin#setAndroidActivity native function
+extern "C" JNIEXPORT void JNICALL
+Java_org_freeorion_godot_FreeOrionPlugin_setAndroidActivity(JNIEnv* env, jclass /*cls*/, jobject activity) {
+    SetAndroidEnvironment(env, activity);
+}
+#endif
