@@ -7,6 +7,8 @@ on:
 jobs:
   android:
     uses: ./.github/workflows/_build-android.yml
+  android-godot4:
+    uses: ./.github/workflows/_build-android-godot4.yml
   macos:
     strategy:
       matrix:
