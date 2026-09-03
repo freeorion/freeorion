@@ -35,12 +35,12 @@ jobs:
       - name: Build
         run: |
           pushd build
-          cmake --build . -- -j4
+          cmake --build . -- -j5
       - name: Upload binaries
         uses: actions/upload-artifact@v7
         with:
           name: android-binaries-godot4-${{ matrix.arch }}
-          path: godot4/bin/
+          path: godot4/bin/**/*.so
           if-no-files-found: error
           retention-days: 1
   merge-binaries:
@@ -55,3 +55,59 @@ jobs:
           pattern: android-binaries-godot4-*
           delete-merged: true
           retention-days: 1
+  export-android:
+    name: Export Android
+    runs-on: ubuntu-latest
+    needs: merge-binaries
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v6
+      - name: Download python library
+        id: download-python-lib
+        uses: suisei-cn/actions-download-file@v1
+        with:
+          url: https://github.com/freeorion/freeorion-sdk/releases/download/v19/python311.zip
+          target: ../
+      - name: Place resources
+        run: |
+          mv default/data/art godot4/assets/
+          mv default/data/fonts godot4/assets/
+          mv default/data/sound godot4/assets/
+          mv default/scripting godot4/default/
+          mv default/stringtables godot4/default/
+          mv default/python godot4/default/
+          mkdir -p godot4/default/python/lib/
+          cp ../${{ steps.download-python-lib.outputs.filename }} godot4/default/python/lib/python311.zip
+          unzip -t godot4/default/python/lib/python311.zip
+      - name: Download binaries
+        uses: actions/download-artifact@v8
+        with:
+          name: android-binaries-godot4
+          path: godot4/bin/
+      - name: Install Godot and Templates
+        run: |
+          wget --content-disposition "https://downloads.godotengine.org/?version=${{ env.GODOT_VERSION }}&flavor=stable&slug=linux.x86_64.zip&platform=linux.64"
+          wget --content-disposition "https://downloads.godotengine.org/?version=${{ env.GODOT_VERSION }}&flavor=stable&slug=export_templates.tpz&platform=templates"
+
+          unzip Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64.zip
+          sudo mv Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64 /usr/local/bin/godot
+
+          mkdir -p ~/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.stable
+          unzip Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
+          mv templates/* ~/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.stable/
+      - name: Install Android build template into project
+        run: |
+          mkdir -p godot4/android/build
+          unzip -o -q ~/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.stable/android_source.zip -d godot4/android/build
+          echo -n "" > godot4/android/build/.gdignore
+          echo -n "${{ env.GODOT_VERSION }}.stable" > godot4/android/.build_version
+          ls -la godot4/android/build
+      - name: Set up Java and Android SDK
+        uses: android-actions/setup-android@v4
+      - name: Install Android Build Tools
+        run: |
+          sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: "8.11.1"
