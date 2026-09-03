@@ -30,7 +30,7 @@ jobs:
           pip install "gdtoolkit==4.*"
       - name: Check format
         run: |
-          find godot4/ -iname "*.gd" -not -path "godot4/addons/*" | xargs gdformat -c
+          find godot4/ -iname "*.gd" -not -path "godot4/addons/gut/*" | xargs gdformat -c
       - name: Check lints
         run: |
-          find godot4/ -iname "*.gd" -not -path "godot4/addons/*" | xargs gdlint
+          find godot4/ -iname "*.gd" -not -path "godot4/addons/gut/*" | xargs gdlint
