@@ -214,7 +214,7 @@ jobs:
           disable-animations: false
           working-directory: ./
           channel: beta
-          script: bash .github/android-apk-launch.sh
+          script: bash .github/android-apk-launch.sh 3
       - name: Upload logs
         if: always()
         uses: actions/upload-artifact@v7
