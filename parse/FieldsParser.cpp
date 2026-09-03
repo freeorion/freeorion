@@ -122,7 +122,7 @@ namespace parse {
         bool file_success = true;
         py_grammar p = py_grammar(parser, field_types);
         for (const auto& file : ListDir(path, IsFOCPyScript))
-            file_success = file_success && py_parse::detail::parse_file(parser, file);
+            file_success = py_parse::detail::parse_file(parser, file) && file_success;
 
         success = file_success;
         return field_types;
