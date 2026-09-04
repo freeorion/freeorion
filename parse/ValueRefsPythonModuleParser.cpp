@@ -541,6 +541,53 @@ namespace {
             nullptr
         ));
     }
+
+    py::object insert_vif_(const PythonTypes& types, const py::object& type, const py::object& cond, const py::object& then_value, const py::object& else_value) {
+        if (type == types.type_int) {
+            auto then_ref = pyobject_to_vref_or_cast<int, double>(then_value);
+            auto else_ref = pyobject_to_vref_or_cast<int, double>(else_value);
+            const auto cond_value = boost::python::extract<value_ref_wrapper<int>>(cond);
+            if (cond_value.check()) {
+                const auto* op = dynamic_cast<const ValueRef::Operation<int>*>(cond_value().value_ref.get());
+                if (op && op->LHS() && op->RHS() && op->IsCompare()) {
+                    std::vector<std::unique_ptr<ValueRef::ValueRef<int>>> operands;
+                    operands.reserve(4);
+                    operands.push_back(ValueRef::CloneUnique(op->LHS()));
+                    operands.push_back(ValueRef::CloneUnique(op->RHS()));
+                    operands.push_back(std::move(then_ref));
+                    operands.push_back(std::move(else_ref));
+                    return boost::python::object(value_ref_wrapper<int>(
+                        std::make_shared<ValueRef::Operation<int>>(op->GetOpType(), std::move(operands))));
+                }
+            }
+            ErrorLogger() << "Vif condition must be a comparison of two int values, but got: "
+                          << boost::python::extract<std::string>(boost::python::str(cond))();
+        } else if (type == types.type_float) {
+            auto then_ref = pyobject_to_vref_or_cast<double, int>(then_value);
+            auto else_ref = pyobject_to_vref_or_cast<double, int>(else_value);
+            const auto cond_value = boost::python::extract<value_ref_wrapper<double>>(cond);
+            if (cond_value.check()) {
+                const auto* op = dynamic_cast<const ValueRef::Operation<double>*>(cond_value().value_ref.get());
+                if (op && op->LHS() && op->RHS() && op->IsCompare()) {
+                    std::vector<std::unique_ptr<ValueRef::ValueRef<double>>> operands;
+                    operands.reserve(4);
+                    operands.push_back(ValueRef::CloneUnique(op->LHS()));
+                    operands.push_back(ValueRef::CloneUnique(op->RHS()));
+                    operands.push_back(std::move(then_ref));
+                    operands.push_back(std::move(else_ref));
+                    return boost::python::object(value_ref_wrapper<double>(
+                        std::make_shared<ValueRef::Operation<double>>(op->GetOpType(), std::move(operands))));
+                }
+            }
+            ErrorLogger() << "Vif condition must be a comparison of two double values, but got: "
+                          << boost::python::extract<std::string>(boost::python::str(cond))();
+        }
+
+        ErrorLogger() << "Unsupported type for static cast: "
+                      << boost::python::extract<std::string>(boost::python::str(type))();
+
+        throw std::runtime_error(std::string("Not implemented ") + __func__);
+    }
 }
 
 BOOST_PYTHON_MODULE(_value_refs) {
@@ -736,4 +783,7 @@ BOOST_PYTHON_MODULE(_value_refs) {
     py::def("StaticCast", boost::python::make_function([types](const boost::python::object& type, const boost::python::object& value) { return insert_static_cast_(types, type, value); },
         boost::python::default_call_policies(),
         boost::mpl::vector<boost::python::object, boost::python::object, boost::python::object>()));
+    py::def("Vif", py::make_function([types](const py::object& type, const py::object& cond, const py::object& then_value, const py::object& else_value) { return insert_vif_(types, type, cond, then_value, else_value); },
+        py::default_call_policies(),
+        boost::mpl::vector<py::object, py::object, py::object, py::object, py::object>()));
 }
