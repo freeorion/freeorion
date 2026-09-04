@@ -1066,6 +1066,7 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
     [[nodiscard]] std::string Description() const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     [[nodiscard]] OpType      GetOpType() const noexcept { return this->m_op_type; }
+    [[nodiscard]] bool        IsCompare() const noexcept;
 
     [[nodiscard]] const auto* LHS() const { return m_operands.empty() ? nullptr : m_operands.front().get(); } // 1st operand (or nullptr if none exists)
     [[nodiscard]] const auto* RHS() const { return m_operands.size() < 2 ? nullptr : m_operands[1].get(); } // 2nd operand (or nullptr if no 2nd operand exists)
@@ -2925,6 +2926,20 @@ std::string Operation<T>::Description() const
 }
 
 template <typename T>
+bool Operation<T>::IsCompare() const noexcept
+{
+    switch (this->m_op_type) {
+    case OpType::COMPARE_EQUAL: [[fallthrough]];
+    case OpType::COMPARE_GREATER_THAN: [[fallthrough]];
+    case OpType::COMPARE_GREATER_THAN_OR_EQUAL: [[fallthrough]];
+    case OpType::COMPARE_LESS_THAN: [[fallthrough]];
+    case OpType::COMPARE_LESS_THAN_OR_EQUAL: [[fallthrough]];
+    case OpType::COMPARE_NOT_EQUAL: return true; break;
+    default: return false;
+    }
+}
+
+template <typename T>
 std::string Operation<T>::Dump(uint8_t ntabs) const
 {
     if (this->m_op_type == OpType::NEGATE)
@@ -2984,17 +2999,7 @@ std::string Operation<T>::Dump(uint8_t ntabs) const
     if (this->m_op_type == OpType::SIGN)
         return "sign(" + LHS()->Dump(ntabs) + ")";
 
-    bool parenthesize_compare = [this]() {
-        switch (this->m_op_type) {
-        case OpType::COMPARE_EQUAL: [[fallthrough]];
-        case OpType::COMPARE_GREATER_THAN: [[fallthrough]];
-        case OpType::COMPARE_GREATER_THAN_OR_EQUAL: [[fallthrough]];
-        case OpType::COMPARE_LESS_THAN: [[fallthrough]];
-        case OpType::COMPARE_LESS_THAN_OR_EQUAL: [[fallthrough]];
-        case OpType::COMPARE_NOT_EQUAL: return true; break;
-        default: return false;
-        }
-    }();
+    bool parenthesize_compare = IsCompare();
     bool parenthesize_lhs = false;
     bool parenthesize_rhs = false;
     if (auto lhs = dynamic_cast<const Operation<T>*>(LHS())) {
