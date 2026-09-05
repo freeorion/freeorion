@@ -245,12 +245,45 @@ namespace {
             parser.UnloadModule(module);
         }
     };
+
+    struct ship_slot_wrapper {
+        ship_slot_wrapper(ShipHull::Slot&& slot_) : slot(std::move(slot_)) {}
+        ship_slot_wrapper(const ShipHull::Slot& slot_) : slot(slot_) {}
+        const ShipHull::Slot slot;
+    };
+
+    ship_slot_wrapper py_insert_slot_(const boost::python::tuple& args,
+                                      const boost::python::dict& kw)
+    {
+        auto type = boost::python::extract<enum_wrapper<ShipSlotType>>(kw["type"])().value;
+
+        auto position = boost::python::extract<boost::python::tuple>(kw["position"])();
+        auto x = boost::python::extract<double>(position[0])();
+        auto y = boost::python::extract<double>(position[1])();
+
+        return ship_slot_wrapper(ShipHull::Slot(type, x, y));
+    }
+
+    boost::python::object py_insert_hull_(boost::python::object scope, const boost::python::tuple& args,
+                                          const boost::python::dict& kw)
+    {
+        return boost::python::object();
+    }
 }
 
 BOOST_PYTHON_MODULE(_ship_hulls) {
     boost::python::docstring_options doc_options(true, true, false);
 
     boost::python::class_<py_grammar, boost::python::bases<>, py_grammar, boost::noncopyable>("__Grammar", boost::python::no_init);
+    boost::python::class_<ship_slot_wrapper, boost::python::bases<>, ship_slot_wrapper, boost::noncopyable>("_ShipSlot", boost::python::no_init);
+
+    boost::python::def("Slot", boost::python::raw_function(py_insert_slot_));
+
+    boost::python::object current_module = boost::python::scope();
+
+    boost::python::def("Hull", boost::python::raw_function(
+        [current_module](const boost::python::tuple& args, const boost::python::dict& kw)
+        { return py_insert_hull_(current_module, args, kw); }));
 }
 
 namespace parse {
