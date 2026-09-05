@@ -245,12 +245,158 @@ namespace {
             parser.UnloadModule(module);
         }
     };
+
+    struct ship_slot_wrapper {
+        ship_slot_wrapper(ShipHull::Slot&& slot_) : slot(std::move(slot_)) {}
+        ship_slot_wrapper(const ShipHull::Slot& slot_) : slot(slot_) {}
+        const ShipHull::Slot slot;
+    };
+
+    ship_slot_wrapper py_insert_slot_(const boost::python::tuple& args,
+                                      const boost::python::dict& kw)
+    {
+        auto type = boost::python::extract<enum_wrapper<ShipSlotType>>(kw["type"])().value;
+
+        auto position = boost::python::extract<boost::python::tuple>(kw["position"])();
+        auto x = boost::python::extract<double>(position[0])();
+        auto y = boost::python::extract<double>(position[1])();
+
+        return ship_slot_wrapper(ShipHull::Slot(type, x, y));
+    }
+
+    boost::python::object py_insert_hull_(boost::python::object scope, const boost::python::tuple& args,
+                                          const boost::python::dict& kw)
+    {
+        auto name = boost::python::extract<std::string>(kw["name"])();
+        auto description = boost::python::extract<std::string>(kw["description"])();
+
+        std::set<std::string> exclusions;
+        if (kw.has_key("exclusions")) {
+            boost::python::stl_input_iterator<std::string> exclusions_begin(kw["exclusions"]), exclusions_end;
+            exclusions = std::set<std::string>(exclusions_begin, exclusions_end);
+        }
+
+        auto fuel = boost::python::extract<float>(kw["fuel"])();
+        auto speed = boost::python::extract<float>(kw["speed"])();
+        auto stealth = boost::python::extract<float>(kw["stealth"])();
+        auto structure = boost::python::extract<float>(kw["structure"])();
+
+        bool default_fuel_effects = true;
+        if (kw.has_key("NoDefaultFuelEffect"))
+            default_fuel_effects = !boost::python::extract<bool>(kw["NoDefaultFuelEffect"])();
+
+        bool default_speed_effects = true;
+        if (kw.has_key("NoDefaultSpeedEffect"))
+            default_speed_effects = !boost::python::extract<bool>(kw["NoDefaultSpeedEffect"])();
+
+        bool default_stealth_effects = true;
+        if (kw.has_key("NoDefaultStealthEffect"))
+            default_stealth_effects = !boost::python::extract<bool>(kw["NoDefaultStealthEffect"])();
+
+        bool default_structure_effects = true;
+        if (kw.has_key("NoDefaultStructureEffect"))
+            default_structure_effects = !boost::python::extract<bool>(kw["NoDefaultStructureEffect"])();
+
+        std::vector<ShipHull::Slot> slots;
+        if (kw.has_key("slots")) {
+            boost::python::stl_input_iterator<ship_slot_wrapper> slots_begin(kw["slots"]), slots_end;
+            for (auto it = slots_begin; it != slots_end; ++it)
+                slots.push_back(it->slot);
+        }
+
+        auto production_cost = pyobject_to_vref_or_cast<double, int>(kw["buildcost"]);
+        auto production_time = pyobject_to_vref_or_cast<int, double>(kw["buildtime"]);
+
+        bool producible = true;
+        if (kw.has_key("producible"))
+            producible = boost::python::extract<bool>(kw["producible"])();
+
+        std::set<std::string> tags;
+        if (kw.has_key("tags")) {
+            boost::python::stl_input_iterator<std::string> tags_begin(kw["tags"]), tags_end;
+            tags = std::set<std::string>(tags_begin, tags_end);
+        }
+
+        std::unique_ptr<Condition::Condition> location;
+        if (kw.has_key("location"))
+            location = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["location"])().condition);
+        else
+            location = std::make_unique<Condition::All>();
+
+        std::unique_ptr<Condition::Condition> enqueue_location;
+        if (kw.has_key("enqueuelocation"))
+            enqueue_location = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["enqueuelocation"])().condition);
+        else
+            enqueue_location = std::make_unique<Condition::All>();
+
+        std::vector<std::unique_ptr<Effect::EffectsGroup>> effectsgroups;
+        boost::python::stl_input_iterator<effect_group_wrapper> effectsgroups_begin(kw["effectsgroups"]), effectsgroups_end;
+        for (auto it = effectsgroups_begin; it != effectsgroups_end; ++it) {
+            const auto& effects_group = *it->effects_group;
+            effectsgroups.push_back(std::make_unique<Effect::EffectsGroup>(
+                ValueRef::CloneUnique(effects_group.Scope()),
+                ValueRef::CloneUnique(effects_group.Activation()),
+                ValueRef::CloneUnique(effects_group.Effects()),
+                effects_group.AccountingLabel(),
+                effects_group.StackingGroup(),
+                effects_group.Priority(),
+                effects_group.GetDescription(),
+                effects_group.TopLevelContent()
+            ));
+        }
+
+        auto icon = boost::python::extract<std::string>(kw["icon"])();
+        auto graphic = boost::python::extract<std::string>(kw["graphic"])();
+
+        auto shiphull = std::make_unique<ShipHull>(
+            fuel,
+            speed,
+            stealth,
+            structure,
+            default_fuel_effects,
+            default_speed_effects,
+            default_stealth_effects,
+            default_structure_effects,
+            CommonParams{
+                std::move(production_cost),
+                std::move(production_time),
+                producible,
+                tags, // TODO: make this parameter by value and move?
+                std::move(location),
+                std::move(effectsgroups),
+                {},
+                {},
+                std::move(enqueue_location)
+            },
+            std::move(name),
+            std::move(description),
+            std::move(exclusions),
+            std::move(slots),
+            std::move(icon),
+            std::move(graphic));
+
+        py_grammar& p = boost::python::extract<py_grammar&>(scope.attr("__grammar"))();
+
+        auto& hull_name{shiphull->Name()};
+        p.hulls.emplace(hull_name, std::move(shiphull));
+
+        return boost::python::object();
+    }
 }
 
 BOOST_PYTHON_MODULE(_ship_hulls) {
     boost::python::docstring_options doc_options(true, true, false);
 
     boost::python::class_<py_grammar, boost::python::bases<>, py_grammar, boost::noncopyable>("__Grammar", boost::python::no_init);
+    boost::python::class_<ship_slot_wrapper, boost::python::bases<>, ship_slot_wrapper, boost::noncopyable>("_ShipSlot", boost::python::no_init);
+
+    boost::python::def("Slot", boost::python::raw_function(py_insert_slot_));
+
+    boost::python::object current_module = boost::python::scope();
+
+    boost::python::def("Hull", boost::python::raw_function(
+        [current_module](const boost::python::tuple& args, const boost::python::dict& kw)
+        { return py_insert_hull_(current_module, args, kw); }));
 }
 
 namespace parse {
