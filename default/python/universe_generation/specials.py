@@ -107,7 +107,7 @@ def distribute_specials(specials_freq, universe_objects, empire_home_systems):  
     )
 
     # removing the planets in the Exclusion Zone from the Universe Objects that are going to be candidate for  Specials
-    universe_objects = [obj for obj in universe_objects if obj not in list(planets_forbidden_to_get_specials)]
+    universe_objects = [obj for obj in universe_objects if obj not in planets_forbidden_to_get_specials]
 
 
     objects_needing_specials = [obj for obj in universe_objects if random.random() < base_chance]
