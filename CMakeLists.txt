@@ -963,6 +963,29 @@ if(NOT BUILD_CLIENT_GODOT STREQUAL "OFF")
                 "-DSOURCE_PATH=${PROJECT_SOURCE_DIR}/default/stringtables"
                 -P "${PROJECT_SOURCE_DIR}/cmake/TargetDependencies.cmake"
         )
+        if(BUILD_CLIENT_GODOT STREQUAL "4")
+            set(GODOT_PLUGIN_JNI_LIBS "${CMAKE_SOURCE_DIR}/${GODOT_PROJECT_DIR}/android-plugin/src/main/jniLibs")
+            if(BUILD_SERVER)
+                add_custom_command(TARGET freeoriond POST_BUILD
+                    COMMAND
+                        ${CMAKE_COMMAND} -E make_directory "${GODOT_PLUGIN_JNI_LIBS}/${ANDROID_ABI}"
+                    COMMAND
+                        ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeoriond>" "${GODOT_PLUGIN_JNI_LIBS}/${ANDROID_ABI}/$<TARGET_FILE_NAME:freeoriond>"
+                    COMMAND
+                        ${CMAKE_STRIP} -g -S -d --strip-debug "${GODOT_PLUGIN_JNI_LIBS}/${ANDROID_ABI}/$<TARGET_FILE_NAME:freeoriond>"
+                )
+            endif()
+            if(BUILD_AI)
+                add_custom_command(TARGET freeorionca POST_BUILD
+                    COMMAND
+                        ${CMAKE_COMMAND} -E make_directory "${GODOT_PLUGIN_JNI_LIBS}/${ANDROID_ABI}"
+                    COMMAND
+                        ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorionca>" "${GODOT_PLUGIN_JNI_LIBS}/${ANDROID_ABI}/$<TARGET_FILE_NAME:freeorionca>"
+                    COMMAND
+                        ${CMAKE_STRIP} -g -S -d --strip-debug "${GODOT_PLUGIN_JNI_LIBS}/${ANDROID_ABI}/$<TARGET_FILE_NAME:freeorionca>"
+                )
+            endif()
+        endif()
     endif()
 endif()
 
