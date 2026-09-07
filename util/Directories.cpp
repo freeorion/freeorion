@@ -75,6 +75,7 @@ namespace {
     AAssetManager* s_asset_manager;
     jobject        s_jni_asset_manager;
     JavaVM*        s_java_vm;
+    bool           s_copy_python_lib;
 
 #define PYTHON_LIB_PATH "lib/python" BOOST_PP_STRINGIZE(BOOST_PP_CAT(PY_MAJOR_VERSION, PY_MINOR_VERSION)) ".zip"
 
@@ -502,8 +503,10 @@ void InitDirs(std::string const& argv0, bool test)
     RedirectOutputLogAndroid(ANDROID_LOG_INFO, "stdout", 1);
 
     s_python_home = s_cache_dir / "python";
-    fs::create_directories(s_python_home / "lib");
-    CopyInitialResourceAndroid(PYTHON_LIB_PATH);
+    if (s_copy_python_lib) {
+        fs::create_directories(s_python_home / "lib");
+        CopyInitialResourceAndroid(PYTHON_LIB_PATH);
+    }
 #endif
 
     g_initialized = true;
@@ -611,11 +614,12 @@ auto GetPythonHome() -> fs::path const
 #endif
 
 #if defined(FREEORION_ANDROID)
-void SetAndroidEnvironment(JNIEnv* env, jobject activity)
+void SetAndroidEnvironment(JNIEnv* env, jobject activity, bool copy_python_lib)
 {
     s_jni_env = env;
     s_jni_env->GetJavaVM(&s_java_vm);
     s_activity = env->NewWeakGlobalRef(activity);
+    s_copy_python_lib = copy_python_lib;
 }
 
 std::string GetAndroidLang()

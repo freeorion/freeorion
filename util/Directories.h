@@ -157,7 +157,7 @@ FO_COMMON_API auto GetPythonHome() -> std::filesystem::path const;
 
 #if defined(FREEORION_ANDROID)
 //! Sets android environment to access directories
-FO_COMMON_API void SetAndroidEnvironment(JNIEnv* env, jobject activity);
+FO_COMMON_API void SetAndroidEnvironment(JNIEnv* env, jobject activity, bool copy_python_lib);
 
 //! Gets locale language from android anvironment
 FO_COMMON_API std::string GetAndroidLang();
