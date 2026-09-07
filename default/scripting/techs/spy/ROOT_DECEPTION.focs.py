@@ -1,9 +1,10 @@
 from focs._conditions import HasSpecial, InSystem, IsTarget, OwnedBy, Ship, Star
-from focs._effects import AddSpecial, EffectsGroup, SetSpecialCapacity, SetStealth
+from focs._effects import AddSpecial, Conditional, EffectsGroup, SetSpecialCapacity, SetStealth
 from focs._enums import BlackHole, Min, Neutron, NoStar, Red
 from focs._sources import LocalCandidate, Source, Target
 from focs._techs import Tech
 from focs._value_refs import (
+    Abs,
     MinOf,
     NamedReal,
     NoOpValue,
@@ -20,6 +21,7 @@ from macros.priorities import (
 
 lower_stealth_count_special = "LOWER_STEALTH_COUNT_SPECIAL"
 base_stealth_special = "BASE_STEALTH_SPECIAL"
+unstealthed_stealth_special = "UNSTEALTHED_STEALTH_SPECIAL"
 
 
 def InGame():
@@ -42,7 +44,10 @@ def count_lower_stealth_ships_statistic_valref(base_cond):
 
 
 def target_has_less_stealth_cond(base_cond):
-    return base_cond & (Value(Target.Stealth) < Value(LocalCandidate.Stealth))
+    return base_cond & (
+        SpecialCapacity(name=base_stealth_special, object=Target.ID)
+        < SpecialCapacity(name=base_stealth_special, object=LocalCandidate.ID)
+    )
 
 
 own_ships_in_targetz_system = Ship & InSystem(id=Target.SystemID) & OwnedBy(empire=Source.Owner)
@@ -85,7 +90,7 @@ def stealth_result(obj, debug=False):
         )
 
 
-#    iff the target does have the maximum stealth of all base_cond matches this returns 0
+#    iff the target does have the maximum stealth of all base_cond matches (and its stealth is non-negative) this returns 0
 def min_effective_stealth_of_more_stealthy_ships_valref_for_not_max_stealth_ships(base_cond):
     return MinOf(
         float,
@@ -95,10 +100,7 @@ def min_effective_stealth_of_more_stealthy_ships_valref_for_not_max_stealth_ship
             value=stealth_result(LocalCandidate.ID),
             condition=target_has_less_stealth_cond(base_cond),
         ),
-        (
-            SpecialCapacity(name=base_stealth_special, object=Target.ID)
-            - SpecialCapacity(name=lower_stealth_count_special, object=Target.ID)
-        ),
+        stealth_result(Target.ID),
     )
 
 
@@ -107,10 +109,18 @@ def min_effective_stealth_of_more_stealthy_ships_valref_for_not_max_stealth_ship
 #    this results in a stealth decrease which does not leak information about unseen higher-stealth ships
 #    if there are a lot higher-stealth ships, normal linear unstealthiness would lead to the higher-stealth ships ending with lower stealth
 #    perfect ignorance linear unstealthiness solves this weirdness by lowering stealth to the lowest stealth of initially-higher stealth ships
+#    Implementation note:
+#      - min_effective_stealth_of_more_stealthy_...
+#         will return zero if the target is stealth positive and at maximum,
+#            so we add the target stealth_result in that case
+#         will return the target stealth if that is negative
+#            so we skip adding the target stealth_result
 def min_effective_stealth_of_more_stealthy_ships_valref(base_cond):
-    return StatisticElse(float, condition=candidate_has_less_stealth_cond(base_cond)) * stealth_result(
-        Target.ID
-    ) + min_effective_stealth_of_more_stealthy_ships_valref_for_not_max_stealth_ships(base_cond)
+    return (0.0 < SpecialCapacity(name=base_stealth_special, object=Target.ID)) * StatisticElse(
+        float, condition=candidate_has_less_stealth_cond(base_cond)
+    ) * stealth_result(Target.ID) + min_effective_stealth_of_more_stealthy_ships_valref_for_not_max_stealth_ships(
+        base_cond
+    )
 
 
 Tech(
@@ -142,21 +152,35 @@ Tech(
             accountinglabel="SPY_DECEPTION_SUBSTELLAR_INTERFERENCE",
             effects=SetStealth(value=Value + NamedReal(name="SPY_DECEPTION_BLACK_INTERFERENCE", value=10.0)),
         ),
-        # temporarily note amount of fleet unstealthiness before capping
+        # note amount of fleet unstealthiness before capping and sync client/server for effect accounting
         EffectsGroup(
             scope=Ship & InSystem() & OwnedBy(empire=Source.Owner),
+            accountinglabel="FLEET_UNSTEALTHINESS_PRESYNC_LABEL",
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=[
                 SetSpecialCapacity(
                     name=lower_stealth_count_special,
                     capacity=count_lower_stealth_ships_statistic_valref(own_ships_in_targetz_system),
                 ),
-                AddSpecial(name=base_stealth_special, capacity=Value(Target.Stealth)),
+                AddSpecial(name=base_stealth_special, capacity=Value(Target.Stealth)),  # record server value
+                Conditional(  # if there is a discrepancy between server and client value, sync to server value
+                    condition=HasSpecial(name=base_stealth_special)  # should be false iff the ship was built this turn
+                    & (
+                        0.01
+                        < Abs(
+                            float, SpecialCapacity(name=base_stealth_special, object=Target.ID) - Value(Target.Stealth)
+                        )
+                    ),
+                    effects=[
+                        SetStealth(value=SpecialCapacity(name=base_stealth_special, object=Target.ID)),
+                    ],
+                ),
             ],
         ),
         # Check InGame(), this should not trigger in e.g. ShipDesigner (where the ship is ~InSystem). No meter effects - not strictly necessary
         EffectsGroup(
             scope=Ship & InGame() & ~InSystem() & OwnedBy(empire=Source.Owner),
+            accountinglabel="FLEET_UNSTEALTHINESS_PRESYNC_LABEL",
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=[
                 SetSpecialCapacity(
@@ -164,6 +188,9 @@ Tech(
                     capacity=count_lower_stealth_ships_statistic_valref(own_ships_on_targetz_starlane),
                 ),
                 AddSpecial(name=base_stealth_special, capacity=Value(Target.Stealth)),
+                SetStealth(
+                    value=SpecialCapacity(name=base_stealth_special, object=Target.ID)
+                ),  # sync client to server value - redundant on server
             ],
         ),
         # apply the lowest resulting stealth of ships of higher/equal stealth
@@ -172,6 +199,10 @@ Tech(
             accountinglabel="FLEET_UNSTEALTHINESS_INSYSTEM_LABEL",
             priority=LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=[
+                AddSpecial(
+                    name=unstealthed_stealth_special,
+                    capacity=min_effective_stealth_of_more_stealthy_ships_valref(other_own_ships_in_targetz_system),
+                ),
                 SetStealth(
                     value=min_effective_stealth_of_more_stealthy_ships_valref(other_own_ships_in_targetz_system)
                 ),
