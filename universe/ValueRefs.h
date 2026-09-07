@@ -396,6 +396,7 @@ FO_ENUM_BIG(
     ((RandomEnqueuedTech))
     ((RandomResearchableTech))
     ((RandomTransferrableTech))
+    ((SelectedBuildingID))
     ((SelectedFleetID))
     ((SelectedPlanetID))
     ((SelectedSystemID))

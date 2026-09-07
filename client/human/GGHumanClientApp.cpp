@@ -1628,6 +1628,12 @@ int GGHumanClientApp::SelectedPlanetID() const {
     return INVALID_OBJECT_ID;
 }
 
+int GGHumanClientApp::SelectedBuildingID() const {
+    if (auto mapwnd = m_ui.GetMapWndConst())
+        return mapwnd->SelectedBuildingID();
+    return INVALID_OBJECT_ID;
+}
+
 int GGHumanClientApp::SelectedFleetID() const {
     if (auto mapwnd = m_ui.GetMapWndConst())
         return mapwnd->SelectedFleetID();

@@ -120,7 +120,9 @@ void BuildingsPanel::Update() {
             continue;
 
         auto ind = GG::Wnd::Create<BuildingIndicator>(GG::X(indicator_size), object_id);
+        ind->LeftClickedSignal.connect(BuildingSelectedSignal);
         ind->RightClickedSignal.connect(BuildingRightClickedSignal);
+        ind->SelectBuilding(m_selected_building_id);
         m_building_indicators.push_back(std::move(ind));
     }
 
@@ -163,6 +165,15 @@ void BuildingsPanel::RefreshImpl() {
 void BuildingsPanel::EnableOrderIssuing(bool enable) {
     for (auto& indicator : m_building_indicators)
         indicator->EnableOrderIssuing(enable);
+}
+
+void BuildingsPanel::SelectBuilding(int building_id) {
+    if (m_selected_building_id == building_id)
+        return;
+
+    m_selected_building_id = building_id;
+    for (auto& indicator : m_building_indicators)
+        indicator->SelectBuilding(m_selected_building_id);
 }
 
 void BuildingsPanel::ExpandCollapseButtonPressed()
@@ -296,7 +307,10 @@ void BuildingIndicator::Render() {
     GG::Pt lr = LowerRight();
 
     // Draw outline and background...
-    GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
+    // TODO: don't hardcode color here, but put it near WndOuterBorderColor() (WndSelectedBorderColor?).
+    auto border_color = m_selected ? GG::CLR_GRAY : ClientUI::WndOuterBorderColor();
+
+    GG::FlatRectangle(ul, lr, ClientUI::WndColor(), border_color , 1);
 }
 
 void BuildingIndicator::PreRender() {
@@ -367,6 +381,27 @@ void BuildingIndicator::SizeMove(GG::Pt ul, GG::Pt lr) {
 void BuildingIndicator::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
+void BuildingIndicator::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
+    // verify that this indicator represents an existing building, and not a
+    // queued production item, and that the owner of the building is this
+    // client's player's empire
+    auto& app = GetApp();
+    const auto& context = app.GetContext();
+    const auto& objects = context.ContextObjects();
+
+    auto building = objects.get<Building>(m_building_id);
+    if (!building)
+        return;
+
+    if (!m_order_issuing_enabled)
+        return;
+
+    if (!m_selected)
+        LeftClickedSignal(m_building_id);
+    else
+        LeftClickedSignal(INVALID_OBJECT_ID);
+}
+
 void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     // verify that this indicator represents an existing building, and not a
     // queued production item, and that the owner of the building is this
@@ -432,6 +467,9 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
 
 void BuildingIndicator::EnableOrderIssuing(bool enable)
 { m_order_issuing_enabled = enable; }
+
+void BuildingIndicator::SelectBuilding(int building_id) noexcept
+{ m_selected = (m_building_id == building_id); }
 
 void BuildingIndicator::DoLayout() {
     GG::Pt child_lr = Size() - GG::Pt(GG::X1, GG::Y1);   // extra pixel prevents graphic from overflowing border box

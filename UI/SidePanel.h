@@ -35,10 +35,17 @@ public:
       * INVALID_OBJECT_ID if no planet is selected */
     int SelectedPlanetID() const noexcept { return (m_selection_enabled ? s_planet_id : INVALID_OBJECT_ID); }
 
+    /** Returns the id of the building selected in the SidePanels, or
+      * INVALID_OBJECT_ID if no building is selected */
+    static int SelectedBuildingID() noexcept { return s_building_id; }
 
     /** Returns whether this SidePanel contains an object with the indicated
       * \a object_id that can be selected within the SidePanel. */
     bool PlanetSelectable(int planet_id, const ObjectMap& objects) const;
+
+    /** Returns whether this SidePanel contains an object with the indicated
+      * \a object_id that can be selected within the SidePanel. */
+    bool BuildingSelectable(int building_id, const ObjectMap& objects) const;
 
     void PreRender() override;
 
@@ -57,6 +64,11 @@ public:
       * such a planet exists.  All SidePanels' selected planets are set, if
       * those panels have planet selection enabled. */
     static void SelectPlanet(int planet_id, const ObjectMap& objects);
+
+    /** Selects the building with id \a building_id within the current system, if
+      * it exists.  All SidePanels' selected buildings are set, if those panels
+      * have building selection enabled. */
+    static void SelectBuilding(int building_id);
 
     /** Sets the system currently being viewed in all side panels */
     static void SetSystem(int system_id, const ObjectMap& objects);
@@ -88,6 +100,9 @@ public:
 
     /** emitted when a planet is right clicked */
     static boost::signals2::signal<void (int)>    PlanetRightClickedSignal;
+
+    /** emitted when a building in the side panel is (left) clicked by the user */
+    static boost::signals2::signal<void (int)>    BuildingSelectedSignal;
 
     /** emitted when a building is right clicked */
     static boost::signals2::signal<void (int)>    BuildingRightClickedSignal;
@@ -139,7 +154,7 @@ private:
     std::shared_ptr<PlanetPanelContainer>       m_planet_panel_container;
     std::shared_ptr<MultiIconValueIndicator>    m_system_resource_summary;
 
-    std::array<boost::signals2::scoped_connection, 9> m_connections;
+    std::array<boost::signals2::scoped_connection, 10> m_connections;
 
     bool        m_selection_enabled = false;
 
@@ -150,6 +165,9 @@ private:
 
     /** The id of the currently-selected planet, or INVALID_OBJECT_ID if no planet is selected. */
     static int  s_planet_id;
+
+    /** The id of the currently-selected building, or INVALID_OBJECT_ID if no building is selected. */
+    static int  s_building_id;
 
     static std::set<std::weak_ptr<SidePanel>, std::owner_less<std::weak_ptr<SidePanel>>> s_side_panels;
 

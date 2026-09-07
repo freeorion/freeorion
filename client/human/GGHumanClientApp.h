@@ -44,6 +44,7 @@ public:
 
     [[nodiscard]] int SelectedSystemID() const override;
     [[nodiscard]] int SelectedPlanetID() const override;
+    [[nodiscard]] int SelectedBuildingID() const override;
     [[nodiscard]] int SelectedFleetID() const override;
     [[nodiscard]] int SelectedShipID() const override;
 
