@@ -509,6 +509,11 @@ namespace {
                                                                         std::move(effects)));
         }
     }
+
+    effect_wrapper set_destination(const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto destination = ValueRef::CloneUnique(py::extract<condition_wrapper>(kw["destination"])().condition);
+        return effect_wrapper(std::make_shared<Effect::SetDestination>(std::move(destination)));
+    }
 }
 
 BOOST_PYTHON_MODULE(_effects) {
@@ -536,6 +541,7 @@ BOOST_PYTHON_MODULE(_effects) {
     py::def("SetFocus", py::raw_function(set_focus));
     py::def("SetSpecies", py::raw_function(set_species));
     py::def("CreateField", py::raw_function(create_field));
+    py::def("SetDestination", py::raw_function(set_destination));
 
     // set_non_ship_part_meter_enum_grammar
     for (const auto& meter : std::initializer_list<std::pair<const char*, MeterType>>{

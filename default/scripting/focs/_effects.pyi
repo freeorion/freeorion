@@ -34,6 +34,7 @@ def CreatePlanet(
     name: _StringParam = ...,
     initial_effects: list[_Effect] = ...,
 ) -> _Effect: ...
+def SetDestination(*, destination: _Condition) -> _Effect: ...
 
 Destroy = _Effect()
 
