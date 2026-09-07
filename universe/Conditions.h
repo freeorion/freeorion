@@ -1822,7 +1822,7 @@ public:
                                             [](const auto& e) { return e->LocalCandidateInvariant(); }))
     {}
     constexpr explicit PlanetType(::PlanetType type) requires ((N == 1) && have_pt_values) :
-        PlanetTypeBase(true, true, true, CheckSums::GetCheckSum("Condition::PlanetType", type)),
+        PlanetTypeBase(true, true, true, CheckSums::GetCheckSum("Condition::PlanetType", type, 1u)),
         m_types(type)
     {}
     CONSTEXPR_VEC explicit PlanetType(std::vector<::PlanetType> types) requires ((N == 0) && have_pt_values) :

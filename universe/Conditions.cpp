@@ -10881,13 +10881,13 @@ namespace StaticTests {
 
     constexpr auto pt_cx = PlanetType{::PlanetType::PT_INFERNO};
     constexpr auto pt_cx_cs = pt_cx.GetCheckSum();
-    static_assert(pt_cx_cs == 2114u);
+    static_assert(pt_cx_cs == 2115u);
     static_assert(pt_cx.GetDefaultInitialCandidateObjectTypes() == ::Condition::Impl::MatchesType::PLANETS_BUILDINGS);
 
     constexpr auto contains_pt_cx0 = Contains{PlanetType{::PlanetType::PT_OCEAN}};
     constexpr auto contains_pt_cx1 = Contains<PlanetType<::PlanetType, 1>>{::PlanetType::PT_OCEAN};
     constexpr auto ct_pt_cx1_cs = contains_pt_cx1.GetCheckSum();
-    static_assert(ct_pt_cx1_cs == 4021u);
+    static_assert(ct_pt_cx1_cs == 4022u);
     static_assert(contains_pt_cx0 == contains_pt_cx1);
     static_assert(contains_pt_cx0.GetDefaultInitialCandidateObjectTypes() == ::Condition::Impl::MatchesType::PLANETS_SYSTEMS);
 
