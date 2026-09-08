@@ -142,11 +142,11 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         db.Add<std::string>("version.string",           UserStringNop("OPTIONS_DB_VERSION_STRING"),         FreeOrionVersionString(),
                             Validator<std::string>(),   OptionsDB::Storable::STORABLE);
         db.AddFlag('r', "render-simple",                UserStringNop("OPTIONS_DB_RENDER_SIMPLE"),          OptionsDB::Storable::UNSTORABLE);
-        db.Add<std::string>("misc.server-local-binary.path", UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),
+        db.Add<std::filesystem::path>("misc.server-local-binary.path", UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),
 #ifdef FREEORION_WIN32
-                            PathToString(GetBinDir() / "freeoriond.exe"));
+                            GetBinDir() / "freeoriond.exe");
 #else
-                            PathToString(GetBinDir() / "freeoriond"));
+                            GetBinDir() / "freeoriond");
 #endif
 
         // add sections for option sorting

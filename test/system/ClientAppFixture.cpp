@@ -49,8 +49,8 @@ ClientAppFixture::ClientAppFixture() :
         "freeoriond";
 #endif
     if (!GetOptionsDB().OptionExists(server_path_option)) {
-        auto server_path = PathToString(GetBinDir() / server_filename);
-        GetOptionsDB().Add<std::string>(server_path_option, UserStringNop("OPTIONS_DB_FREEORIOND_PATH"), std::move(server_path));
+        auto server_path = GetBinDir() / server_filename;
+        GetOptionsDB().Add<std::filesystem::path>(server_path_option, UserStringNop("OPTIONS_DB_FREEORIOND_PATH"), std::move(server_path));
     }
 
     InfoLogger() << FreeOrionVersionString();
