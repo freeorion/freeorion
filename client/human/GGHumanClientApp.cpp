@@ -512,8 +512,8 @@ void GGHumanClientApp::StartServer() {
         throw LocalServerAlreadyRunningException();
     }
 
-    std::string SERVER_CLIENT_EXE = GetOptionsDB().Get<std::string>("misc.server-local-binary.path");
-    DebugLogger() << "GGHumanClientApp::StartServer: " << SERVER_CLIENT_EXE;
+    std::filesystem::path SERVER_CLIENT_EXE = GetOptionsDB().Get<std::filesystem::path>("misc.server-local-binary.path");
+    DebugLogger() << "GGHumanClientApp::StartServer: " << PathToString(SERVER_CLIENT_EXE);
 
 #ifdef FREEORION_MACOSX
     // On OSX set environment variable DYLD_LIBRARY_PATH to python framework folder
@@ -529,7 +529,7 @@ void GGHumanClientApp::StartServer() {
     std::vector<std::string> args;
     std::string ai_config = GetOptionsDB().Get<std::string>("ai-config");
     std::string ai_path = GetOptionsDB().Get<std::string>("ai-path");
-    args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
+    args.push_back("\"" + PathToString(SERVER_CLIENT_EXE) + "\"");
     args.push_back("--resource.path");
     args.push_back("\"" + PathToString(GetOptionsDB().Get<std::filesystem::path>("resource.path")) + "\"");
 
@@ -558,7 +558,7 @@ void GGHumanClientApp::StartServer() {
     DebugLogger() << "Launching server process with args: ";
     for (const auto& arg : args)
         DebugLogger() << arg;
-    m_server_process = Process(Networking().IoContext(), SERVER_CLIENT_EXE, args);
+    m_server_process = Process(Networking().IoContext(), PathToString(SERVER_CLIENT_EXE), args);
     DebugLogger() << "... finished launching server process.";
 }
 

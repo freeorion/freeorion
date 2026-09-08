@@ -92,12 +92,12 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
     if (launch_server) {
         BOOST_REQUIRE(!PingLocalHostServer());
 
-        std::string SERVER_CLIENT_EXE = GetOptionsDB().Get<std::string>("misc.server-local-binary.path");
+        std::filesystem::path SERVER_CLIENT_EXE = GetOptionsDB().Get<std::filesystem::path>("misc.server-local-binary.path");
 
-        BOOST_TEST_MESSAGE(SERVER_CLIENT_EXE);
+        BOOST_TEST_MESSAGE(PathToString(SERVER_CLIENT_EXE));
 
         std::vector<std::string> args {
-            "\"" + SERVER_CLIENT_EXE + "\"",
+            "\"" + PathToString(SERVER_CLIENT_EXE) + "\"",
             "--hostless",
             "--save.auto.hostless.enabled", save_game ? "1" : "0",
             "--setup.ai.player.count", "0",
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
         args.push_back("/proc/self/fd/1");
 #endif
 
-        server = Process(m_networking->IoContext(), SERVER_CLIENT_EXE, args);
+        server = Process(m_networking->IoContext(), PathToString(SERVER_CLIENT_EXE), args);
 
         BOOST_TEST_MESSAGE("Server started.");
     }

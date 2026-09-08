@@ -38,12 +38,12 @@ BOOST_AUTO_TEST_CASE(host_server) {
 
     BOOST_REQUIRE(!PingLocalHostServer());
 
-    std::string SERVER_CLIENT_EXE = GetOptionsDB().Get<std::string>("misc.server-local-binary.path");
+    std::filesystem::path SERVER_CLIENT_EXE = GetOptionsDB().Get<std::filesystem::path>("misc.server-local-binary.path");
 
-    BOOST_TEST_MESSAGE(SERVER_CLIENT_EXE);
+    BOOST_TEST_MESSAGE(PathToString(SERVER_CLIENT_EXE));
 
     std::vector<std::string> args{
-        "\"" + SERVER_CLIENT_EXE + "\"",
+        "\"" + PathToString(SERVER_CLIENT_EXE) + "\"",
         "--singleplayer",
         "--testing",
         "--log-level", "info",
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(host_server) {
     args.push_back("/proc/self/fd/1");
 #endif
 
-    Process server = Process(m_networking->IoContext(), SERVER_CLIENT_EXE, args);
+    Process server = Process(m_networking->IoContext(), PathToString(SERVER_CLIENT_EXE), args);
 
     BOOST_REQUIRE(ConnectToLocalHostServer());
 
