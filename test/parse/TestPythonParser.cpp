@@ -335,15 +335,15 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_REQUIRE_EQUAL(98, effect_group.Priority());
 
         BOOST_REQUIRE_EQUAL(1693, effect_group.Scope()->GetCheckSum());
-        BOOST_REQUIRE_EQUAL(18072, effect_group.Activation()->GetCheckSum());
+        BOOST_REQUIRE_EQUAL(12762, effect_group.Activation()->GetCheckSum());
         BOOST_REQUIRE_EQUAL("", effect_group.GetDescription());
 
         BOOST_REQUIRE_EQUAL(true, effect_group.HasMeterEffects());
         BOOST_REQUIRE_EQUAL(false, effect_group.HasAppearanceEffects());
         BOOST_REQUIRE_EQUAL(false, effect_group.HasSitrepEffects());
         BOOST_REQUIRE_EQUAL(1, effect_group.Effects().size());
-        BOOST_REQUIRE_EQUAL(8007633, effect_group.Effects()[0]->GetCheckSum());
-        BOOST_REQUIRE_EQUAL(8030326, effect_group.GetCheckSum());
+        BOOST_REQUIRE_EQUAL(8004093, effect_group.Effects()[0]->GetCheckSum());
+        BOOST_REQUIRE_EQUAL(8021476, effect_group.GetCheckSum());
 
         BOOST_REQUIRE_NE(nullptr, effect_group.Scope());
         BOOST_REQUIRE_NE(nullptr, effect_group.Activation());
@@ -359,13 +359,13 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_REQUIRE_EQUAL(831, CheckSums::GetCheckSum(species.Name()));
         BOOST_REQUIRE_EQUAL(1218, CheckSums::GetCheckSum(species.Description()));
         BOOST_REQUIRE_EQUAL(53880, CheckSums::GetCheckSum(species.GameplayDescription()));
-        BOOST_REQUIRE_EQUAL(325629, CheckSums::GetCheckSum(species.Foci()));
+        BOOST_REQUIRE_EQUAL(318549, CheckSums::GetCheckSum(species.Foci()));
         BOOST_REQUIRE_EQUAL(1135, CheckSums::GetCheckSum(species.DefaultFocus()));
         BOOST_REQUIRE_EQUAL(16966, CheckSums::GetCheckSum(species.Likes()));
         BOOST_REQUIRE_EQUAL(16450, CheckSums::GetCheckSum(species.Dislikes()));
         BOOST_REQUIRE_EQUAL(328, CheckSums::GetCheckSum(species.PlanetEnvironments()));
         BOOST_REQUIRE_EQUAL(0, CheckSums::GetCheckSum(species.CombatTargets()));
-        BOOST_REQUIRE_EQUAL(4056455, CheckSums::GetCheckSum(species.AnnexationCondition()));
+        BOOST_REQUIRE_EQUAL(4040525, CheckSums::GetCheckSum(species.AnnexationCondition()));
 
         const auto* annex_cost_op = dynamic_cast<const ValueRef::Operation<double>*>(species.AnnexationCost());
         BOOST_REQUIRE_EQUAL(static_cast<int16_t>(annex_cost_op->GetOpType()),
@@ -395,12 +395,12 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_REQUIRE_EQUAL(7677, op0->GetCheckSum());
 
         const auto* op1 = dynamic_cast<const ValueRef::Operation<double>*>(operands.at(1));
-        BOOST_REQUIRE_EQUAL(104225, op1->GetCheckSum());
+        BOOST_REQUIRE_EQUAL(100685, op1->GetCheckSum());
 
-        BOOST_REQUIRE_EQUAL(113801, CheckSums::GetCheckSum(species.AnnexationCost()));
+        BOOST_REQUIRE_EQUAL(110261, CheckSums::GetCheckSum(species.AnnexationCost()));
 
-        BOOST_REQUIRE_EQUAL(4213540, CheckSums::GetCheckSum(species.Effects()));
-        BOOST_REQUIRE_EQUAL(14018, CheckSums::GetCheckSum(species.Location()));
+        BOOST_REQUIRE_EQUAL(3631210, CheckSums::GetCheckSum(species.Effects()));
+        BOOST_REQUIRE_EQUAL(10478, CheckSums::GetCheckSum(species.Location()));
         BOOST_REQUIRE_EQUAL(1, CheckSums::GetCheckSum(species.Playable()));
         BOOST_REQUIRE_EQUAL(0, CheckSums::GetCheckSum(species.Native()));
         BOOST_REQUIRE_EQUAL(1, CheckSums::GetCheckSum(species.CanColonize()));
@@ -413,7 +413,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_TEST_MESSAGE("Dump " << species.Name() << ":");
         BOOST_TEST_MESSAGE(species.Dump(0));
 
-        BOOST_REQUIRE_EQUAL(2781909, species.GetCheckSum());
+        BOOST_REQUIRE_EQUAL(2169489, species.GetCheckSum());
 
         const Species test_species{"SP_ABADDONI",
             "SP_ABADDONI_DESC",
@@ -699,11 +699,11 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
     BOOST_CHECK(dynamic_cast<const Condition::Not*>(location_conds[1]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::EmpireAffiliation*>(location_conds[2]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::StarType*>(location_conds[3]) != nullptr);
-    BOOST_CHECK_EQUAL(22520, location_cond->GetCheckSum());
-    BOOST_CHECK_EQUAL(3267, location_conds[0]->GetCheckSum());
+    BOOST_CHECK_EQUAL(18980, location_cond->GetCheckSum());
+    BOOST_CHECK_EQUAL(1497, location_conds[0]->GetCheckSum());
     BOOST_CHECK_EQUAL(9118, location_conds[1]->GetCheckSum());
     BOOST_CHECK_EQUAL(5108, location_conds[2]->GetCheckSum());
-    BOOST_CHECK_EQUAL(3683, location_conds[3]->GetCheckSum());
+    BOOST_CHECK_EQUAL(1913, location_conds[3]->GetCheckSum());
 
     const Condition::And* test_location_cond = dynamic_cast<const Condition::And*>(test_building.Location());
     BOOST_REQUIRE(test_location_cond != nullptr);
@@ -713,11 +713,11 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
     BOOST_CHECK(dynamic_cast<const Condition::Not*>(test_location_conds[1]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::EmpireAffiliation*>(test_location_conds[2]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::StarType*>(test_location_conds[3]) != nullptr);
-    BOOST_CHECK_EQUAL(22520, test_location_cond->GetCheckSum());
-    BOOST_CHECK_EQUAL(3267, test_location_conds[0]->GetCheckSum());
+    BOOST_CHECK_EQUAL(18980, test_location_cond->GetCheckSum());
+    BOOST_CHECK_EQUAL(1497, test_location_conds[0]->GetCheckSum());
     BOOST_CHECK_EQUAL(9118, test_location_conds[1]->GetCheckSum());
     BOOST_CHECK_EQUAL(5108, test_location_conds[2]->GetCheckSum());
-    BOOST_CHECK_EQUAL(3683, test_location_conds[3]->GetCheckSum());
+    BOOST_CHECK_EQUAL(1913, test_location_conds[3]->GetCheckSum());
 
     BOOST_CHECK((*test_building.Location()) == (*building->Location()));
     BOOST_CHECK_EQUAL(test_building.Location()->GetCheckSum(), building->Location()->GetCheckSum());
@@ -759,7 +759,7 @@ BOOST_AUTO_TEST_CASE(parse_empire_statistics) {
 
     BOOST_REQUIRE(condition != nullptr);
     BOOST_REQUIRE_EQUAL(4, condition->OperandsRaw().size());
-    BOOST_CHECK_EQUAL(3265, condition->OperandsRaw()[0]->GetCheckSum());
+    BOOST_CHECK_EQUAL(1495, condition->OperandsRaw()[0]->GetCheckSum());
     BOOST_CHECK_EQUAL(1813, condition->OperandsRaw()[1]->GetCheckSum());
     BOOST_CHECK_EQUAL(1556, condition->OperandsRaw()[2]->GetCheckSum());
     BOOST_CHECK_EQUAL(2830, condition->OperandsRaw()[3]->GetCheckSum());
@@ -811,10 +811,10 @@ BOOST_AUTO_TEST_CASE(parse_fields) {
 
     const auto& effects = field->Effects();
     BOOST_REQUIRE_EQUAL(4, effects.size());
-    BOOST_CHECK_EQUAL(4028904, effects[0].GetCheckSum());
-    BOOST_CHECK_EQUAL(4027442, effects[1].GetCheckSum());
-    BOOST_CHECK_EQUAL(4016711, effects[2].GetCheckSum());
-    BOOST_CHECK_EQUAL(4014678, effects[3].GetCheckSum());
+    BOOST_CHECK_EQUAL(4025364, effects[0].GetCheckSum());
+    BOOST_CHECK_EQUAL(4025672, effects[1].GetCheckSum());
+    BOOST_CHECK_EQUAL(4014941, effects[2].GetCheckSum());
+    BOOST_CHECK_EQUAL(4012908, effects[3].GetCheckSum());
 }
 
 BOOST_AUTO_TEST_CASE(parse_named_values) {
@@ -902,7 +902,7 @@ BOOST_AUTO_TEST_CASE(parse_ship_hulls) {
     BOOST_CHECK(dynamic_cast<const Condition::Type*>(location_opers[0]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::EmpireAffiliation*>(location_opers[1]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::Contains<std::unique_ptr<Condition::Condition>>*>(location_opers[2]) != nullptr);
-    BOOST_CHECK_EQUAL(3267, location_opers[0]->GetCheckSum());
+    BOOST_CHECK_EQUAL(1497, location_opers[0]->GetCheckSum());
     BOOST_CHECK_EQUAL(5108, location_opers[1]->GetCheckSum());
     BOOST_CHECK_EQUAL(14121, location_opers[2]->GetCheckSum());
 
@@ -913,40 +913,40 @@ BOOST_AUTO_TEST_CASE(parse_ship_hulls) {
             const char*, uint32_t, size_t>> expected_effects{
         {"", "", "", 0,
             true, false, false,
-            "", 4017890, 1},
+            "", 4016120, 1},
         {"", "", "", 0,
             true, false, false,
-            "", 4027682, 1},
+            "", 4025912, 1},
         {"", "", "", 0,
             true, false, false,
-            "", 4039111, 1},
+            "", 4037341, 1},
         {"", "HULL_FUEL_EFFICIENCY_DESC", "GREAT_FUEL_EFFICIENCY_LABEL", 120,
             true, false, false,
-            "SH_BASIC_SMALL", 4036545, 1},
+            "SH_BASIC_SMALL", 4033005, 1},
         {"", "MAX_FUEL_LESS_THAN_ONE_DESC", "MAX_FUEL_LESS_THAN_ONE_LABEL", 700,
             true, false, false,
-            "SH_BASIC_SMALL", 4022616, 1},
+            "SH_BASIC_SMALL", 4017306, 1},
         {"", "", "TT_SHIP_HULL", 199,
             true, false, false,
             "SH_BASIC_SMALL", 14042, 1},
         {"BASE_FUEL_REGEN", "AVERAGE_BASE_FUEL_REGEN_DESC", "BASE_FUEL_REGEN_LABEL", 500,
             true, false, false,
-            "SH_BASIC_SMALL", 4027332, 1},
+            "SH_BASIC_SMALL", 4023792, 1},
         {"", "", "", 100,
             false, false, true,
-            "SH_BASIC_SMALL", 4101870, 1},
+            "SH_BASIC_SMALL", 4085940, 1},
         {"", "", "", 100,
             true, false, false,
-            "SH_BASIC_SMALL", 4023288, 1},
+            "SH_BASIC_SMALL", 4021518, 1},
         {"", "", "", 100,
             true, false, false,
-            "SH_BASIC_SMALL", 8016811, 1},
+            "SH_BASIC_SMALL", 8013271, 1},
         {"", "", "GOOD_VISION_LABEL", 100,
             true, false, false,
-            "SH_BASIC_SMALL", 4030456, 1},
+            "SH_BASIC_SMALL", 4028686, 1},
         {"MONSTER_FLEET_MOVE_STACK", "", "", 100,
             false, false, false,
-            "SH_BASIC_SMALL", 4062928, 1}
+            "SH_BASIC_SMALL", 4054078, 1}
     };
 
     BOOST_CHECK_EQUAL(expected_effects.size(), effects.size());

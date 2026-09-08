@@ -120,8 +120,8 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
 {
     [[nodiscard]] constexpr explicit Constant(T value)
         noexcept(noexcept(std::string{}) &&
-                 noexcept(CheckSums::GetCheckSum("ValueRef::Constant", value))) :
-        ValueRef<T>(true, true, true, true, true, CheckSums::GetCheckSum("ValueRef::Constant", value)),
+                 noexcept(CheckSums::GetCheckSum(value))) :
+        ValueRef<T>(true, true, true, true, true, CheckSums::GetCheckSum(value)),
         m_value(std::move(value))
     {}
 
@@ -129,7 +129,7 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
     [[nodiscard]] constexpr explicit Constant(TT&& value)
         noexcept(noexcept(std::string{}) &&
                  noexcept(T(std::forward<TT>(value))) &&
-                 noexcept(CheckSums::GetCheckSum("ValueRef::Constant", std::declval<T>()))) :
+                 noexcept(CheckSums::GetCheckSum(std::declval<T>()))) :
         Constant(T(std::forward<TT>(value)))
     {}
 
