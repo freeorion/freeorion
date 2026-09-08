@@ -97,8 +97,8 @@ void GodotClientApp::StartServer() {
         throw LocalServerAlreadyRunningException();
     }
 
-    std::string SERVER_CLIENT_EXE = GetOptionsDB().Get<std::string>("misc.server-local-binary.path");
-    DebugLogger() << "GodotClientApp::StartServer: " << SERVER_CLIENT_EXE;
+    std::filesystem::path SERVER_CLIENT_EXE = GetOptionsDB().Get<std::filesystem::path>("misc.server-local-binary.path");
+    DebugLogger() << "GodotClientApp::StartServer: " << PathToString(SERVER_CLIENT_EXE);
 
 #ifdef FREEORION_MACOSX
     // On OSX set environment variable DYLD_LIBRARY_PATH to python framework folder
@@ -114,7 +114,7 @@ void GodotClientApp::StartServer() {
     std::vector<std::string> args;
     std::string ai_config = GetOptionsDB().Get<std::string>("ai-config");
     std::string ai_path = GetOptionsDB().Get<std::string>("ai-path");
-    args.emplace_back("\"" + SERVER_CLIENT_EXE + "\"");
+    args.emplace_back("\"" + PathToString(SERVER_CLIENT_EXE) + "\"");
     args.emplace_back("--resource.path");
     args.emplace_back("\"" + PathToString(GetOptionsDB().Get<std::filesystem::path>("resource.path")) + "\"");
 
@@ -143,7 +143,7 @@ void GodotClientApp::StartServer() {
     DebugLogger() << "Launching server process with args: ";
     for (auto arg : args)
         DebugLogger() << arg;
-    m_server_process = Process(m_networking->IoContext(), SERVER_CLIENT_EXE, args);
+    m_server_process = Process(m_networking->IoContext(), PathToString(SERVER_CLIENT_EXE), args);
     DebugLogger() << "... finished launching server process.";
 }
 
