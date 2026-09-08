@@ -624,7 +624,7 @@ namespace StaticTests {
     static_assert(cdvr.SourceInvariant());
     static_assert(!cdvr.SimpleIncrement());
     static_assert(cdvr.ConstantExpr());
-    static_assert(cdvr.GetCheckSum() == 4018064);
+    static_assert(cdvr.GetCheckSum() == 4016294);
 
     constexpr auto cdvr_copy(cdvr);
     static_assert(cdvr == cdvr_copy);
@@ -3324,10 +3324,11 @@ namespace StaticTests {
 
     constexpr ::ValueRef::Constant<int> const_ref_8{8};
     static_assert(const_ref_8.Eval() == 8);
-    static_assert(const_ref_8.GetCheckSum() == CheckSums::GetCheckSum("ValueRef::Constant", 8));
+    // constant maintains same checksum regardless wrapped in value ref or not to be stable in PlanetType and so on
+    static_assert(const_ref_8.GetCheckSum() == CheckSums::GetCheckSum(8));
 
     constexpr auto test_checksum_variadic4 = CheckSums::GetCheckSum("text", false, &const_ref_8, nullptr);
-    static_assert(test_checksum_variadic4 == 2235);
+    static_assert(test_checksum_variadic4 == 465);
 
     constexpr auto test_checksum_like_constant_string = CheckSums::GetCheckSum("ValueRef::Constant<string>", "RULE_ANNEX_COST_MINIMUM");
     static_assert(test_checksum_like_constant_string == 4414);
