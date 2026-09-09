@@ -15,7 +15,7 @@
 #include <utility>
 #if !defined(__cpp_lib_integer_comparison_functions)
 namespace std {
-    inline auto cmp_greater_equal(auto&& lhs, auto&& rhs) { return lhs < rhs; }
+    inline auto cmp_greater_equal(auto&& lhs, auto&& rhs) { return lhs >= rhs; }
 }
 #endif
 
