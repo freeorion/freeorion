@@ -388,7 +388,7 @@ BOOST_PYTHON_MODULE(_ship_hulls) {
     boost::python::docstring_options doc_options(true, true, false);
 
     boost::python::class_<py_grammar, boost::python::bases<>, py_grammar, boost::noncopyable>("__Grammar", boost::python::no_init);
-    boost::python::class_<ship_slot_wrapper, boost::python::bases<>, ship_slot_wrapper, boost::noncopyable>("_ShipSlot", boost::python::no_init);
+    boost::python::class_<ship_slot_wrapper>("_ShipSlot", boost::python::no_init);
 
     boost::python::def("Slot", boost::python::raw_function(py_insert_slot_));
 
