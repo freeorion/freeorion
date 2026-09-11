@@ -81,10 +81,10 @@ colony_gamerule_default = ""
 species_colony_gamerules = {"SP_SUPER_TEST": "RULE_ENABLE_SUPER_TESTER"}
 
 # default base buildcost
-buildcost_default = 50
+buildcost_default = 60
 
 # Species specific overrides to base buildcost
-species_buildcost = {"SP_EXOBOT": 60}
+species_buildcost = {"SP_EXOBOT": 70}
 
 # default buildtime factor
 buildtime_factor_default = 1.0
