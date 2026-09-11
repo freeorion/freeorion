@@ -29,6 +29,7 @@ namespace {
         if (filename != nullptr) {
             std::ofstream f(filename);
             const auto dump = t.Dump(0);
+            f << "// CheckSum: " << std::to_string(t.GetCheckSum()) << std::endl;
             f.write(dump.c_str(), dump.size());
             f.flush();           
         } else {
