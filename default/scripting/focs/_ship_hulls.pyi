@@ -23,7 +23,7 @@ def Hull(
     tags: list[str] | None = None,
     location: _Condition,
     enqueuelocation=_Condition(),
-    effectsgroups: list[_EffectGroup] | None = None,
+    effectsgroups: list[_EffectGroup],
     icon: str,
     graphic: str,
 ) -> None: ...
