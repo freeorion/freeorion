@@ -148,10 +148,14 @@ namespace {
                     types.push_back(std::move(constant));
                 }
             }
-            if (have_refs)
+            if (have_refs) {
                 return make_wrapped<Condition::PlanetType<>>(std::move(types));
-            else // have only constants
-                return make_wrapped<Condition::PlanetType<::PlanetType>>(std::move(type_vals));
+            } else { // have only constants
+                if (type_vals.size() == 1)
+                    return make_wrapped<Condition::PlanetType<::PlanetType, 1>>(std::move(type_vals[0]));
+                else
+                    return make_wrapped<Condition::PlanetType<::PlanetType>>(std::move(type_vals));
+            }
 
         } else if (kw.has_key("size")) {
             std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>> sizes;
