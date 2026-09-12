@@ -333,9 +333,9 @@ void InitBinDir(std::string const& argv0)
         problem = true;
     }
 
-    static_assert(
-#!defined(_WIN32)
-    ); // various path manipulations in this code that could have issues in Windows with UTF-16 path encoding
+#  if defined(_WIN32)
+    static_assert(false); // various path manipulations in this code that could have issues in Windows with UTF-16 path encoding
+#  endif
 
     if (problem) {
         // failed trying to parse the call path, so try hard-coded standard location...
