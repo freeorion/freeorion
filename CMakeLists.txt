@@ -945,10 +945,6 @@ if(NOT BUILD_CLIENT_GODOT STREQUAL "OFF")
             COMMAND
                 ${CMAKE_COMMAND} -E copy_if_different "${ICONV_LIBRARY}" "${CMAKE_SOURCE_DIR}/${GODOT_PROJECT_DIR}/bin/${SYSTEM_NAME}.${BITS}/libiconv.so"
             COMMAND
-                ${CMAKE_STRIP} -g -S -d --strip-debug "${CMAKE_SOURCE_DIR}/${GODOT_PROJECT_DIR}/bin/${SYSTEM_NAME}.${BITS}/libiconv.so"
-            COMMAND
-                ${CMAKE_STRIP} -g -S -d --strip-debug "${CMAKE_SOURCE_DIR}/${GODOT_PROJECT_DIR}/bin/${SYSTEM_NAME}.${BITS}/$<TARGET_FILE_NAME:freeoriongodot>"
-            COMMAND
                 ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/${GODOT_PROJECT_DIR}/default/
             COMMAND
                 ${CMAKE_COMMAND}
@@ -971,8 +967,6 @@ if(NOT BUILD_CLIENT_GODOT STREQUAL "OFF")
                         ${CMAKE_COMMAND} -E make_directory "${GODOT_PLUGIN_JNI_LIBS}/${ANDROID_ABI}"
                     COMMAND
                         ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeoriond>" "${GODOT_PLUGIN_JNI_LIBS}/${ANDROID_ABI}/$<TARGET_FILE_NAME:freeoriond>"
-                    COMMAND
-                        ${CMAKE_STRIP} -g -S -d --strip-debug "${GODOT_PLUGIN_JNI_LIBS}/${ANDROID_ABI}/$<TARGET_FILE_NAME:freeoriond>"
                 )
             endif()
             if(BUILD_AI)
@@ -981,8 +975,6 @@ if(NOT BUILD_CLIENT_GODOT STREQUAL "OFF")
                         ${CMAKE_COMMAND} -E make_directory "${GODOT_PLUGIN_JNI_LIBS}/${ANDROID_ABI}"
                     COMMAND
                         ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorionca>" "${GODOT_PLUGIN_JNI_LIBS}/${ANDROID_ABI}/$<TARGET_FILE_NAME:freeorionca>"
-                    COMMAND
-                        ${CMAKE_STRIP} -g -S -d --strip-debug "${GODOT_PLUGIN_JNI_LIBS}/${ANDROID_ABI}/$<TARGET_FILE_NAME:freeorionca>"
                 )
             endif()
         endif()
