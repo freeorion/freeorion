@@ -2,15 +2,20 @@ name: "Android Godot4"
 
 on:
   workflow_call:
+    inputs:
+      debug_sanitize:
+        description: "Debug Build Type & Sanitizer"
+        default: false
+        type: boolean
 env:
   GODOT_VERSION: "4.7.2"
 jobs:
   android:
-    name: ${{ matrix.arch }}
+    name: ${{ matrix.arch }} (${{ inputs.debug_sanitize && 'RelWithDebInfo_ASan' || 'MinSizeRel' }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [x86, x86_64, armeabi-v7a, arm64-v8a]
+        arch: [x86_64, armeabi-v7a, arm64-v8a]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
@@ -23,24 +28,106 @@ jobs:
       - uses: nttld/setup-ndk@v1
         id: setup-ndk
         with:
-          ndk-version: r24
+          # Matches NDK for Godot4
+          # https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/platform/android/java/app/config.gradle#L16
+          ndk-version: r29
           add-to-path: false
+      - name: Setup configuration
+        run: |
+          if [ "${{ inputs.debug_sanitize }}" = "true" ]; then
+            echo "CONF_CMAKE_BUILD_TYPE=RelWithDebInfo" >> $GITHUB_ENV
+            echo "CONF_CMAKE_CXX_FLAGS=-std=c++20 -fsanitize=address -fno-omit-frame-pointer" >> $GITHUB_ENV
+            echo "CONF_CMAKE_SHARED_LINKER_FLAGS=-fsanitize=address" >> $GITHUB_ENV
+          else
+            echo "CONF_CMAKE_BUILD_TYPE=MinSizeRel" >> $GITHUB_ENV
+            echo "CONF_CMAKE_CXX_FLAGS=-std=c++20" >> $GITHUB_ENV
+            echo "CONF_CMAKE_SHARED_LINKER_FLAGS=" >> $GITHUB_ENV
+          fi
       - name: Configure
         run: |
           unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
           mkdir build
           pushd build
           FO_SDK=$(realpath ../..)
-          cmake -DANDROID_ABI=${{ matrix.arch }} -DANDROID_PLATFORM=24 -DANDROID_NDK=${{ steps.setup-ndk.outputs.ndk-path }} -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake -DCMAKE_CXX_FLAGS=-std=c++14 -DANDROID_ALLOW_UNDEFINED_SYMBOLS=Off -DBUILD_SERVER=ON -DBUILD_AI=ON -DBUILD_CLIENT_GG=OFF -DBoost_INCLUDE_DIR=${FO_SDK}/include/ -DBoost_USE_STATIC_LIBS=On -DBoost_LIBRARY_DIR=${FO_SDK}/lib/ -DBUILD_CLIENT_GODOT=4 -DICUI18N_LIBRARY=${FO_SDK}/lib/libicui18n.a -DICUUC_LIBRARY=${FO_SDK}/lib/libicuuc.a -DICUDATA_LIBRARY=${FO_SDK}/lib/libicudata.a -DICONV_LIBRARY=${FO_SDK}/lib/libiconv.so -DPython3_LIBRARY=${FO_SDK}/lib/libpython3.11.a -DPython3_INCLUDE_DIR=${FO_SDK}/include/python3.11/ -DGODOTCPP_API_VERSION=4.4 ..
+          cmake -DANDROID_ABI=${{ matrix.arch }} \
+            -DANDROID_PLATFORM=24 \
+            -DANDROID_NDK=${{ steps.setup-ndk.outputs.ndk-path }} \
+            -DANDROID_STL=c++_shared \
+            -DCMAKE_BUILD_TYPE=${{ env.CONF_CMAKE_BUILD_TYPE }} \
+            -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
+            -DCMAKE_CXX_FLAGS="${{ env.CONF_CMAKE_CXX_FLAGS }}" \
+            -DCMAKE_SHARED_LINKER_FLAGS="${{ env.CONF_CMAKE_SHARED_LINKER_FLAGS }}" \
+            -DANDROID_ALLOW_UNDEFINED_SYMBOLS=Off \
+            -DBUILD_SERVER=On \
+            -DBUILD_AI=On \
+            -DBUILD_CLIENT_GG=Off \
+            -DBoost_INCLUDE_DIR=${FO_SDK}/include/ \
+            -DBoost_USE_STATIC_LIBS=On \
+            -DBoost_LIBRARY_DIR=${FO_SDK}/lib/ \
+            -DBUILD_CLIENT_GODOT=4 \
+            -DICUI18N_LIBRARY=${FO_SDK}/lib/libicui18n.a \
+            -DICUUC_LIBRARY=${FO_SDK}/lib/libicuuc.a \
+            -DICUDATA_LIBRARY=${FO_SDK}/lib/libicudata.a \
+            -DICONV_LIBRARY=${FO_SDK}/lib/libiconv.so \
+            -DPython3_LIBRARY=${FO_SDK}/lib/libpython3.11.a \
+            -DPython3_INCLUDE_DIR=${FO_SDK}/include/python3.11/ \
+            -DGODOTCPP_API_VERSION=4.4 \
+            ..
       - name: Build
         run: |
           pushd build
           cmake --build . -- -j5
+      - name: Extract symbols and strip binaries
+        run: |
+          NDK_BIN="${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/bin"
+          find godot4/bin godot4/android-plugin/src/main/jniLibs -name "*.so" | while read -r SO_FILE; do
+            echo "::group::Process library ${SO_FILE}"
+            DEBUG_FILE="${SO_FILE}.debug"
+            "$NDK_BIN/llvm-objcopy" --only-keep-debug "$SO_FILE" "$DEBUG_FILE"
+            "$NDK_BIN/llvm-objcopy" --add-gnu-debuglink="$DEBUG_FILE" "$SO_FILE"
+            "$NDK_BIN/llvm-strip" --strip-all "$SO_FILE"
+            echo "::endgroup::"
+          done
+      - name: Setup ASan wrapper and runtime
+        if: inputs.debug_sanitize
+        run: |
+          JNILIBS_DIR="godot4/android-plugin/src/main/jniLibs/${{ matrix.arch }}"
+          RESOURCES_DIR="godot4/android-plugin/src/main/resources/lib/${{ matrix.arch }}"
+          mkdir -p "$JNILIBS_DIR" "$RESOURCES_DIR"
+          ASAN_SO=$(find "${{ steps.setup-ndk.outputs.ndk-path }}" -name "libclang_rt.asan-${{ matrix.arch }}-android.so" | head -n 1)
+          if [ -z "$ASAN_SO" ]; then
+            echo "::error::ASan runtime library not found in NDK!"
+            exit 1
+          fi
+          cp "$ASAN_SO" "$JNILIBS_DIR/"
+          cat << 'EOF' > "$RESOURCES_DIR/wrap.sh"
+          #!/system/bin/sh
+          HERE="$(cd "$(dirname "$0")" && pwd)"
+          export ASAN_OPTIONS=log_to_syslog=false,allow_user_segv_handler=1
+          # Preload the Godot's libc++_shared.so AFTER the ASan runtime so the ASan
+          # __cxa_throw interceptor forwards to the Godot's libc++abi.
+          export LD_PRELOAD=$HERE/libclang_rt.asan-${{ matrix.arch }}-android.so:$HERE/libc++_shared.so
+          exec "$@"
+          EOF
+          chmod +x "$RESOURCES_DIR/wrap.sh"
       - name: Upload binaries
         uses: actions/upload-artifact@v7
         with:
           name: android-binaries-godot4-${{ matrix.arch }}
-          path: godot4/bin/**/*.so
+          path: |
+            godot4/bin/**/*.so
+            godot4/android-plugin/src/main/jniLibs/**/*.so
+            godot4/android-plugin/src/main/resources/lib/**/wrap.sh
+          if-no-files-found: error
+          retention-days: 1
+      - name: Upload debug symbols
+        if: inputs.debug_sanitize
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-debug-binaries-godot4-${{ matrix.arch }}
+          path: |
+            godot4/bin/**/*.debug
+            godot4/android-plugin/src/main/jniLibs/**/*.debug
           if-no-files-found: error
           retention-days: 1
   merge-binaries:
@@ -73,6 +160,7 @@ jobs:
           mv default/data/art godot4/assets/
           mv default/data/fonts godot4/assets/
           mv default/data/sound godot4/assets/
+          mkdir -p godot4/default/
           mv default/scripting godot4/default/
           mv default/stringtables godot4/default/
           mv default/python godot4/default/
@@ -83,7 +171,7 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: android-binaries-godot4
-          path: godot4/bin/
+          path: godot4/
       - name: Install Godot and Templates
         run: |
           wget --content-disposition "https://downloads.godotengine.org/?version=${{ env.GODOT_VERSION }}&flavor=stable&slug=linux.x86_64.zip&platform=linux.64"
