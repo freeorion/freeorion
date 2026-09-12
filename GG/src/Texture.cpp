@@ -160,11 +160,12 @@ void Texture::Load(const std::filesystem::path& path, bool mipmap)
     if (m_opengl_id)
         Clear();
 
-    if (!fs::exists(path)) {
+    std::error_code ec;
+    if (!fs::exists(path, ec)) {
         std::cerr << "Texture::Load passed non-existant path: " << PathToString(path) << std::endl;
         throw BadFile("Texture file \"" + PathToString(path) + "\" does not exist");
     }
-    if (!fs::is_regular_file(path)) {
+    if (!fs::is_regular_file(path, ec)) {
         std::cerr << "Texture::Load passed non-file path: " << PathToString(path) << std::endl;
         throw BadFile("Texture \"file\" \"" + PathToString(path) + "\" is not a file");
     }

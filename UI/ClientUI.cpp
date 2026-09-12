@@ -1105,6 +1105,14 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound) {
     dlg->Run();
 }
 
+std::shared_ptr<GG::Texture> ClientUI::GetMissingTexture(bool mipmap) {
+    try {
+        return GGHumanClientApp::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", mipmap);
+    } catch (...) {
+        return nullptr;
+    }
+}
+
 std::shared_ptr<GG::Texture> ClientUI::GetTexture(const std::filesystem::path& path, bool mipmap) {
     std::shared_ptr<GG::Texture> retval;
     try {
@@ -1113,7 +1121,7 @@ std::shared_ptr<GG::Texture> ClientUI::GetTexture(const std::filesystem::path& p
         ErrorLogger() << "Unable to load texture \"" + PathToString(path) + "\"\n"
             "reason: " << e.what();
         try {
-            retval = GGHumanClientApp::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", mipmap);
+            retval = GetMissingTexture(mipmap);
         } catch (...) {
             return retval;
         }
@@ -1121,13 +1129,13 @@ std::shared_ptr<GG::Texture> ClientUI::GetTexture(const std::filesystem::path& p
         ErrorLogger() << "Unable to load texture \"" + PathToString(path) + "\"\n"
             "reason unknown...?";
         try {
-            retval = GGHumanClientApp::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", mipmap);
+            retval = GetMissingTexture(mipmap);
         } catch (...) {
             return retval;
         }
     }
 #ifdef FREEORION_MACOSX
-    if (!mipmap)
+    if (!mipmap && retval)
         retval->SetFilters(GL_LINEAR, GL_LINEAR);
 #endif
     return retval;
@@ -1179,13 +1187,14 @@ const std::vector<std::shared_ptr<GG::Texture>>& ClientUI::GetPrefixedTextures(
     const std::filesystem::path& dir, std::string_view prefix, bool mipmap)
 {
     namespace fs = std::filesystem;
-    if (!fs::is_directory(dir)) {
+    std::error_code ec;
+    if (!fs::is_directory(dir, ec)) {
         ErrorLogger() << "GetPrefixedTextures passed invalid dir: " << dir;
         static CONSTEXPR_VEC const std::vector<std::shared_ptr<GG::Texture>> EMPTY_VEC;
         return EMPTY_VEC;
     }
 
-    std::string KEY{(dir / prefix.data()).string()};
+    std::string KEY = PathToString(dir / prefix.data());
     auto prefixed_textures_it = m_prefixed_textures.find(KEY);
     if (prefixed_textures_it != m_prefixed_textures.end())
         return prefixed_textures_it->second;
@@ -1195,10 +1204,11 @@ const std::vector<std::shared_ptr<GG::Texture>>& ClientUI::GetPrefixedTextures(
     fs::directory_iterator end_it;
     for (fs::directory_iterator it(dir); it != end_it; ++it) {
         try {
-            if (fs::exists(*it) && !fs::is_directory(*it)) {
-                auto path_str = it->path().filename().string();
-                if (boost::algorithm::starts_with(path_str, prefix) && GG::GUI::IsSupportedTextureFilenameExtension(*it))
-                    textures.emplace_back(std::move(path_str), m_app.GetTexture(*it, mipmap));
+            if (fs::exists(*it, ec) && !fs::is_directory(*it, ec)) {
+                const fs::path& path = it->path();
+                auto path_str = PathToString(path.filename());
+                if (boost::algorithm::starts_with(path_str, prefix) && GG::GUI::IsSupportedTextureFilenameExtension(path))
+                    textures.emplace_back(std::move(path_str), m_app.GetTexture(path, mipmap));
             }
         } catch (const fs::filesystem_error& e) {
             // ignore files for which permission is denied, and rethrow other exceptions
@@ -1207,7 +1217,7 @@ const std::vector<std::shared_ptr<GG::Texture>>& ClientUI::GetPrefixedTextures(
         }
     }
 
-    static constexpr auto first_less = [](const auto& lhs, const auto& rhs) { return lhs < rhs; };
+    static constexpr auto first_less = [](const auto& lhs, const auto& rhs) noexcept(noexcept(lhs < rhs)) { return lhs < rhs; };
     std::sort(textures.begin(), textures.end(), first_less);
     auto tex_ptrs_vec = textures | range_values | range_to_vec;
     auto emplace_it = m_prefixed_textures.emplace(std::move(KEY), std::move(tex_ptrs_vec)).first;

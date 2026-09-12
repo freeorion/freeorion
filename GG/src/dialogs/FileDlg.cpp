@@ -242,9 +242,10 @@ void FileDlg::CompleteConstruction()
     AttachChild(m_files_label);
     AttachChild(m_file_types_label);
 
+    std::error_code ec;
     if (!m_init_directory.empty()) {
-        const auto dir_path = fs::absolute(StringToPath(m_init_directory));
-        if (!fs::exists(dir_path))
+        const auto dir_path = fs::absolute(StringToPath(m_init_directory), ec);
+        if (!fs::exists(dir_path, ec))
             throw BadInitialDirectory("FileDlg::FileDlg() : Initial directory \"" + PathToString(dir_path) + "\" does not exist.");
         SetWorkingDirectory(dir_path);
     }
@@ -263,7 +264,7 @@ void FileDlg::CompleteConstruction()
     m_connections[5] = m_filter_list->SelChangedSignal.connect([this](auto it) { FilterChanged(it); });
 
     if (!m_init_filename.empty()) {
-        fs::path filename_path = fs::absolute(fs::path(m_init_filename));
+        fs::path filename_path = fs::absolute(StringToPath(m_init_filename), ec);
         m_files_edit->SetText(PathToString(filename_path.filename()));
     }
 }
@@ -377,7 +378,8 @@ void FileDlg::OkHandler(bool double_click)
             m_result.emplace(PathToString(p));
 
             // check to see if file already exists; if so, ask if it's ok to overwrite
-            if (fs::exists(p)) {
+            std::error_code ec;
+            if (fs::exists(p, ec)) {
                 std::string msg_str = boost::str(boost::format(style.Translate("%1% exists.\nOk to overwrite it?")) % save_file);
                 auto dlg =
                     style.NewThreeButtonDlg(X(300), Y(125), msg_str, m_font, m_color, m_border_color, m_color, m_text_color,
@@ -390,11 +392,12 @@ void FileDlg::OkHandler(bool double_click)
         if (files.empty() || (m_select_directories && double_click)) {
             OpenDirectory();
         } else { // ensure the file(s) are valid before returning them
+            std::error_code ec;
             for (const std::string& file_name : files) {
                 fs::path p = s_working_dir / StringToPath(file_name);
 
-                if (fs::exists(p)) {
-                    bool p_is_directory = fs::is_directory(p);
+                if (fs::exists(p, ec)) {
+                    bool p_is_directory = fs::is_directory(p, ec);
                     if (!m_select_directories && p_is_directory) {
                         std::string msg_str = boost::str(boost::format(style.Translate("\"%1%\"\nis a directory.")) % file_name);
                         auto dlg =
@@ -496,7 +499,8 @@ void FileDlg::SetWorkingDirectory(const fs::path& p)
 {
     m_files_edit->Clear();
     FilesEditChanged(m_files_edit->Text());
-    s_working_dir = fs::canonical(p);
+    std::error_code ec;
+    s_working_dir = fs::canonical(p, ec);
     UpdateDirectoryText();
     UpdateList();
 }
@@ -590,9 +594,10 @@ void FileDlg::UpdateList()
         }
         // contained directories
         std::multimap<std::string, std::shared_ptr<ListBox::Row>> sorted_rows;
+        std::error_code ec;
         for (fs::directory_iterator it(s_working_dir); it != end_it; ++it) {
             try {
-                if (fs::exists(*it) && fs::is_directory(*it)) {
+                if (fs::exists(*it, ec) && fs::is_directory(*it, ec)) {
                     auto filename_string = PathToString(it->path().filename());
                     if (!filename_string.empty() && filename_string.front() != '.') {
                         auto row = Wnd::Create<ListBox::Row>();
@@ -615,7 +620,7 @@ void FileDlg::UpdateList()
         if (!m_select_directories) {
             for (fs::directory_iterator it(s_working_dir); it != end_it; ++it) {
                 try {
-                    if (fs::exists(*it) && !fs::is_directory(*it)) {
+                    if (fs::exists(*it, ec) && !fs::is_directory(*it, ec)) {
                         auto filename_string = PathToString(it->path().filename());
                         if (!filename_string.empty() && filename_string.front() != '.') {
                             bool meets_filters = file_filters.empty();
@@ -641,14 +646,14 @@ void FileDlg::UpdateList()
         for (char c = 'C'; c <= 'Z'; ++c) {
             try {
                 fs::path path(c + std::string(":"));
-                if (fs::exists(path)) {
+                std::error_code ec;
+                if (fs::exists(path, ec)) {
                     auto row = Wnd::Create<ListBox::Row>();
                     auto row_text = "[" + PathToString(path) + "]";
                     row->push_back(GetStyleFactory().NewTextControl(row_text, m_font, m_text_color, FORMAT_NOWRAP));
                     m_files_list->Insert(std::move(row));
                 }
-            } catch (const fs::filesystem_error&) {
-            }
+            } catch (...) {}
         }
     }
 }

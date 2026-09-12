@@ -191,8 +191,9 @@ namespace {
     std::filesystem::path GetDesignsDir() {
         // ensure directory present
         std::filesystem::path designs_dir_path(SavedDesignsDir());
-        if (!exists(designs_dir_path))
-            std::filesystem::create_directories(designs_dir_path);
+        std::error_code ec;
+        if (!exists(designs_dir_path, ec))
+            std::filesystem::create_directories(designs_dir_path, ec);
         return designs_dir_path;
     }
 
@@ -205,7 +206,8 @@ namespace {
         const auto file_name{std::string(DESIGN_FILENAME_PREFIX)
             .append(boost::uuids::to_string(design.UUID())).append(DESIGN_FILENAME_EXTENSION)};
 
-        return std::filesystem::absolute(designs_dir_path / file_name);
+        std::error_code ec;
+        return std::filesystem::absolute(designs_dir_path / FilenameToPath(file_name), ec);
     }
 
 
@@ -571,7 +573,8 @@ namespace {
         std::filesystem::path designs_dir_path = GetDesignsDir();
 
         const auto file_name{std::string{DESIGN_MANIFEST_PREFIX}.append(DESIGN_FILENAME_EXTENSION)};
-        auto file = std::filesystem::absolute(PathToString(designs_dir_path / file_name));
+        std::error_code ec;
+        auto file = std::filesystem::absolute(PathToString(designs_dir_path / FilenameToPath(file_name)), ec);
 
         std::stringstream ss;
         ss << DESIGN_MANIFEST_PREFIX << "\n";

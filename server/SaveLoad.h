@@ -20,7 +20,7 @@ struct ServerSaveGameData;
 std::map<int, SaveGameEmpireData> CompileSaveGameEmpireData(const EmpireManager& empires);
 
 /** Saves the provided data to savefile \a filename. */
-int SaveGame(const std::string& filename,
+int SaveGame(std::filesystem::path path,
              const ServerSaveGameData& server_save_game_data,
              const std::vector<PlayerSaveGameData>& player_save_game_data,
              const Universe& universe,
@@ -29,6 +29,9 @@ int SaveGame(const std::string& filename,
              const CombatLogManager& combat_log_manager,
              GalaxySetupData galaxy_setup_data,
              bool multiplayer);
+int SaveGame(auto, const ServerSaveGameData&, const std::vector<PlayerSaveGameData>&,
+             const Universe&, const EmpireManager&, const SpeciesManager&,
+             const CombatLogManager&, GalaxySetupData, bool) = delete;
 
 /** Loads the indicated data from savefile \a filename. */
 [[nodiscard]] bool LoadGame(const std::filesystem::path& path,
@@ -39,6 +42,9 @@ int SaveGame(const std::string& filename,
                             SpeciesManager& species_manager,
                             CombatLogManager& combat_log_manager,
                             GalaxySetupData& galaxy_setup_data);
+
+bool LoadGame(auto, ServerSaveGameData&, std::vector<PlayerSaveGameData>&, Universe&,
+              EmpireManager&, SpeciesManager&, CombatLogManager&, GalaxySetupData&) = delete;
 
 /** Loads from a savefile \a filename some basic info about players in the save
   * that is needed when resuming the game. */

@@ -40,7 +40,8 @@ namespace {
     /// Populates a SaveGamePreviewData from a given file
     /// returns true on success, false if preview data could not be found
     bool LoadSaveGamePreviewData(const fs::path& path, FullPreview& full) {
-        if (!fs::exists(path)) {
+        std::error_code ec;
+        if (!fs::exists(path, ec)) {
             DebugLogger() << "LoadSaveGamePreviewData: Save file note found: " << path.string();
             return false;
         }
@@ -99,6 +100,7 @@ namespace {
             return false;
         }
     }
+    bool LoadSaveGamePreviewData(auto, auto) = delete;
 }
 
 SaveGamePreviewData::SaveGamePreviewData() :
@@ -116,7 +118,8 @@ void SaveGamePreviewData::SetBinary(bool bin)
 
 
 bool SaveFileWithValidHeader(const std::filesystem::path& path) {
-    if (!fs::exists(path))
+    std::error_code ec;
+    if (!fs::exists(path, ec))
         return false;
 
     std::ifstream ifs(path, std::ios_base::binary);
@@ -165,7 +168,8 @@ bool SaveFileWithValidHeader(const std::filesystem::path& path) {
         }
 
     } catch (const std::exception& e) {
-        ErrorLogger() << "SaveFileWithValidHeader: Failed to read headers of " << path.string() << " because: " << e.what();
+        ErrorLogger() << "SaveFileWithValidHeader: Failed to read headers of " << PathToString(path)
+                      << " because: " << e.what();
         return false;
     }
     return true;
@@ -222,30 +226,32 @@ void LoadSaveGamePreviews(const fs::path& orig_path, const std::string& extensio
     fs::path path = orig_path;
     // Relative path relative to the save directory
     if (path.is_relative()) {
-        ErrorLogger() << "LoadSaveGamePreviews: supplied path must not be relative, \"" << path << "\" ";
+        ErrorLogger() << "LoadSaveGamePreviews: supplied path must not be relative, \"" << PathToString(path) << "\" ";
         return;
     }
 
-    if (!fs::exists(path)) {
-        ErrorLogger() << "LoadSaveGamePreviews: Save Game directory \"" << path << "\" not found";
+    std::error_code ec;
+    if (!fs::exists(path, ec)) {
+        ErrorLogger() << "LoadSaveGamePreviews: Save Game directory \"" << PathToString(path) << "\" not found";
         return;
     }
-    if (!fs::is_directory(path)) {
-        ErrorLogger() << "LoadSaveGamePreviews: Save Game directory \"" << path << "\" was not a directory";
+    if (!fs::is_directory(path, ec)) {
+        ErrorLogger() << "LoadSaveGamePreviews: Save Game directory \"" << PathToString(path) << "\" was not a directory";
         return;
     }
 
     for (fs::directory_iterator it(path); it != end_it; ++it) {
         try {
-            if ((it->path().filename().extension() == extension) && !fs::is_directory(it->path())) {
+            if ((PathToString(it->path().filename().extension()) == extension) && !fs::is_directory(it->path(), ec)) {
                 FullPreview data;
-                if (LoadSaveGamePreviewData(*it, data)) {
+                if (LoadSaveGamePreviewData(it->path(), data)) {
                     // Add preview entry to list
                     previews.push_back(std::move(data));
                 }
             }
         } catch (const std::exception& e) {
-            ErrorLogger() << "LoadSaveGamePreviews: Failed loading preview from " << it->path() << " because: " << e.what();
+            ErrorLogger() << "LoadSaveGamePreviews: Failed loading preview from " << PathToString(it->path())
+                          << " because: " << e.what();
         }
     }
 }
