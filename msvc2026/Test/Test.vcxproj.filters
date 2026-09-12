@@ -89,5 +89,8 @@
     <ClCompile Include="..\..\server\SaveLoad.cpp">
       <Filter>Test\server</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\test\parse\TestExpressionsPythonParser.cpp">
+      <Filter>Test\parse</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -51,6 +51,7 @@ namespace parse {
        the government header here. */
     template <typename P>
     FO_PARSE_API P policies(const std::filesystem::path& path);
+    template <typename P> void policies(auto) = delete;
 
     /** Parse all species in directory \p path, store them with their name in \p
         species_by_name. If a file exists called SpeciesCensusOrdering.focs.txt, parse it and

@@ -174,7 +174,7 @@ namespace {
     }
 
     bool IsMultiplayerSaveFile(const std::filesystem::path& path)
-    { return IsExistingFile(path) && MP_SAVE_FILE_EXTENSION == path.extension(); }
+    { return IsExistingFile(path) && MP_SAVE_FILE_EXTENSION == PathToString(path.extension()); }
 
     constexpr auto to_empire_colour = [](const auto& entry) noexcept {
         if constexpr (requires { entry.second.empire_color; })
@@ -373,11 +373,12 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
                 // save game on exit
                 std::string save_filename = GetAutoSaveFileName(m_server.CurrentTurn(),
                                                                 m_server.GetGalaxySetupData());
+                auto save_file_path = FilenameToPath(save_filename);
                 ServerSaveGameData server_data{m_server.CurrentTurn()};
                 int bytes_written = 0;
                 // save game...
                 try {
-                    bytes_written = SaveGame(save_filename,             server_data,        m_server.GetPlayerSaveGameData(),
+                    bytes_written = SaveGame(save_file_path,            server_data,        m_server.GetPlayerSaveGameData(),
                                              m_server.GetUniverse(),    m_server.Empires(), m_server.GetSpeciesManager(),
                                              GetCombatLogManager(),     m_server.m_galaxy_setup_data,
                                              !m_server.m_single_player_game);
@@ -762,11 +763,11 @@ sc::result Idle::react(const Hostless&) {
         DebugLogger(FSM) << "Loading file " << autostart_load_filename;
         try {
             // expect no players to send error message to
-
-            bool load_success = LoadGame(autostart_load_filename,   *server_save_game_data,
-                                         player_save_game_data,     server.GetUniverse(),
-                                         server.Empires(),          server.GetSpeciesManager(),
-                                         GetCombatLogManager(),     server.m_galaxy_setup_data);
+            auto autostart_load_path = FilenameToPath(autostart_load_filename);
+            bool load_success = LoadGame(autostart_load_path,   *server_save_game_data,
+                                         player_save_game_data, server.GetUniverse(),
+                                         server.Empires(),      server.GetSpeciesManager(),
+                                         GetCombatLogManager(), server.m_galaxy_setup_data);
 
             if (!load_success)
                 throw std::runtime_error("Loading save returned false");
@@ -1708,7 +1709,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         std::filesystem::path save_dir(GetServerSaveDir());
         std::vector<PlayerSaveHeaderData> player_save_header_data;
         try {
-            LoadEmpireSaveGameData((save_dir / m_lobby_data->save_game).string(),
+            LoadEmpireSaveGameData(save_dir / m_lobby_data->save_game,
                                    m_lobby_data->save_game_empire_data,
                                    player_save_header_data,
                                    *m_lobby_data,
@@ -1770,15 +1771,15 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
             if (!m_lobby_data->new_game) {
                 // Load game ...
-                std::string save_filename = PathToString((GetServerSaveDir() / m_lobby_data->save_game));
+                auto save_path = GetServerSaveDir() / m_lobby_data->save_game;
 
                 try {
                     server.Networking().SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::LOADING_GAME));
 
-                    bool load_success = LoadGame(save_filename,             *m_server_save_game_data,
-                                                 m_player_save_game_data,   server.GetUniverse(),
-                                                 server.Empires(),          server.GetSpeciesManager(),
-                                                 GetCombatLogManager(),     server.m_galaxy_setup_data);
+                    bool load_success = LoadGame(save_path,               *m_server_save_game_data,
+                                                 m_player_save_game_data, server.GetUniverse(),
+                                                 server.Empires(),        server.GetSpeciesManager(),
+                                                 GetCombatLogManager(),   server.m_galaxy_setup_data);
                     if (!load_success)
                         throw std::runtime_error("Loading save returned false");
 
@@ -1885,12 +1886,12 @@ sc::result MPLobby::react(const StartMPGame& msg) {
 
         } else {
             // Load game...
-            std::string save_filename = (GetServerSaveDir() / m_lobby_data->save_game).string();
+            auto save_path = GetServerSaveDir() / m_lobby_data->save_game;
 
             try {
                 server.Networking().SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::LOADING_GAME));
 
-                bool load_success = LoadGame(save_filename,             *m_server_save_game_data,
+                bool load_success = LoadGame(save_path,                 *m_server_save_game_data,
                                              m_player_save_game_data,   server.GetUniverse(),
                                              server.Empires(),          server.GetSpeciesManager(),
                                              GetCombatLogManager(),     server.m_galaxy_setup_data);
@@ -2222,9 +2223,16 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
             try {
                 server.Networking().SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::LOADING_GAME));
 
-                bool load_success = LoadGame(m_single_player_setup_data->filename,                  *m_server_save_game_data,
-                                             m_player_save_game_data,       server.GetUniverse(),   server.Empires(),
-                                             server.GetSpeciesManager(),    GetCombatLogManager(),  server.m_galaxy_setup_data);
+                auto load_path = FilenameToPath(m_single_player_setup_data->filename);
+                std::error_code ec;
+                if (!std::filesystem::exists(load_path, ec))
+                    ErrorLogger(FSM) << "Save file does not exist: " << PathToString(load_path);
+                else if (!std::filesystem::is_regular_file(load_path, ec))
+                    WarnLogger(FSM) << "Save file is not a regular file: " << PathToString(load_path);
+
+                bool load_success = LoadGame(load_path,                  *m_server_save_game_data,
+                                             m_player_save_game_data,    server.GetUniverse(),   server.Empires(),
+                                             server.GetSpeciesManager(), GetCombatLogManager(),  server.m_galaxy_setup_data);
 
                 if (!load_success)
                     throw std::runtime_error("Loading save returned false");
@@ -2752,11 +2760,12 @@ sc::result PlayingGame::react(const ShutdownServer& msg) {
     {
         // save game on exit
         std::string save_filename = GetAutoSaveFileName(server.CurrentTurn(), server.GetGalaxySetupData());
+        auto save_path = FilenameToPath(save_filename);
         ServerSaveGameData server_data{server.CurrentTurn()};
         int bytes_written = 0;
         // save game...
         try {
-            bytes_written = SaveGame(save_filename,         server_data,        server.GetPlayerSaveGameData(),
+            bytes_written = SaveGame(save_path,             server_data,        server.GetPlayerSaveGameData(),
                                      server.GetUniverse(),  server.Empires(),   server.GetSpeciesManager(),
                                      GetCombatLogManager(), server.m_galaxy_setup_data,
                                      !server.m_single_player_game);
@@ -3534,7 +3543,8 @@ sc::result WaitingForTurnEnd::react(const SaveGameRequest& msg) {
     try {
         ServerSaveGameData server_data{server.m_current_turn};
         const auto& save_filename = message.Text();
-        int bytes_written = SaveGame(save_filename,         server_data,        server.GetPlayerSaveGameData(),
+        auto save_path = FilenameToPath(save_filename);
+        int bytes_written = SaveGame(save_path,             server_data,        server.GetPlayerSaveGameData(),
                                      server.GetUniverse(),  server.Empires(),   server.GetSpeciesManager(),
                                      GetCombatLogManager(), server.m_galaxy_setup_data,
                                      !server.m_single_player_game);

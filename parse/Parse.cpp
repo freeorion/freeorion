@@ -158,7 +158,7 @@ namespace parse {
                 if (macro_lookup_it != macros.end()) {
                     // verify that macro is safe: check for cyclic reference of macro to itself
                     if (macro_deep_referenced_in_text(macro_key, macro_lookup_it->second, macros)) {
-                        ErrorLogger() << file_path.generic_string() << ": Skipping cyclic macro reference: " << macro_key;
+                        ErrorLogger() << PathToString(file_path) << ": Skipping cyclic macro reference: " << macro_key;
                         position += match.length();
                     } else {
                         // insert macro text in place of reference
@@ -181,13 +181,13 @@ namespace parse {
                         // be matched on the next pass
                     }
                 } else {
-                    ErrorLogger() << file_path.generic_string() << ": Unresolved macro reference: " << macro_key;
+                    ErrorLogger() << PathToString(file_path) << ": Unresolved macro reference: " << macro_key;
                     position += match.length();
                 }
             }
         } catch (const std::exception& e) {
-            ErrorLogger() << file_path.generic_string() << ": Exception caught regex parsing script file: " << e.what();
-            std::cerr << file_path.generic_string() << ": Exception caught regex parsing script file: " << e.what() << std::endl;
+            ErrorLogger() << PathToString(file_path) << ": Exception caught regex parsing script file: " << e.what();
+            std::cerr << PathToString(file_path) << ": Exception caught regex parsing script file: " << e.what() << std::endl;
             return;
         }
     }
@@ -229,7 +229,7 @@ namespace parse {
     {
         if (!IsExistingDir(file_search_path)) {
             ErrorLogger() << "File parsing include substitution given search path that is not a directory: "
-                          << file_search_path.string();
+                          << PathToString(file_search_path);
             return;
         }
         try {
@@ -276,17 +276,17 @@ namespace parse {
                 base_path = file_search_path;
                 match_path = (base_path / fn_match).lexically_normal();
             }
-            std::string fn_str = std::filesystem::path(fn_match).filename().string();
+            std::string fn_str = PathToString(FilenameToPath(fn_match).filename());
             if (fn_str.substr(0, 1) == "*") {
                 if (match_path.parent_path().empty()) {
-                    DebugLogger() << "Parse: " << match_path.parent_path().string() << " is empty, skipping.";
+                    DebugLogger() << "Parse: " << PathToString(match_path.parent_path()) << " is empty, skipping.";
                     continue;
                 }
                 fn_str = fn_str.substr(1, fn_str.size() - 1);
                 std::set<std::filesystem::path> match_list;
                 // filter results
                 for (const std::filesystem::path& file : ListDir(match_path.parent_path())) {
-                    std::string it_str = file.filename().string();
+                    std::string it_str = PathToString(file.filename());
                     std::size_t it_len = it_str.length();
                     std::size_t match_len = fn_str.length();
                     if (it_len > match_len) {
@@ -304,7 +304,7 @@ namespace parse {
                             new_text.append("\n");
                             dir_text.append(new_text);
                         } else {
-                            ErrorLogger() << "Parse: Unable to read file " << file.string();
+                            ErrorLogger() << "Parse: Unable to read file " << PathToString(file);
                         }
                     }
                 }
@@ -331,7 +331,7 @@ namespace parse {
 
         const auto& rdir = GetResourceDir();
         if (!IsExistingDir(rdir)) {
-            ErrorLogger() << "Background parse given non-existant resources directory: " << rdir.string() ;
+            ErrorLogger() << "Background parse given non-existant resources directory: " << PathToString(rdir) ;
             return;
         }
 
@@ -351,73 +351,73 @@ namespace parse {
         if (IsExistingDir(rdir / "scripting/macros")) {
             GetNamedValueRefManager().SetNamedValueRefParse(Pending::ParseSynchronously(parse::named_value_refs, python, rdir / "scripting/macros"));
         } else
-            ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/macros").string();
+            ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/macros");
 
         if (IsExistingDir(rdir / "scripting/buildings"))
             GetBuildingTypeManager().SetBuildingTypes(Pending::ParseSynchronously(parse::buildings, python, rdir / "scripting/buildings"));
         else
-            ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/buildings").string();
+            ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/buildings");
 
         if (IsExistingDir(rdir / "scripting/policies"))
             GetPolicyManager().SetPolicies(Pending::StartAsyncParsing(parse::policies<std::vector<Policy>>, rdir / "scripting/policies"));
         else
-            ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/policies").string();
+            ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/policies");
 
         if (IsExistingDir(rdir / "scripting/encyclopedia"))
             GetEncyclopedia().SetArticles(Pending::ParseSynchronously(parse::encyclopedia_articles, python, rdir / "scripting/encyclopedia"));
         else
-            ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/encyclopedia").string();
+            ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/encyclopedia");
 
         if (IsExistingDir(rdir / "scripting/fields"))
             GetFieldTypeManager().SetFieldTypes(Pending::ParseSynchronously(parse::fields, python, rdir / "scripting/fields"));
         else
-            ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/fields").string();
+            ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/fields");
 
         if (IsExistingDir(rdir / "scripting/specials"))
             GetSpecialsManager().SetSpecialsTypes(Pending::StartAsyncParsing(parse::specials, rdir / "scripting/specials"));
         else
-            ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/specials").string();
+            ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/specials");
 
         if (IsExistingDir(rdir / "scripting/species"))
             species_manager.SetSpeciesTypes(Pending::ParseSynchronously(parse::species, python, rdir / "scripting/species"));
         else
-            ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/species").string();
+            ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/species");
 
         if (IsExistingDir(rdir / "scripting/ship_parts"))
             GetShipPartManager().SetShipParts(Pending::StartAsyncParsing(parse::ship_parts, rdir / "scripting/ship_parts"));
         else
-            ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/ship_parts").string();
+            ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/ship_parts");
 
         if (IsExistingDir(rdir / "scripting/ship_hulls"))
             GetShipHullManager().SetShipHulls(Pending::ParseSynchronously(parse::ship_hulls, python, rdir / "scripting/ship_hulls"));
         else
-            ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/ship_hulls").string();
+            ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/ship_hulls");
 
         if (IsExistingDir(rdir / "scripting/ship_designs"))
             GetPredefinedShipDesignManager().SetShipDesignTypes(Pending::StartAsyncParsing(parse::ship_designs, rdir / "scripting/ship_designs"));
         else
-            ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/ship_designs").string();
+            ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/ship_designs");
 
         if (IsExistingDir(rdir / "scripting/monster_designs"))
             GetPredefinedShipDesignManager().SetMonsterDesignTypes(Pending::StartAsyncParsing(parse::ship_designs, rdir / "scripting/monster_designs"));
         else
-            ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/monster_designs").string();
+            ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/monster_designs");
 
         if (IsExistingFile(rdir / "scripting/game_rules.focs.py"))
             GetGameRules().Add(Pending::ParseSynchronously(parse::game_rules, python, rdir / "scripting/game_rules.focs.py"));
         else
-            ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/game_rules.focs.py").string();
+            ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/game_rules.focs.py");
 
         if (IsExistingDir(rdir / "scripting/techs"))
             GetTechManager().SetTechs(Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, python, rdir / "scripting/techs"));
         else {
-            ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/techs").string();
+            ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/techs");
         }
 
         if (IsExistingFile(rdir / "scripting/empire_colors.xml"))
             InitEmpireColors(rdir / "scripting/empire_colors.xml");
         else
-            ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/empire_colors.xml").string();
+            ErrorLogger() << "Background parse path doesn't exist: " << PathToString(rdir / "scripting/empire_colors.xml");
     }
 
     namespace detail {
@@ -598,7 +598,7 @@ namespace parse {
                            std::string& filename, std::string& file_contents,
                            parse::text_iterator& first, parse::text_iterator& last, parse::token_iterator& it)
     {
-        filename = path.string();
+        filename = PathToString(path);
 
         bool read_success = ReadFile(path, file_contents);
         if (!read_success) {
@@ -626,7 +626,7 @@ namespace parse {
                                          const text_iterator last)
     {
         if (!parser_success)
-            WarnLogger() << "A parser failed while parsing " << path;
+            WarnLogger() << "A parser failed while parsing " << PathToString(path);
 
         auto length_of_unparsed_file = std::distance(first, last);
         bool parse_length_good = ((length_of_unparsed_file == 0)
@@ -638,7 +638,7 @@ namespace parse {
         {
             auto unparsed_section = file_contents.substr(file_contents.size() - std::abs(length_of_unparsed_file));
             std::copy(first, last, std::back_inserter(unparsed_section));
-            ErrorLogger() << "File \"" << path << "\" was incompletely parsed. \n"
+            ErrorLogger() << "File \"" << PathToString(path) << "\" was incompletely parsed. \n"
                             << "Unparsed section of file, " << length_of_unparsed_file <<" characters:\n"
                             << unparsed_section;
         }

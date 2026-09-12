@@ -554,6 +554,8 @@ public:
       * DB options contained in that file (read the file using XMLDoc, then fill the DB using SetFromXML)
       * if the \a version string is empty, bypass that check */
     void SetFromFile(const std::filesystem::path& file_path, std::string_view version = "");
+    void SetFromFile(auto, std::string_view) = delete;
+    void SetFromFile(auto) = delete;
 
     /** fills some or all of the options of the DB from values passed in from
       * the command line */
@@ -611,14 +613,16 @@ private:
 
 template <typename T>
 bool OptionsDB::Option::SetFromValue(T&& value_) {
-    if constexpr (!std::is_same_v<std::decay_t<decltype(value_)>, std::filesystem::path> &&
-                  !std::is_same_v<std::decay_t<decltype(value_)>, std::string> &&
-                  std::is_convertible_v<decltype(value_), std::string> &&
-                  std::is_convertible_v<std::string, decltype(value_)>)
+    static_assert(std::is_same_v<std::decay_t<T>, std::decay_t<decltype(value_)>>);
+    using DecayT = std::decay_t<T>;
+    if constexpr (!std::is_same_v<DecayT, std::filesystem::path> &&
+                  !std::is_same_v<DecayT, std::string> &&
+                  std::is_convertible_v<DecayT, std::string> &&
+                  std::is_convertible_v<std::string, DecayT>)
     {
         return SetFromValue(std::string(value_));
 
-    } else if (value.type() != typeid(std::decay_t<T>)) {
+    } else if (value.type() != typeid(DecayT)) {
         DebugLogger() << "OptionsDB::Option::SetFromValue expected type " << value.type().name()
                       << " but got value of type " << typeid(T).name();
     }

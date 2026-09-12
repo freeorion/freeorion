@@ -60,11 +60,13 @@ auto PythonServer::InitModules() -> bool
 {
     DebugLogger() << "Initializing server Python modules";
 
+    std::error_code ec;
+
     // Confirm existence of the directory containing the universe generation
     // Python scripts and add it to Pythons sys.path to make sure Python will
     // find our scripts
     auto python_universe_generator_dir = GetPythonUniverseGeneratorDir();
-    if (!fs::exists(python_universe_generator_dir)) {
+    if (!fs::exists(python_universe_generator_dir), ec) {
         ErrorLogger() << "Can't find folder containing universe generation scripts: " << PathToString(python_universe_generator_dir);
         return false;
     }
@@ -73,7 +75,7 @@ auto PythonServer::InitModules() -> bool
     // scripts and add it to Pythons sys.path to make sure Python will find
     // our scripts
     auto python_turn_events_dir = GetPythonTurnEventsDir();
-    if (!fs::exists(python_turn_events_dir)) {
+    if (!fs::exists(python_turn_events_dir), ec) {
         ErrorLogger() << "Can't find folder containing turn events scripts:" << PathToString(python_turn_events_dir);
         return false;
     }
@@ -81,7 +83,7 @@ auto PythonServer::InitModules() -> bool
     // Confirm existence of the directory containing the auth Python scripts
     // and add it to Pythons sys.path to make sure Python will find our scripts
     auto python_auth_dir = GetPythonAuthDir();
-    if (!fs::exists(python_auth_dir)) {
+    if (!fs::exists(python_auth_dir), ec) {
         ErrorLogger() << "Can't find folder containing auth scripts:" << PathToString(python_auth_dir);
         return false;
     }
@@ -89,7 +91,7 @@ auto PythonServer::InitModules() -> bool
     // Confirm existence of the directory containing the chat Python scripts
     // and add it to Pythons sys.path to make sure Python will find our scripts
     auto python_chat_dir = GetPythonChatDir();
-    if (!fs::exists(python_chat_dir)) {
+    if (!fs::exists(python_chat_dir), ec) {
         ErrorLogger() << "Can't find folder containing chat scripts:" << PathToString(python_chat_dir);
         return false;
     }
