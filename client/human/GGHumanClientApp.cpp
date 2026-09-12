@@ -1771,20 +1771,18 @@ void GGHumanClientApp::BrowsePath(const std::filesystem::path& browse_path) {
         return;
     }
 
-    try {
+    if constexpr (noexcept(full_path.make_preferred())) {
         full_path.make_preferred();
-    } catch (...) {}
+    } else {
+        try {
+            full_path.make_preferred();
+        } catch (...) {}
+    }
     // Trailing slash post-fixed to prevent executing a file with same name(minus extension) as folder
     full_path += std::filesystem::path::preferred_separator;
 
-    const auto target = [&full_path]() -> std::filesystem::path::string_type {
-        try {
-            return full_path.native();
-        } catch(...) {
-            ErrorLogger() << "Unable to get native path string for path " << PathToString(full_path);
-            return {};
-        }
-    }();
+    static_assert(noexcept(full_path.native()));
+    const auto& target{full_path.native()};
     if (target.empty())
         return;
 
@@ -1798,7 +1796,7 @@ void GGHumanClientApp::BrowsePath(const std::filesystem::path& browse_path) {
     //    Contrary to official documentation for start, the first argument (title) is not always optional.
     //    The argument for window title is left as an empty string.
     //    see https://ss64.com/nt/start.html
-    decltype(target) command =
+    const std::filesystem::path::string_type command =
 #ifdef _WIN32
     L"start \"\" \"" + target + L"\\\\\"";
 #elif __APPLE__
