@@ -169,6 +169,7 @@ namespace {
 
     std::string PathToString(const fs::path& p) {
 #if defined (_WIN32)
+        static_assert(noexcept(p.native()));
         return ToUTF8String(p.native());
 #else
         return p.string();
