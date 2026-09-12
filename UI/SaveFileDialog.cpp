@@ -521,9 +521,10 @@ public:
         if (path.has_parent_path() && path.parent_path() != path)
             dirs.emplace_back("..");
 
+        std::error_code ec;
         fs::directory_iterator end_it;
         for (fs::directory_iterator it(path); it != end_it; ++it) {
-            if (fs::is_directory(it->path())) {
+            if (fs::is_directory(it->path(), ec)) {
                 fs::path last_bit_of_path = it->path().filename();
                 std::string utf8_dir_name = PathToString(last_bit_of_path);
                 DebugLogger() << "SaveFileDialog::FindLocalRelativeDirs name: " << utf8_dir_name
@@ -813,9 +814,10 @@ void SaveFileDialog::Confirm() {
         return "chosen_full_path PathString: " + cfpstr +
             (utf8::is_valid(cfpstr.begin(), cfpstr.end()) ? "is valid UTF8" : "is NOT valid UTF8");
     }();
-    DebugLogger() << "chosen_full_path is directory? : " << fs::is_directory(chosen_full_path);
+    std::error_code ec;
+    DebugLogger() << "chosen_full_path is directory? : " << fs::is_directory(chosen_full_path, ec);
 
-    if (fs::is_directory(chosen_full_path)) {
+    if (fs::is_directory(chosen_full_path, ec)) {
         DebugLogger() << "SaveFileDialog::Confirm: " << PathToString(chosen_full_path) << " is a directory. Listing content.";
         UpdateDirectory(PathToString(chosen_full_path));
         return;
@@ -828,7 +830,7 @@ void SaveFileDialog::Confirm() {
 
     if (!m_load_only) {
         // append appropriate extension if invalid
-        std::string chosen_ext = fs::path(chosen_full_path).extension().string();
+        const std::string chosen_ext = PathToString(chosen_full_path.extension());
         if (chosen_ext != m_extension) {
             choice += m_extension;
             chosen_full_path += m_extension;
@@ -836,11 +838,11 @@ void SaveFileDialog::Confirm() {
         }
         DebugLogger() << "SaveFileDialog::Confirm: File " << PathToString(chosen_full_path) << " chosen.";
         // If not loading and file exists(and is regular file), ask to confirm override
-        if (fs::is_regular_file(chosen_full_path)) {
+        if (fs::is_regular_file(chosen_full_path, ec)) {
             std::string question = str((FlexibleFormat(UserString("SAVE_REALLY_OVERRIDE")) % choice));
             if (!Prompt(std::move(question)))
                 return;
-        } else if (fs::exists(chosen_full_path)) {
+        } else if (fs::exists(chosen_full_path, ec)) {
             ErrorLogger() << "SaveFileDialog::Confirm: Invalid status for file: " << ResultString();
             return;
         }
@@ -854,7 +856,8 @@ void SaveFileDialog::AskDelete() {
         return;
 
     fs::path chosen(ResultPath());
-    if (!fs::exists(chosen) || !fs::is_regular_file(chosen))
+    std::error_code ec;
+    if (!fs::exists(chosen, ec) || !fs::is_regular_file(chosen, ec))
         return;
     const auto& filename = m_name_edit->Text();
 
@@ -964,12 +967,12 @@ void SaveFileDialog::SetPreviewListCore(const std::function<void ()>& setup_prev
 bool SaveFileDialog::CheckChoiceValidity() {
     // Check folder validity
     if (!m_server_previews) {
-        fs::path dir(FilenameToPath(GetDirPath()));
-        if (fs::exists(dir) && fs::is_directory(dir)) {
+        fs::path dir = FilenameToPath(GetDirPath());
+        std::error_code ec;
+        if (fs::exists(dir, ec) && fs::is_directory(dir, ec))
             m_current_dir_edit->SetColor(ClientUI::TextColor());
-        } else {
+        else
             m_current_dir_edit->SetColor(GG::CLR_RED);
-        }
     }
 
     // Check file name validity
@@ -1032,9 +1035,10 @@ void SaveFileDialog::SetDirPath(std::string dirname) {
         }
     } else {
         // Normalize path
-        fs::path path(dirname);
-        if (fs::is_directory(path)) {
-            path = fs::canonical(path);
+        fs::path path = FilenameToPath(dirname);
+        std::error_code ec;
+        if (fs::is_directory(path, ec)) {
+            path = fs::canonical(path, ec);
             dirname = PathToString(path);
         }
     }

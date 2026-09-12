@@ -58,6 +58,7 @@ private:
     void UpdatePreviewList();
     /** Update the preview list from a local save directory*/
     void SetPreviewList(const std::filesystem::path& path);
+    void SetPreviewList(auto) = delete;
     /** Update the previews with preview info set by \p setup_preview_info*/
     void SetPreviewListCore(const std::function<void ()>& setup_preview_info);
 
