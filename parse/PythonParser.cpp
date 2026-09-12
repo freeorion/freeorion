@@ -416,7 +416,7 @@ bool PythonParser::ParseFileCommon(const std::filesystem::path& path,
     }
 
     try {
-        boost::python::dict globals;
+        const boost::python::dict globals;
         PythonCommon::CompileEval(file_contents.c_str(), path, globals);
     } catch (const boost::python::error_already_set&) {
         m_python.HandleErrorAlreadySet();
