@@ -107,7 +107,7 @@ namespace {
     static_assert(Pow(0,0) == 1);
 }
 
-int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_game_data,
+int SaveGame(std::filesystem::path path, const ServerSaveGameData& server_save_game_data,
              const std::vector<PlayerSaveGameData>& player_save_game_data, const Universe& universe,
              const EmpireManager& empire_manager, const SpeciesManager& species_manager,
              const CombatLogManager& combat_log_manager, GalaxySetupData galaxy_setup_data,
@@ -117,7 +117,8 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
 
     bool use_binary = GetOptionsDB().Get<bool>("save.format.binary.enabled");
     bool use_zlib_for_zml = GetOptionsDB().Get<bool>("save.format.xml.zlib.enabled");
-    DebugLogger() << "SaveGame(" << (use_binary ? "binary" : (use_zlib_for_zml ? "zlib-xml" : "raw-xml")) << ") filename: " << filename;
+    DebugLogger() << "SaveGame(" << (use_binary ? "binary" : (use_zlib_for_zml ? "zlib-xml" : "raw-xml")) << ") filename: "
+                  << PathToString(path.filename());
     GlobalSerializationEncodingForEmpire() = ALL_EMPIRES;
 
     DebugLogger() << "Compiling save empire and preview data";
@@ -138,25 +139,24 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
 
     try {
         timer.EnterSection("path management");
-        fs::path path = FilenameToPath(filename);
 
         // A relative path should be relative to the save directory.
         if (path.is_relative()) {
             path = (multiplayer ? GetServerSaveDir() : GetSaveDir()) / path;
-            DebugLogger() << "Made save path relative to save dir. Is now: " << path;
+            DebugLogger() << "Made save path relative to save dir. Is now: " << PathToString(path);
         }
 
         if (multiplayer) {
             // Make sure the path points into our save directory
             if (!IsInDir(GetServerSaveDir(), path.parent_path())) {
-                WarnLogger() << "Path \"" << path << "\" is not in server save directory.";
+                WarnLogger() << "Path \"" << PathToString(path) << "\" is not in server save directory.";
                 path = GetServerSaveDir() / path.filename();
-                WarnLogger() << "Path changed to \"" << path << "\"";
+                WarnLogger() << "Path changed to \"" << PathToString(path) << "\"";
             } else {
                 try {
                     // ensure save directory exists
-                    if (!exists(path.parent_path())) {
-                        WarnLogger() << "Creating save directories " << path.parent_path().string();
+                    if (!exists(path.parent_path())) { // allow throw
+                        WarnLogger() << "Creating save directories " << PathToString(path.parent_path());
                         std::filesystem::create_directories(path.parent_path());
                     }
                 } catch (const std::exception& e) {
@@ -462,7 +462,7 @@ namespace {
     }
 }
 
-bool LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_data,
+bool LoadGame(const std::filesystem::path& path, ServerSaveGameData& server_save_game_data,
               std::vector<PlayerSaveGameData>& player_save_game_data, Universe& universe,
               EmpireManager& empire_manager, SpeciesManager& species_manager,
               CombatLogManager& combat_log_manager, GalaxySetupData& galaxy_setup_data)
@@ -476,7 +476,6 @@ bool LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
 
     try {
         // set up input archive / stream for loading
-        const fs::path path = FilenameToPath(filename);
         std::ifstream ifs(path, std::ios_base::binary);
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
@@ -504,7 +503,7 @@ bool LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
         ErrorLogger() << "LoadGame(...) failed!  Error: " << err.what();
         return false;
     }
-    DebugLogger() << "LoadGame : Successfully loaded save file: " + filename;
+    DebugLogger() << "LoadGame : Successfully loaded save file: " << PathToString(path);
     return true;
 }
 
@@ -595,7 +594,7 @@ void LoadPlayerSaveHeaderData(const std::string& filename, std::vector<PlayerSav
     }
 }
 
-void LoadEmpireSaveGameData(const std::string& filename,
+void LoadEmpireSaveGameData(const std::filesystem::path& file_path,
                             std::map<int, SaveGameEmpireData>& empire_save_game_data,
                             std::vector<PlayerSaveHeaderData>& player_save_header_data,
                             GalaxySetupData& galaxy_setup_data,
@@ -605,12 +604,11 @@ void LoadEmpireSaveGameData(const std::string& filename,
     ServerSaveGameData  saved_server_save_game_data;
     GalaxySetupData     saved_galaxy_setup_data;
 
-    ScopedTimer timer("LoadEmpireSaveGameData: " + filename);
+    ScopedTimer timer("LoadEmpireSaveGameData: " + PathToString(file_path));
 
     try {
-        fs::path path = FilenameToPath(filename);
-        DebugLogger() << "LoadEmpireSaveGameData: filename: " << filename << " path:" << path;
-        std::ifstream ifs(path, std::ios_base::binary);
+        DebugLogger() << "LoadEmpireSaveGameData: path:" << PathToString(file_path);
+        std::ifstream ifs(file_path, std::ios_base::binary);
 
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);

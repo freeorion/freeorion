@@ -56,6 +56,7 @@ struct FO_COMMON_API PreviewInformation {
 /// Returns true on success, false if header data could not be loaded
 /// @param path Filename to load headers of
 FO_COMMON_API bool SaveFileWithValidHeader(const std::filesystem::path& path);
+bool SaveFileWithValidHeader(auto) = delete;
 
 /// Get the value of column name in this preview
 /// @param full FullPreview to match for column @p name
@@ -69,6 +70,7 @@ FO_COMMON_API std::string ColumnInPreview(const FullPreview& full, const std::st
 /// \param [out] previews The previews will be put here
 FO_COMMON_API void LoadSaveGamePreviews(const std::filesystem::path& path, const std::string& extension,
                                         std::vector<FullPreview>& previews);
+void LoadSaveGamePreviews(auto, const std::string&, std::vector<FullPreview>&) = delete;
 
 
 #endif

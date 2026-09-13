@@ -120,6 +120,7 @@ private:
 
 /** Initialize empire colors from \p path */
 FO_COMMON_API void InitEmpireColors(const std::filesystem::path& path);
+void InitEmpireColors(auto) = delete; // disable implicit conversions
 
 
 #endif

@@ -452,7 +452,7 @@ namespace {
             name_text = UserString(elem.item.name);
 
         } else {
-            graphic = ui.GetTexture(""); // get "missing texture" texture by supply intentionally bad path
+            graphic = ui.GetMissingTexture();
             name_text = UserString("FW_UNKNOWN_DESIGN_NAME");
         }
 

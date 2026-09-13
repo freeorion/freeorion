@@ -99,15 +99,14 @@ namespace {
 
         void operator()() {
             try {
-                auto dlg = GG::Wnd::Create<FileDlg>(m_path.string(), m_edit->Text(), false, false, m_filters);
+                auto dlg = GG::Wnd::Create<FileDlg>(PathToString(m_path), m_edit->Text(), false, false, m_filters);
                 if (m_directory)
                     dlg->SelectDirectories(true);
                 dlg->Run();
                 if (!dlg->Result().empty()) {
-                    fs::path path = m_return_relative_path ?
-                        RelativePath(m_path, fs::path(*(dlg->Result().begin()))) :
-                        fs::absolute(*(dlg->Result().begin()));
-                    *m_edit << path.string();
+                    auto dlg_result_path = FilenameToPath(*dlg->Result().begin());
+                    auto path = m_return_relative_path ? fs::relative(dlg_result_path, m_path) : fs::absolute(dlg_result_path);
+                    *m_edit << PathToString(path);
                     m_edit->EditedSignal(m_edit->Text());
                 }
             } catch (const std::exception& e) {
@@ -127,8 +126,9 @@ namespace {
         // main() caught exception(std::exception): filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
             fs::path path = FilenameToPath(file);
+            std::error_code ec;
             return boost::algorithm::ends_with(file, STRINGTABLE_FILE_SUFFIX) &&
-                fs::exists(path) && !fs::is_directory(path);
+                fs::exists(path, ec) && !fs::is_directory(path, ec);
         } catch (...) {
         }
         return false;
@@ -139,8 +139,9 @@ namespace {
         // main() caught exception(std::exception): filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
             fs::path path = FilenameToPath(file);
+            std::error_code ec;
             return boost::algorithm::ends_with(file, FONT_FILE_SUFFIX) &&
-                fs::exists(path) && !fs::is_directory(path);
+                fs::exists(path, ec) && !fs::is_directory(path, ec);
         } catch (...) {
         }
         return false;
@@ -151,8 +152,9 @@ namespace {
         // main() caught exception(std::exception): filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
             fs::path path = FilenameToPath(file);
+            std::error_code ec;
             return boost::algorithm::ends_with(file, MUSIC_FILE_SUFFIX) &&
-                fs::exists(path) && !fs::is_directory(path);
+                fs::exists(path, ec) && !fs::is_directory(path, ec);
         } catch (...) {
         }
         return false;
@@ -163,8 +165,9 @@ namespace {
         // main() caught exception(std::exception): filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
             fs::path path = FilenameToPath(file);
+            std::error_code ec;
             return boost::algorithm::ends_with(file, SOUND_FILE_SUFFIX) &&
-                fs::exists(path) && !fs::is_directory(path);
+                fs::exists(path, ec) && !fs::is_directory(path, ec);
         } catch (...) {
         }
         return false;
@@ -175,7 +178,8 @@ namespace {
         // main() caught exception(std::exception): filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
             fs::path path = FilenameToPath(file);
-            return fs::exists(path) && fs::is_directory(path);
+            std::error_code ec;
+            return fs::exists(path, ec) && fs::is_directory(path, ec);
         } catch (...) {
         }
         return false;
@@ -190,7 +194,8 @@ namespace {
             if (!boost::algorithm::ends_with(file, EXE_FILE_SUFFIX))
                 return false;
 #endif
-            return fs::exists(path) && fs::is_regular_file(path);
+            std::error_code ec;
+            return fs::exists(path, ec) && fs::is_regular_file(path, ec);
         } catch (...) {
         }
         return false;

@@ -336,15 +336,19 @@ public:
       * generated if \a mipmap is true. */
     static std::shared_ptr<Texture> GetTexture(const std::filesystem::path& path, bool mipmap = false)
     { return GetTextureManager().GetTexture(path, mipmap); }
+    static std::shared_ptr<Texture> GetTexture(auto, bool) = delete; // disable implicit conversions
+    static std::shared_ptr<Texture> GetTexture(auto) = delete;
 
     /** Returns if file \a path is a supported texture format. */
     static bool IsSupportedTextureFilenameExtension(const std::filesystem::path& path)
     { return TextureManager::IsSupportedTextureFilenameExtension(path); }
+    static bool IsSupportedTextureFilenameExtension(auto) = delete; // disable implicit conversion
 
     /** Removes the desired texture from the managed pool; since shared_ptr
       * are used, the texture may be deleted much later. */
     static void FreeTexture(const std::filesystem::path& path)
     { GetTextureManager().FreeTexture(path); }
+    static void FreeTexture(auto) = delete; // disable implicit conversion
 
     /** Sets the currently-installed style factory. */
     void SetStyleFactory(std::unique_ptr<StyleFactory>&& factory) noexcept;

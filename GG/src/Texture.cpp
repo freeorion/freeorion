@@ -1,4 +1,4 @@
-//! GiGi - A GUI for OpenGL
+﻿//! GiGi - A GUI for OpenGL
 //!
 //!  Copyright (C) 2003-2008 T. Zachary Laine <whatwasthataddress@gmail.com>
 //!  Copyright (C) 2013-2020 The FreeOrion Project
@@ -35,6 +35,25 @@ namespace {
         while (value < input)
             value *= 2;
         return value;
+    }
+
+    namespace {
+#if defined(_WIN32)
+        std::string ToUTF8String(const std::filesystem::path::string_type& native_wstring) {
+            std::string u8_string;
+            utf8::utf16to8(native_wstring.begin(), native_wstring.end(), std::back_inserter(u8_string));
+            return u8_string;
+        }
+#endif
+
+        decltype(auto) PathToString(const std::filesystem::path& p) {
+#if defined (_WIN32)
+            return ToUTF8String(p.generic_wstring());
+#else
+            return p.generic_string();
+#endif
+        }
+        std::string PathToString(auto) = delete; // disable implicit conversions
     }
 }
 
@@ -141,26 +160,14 @@ void Texture::Load(const std::filesystem::path& path, bool mipmap)
     if (m_opengl_id)
         Clear();
 
-    // convert path into UTF-8 format filename string for potential error reporting
-    // but do the work only if actually throwing error to log
-    constexpr auto loggable_path = [](const fs::path& p) {
-#if defined (_WIN32)
-        std::filesystem::path::string_type path_native = p.native();
-        std::string filename;
-        utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(filename));
-        return filename;
-#else
-        return p.generic_string();
-#endif
-    };
-
-    if (!fs::exists(path)) {
-        std::cerr << "Texture::Load passed non-existant path: " << path.generic_string() << std::endl;
-        throw BadFile("Texture file \"" + loggable_path(path) + "\" does not exist");
+    std::error_code ec;
+    if (!fs::exists(path, ec)) {
+        std::cerr << "Texture::Load passed non-existant path: " << PathToString(path) << std::endl;
+        throw BadFile("Texture file \"" + PathToString(path) + "\" does not exist");
     }
-    if (!fs::is_regular_file(path)) {
-        std::cerr << "Texture::Load passed non-file path: " << path.generic_string() << std::endl;
-        throw BadFile("Texture \"file\" \"" + loggable_path(path) + "\" is not a file");
+    if (!fs::is_regular_file(path, ec)) {
+        std::cerr << "Texture::Load passed non-file path: " << PathToString(path) << std::endl;
+        throw BadFile("Texture \"file\" \"" + PathToString(path) + "\" is not a file");
     }
 
     static_assert(sizeof(gil::gray8_pixel_t) == 1, "gray8 pixel type does not match expected type size");
@@ -187,7 +194,7 @@ void Texture::Load(const std::filesystem::path& path, bool mipmap)
     typedef gil::any_image<ImageTypes> ImageType;
 #endif
 
-    std::string extension = boost::algorithm::to_lower_copy(path.extension().string());
+    std::string extension = boost::algorithm::to_lower_copy(PathToString(path.extension()));
     ImageType image;
     try {
         // First attempt -- try just to read the file in one of the default formats above.
@@ -206,7 +213,7 @@ void Texture::Load(const std::filesystem::path& path, bool mipmap)
         }
         else
 #endif
-            throw BadFile("Texture file \"" + loggable_path(path) + "\" does not have a supported file extension");
+            throw BadFile("Texture file \"" + PathToString(path) + "\" does not have a supported file extension");
     } catch (const std::ios_base::failure&) {
         // Second attempt -- If *_read_image() throws, see if we can convert
         // the image to RGBA.  This is needed for color-indexed images.
@@ -269,7 +276,7 @@ void Texture::Load(const std::filesystem::path& path, bool mipmap)
     case 2:  m_format = GL_LUMINANCE_ALPHA; break;
     case 3:  m_format = GL_RGB; break;
     case 4:  m_format = GL_RGBA; break;
-    default: throw BadFile("Texture file \"" + loggable_path(path) + "\" does not have a supported number of color channels (1-4)");
+    default: throw BadFile("Texture file \"" + PathToString(path) + "\" does not have a supported number of color channels (1-4)");
     }
 
     assert(image_data);
@@ -495,24 +502,26 @@ void TextureManager::StoreTexture(Texture* texture, std::string texture_name)
 void TextureManager::StoreTexture(std::shared_ptr<Texture> texture, std::string texture_name)
 {
     std::scoped_lock lock(m_texture_access_guard);
-    m_textures.insert_or_assign(std::move(texture_name), std::move(texture));
+    m_named_textures.insert_or_assign(std::move(texture_name), std::move(texture));
 }
 
 std::shared_ptr<Texture> TextureManager::GetTexture(const std::filesystem::path& path, bool mipmap)
 {
     std::scoped_lock lock(m_texture_access_guard);
 
-    auto it = m_textures.find(path.generic_string());
-    if (it != m_textures.end())
-        return it->second;
+    try {
+        auto it = m_pathed_textures.find(path);
+        if (it != m_pathed_textures.end())
+            return it->second;
+    } catch (...) {}
 
     // if no such texture was found, attempt to load it now, using name as the filename
     //std::cout << "TextureManager::GetTexture storing new texture under name: " << path.generic_string();
     return LoadTexture(path, mipmap);
 }
 
-bool TextureManager::IsSupportedTextureFilenameExtension(const std::filesystem::path& path) {
-    std::string extension = boost::algorithm::to_lower_copy(path.extension().string());
+bool TextureManager::IsSupportedTextureFilenameExtension(std::string_view extension) noexcept
+{
 #if GG_HAVE_LIBPNG
     if (extension == ".png")
         return true;
@@ -524,31 +533,41 @@ bool TextureManager::IsSupportedTextureFilenameExtension(const std::filesystem::
     return false;
 }
 
+bool TextureManager::IsSupportedTextureFilenameExtension(const std::filesystem::path& path)
+{
+    const std::string extension = boost::algorithm::to_lower_copy(PathToString(path.extension()));
+    return IsSupportedTextureFilenameExtension(std::string_view{extension});
+}
+
 std::shared_ptr<Texture> TextureManager::GetTextureByName(const std::string& texture_name) const
 {
     std::scoped_lock lock(m_texture_access_guard);
-    auto it = m_textures.find(texture_name);
-    return it == m_textures.end() ? nullptr : it->second;
+    auto it = m_named_textures.find(texture_name);
+    return it == m_named_textures.end() ? nullptr : it->second;
 }
 
 void TextureManager::FreeTexture(const std::filesystem::path& path)
-{ FreeTexture(path.generic_string()); }
+{
+    std::scoped_lock lock(m_texture_access_guard);
+    m_pathed_textures.erase(path);
+}
 
 void TextureManager::FreeTexture(const std::string& name)
 {
     std::scoped_lock lock(m_texture_access_guard);
-    auto it = m_textures.find(name);
-    if (it != m_textures.end())
-        m_textures.erase(it);
+    m_named_textures.erase(name);
 }
 
 std::shared_ptr<Texture> TextureManager::LoadTexture(const std::filesystem::path& path, bool mipmap)
 {
     // only called from other TextureManager functions that should already have locked m_texture_access_guard
-    auto temp = std::make_shared<Texture>();
-    temp->Load(path, mipmap);
-    auto it = m_textures.insert_or_assign(path.generic_string(), std::move(temp)).first;
-    return it->second;
+    try {
+        auto temp = std::make_shared<Texture>();
+        temp->Load(path, mipmap);
+        auto it = m_pathed_textures.insert_or_assign(path, std::move(temp)).first;
+        return it->second;
+    } catch (...) {}
+    return nullptr;
 }
 
 TextureManager& GG::GetTextureManager()

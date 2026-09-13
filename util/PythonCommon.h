@@ -47,12 +47,12 @@ public:
 
     // Compiles and evaluates \a code with defined \a filename. Populates \a globals
     static void CompileEval(const char* code, const std::filesystem::path& filename, const boost::python::dict& globals);
+    static void CompileEval(const char*, auto, const boost::python::dict&) = delete; // disable implicit conversion
 
     // Compiles and evaluates \a expression. Populates \a globals and returns result.
     static boost::python::object CompileEvalExpression(const char* expression, const boost::python::dict& globals);
 
-    void SetModulesDirs(const std::vector<std::filesystem::path>& modules_dirs);
-    void SetModulesDirs(std::vector<std::filesystem::path>&& modules_dirs);
+    void SetModulesDirs(std::vector<std::filesystem::path> modules_dirs);
 
     //! @name Modules finder and loader
     //! Methods exposed to Python as a meta path finder and a loader
@@ -77,7 +77,7 @@ private:
     //! @{
     std::vector<std::filesystem::path> m_modules_dirs;
     boost::optional<boost::python::list> m_meta_path;
-    int m_meta_path_len;
+    int m_meta_path_len = 0;
     //! @}
 };
 

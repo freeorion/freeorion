@@ -197,6 +197,7 @@
     <ClCompile Include="..\..\test\parse\ParserAppFixture.cpp" />
     <ClCompile Include="..\..\test\parse\TestDefaultPythonParser.cpp" />
     <ClCompile Include="..\..\test\parse\TestEnumParser.cpp" />
+    <ClCompile Include="..\..\test\parse\TestExpressionsPythonParser.cpp" />
     <ClCompile Include="..\..\test\parse\TestPythonParser.cpp" />
     <ClCompile Include="..\..\test\parse\TestScriptParser.cpp" />
     <ClCompile Include="..\..\test\save\EmptySave.cpp" />
