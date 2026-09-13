@@ -287,7 +287,7 @@ def _calculate_colonisation_priority():
     elif fo.currentTurn() > 100:
         allotted_portion *= 0.75 ** (num_colonies / 10.0)
     # allottedColonyTargets = 1+ int(fo.currentTurn()/50)
-    allottedColonyTargets = 1 + int(total_pp * turns_to_build * allotted_portion / colony_cost)
+    allottedColonyTargets = 1 + int(total_pp * turns_to_build * allotted_portion / max(colony_cost, 1))
     outpost_prio = aistate.get_priority(PriorityType.PRODUCTION_OUTPOST)
 
     # if have no SP_SLY, and have any outposts to build, don't build colony ships TODO: make more complex assessment
