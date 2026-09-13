@@ -223,6 +223,10 @@ public:
       * if none or "RANDOM" was specified. */
     int InitGlobalRNGSeedFromGalaxySetupData();
 
+#ifdef FREEORION_ANDROID
+    void Stop() { SignalHandler(boost::system::error_code{}, 0); };
+#endif
+
 private:
     /** Initialize the python engine if not already running.*/
     void InitializePython();

@@ -1,5 +1,8 @@
 #include "i18n.h"
 
+#ifdef FREEORION_ANDROID
+#  include "AndroidEnvironment.h"
+#endif
 #include "Directories.h"
 #include "Logger.h"
 #include "OptionsDB.h"

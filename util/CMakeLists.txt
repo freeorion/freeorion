@@ -1,5 +1,6 @@
 target_sources(freeorioncommon
     PUBLIC
+        $<$<PLATFORM_ID:Android>:${CMAKE_CURRENT_LIST_DIR}/AndroidEnvironment.h>
         ${CMAKE_CURRENT_LIST_DIR}/AppInterface.h
         ${CMAKE_CURRENT_LIST_DIR}/base64_filter.h
         ${CMAKE_CURRENT_LIST_DIR}/blocking_combiner.h
@@ -29,6 +30,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/Version.h
         ${CMAKE_CURRENT_LIST_DIR}/XMLDoc.h
     PRIVATE
+        $<$<PLATFORM_ID:Android>:${CMAKE_CURRENT_LIST_DIR}/AndroidEnvironment.cpp>
         ${CMAKE_CURRENT_LIST_DIR}/AppInterface.cpp
         ${CMAKE_CURRENT_LIST_DIR}/CheckSums.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Directories.cpp
