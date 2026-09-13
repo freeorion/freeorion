@@ -20,6 +20,10 @@
 #include "../../util/i18n.h"
 #include "../../util/Version.h"
 
+#ifdef FREEORION_ANDROID
+#  include "../../util/AndroidEnvironment.h"
+#endif
+
 std::atomic_bool quit(false);
 
 // Copied from ChatWnd.cpp

@@ -27,6 +27,7 @@
 #  include <android/asset_manager_jni.h>
 #  include <android/log.h>
 #  include <patchlevel.h>
+#  include "AndroidEnvironment.h"
 #endif
 
 #if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
@@ -67,53 +68,49 @@ namespace {
 #endif
 
 #if defined(FREEORION_ANDROID)
-    thread_local JNIEnv* s_jni_env = nullptr;
     fs::path       s_user_dir;
     fs::path       s_cache_dir;
     fs::path       s_python_home;
-    jweak          s_activity;
     AAssetManager* s_asset_manager;
     jobject        s_jni_asset_manager;
-    JavaVM*        s_java_vm;
-    bool           s_copy_python_lib;
 
-#define PYTHON_LIB_PATH "lib/python" BOOST_PP_STRINGIZE(BOOST_PP_CAT(PY_MAJOR_VERSION, PY_MINOR_VERSION)) ".zip"
+#  define PYTHON_LIB_PATH "lib/python" BOOST_PP_STRINGIZE(BOOST_PP_CAT(PY_MAJOR_VERSION, PY_MINOR_VERSION)) ".zip"
 
-void RedirectOutputLogAndroid(int priority, const char* tag, int fd)
-{
-    std::thread background([priority, tag, fd]() {
-        int pipes[2];
-        pipe(pipes);
-        dup2(pipes[1], fd);
-        FILE *inputFile = fdopen(pipes[0], "r");
-        char readBuffer[256];
-        while (true) {
-            fgets(readBuffer, sizeof(readBuffer), inputFile);
-            __android_log_write(priority, tag, readBuffer);
+    void RedirectOutputLogAndroid(int priority, const char* tag, int fd)
+    {
+        std::thread background([priority, tag, fd]() {
+            int pipes[2];
+            pipe(pipes);
+            dup2(pipes[1], fd);
+            FILE *inputFile = fdopen(pipes[0], "r");
+            char readBuffer[256];
+            while (true) {
+                fgets(readBuffer, sizeof(readBuffer), inputFile);
+                __android_log_write(priority, tag, readBuffer);
+            }
+        });
+        background.detach();
+    }
+
+    void CopyInitialResourceAndroid(const std::string& rel_path) {
+        AAsset* asset = AAssetManager_open(s_asset_manager, ("default/python/" + rel_path).c_str(), AASSET_MODE_STREAMING);
+        if (!asset)
+            return;
+
+        off64_t asset_length = AAsset_getLength64(asset);
+        if (asset_length <= 0) {
+            AAsset_close(asset);
+            return;
         }
-    });
-    background.detach();
-}
 
-void CopyInitialResourceAndroid(const std::string& rel_path) {
-    AAsset* asset = AAssetManager_open(s_asset_manager, ("default/python/" + rel_path).c_str(), AASSET_MODE_STREAMING);
-    if (!asset)
-        return;
-
-    off64_t asset_length = AAsset_getLength64(asset);
-    if (asset_length <= 0) {
-        AAsset_close(asset);
-        return;
+        char buf[4096];
+        int nb_read = 0;
+        std::ofstream ofs(s_python_home / rel_path, std::ios::binary);
+        while ((nb_read = AAsset_read(asset, buf, 4096)) > 0) {
+            ofs.write(buf, nb_read);
+        }
+        ofs.close();
     }
-
-    char buf[4096];
-    int nb_read = 0;
-    std::ofstream ofs(s_python_home / rel_path, std::ios::binary);
-    while ((nb_read = AAsset_read(asset, buf, 4096)) > 0) {
-        ofs.write(buf, nb_read);
-    }
-    ofs.close();
-}
 #endif
 
 #if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU)
@@ -465,19 +462,14 @@ void InitDirs(std::string const& argv0, bool test)
 
     InitBinDir(argv0);
 #elif defined(FREEORION_ANDROID)
-    JNIEnv *env;
-    if (s_jni_env) {
-        env = s_jni_env;
-    } else {
-        s_java_vm->AttachCurrentThreadAsDaemon(&env, nullptr);
-    }
+    ScopedJNIEnv env;
 
-    jobject activity = env->NewLocalRef(s_activity);
+    jobject context = env->NewLocalRef(ScopedJNIEnv::Context());
 
-    jclass activity_cls = env->GetObjectClass(activity);
+    jclass context_cls = env->GetObjectClass(context);
 
-    jmethodID get_files_dir_mid = env->GetMethodID(activity_cls, "getFilesDir", "()Ljava/io/File;");
-    jobject files_dir = env->CallObjectMethod(activity, get_files_dir_mid);
+    jmethodID get_files_dir_mid = env->GetMethodID(context_cls, "getFilesDir", "()Ljava/io/File;");
+    jobject files_dir = env->CallObjectMethod(context, get_files_dir_mid);
 
     jclass file_cls = env->GetObjectClass(files_dir);
     jmethodID get_absolute_path_mid = env->GetMethodID(file_cls, "getAbsolutePath", "()Ljava/lang/String;");
@@ -487,8 +479,8 @@ void InitDirs(std::string const& argv0, bool test)
     s_user_dir = fs::path(files_dir_chars);
     env->ReleaseStringUTFChars(files_dir_path, files_dir_chars);
 
-    jmethodID get_cache_dir_mid = env->GetMethodID(activity_cls, "getCacheDir", "()Ljava/io/File;");
-    jobject cache_dir = env->CallObjectMethod(activity, get_cache_dir_mid);
+    jmethodID get_cache_dir_mid = env->GetMethodID(context_cls, "getCacheDir", "()Ljava/io/File;");
+    jobject cache_dir = env->CallObjectMethod(context, get_cache_dir_mid);
 
     file_cls = env->GetObjectClass(cache_dir);
     get_absolute_path_mid = env->GetMethodID(file_cls, "getAbsolutePath", "()Ljava/lang/String;");
@@ -498,20 +490,16 @@ void InitDirs(std::string const& argv0, bool test)
     s_cache_dir = fs::path(cache_dir_chars);
     env->ReleaseStringUTFChars(cache_dir_path, cache_dir_chars);
 
-    jmethodID get_assets_mid = env->GetMethodID(activity_cls, "getAssets", "()Landroid/content/res/AssetManager;");
-    jobject asset_manager = env->CallObjectMethod(activity, get_assets_mid);
+    jmethodID get_assets_mid = env->GetMethodID(context_cls, "getAssets", "()Landroid/content/res/AssetManager;");
+    jobject asset_manager = env->CallObjectMethod(context, get_assets_mid);
     s_jni_asset_manager = env->NewGlobalRef(asset_manager);
     s_asset_manager = AAssetManager_fromJava(env, s_jni_asset_manager);
-
-    if (!s_jni_env) {
-        s_java_vm->DetachCurrentThread();
-    }
 
     RedirectOutputLogAndroid(ANDROID_LOG_ERROR, "stderr", 2);
     RedirectOutputLogAndroid(ANDROID_LOG_INFO, "stdout", 1);
 
     s_python_home = s_cache_dir / "python";
-    if (s_copy_python_lib) {
+    if (ScopedJNIEnv::CopyPythonLib()) {
         fs::create_directories(s_python_home / "lib");
         CopyInitialResourceAndroid(PYTHON_LIB_PATH);
     }
@@ -619,44 +607,6 @@ auto GetPythonHome() -> fs::path const
 #elif defined(FREEORION_WIN32)
     return GetBinDir();
 #endif
-}
-#endif
-
-#if defined(FREEORION_ANDROID)
-void SetAndroidEnvironment(JNIEnv* env, jobject activity, bool copy_python_lib)
-{
-    s_jni_env = env;
-    s_jni_env->GetJavaVM(&s_java_vm);
-    s_activity = env->NewWeakGlobalRef(activity);
-    s_copy_python_lib = copy_python_lib;
-}
-
-std::string GetAndroidLang()
-{
-    std::string retval;
-
-    JNIEnv *env;
-    if (s_jni_env != nullptr) {
-        env = s_jni_env;
-    } else {
-        s_java_vm->AttachCurrentThreadAsDaemon(&env, nullptr);
-    }
-
-    jclass locale_class = env->FindClass("java/util/Locale");
-    jmethodID get_default_mid = env->GetStaticMethodID(locale_class, "getDefault", "()Ljava/util/Locale;");
-    jobject locale = env->CallStaticObjectMethod(locale_class, get_default_mid);
-
-    jmethodID get_language_mid = env->GetMethodID(locale_class, "getLanguage", "()Ljava/lang/String;");
-    jstring language = reinterpret_cast<jstring>(env->CallObjectMethod(locale, get_language_mid));
-
-    const char *language_chars = env->GetStringUTFChars(language, nullptr);
-    retval = std::string(language_chars);
-    env->ReleaseStringUTFChars(language, language_chars);
-
-    if (!s_jni_env)
-        s_java_vm->DetachCurrentThread();
-
-    return retval;
 }
 #endif
 
@@ -822,12 +772,7 @@ auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predica
     directories.push_front(path);
 
     // ToDo: Register thread once after moving to single backgroung parsing thread for Python
-    JNIEnv *env;
-    if (s_jni_env != nullptr) {
-        env = s_jni_env;
-    } else {
-        s_java_vm->AttachCurrentThreadAsDaemon(&env, nullptr);
-    }
+    ScopedJNIEnv env;
 
     jmethodID list_mid = env->GetMethodID(env->GetObjectClass(s_jni_asset_manager), "list", "(Ljava/lang/String;)[Ljava/lang/String;");
     while (!directories.empty()) {
@@ -864,8 +809,6 @@ auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predica
             env->DeleteLocalRef(jstr);
         }
     }
-    if (!s_jni_env)
-        s_java_vm->DetachCurrentThread();
 
 #else
     bool is_rel = path.is_relative();
@@ -982,27 +925,17 @@ auto IsExistingDir(std::filesystem::path const& path) -> bool
         }
     }
 
-    JNIEnv *env;
-    if (s_jni_env != nullptr) {
-        env = s_jni_env;
-    } else {
-        s_java_vm->AttachCurrentThreadAsDaemon(&env, nullptr);
-    }
+    ScopedJNIEnv env;
 
     // Check assets with JNI to get subdirectories
     jmethodID list_mid = env->GetMethodID(env->GetObjectClass(s_jni_asset_manager), "list", "(Ljava/lang/String;)[Ljava/lang/String;");
     jstring path_object = env->NewStringUTF(PathToString(path).c_str());
     jobjectArray list_object = reinterpret_cast<jobjectArray>(env->CallObjectMethod(s_jni_asset_manager, list_mid, path_object));
     env->DeleteLocalRef(path_object);
-    if (!list_object) {
-        if (!s_jni_env)
-            s_java_vm->DetachCurrentThread();
+    if (!list_object)
         return false;
-    }
-    auto length = env->GetArrayLength(list_object);
-    if (!s_jni_env)
-        s_java_vm->DetachCurrentThread();
 
+    auto length = env->GetArrayLength(list_object);
     return length > 0;
 #else
     std::error_code ec;
