@@ -26,6 +26,10 @@ unroll and hide the stack trace, print a message and still crash anyways. */
 #  include <windows.h>
 #endif
 
+#ifdef FREEORION_ANDROID
+#  include "../util/AndroidEnvironment.h"
+#endif
+
 namespace {
 const auto& GetLoggerInitHelper() {
     // used to for init of logger before ServerApp and thus logger shutdown after ServerApp
@@ -37,15 +41,7 @@ const auto& GetLoggerInitHelper() {
 }
 }
 
-#ifndef FREEORION_WIN32
-int main(int argc, char* argv[]) {
-    std::vector<std::string> args;
-    bool testing = false;
-    for (int i = 0; i < argc; ++i) {
-        args.push_back(argv[i]);
-        testing = testing || (args.back() == "--testing");
-    }
-#else
+#if defined(FREEORION_WIN32)
 int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     // copy UTF-16 command line arguments to UTF-8 vector
     std::vector<std::string> args;
@@ -68,7 +64,41 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
             std::cerr << "main() couldn't convert argument to UTF8" << std::endl;
         }
     }
+#elif defined(FREEORION_ANDROID)
+//Called by org.freeorion.godot.FreeOrionServerService#stopNativeService native function
+extern "C" JNIEXPORT void JNICALL
+Java_org_freeorion_godot_FreeOrionServerService_stopNativeService(JNIEnv*, jclass) {
+    ServerApp& app = GetApp();
+    app.Stop();
+}
 
+// Called by org.freeorion.godot.FreeOrionServerService#startNativeService native function
+extern "C" JNIEXPORT int JNICALL
+Java_org_freeorion_godot_FreeOrionServerService_startNativeService(JNIEnv* env, jclass, jobject context, jobjectArray argsArray) {
+    SetAndroidEnvironment(env, context, false);
+    std::vector<std::string> args;
+    bool testing = false;
+    if (argsArray != nullptr) {
+        jsize length = env->GetArrayLength(argsArray);
+        for (jsize i = 0; i < length; ++i) {
+            auto jstr = static_cast<jstring>(env->GetObjectArrayElement(argsArray, i));
+            const char* chars = env->GetStringUTFChars(jstr, nullptr);
+            if (chars) {
+                args.emplace_back(chars);
+                testing = testing || (args.back() == "--testing");
+                env->ReleaseStringUTFChars(jstr, chars);
+            }
+            env->DeleteLocalRef(jstr);
+        }
+    }
+#else
+int main(int argc, char* argv[]) {
+    std::vector<std::string> args;
+    bool testing = false;
+    for (int i = 0; i < argc; ++i) {
+        args.push_back(argv[i]);
+        testing = testing || (args.back() == "--testing");
+    }
 #endif
     InitDirs((args.empty() ? "" : args.front()), testing);
 
