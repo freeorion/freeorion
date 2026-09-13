@@ -480,12 +480,12 @@ bool LoadGame(const std::filesystem::path& path, ServerSaveGameData& server_save
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
 
-        std::string signature(5, '\0');
-        if (!ifs.read(signature.data(), 5))
+        std::string signature(6, '\0');
+        if (!ifs.read(signature.data(), 6))
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         boost::iostreams::seek(ifs, 0, std::ios_base::beg);
 
-        if (strncmp(signature.c_str(), "<?xml", 5)) {
+        if (strncmp(signature.c_str(), "<?xml ", 6)) {
             bool bin_success = LoadGameBinary(ifs, server_save_game_data, player_save_game_data,
                                               universe, empire_manager, species_manager,
                                               combat_log_manager, galaxy_setup_data, timer);
