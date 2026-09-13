@@ -112,10 +112,14 @@ void PythonAI::Start()
     DebugLogger() << "Initializing AI Python modules";
     // Confirm existence of the directory containing the AI Python scripts
     // and add it to Pythons sys.path to make sure Python will find our scripts
+#ifdef FREEORION_ANDROID
+    fs::path ai_path = GetResourceDir() / FilenameToPath(GetOptionsDB().Get<std::string>("ai-path"));
+#else
     std::error_code ec;
     fs::path ai_path = fs::weakly_canonical(GetResourceDir() / FilenameToPath(GetOptionsDB().Get<std::string>("ai-path")), ec);
+#endif
     DebugLogger() << "AI Python script path: " << PathToString(ai_path);
-    if (!fs::exists(ai_path, ec)) {
+    if (!IsExistingDir(ai_path)) {
         ErrorLogger() << "Can't find folder containing AI scripts";
         return;
     }
