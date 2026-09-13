@@ -633,12 +633,12 @@ class ShipDesigner:
             species_tuple = tuple(relevant_grades)
             design_cache_species = design_cache_tech.setdefault(species_tuple, {})
 
-            available_hulls = list(Cache.hulls_for_planets[pid]) + list(additional_hulls)
+            available_hulls = list(Cache.hulls_for_planets.get(pid, [])) + list(additional_hulls)
             if verbose:
                 debug("Evaluating planet %s" % planet.name)
                 debug("Species: %s" % planet.speciesName)
                 debug("Available Ship Hulls: %s" % available_hulls)
-            available_parts = copy.copy(Cache.parts_for_planets[pid])  # this is a dict! {slottype:(partnames)}
+            available_parts = copy.copy(Cache.parts_for_planets.get(pid, {}))  # this is a dict! {slottype:(partnames)}
             available_slots = set(available_parts.keys()) | set(additional_part_dict.keys())
             for slot in available_slots:
                 available_parts[slot] = list(available_parts.get(slot, [])) + additional_part_dict.get(slot, [])
@@ -731,7 +731,7 @@ class ShipDesigner:
             part_dict[slottype] = [tup for tup in part_dict[slottype] if tup[1].partClass in self.useful_part_classes]
 
         if self.filter_inefficient_parts:
-            local_cost_cache = Cache.production_cost[self.pid]
+            local_cost_cache = Cache.production_cost.get(self.pid, {})
             # TODO: Check for redundance of weapons with new tech upgrade system
             # TODO: Check for redundance of hangars
             # TODO Remember to use secondaryStat as well for weapons/hangars
