@@ -63,6 +63,14 @@ jobs:
         run: |
           pushd build
           cmake --build . -- -j5
+      - name: Extract symbols and strip binaries
+        run: |
+          NDK_BIN="${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/bin"
+          find godot/bin -name "*.so" | while read -r SO_FILE; do
+            echo "::group::Process library ${SO_FILE}"
+            "$NDK_BIN/llvm-strip" --strip-all "$SO_FILE"
+            echo "::endgroup::"
+          done
       - name: Upload binaries
         uses: actions/upload-artifact@v7
         with:
