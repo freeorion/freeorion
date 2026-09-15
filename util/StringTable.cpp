@@ -36,7 +36,7 @@ namespace {
 #endif
 }
 
-StringTable::StringTable(std::string filename, std::shared_ptr<const StringTable> fallback):
+StringTable::StringTable(std::filesystem::path filename, std::shared_ptr<const StringTable> fallback):
     m_filename(std::move(filename))
 { Load(std::move(fallback)); }
 
@@ -142,23 +142,22 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
         fallback = nullptr;
     }
 
-    auto path = FilenameToPath(m_filename);
     std::string file_contents;
 
-    bool read_success = ReadFile(path, file_contents);
+    bool read_success = ReadFile(m_filename, file_contents);
     if (!read_success) {
         [[unlikely]]
-        ErrorLogger() << "StringTable::Load failed to read file at path: " << m_filename;
+        ErrorLogger() << "StringTable::Load failed to read file at path: " << PathToString(m_filename);
         //m_initialized intentionally left false
         return;
     }
     // add newline at end to avoid errors when one is left out, but is expected by parsers
     file_contents += "\n";
 
-    parse::file_substitution(file_contents, path.parent_path(), m_filename);
+    parse::file_substitution(file_contents, m_filename.parent_path(), PathToString(m_filename));
 
     decltype(fallback->m_strings) fallback_lookup_strings;
-    std::string fallback_table_file;
+    std::filesystem::path fallback_table_file;
     if (fallback) {
         fallback_table_file = fallback->Filename();
         fallback_lookup_strings = fallback->m_strings; //.insert(fallback->m_strings.begin(), fallback->m_strings.end());
@@ -207,7 +206,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                             boost::algorithm::replace_all(m_strings[key], "\\n", "\n");
                         } else {
                             ErrorLogger() << "Duplicate string ID found: '" << key
-                                          << "' in file: '" << m_filename
+                                          << "' in file: '" << PathToString(m_filename)
                                           << "'.  Ignoring duplicate.";
                         }
                         prev_key = std::move(key);
@@ -278,8 +277,8 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
 #endif
                     bool foundmatch = map_lookup_it != m_strings.end();
                     if (!foundmatch && !fallback_lookup_strings.empty()) {
-                        DebugLogger() << "Key expansion: " << match[1] << " not found in primary stringtable: " << m_filename
-                                      << "; checking in fallback file: " << fallback_table_file;
+                        DebugLogger() << "Key expansion: " << match[1] << " not found in primary stringtable: " << PathToString(m_filename)
+                                      << "; checking in fallback file: " << PathToString(fallback_table_file);
 #if BOOST_VERSION >= 107900
                         map_lookup_it = fallback_lookup_strings.find(MatchLookupKey(match, 1u));
 #else
@@ -297,11 +296,11 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                             ref_check.second += added_chars;
                         // replace recursively -- do not skip past substitution
                     } else {
-                        ErrorLogger() << "Unresolved key expansion: " << match[1] << " in: " << m_filename << ".";
+                        ErrorLogger() << "Unresolved key expansion: " << match[1] << " in: " << PathToString(m_filename) << ".";
                         position += match.length();
                     }
                 } else {
-                    ErrorLogger() << "Cyclic key expansion: " << match[1] << " in: " << m_filename << "."
+                    ErrorLogger() << "Cyclic key expansion: " << match[1] << " in: " << PathToString(m_filename) << "."
                                   << "         at expansion text position " << position;
                     ErrorLogger() << "         of current expansion text: " << user_read_entry;
                     ErrorLogger() << "         from keyword "<< loop_key << " with raw text: " << rawtext;
@@ -325,8 +324,8 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
 #endif
                 bool foundmatch = map_lookup_it != m_strings.end();
                 if (!foundmatch && !fallback_lookup_strings.empty()) {
-                    DebugLogger() << "Key reference: " << match[2] << " not found in primary stringtable: " << m_filename
-                                  << "; checking in fallback file: " << fallback_table_file;
+                    DebugLogger() << "Key reference: " << match[2] << " not found in primary stringtable: " << PathToString(m_filename)
+                                  << "; checking in fallback file: " << PathToString(fallback_table_file);
 #if BOOST_VERSION >= 107900
                     map_lookup_it = fallback_lookup_strings.find(MatchLookupKey(match, 2u));
 #else
@@ -343,19 +342,19 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                     position += substitution.length();
                 } else {
                     if (match[1] == "value") {
-                        TraceLogger() << "Unresolved optional value reference: " << match[2] << " in: " << m_filename << ".";
+                        TraceLogger() << "Unresolved optional value reference: " << match[2] << " in: " << PathToString(m_filename) << ".";
                         const std::string substitution = "<value " + match[2].str() + "></value>";
                         user_read_entry.replace(position, match.length(), substitution);
                         position += substitution.length();
                     } else {
-                        ErrorLogger() << "Unresolved reference: " << match[2] << " in: " << m_filename << ".";
+                        ErrorLogger() << "Unresolved reference: " << match[2] << " in: " << PathToString(m_filename)<< ".";
                         position += match.length();
                     }
                 }
             }
         }
     } else {
-        ErrorLogger() << "StringTable file \"" << m_filename << "\" is malformed around line " << std::count(file_contents.begin(), it, '\n');
+        ErrorLogger() << "StringTable file \"" << PathToString(m_filename) << "\" is malformed around line " << std::count(file_contents.begin(), it, '\n');
     }
 
     m_initialized = true;
