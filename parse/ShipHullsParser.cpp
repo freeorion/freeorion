@@ -298,11 +298,9 @@ namespace {
             default_structure_effects = !boost::python::extract<bool>(kw["NoDefaultStructureEffect"])();
 
         std::vector<ShipHull::Slot> slots;
-        if (kw.has_key("slots")) {
-            boost::python::stl_input_iterator<ship_slot_wrapper> slots_begin(kw["slots"]), slots_end;
-            for (auto it = slots_begin; it != slots_end; ++it)
-                slots.push_back(it->slot);
-        }
+        boost::python::stl_input_iterator<ship_slot_wrapper> slots_begin(kw["slots"]), slots_end;
+        for (auto it = slots_begin; it != slots_end; ++it)
+            slots.push_back(it->slot);
 
         auto production_cost = pyobject_to_vref_or_cast<double, int>(kw["buildcost"]);
         auto production_time = pyobject_to_vref_or_cast<int, double>(kw["buildtime"]);
@@ -317,17 +315,9 @@ namespace {
             tags = std::set<std::string>(tags_begin, tags_end);
         }
 
-        std::unique_ptr<Condition::Condition> location;
-        if (kw.has_key("location"))
-            location = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["location"])().condition);
-        else
-            location = std::make_unique<Condition::All>();
+        auto location = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["location"])().condition);
 
-        std::unique_ptr<Condition::Condition> enqueue_location;
-        if (kw.has_key("enqueuelocation"))
-            enqueue_location = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["enqueuelocation"])().condition);
-        else
-            enqueue_location = std::make_unique<Condition::All>();
+        std::unique_ptr<Condition::Condition> enqueue_location = std::make_unique<Condition::All>();
 
         std::vector<std::unique_ptr<Effect::EffectsGroup>> effectsgroups;
         boost::python::stl_input_iterator<effect_group_wrapper> effectsgroups_begin(kw["effectsgroups"]), effectsgroups_end;
