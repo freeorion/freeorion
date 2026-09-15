@@ -104,6 +104,8 @@ jobs:
           ls -la godot4/android/build
       - name: Set up Java and Android SDK
         uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
       - name: Install Android Build Tools
         run: |
           sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
