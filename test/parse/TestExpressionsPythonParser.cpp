@@ -29,7 +29,7 @@ from focs._effects import MoveTowards
 from focs._conditions import IsSource
     )";
     try {
-        PythonCommon::CompileEval(imports_code, FilenameToPath("<imports>"), globals);
+        PythonCommon::CompileEval(imports_code, std::filesystem::path{"<imports>"}, globals);
         py::object obj_result = PythonCommon::CompileEvalExpression("MoveTowards(speed=5, target=IsSource)", globals);
         auto result = py::extract<effect_wrapper>(obj_result)();
         BOOST_CHECK_EQUAL("MoveTowards destination = Source\n\n", result.effect->Dump(0));
