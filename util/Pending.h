@@ -133,7 +133,7 @@ namespace Pending {
 
     /** Return a Pending<T> constructed with \p parser, \p arg1, and \p path*/
     [[nodiscard]] auto ParseSynchronously(const auto& parser, const auto& arg1, const std::filesystem::path& path)
-        -> Pending<decltype(parser(arg1, path, std::declval<bool&>()))>
+        //-> Pending<decltype(parser(arg1, path, std::declval<bool&>()))>
     {
         bool success = true;
         auto result = parser(arg1, path, success);
