@@ -1006,7 +1006,8 @@ auto IsExistingDir(std::filesystem::path const& path) -> bool
     return length > 0;
 #else
     std::error_code ec;
-    return fs::exists(path, ec) && fs::is_directory(path, ec);
+    const auto stat = fs::status(path, ec);
+    return fs::exists(stat) && fs::is_directory(stat);
 #endif
 }
 
