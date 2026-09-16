@@ -26,9 +26,12 @@ void FreeOrionNode::_bind_methods() {
     godot::ClassDB::bind_method(godot::D_METHOD("start_network_thread"), &FreeOrionNode::start_network_thread);
     godot::ClassDB::bind_method(godot::D_METHOD("start_parsing_thread"), &FreeOrionNode::start_parsing_thread);
     godot::ClassDB::bind_method(godot::D_METHOD("new_single_player_game"), &FreeOrionNode::new_single_player_game);
+    godot::ClassDB::bind_method(godot::D_METHOD("start_turn"), &FreeOrionNode::start_turn);
+    godot::ClassDB::bind_method(godot::D_METHOD("options_get_bool"), &FreeOrionNode::options_get_bool);
 
     ADD_SIGNAL(godot::MethodInfo("parsing_completed"));
     ADD_SIGNAL(godot::MethodInfo("start_game", godot::PropertyInfo(godot::Variant::BOOL, "is_new_game")));
+    ADD_SIGNAL(godot::MethodInfo("turn_update"));
 }
 
 FreeOrionNode::FreeOrionNode()
@@ -42,8 +45,11 @@ void FreeOrionNode::_ready() {
         return;
 
     std::string executable_path = godot::OS::get_singleton()->get_executable_path().utf8().get_data();
-
+#ifdef FREEORION_MACOSX
+    InitDirs(executable_path, true);
+#else
     InitDirs(executable_path);
+#endif
 
 #ifdef FREEORION_WIN32
     GetOptionsDB().Add<std::filesystem::path>("misc.server-local-binary.path", UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),   GetBinDir() / "freeoriond.exe");
@@ -54,7 +60,6 @@ void FreeOrionNode::_ready() {
     GetOptionsDB().SetFromFile(GetConfigPath(), FreeOrionVersionString());
     GetOptionsDB().SetFromFile(GetPersistentConfigPath());
 
-#if !defined(FREEORION_ANDROID)
     std::vector<std::string> args;
     args.emplace_back(std::move(executable_path));
     const godot::PackedStringArray wargs = godot::OS::get_singleton()->get_cmdline_args();
@@ -62,13 +67,21 @@ void FreeOrionNode::_ready() {
         const std::string arg = warg.utf8().get_data();
         // Exclude Godot's options
         if (arg != "-s" && arg.rfind("-g", 0) != 0) {
+            InfoLogger() << "Command line " << arg;
             args.emplace_back(std::move(arg));
         }
     }
-
+    const godot::PackedStringArray uwargs = godot::OS::get_singleton()->get_cmdline_user_args();
+    for (const godot::String &uwarg : uwargs) {
+        const std::string arg = uwarg.utf8().get_data();
+        // Exclude Godot's options
+        if (arg != "-s" && arg.rfind("-g", 0) != 0) {
+            InfoLogger() << "User command line " << arg;
+            args.emplace_back(std::move(arg));
+        }
+    }
     // override previously-saved and default options with command line parameters and flags
     GetOptionsDB().SetFromCommandLine(args);
-#endif
 
     CompleteXDGMigration();
 
@@ -154,12 +167,16 @@ void FreeOrionNode::start_network_thread()
 void FreeOrionNode::start_parsing_thread()
 { m_parsing_thread->start(godot::Callable(this, "parsing_thread")); }
 
-void FreeOrionNode::new_single_player_game() {
-#ifdef FREEORION_ANDROID
-    ErrorLogger() << "No single player game supported";
-#else
-    m_app->NewSinglePlayerGame();
-#endif
+void FreeOrionNode::new_single_player_game()
+{ m_app->NewSinglePlayerGame(); }
+
+void FreeOrionNode::start_turn() {
+    SaveGameUIData ui_data;
+    m_app->StartTurn(ui_data);
+}
+
+bool FreeOrionNode::options_get_bool(godot::String option) const {
+    return GetOptionsDB().Get<bool>(option.utf8().get_data());
 }
 
 void FreeOrionNode::HandleMessage(Message&& msg) {
@@ -211,7 +228,41 @@ void FreeOrionNode::HandleMessage(Message&& msg) {
             GetGameRules().SetFromStrings(m_app->GetGalaxySetupData().GetGameRules());
 
             bool is_new_game = !(loaded_game_data && ui_data_available);
+            m_app->StartGame(is_new_game);
             call_deferred("emit_signal", "start_game", is_new_game);
+
+            if (m_app->AutoTurnsLeft() > 0) {
+                SaveGameUIData ui_data;
+                m_app->StartTurn(ui_data);
+                m_app->DecAutoTurns();
+            }
+
+            break;
+        }
+        case Message::MessageType::TURN_PROGRESS: {
+            Message::TurnProgressPhase phase_id;
+            ExtractTurnProgressMessageData(msg, phase_id);
+            m_app->HandleTurnPhaseUpdate(phase_id);
+            break;
+        }
+        case Message::MessageType::TURN_PARTIAL_UPDATE: {
+            ExtractTurnPartialUpdateMessageData(msg, m_app->EmpireID(), GetUniverse());
+            break;
+        }
+        case Message::MessageType::TURN_UPDATE: {
+            int current_turn = INVALID_GAME_TURN;
+            m_app->Orders().Reset();
+            ExtractTurnUpdateMessageData(msg,                   m_app->EmpireID(),   current_turn,
+                                         Empires(),             GetUniverse(),       GetSpeciesManager(),
+                                         GetCombatLogManager(), GetSupplyManager(),  m_app->Players());
+            m_app->SetCurrentTurn(current_turn);
+            call_deferred("emit_signal", "turn_update");
+
+            if (m_app->AutoTurnsLeft() > 0) {
+                SaveGameUIData ui_data;
+                m_app->StartTurn(ui_data);
+                m_app->DecAutoTurns();
+            }
             break;
         }
         default:
