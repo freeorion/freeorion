@@ -6,6 +6,7 @@ from focs._types import (
     _FleetID,
     _Float,
     _Focus,
+    _HullValue,
     _Int,
     _PlanetId,
     _PlanetType,
@@ -87,12 +88,15 @@ class _Ship(_Object):
     Structure: _Float
     DestroyFightersPerBattleMax: _Float
     DamageStructurePerBattleMax: _Float
+    Fuel: _Float
+    Hull: _HullValue
 
 class _Fleet(_Object):
     PreviousSystemID: _SystemID
     NextSystemID: _SystemID
     FleetID: _FleetID
     ProducedByEmpireID: _EmpireId
+    ArrivedOnTurn: _Int
 
 class _Building(_Object):
     ProducedByEmpireID: _EmpireId
