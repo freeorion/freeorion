@@ -31,7 +31,7 @@ int SaveGame(std::filesystem::path path,
              bool multiplayer);
 int SaveGame(auto, const ServerSaveGameData&, const std::vector<PlayerSaveGameData>&,
              const Universe&, const EmpireManager&, const SpeciesManager&,
-             const CombatLogManager&, GalaxySetupData, bool) = delete;
+             const CombatLogManager&, auto, bool) = delete;
 
 /** Loads the indicated data from savefile \a filename. */
 [[nodiscard]] bool LoadGame(const std::filesystem::path& path,
