@@ -6,7 +6,9 @@
 #include <queue>
 #include <string>
 
-#include "../../util/Process.h"
+#ifndef FREEORION_ANDROID
+#  include "../../util/Process.h"
+#endif
 
 class GodotClientApp : public ClientApp {
 public:

@@ -37,6 +37,10 @@ private:
 
     void new_single_player_game(); ///< Starts new single player game
 
+    void start_turn(); ///< Starts new turn
+
+    bool options_get_bool(godot::String option) const;
+
     void HandleMessage(Message&&); ///< Processes message in the networking thread
 
     std::unique_ptr<GodotClientApp> m_app;
