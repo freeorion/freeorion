@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <application android:extractNativeLibs="${extractNativeLibs}">
+        <meta-data
+            android:name="org.godotengine.plugin.v2.FreeOrion"
+            android:value="org.freeorion.godot.FreeOrionPlugin" />
+        <service
+            android:name="org.freeorion.godot.FreeOrionServerService"
+            android:exported="false"
+            android:process=":freeoriond" />
+        <service
+            android:name="org.freeorion.godot.FreeOrionAIService1"
+            android:exported="false"
+            android:process=":freeorionca1" />
+        <service
+            android:name="org.freeorion.godot.FreeOrionAIService2"
+            android:exported="false"
+            android:process=":freeorionca2" />
+    </application>
+</manifest>

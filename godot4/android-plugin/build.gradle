@@ -1,0 +1,32 @@
+plugins {
+    id "com.android.library" version "8.5.2"
+}
+
+boolean hasAsan = project.hasProperty('enableAsan') && project.property('enableAsan').toString() == 'true'
+
+android {
+    namespace "org.freeorion.godot"
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 33
+
+        manifestPlaceholders = [extractNativeLibs: hasAsan ? "true" : "false"]
+    }
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = hasAsan
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation "org.godotengine:godot:4.7.2.stable"
+}
