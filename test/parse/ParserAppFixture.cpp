@@ -28,7 +28,7 @@ ParserAppFixture::ParserAppFixture(bool test_scripting) :
         resource_dir = std::filesystem::path(resource_path_env);
 #else
     if (const char* resource_path_env = std::getenv("FO_TEST_RESOURCE_PATH"))
-        resource_dir = FilenameToPath(resource_path_env);
+        resource_dir = std::filesystem::path(resource_path_env);
 #endif
 
     GetOptionsDB().Set("resource.path", resource_dir);
