@@ -142,10 +142,43 @@ jobs:
           pattern: android-binaries-godot4-*
           delete-merged: true
           retention-days: 1
+  build-plugin:
+    name: Build FreeOrion Android plugin
+    runs-on: ubuntu-latest
+    needs: merge-binaries
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: godot4/android-plugin/
+      - name: Download binaries
+        uses: actions/download-artifact@v8
+        with:
+          name: android-binaries-godot4
+          path: godot4/
+      - name: Set up Java and Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: "8.11.1"
+      - name: Build FreeOrion Android plugin
+        run: |
+          cd godot4/android-plugin
+          gradle assembleDebug -PenableAsan=${{ inputs.debug_sanitize }} --no-daemon
+      - name: Upload AAR artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: freeorion-aar-plugin
+          path: godot4/android-plugin/build/outputs/aar/*-debug.aar
+          if-no-files-found: error
+          retention-days: 1
   export-android:
     name: Export Android
     runs-on: ubuntu-latest
-    needs: merge-binaries
+    needs: build-plugin
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
@@ -189,7 +222,6 @@ jobs:
           unzip -o -q ~/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.stable/android_source.zip -d godot4/android/build
           echo -n "" > godot4/android/build/.gdignore
           echo -n "${{ env.GODOT_VERSION }}.stable" > godot4/android/.build_version
-          ls -la godot4/android/build
       - name: Set up Java and Android SDK
         uses: android-actions/setup-android@v4
         with:
@@ -201,3 +233,38 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-version: "8.11.1"
+      - name: Download FreeOrion Android plugin
+        uses: actions/download-artifact@v8
+        with:
+          name: freeorion-aar-plugin
+          path: godot4/android/plugins/
+      - name: Place FreeOrion Android plugin
+        run: |
+          mv godot4/android/plugins/*-debug.aar godot4/android/plugins/freeorion-debug.aar
+          cat > godot4/android/plugins/freeorion.gdap <<'EOF'
+          [config]
+          name="FreeOrion"
+          binary_type="local"
+          binary="res://android/plugins/freeorion-debug.aar"
+          EOF
+      - name: Generate Debug Keystore
+        run: |
+          keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+      - name: Configure Godot Editor Settings
+        run: |
+          mkdir -p ~/.config/godot/
+          cat <<EOF > ~/.config/godot/editor_settings-4.tres
+          [gd_resource type="EditorSettings" format=3]
+
+          [resource]
+          export/android/android_sdk_path = "${{ env.ANDROID_HOME }}"
+          export/android/timestamping_authority_url = ""
+          export/android/shutdown_timestamping = true
+          EOF
+
+          sed -i 's|keystore/debug=""|keystore/debug="${{ github.workspace }}/debug.keystore"|' godot4/export_presets.cfg
+          sed -i 's|keystore/debug_user=""|keystore/debug_user="androiddebugkey"|' godot4/export_presets.cfg
+          sed -i 's|keystore/debug_password=""|keystore/debug_password="android"|' godot4/export_presets.cfg
+          if [ "${{ inputs.debug_sanitize }}" = "true" ]; then
+            sed -i 's|gradle_build/compress_native_libraries=false|gradle_build/compress_native_libraries=true|' godot4/export_presets.cfg
+          fi

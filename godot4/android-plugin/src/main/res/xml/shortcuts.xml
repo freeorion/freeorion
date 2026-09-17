@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="quickstart_shortcut"
+        android:enabled="true"
+        android:shortcutShortLabel="@string/quickstart_short_label"
+        android:icon="@mipmap/icon">
+
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetPackage="org.godotengine.freeoriongodotclient"
+            android:targetClass="com.godot.game.GodotApp">
+
+            <extra android:name="quickstart" android:value="true" />
+        </intent>
+    </shortcut>
+</shortcuts>
