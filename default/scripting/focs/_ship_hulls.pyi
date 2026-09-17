@@ -22,7 +22,6 @@ def Hull(
     producible: bool = True,
     tags: list[str] | None = None,
     location: _Condition,
-    enqueuelocation=_Condition(),
     effectsgroups: list[_EffectGroup],
     icon: str,
     graphic: str,
