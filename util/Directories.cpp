@@ -426,24 +426,20 @@ void InitDirs(std::string const& argv0, bool test)
     MigrateOldConfigDirsToXDGLocation();
 
     fs::path cp = GetUserConfigDir();
-    if (!exists(cp, ec)) {
+    if (!exists(cp, ec))
         fs::create_directories(cp, ec);
-    }
 
     fs::path ca = GetUserCacheDir();
-    if (!exists(ca, ec)) {
+    if (!exists(ca, ec))
         fs::create_directories(ca, ec);
-    }
 
     fs::path p = GetUserDataDir();
-    if (!exists(p, ec)) {
+    if (!exists(p, ec))
         fs::create_directories(p, ec);
-    }
 
     p /= "save";
-    if (!exists(p, ec)) {
+    if (!exists(p, ec))
         fs::create_directories(p, ec);
-    }
 
     // Intentionally do not create the server save dir.
     // The server save dir is publically accessible and should not be
