@@ -1,6 +1,11 @@
 
 #include "GodotClientApp.h"
 
+#ifdef FREEORION_ANDROID
+#  include <godot_cpp/classes/engine.hpp>
+#  include <godot_cpp/classes/object.hpp>
+#endif
+
 #include "../ClientNetworking.h"
 #include "../../Empire/Empire.h"
 #include "../../parse/PythonParser.h"
@@ -22,6 +27,8 @@ namespace {
         db.Add("setup.initial.species",          UserStringNop("OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME"),    std::string("SP_HUMAN"),    Validator<std::string>());
         db.Add("setup.multiplayer.player.name",  UserStringNop("OPTIONS_DB_MP_PLAYER_NAME"),     std::string(""),            Validator<std::string>());
         db.Add("setup.multiplayer.host.address", UserStringNop("OPTIONS_DB_MP_HOST_ADDRESS"),    std::string("localhost"),   Validator<std::string>());
+        db.Add<int>("auto-advance-n-turns",      UserStringNop("OPTIONS_DB_AUTO_N_TURNS"),           0,
+                    RangedValidator<int>(0, 400),       OptionsDB::Storable::UNSTORABLE);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -71,6 +78,8 @@ GodotClientApp::GodotClientApp() {
     LogDependencyVersions();
 
     SetStringtableDependentOptionDefaults();
+
+    m_auto_turns = GetOptionsDB().Get<int>("auto-advance-n-turns");
 }
 
 GodotClientApp::~GodotClientApp() {
@@ -90,17 +99,32 @@ int GodotClientApp::EffectsProcessingThreads() const
 GodotClientApp* GodotClientApp::GetApp()
 { return static_cast<GodotClientApp*>(s_app); }
 
-#ifndef FREEORION_ANDROID
 void GodotClientApp::StartServer() {
     if (m_networking->PingLocalHostServer(std::chrono::milliseconds(100))) {
         ErrorLogger() << "Can't start local server because a server is already connecting at 127.0.0.0.";
         throw LocalServerAlreadyRunningException();
     }
-
+#ifdef FREEORION_ANDROID
+    DebugLogger() << "GodotClientApp::StartServer: starting server service";
+    if (auto* engine = godot::Engine::get_singleton()) {
+        if (auto* plugin = engine->get_singleton("FreeOrion")) {
+            godot::PackedStringArray args;
+            if (m_single_player_game) {
+                args.append("--singleplayer");
+                args.append("--skip-checksum");
+            }
+            args.append("--effects.server.threads");
+            args.append("1");
+            plugin->call("startServer", args);
+        } else
+            ErrorLogger() << "GodotClientApp::StartServer: FreeOrion plugin singleton not found";
+    }
+    DebugLogger() << "... finished starting server service.";
+#else
     std::filesystem::path SERVER_CLIENT_EXE = GetOptionsDB().Get<std::filesystem::path>("misc.server-local-binary.path");
     DebugLogger() << "GodotClientApp::StartServer: " << PathToString(SERVER_CLIENT_EXE);
 
-#ifdef FREEORION_MACOSX
+#  ifdef FREEORION_MACOSX
     // On OSX set environment variable DYLD_LIBRARY_PATH to python framework folder
     // bundled with app, so the dynamic linker uses the bundled python library.
     // Otherwise the dynamic linker will look for a correct python lib in system
@@ -109,7 +133,7 @@ void GodotClientApp::StartServer() {
     const char* old_library_path = getenv("DYLD_LIBRARY_PATH");
     const auto library_path = (old_library_path != nullptr) ? (GetPythonHome().string() + ":" + old_library_path) : GetPythonHome().string();
     setenv("DYLD_LIBRARY_PATH", library_path.c_str(), 1);
-#endif
+#  endif
 
     std::vector<std::string> args;
     std::string ai_config = GetOptionsDB().Get<std::string>("ai-config");
@@ -140,15 +164,28 @@ void GodotClientApp::StartServer() {
         args.emplace_back("--singleplayer");
         args.emplace_back("--skip-checksum");
     }
+#  ifdef FREEORION_MACOSX
+    args.emplace_back("--testing");
+#  endif
     DebugLogger() << "Launching server process with args: ";
     for (auto arg : args)
         DebugLogger() << arg;
     m_server_process = Process(m_networking->IoContext(), PathToString(SERVER_CLIENT_EXE), args);
+#endif
     DebugLogger() << "... finished launching server process.";
 }
 
 void GodotClientApp::FreeServer() {
+#ifdef FREEORION_ANDROID
+    if (auto* engine = godot::Engine::get_singleton()) {
+        if (auto* plugin = engine->get_singleton("FreeOrion"))
+            plugin->call("stopServer");
+        else
+            ErrorLogger() << "GodotClientApp::StartServer: FreeOrion plugin singleton not found";
+    }
+#else
     m_server_process.Free();
+#endif
     m_networking->SetPlayerID(Networking::INVALID_PLAYER_ID);
     m_networking->SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     SetEmpireID(ALL_EMPIRES);
@@ -256,13 +293,25 @@ void GodotClientApp::NewSinglePlayerGame() {
     m_networking->SendMessage(HostSPGameMessage(setup_data, DependencyVersions()));
     DebugLogger() << "GodotClientApp::NewSinglePlayerGame done";
 }
-#endif
+
+int  GodotClientApp::AutoTurnsLeft() const
+{ return m_auto_turns; }
+
+void GodotClientApp::InitAutoTurns(int auto_turns) {
+    m_auto_turns = auto_turns;
+    if (!m_game_started || m_auto_turns < 0)
+        m_auto_turns = 0;
+}
+
+void GodotClientApp::DecAutoTurns(int n)
+{ InitAutoTurns(m_auto_turns - n); }
 
 bool GodotClientApp::SinglePlayerGame() const
 { return m_single_player_game; }
 
-void GodotClientApp::SetSinglePlayerGame(bool sp/* = true*/)
+void GodotClientApp::SetSinglePlayerGame(bool sp)
 { m_single_player_game = sp; }
 
-
+void GodotClientApp::StartGame(bool is_new_game)
+{ m_game_started = true; }
 
