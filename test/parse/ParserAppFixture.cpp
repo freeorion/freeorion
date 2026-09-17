@@ -44,7 +44,7 @@ ParserAppFixture::ParserAppFixture(bool test_scripting) :
     } else {
         m_scripting_dir = resource_dir / "scripting";
     }
-    BOOST_TEST_MESSAGE("Test scripting directory: " << m_scripting_dir);
+    BOOST_TEST_MESSAGE("Test scripting directory: " << PathToString(m_scripting_dir));
     BOOST_REQUIRE(m_scripting_dir.is_absolute());
     BOOST_REQUIRE(fs::exists(m_scripting_dir, ec));
     BOOST_REQUIRE(fs::is_directory(m_scripting_dir, ec));
