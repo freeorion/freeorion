@@ -31,7 +31,7 @@ jobs:
     needs: generate-godot-api
     strategy:
       matrix:
-        arch: [x86, x86_64, armeabi-v7a, arm64-v8a]
+        arch: [x86_64, armeabi-v7a, arm64-v8a]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
