@@ -20,6 +20,11 @@ config/icon="uid://cj7u2a5f57ueg"
 
 GlobalFreeOrionNode="*res://FreeOrionNode.tscn"
 
+[display]
+
+window/size/viewport_width=1024
+window/size/viewport_height=768
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/gut/plugin.cfg")
