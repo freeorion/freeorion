@@ -64,13 +64,29 @@ int main(int argc, char* argv[]) {
     }
 #endif
 #ifdef FREEORION_WIN32
+#include <windows.h>
+
 int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     // copy UTF-16 command line arguments to UTF-8 vector
     std::vector<std::string> args;
     for (int i = 0; i < argc; ++i) {
         std::wstring argi16(argv[i]);
-        std::string argi8;
-        utf8::utf16to8(argi16.begin(), argi16.end(), std::back_inserter(argi8));
+
+        //HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+
+        //std::cout << "arg " << i << ": ";
+        //WriteConsoleW(h, argi16.data(), static_cast<DWORD>(argi16.size()), NULL, nullptr);
+        //std::cout << "\n";
+
+        // convert UTF-16 to UTF-8
+        int utf8_sz = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS,
+                                          argi16.data(), argi16.size(),
+                                          nullptr, 0, nullptr, nullptr);
+        std::string argi8(utf8_sz, 0);
+        if (utf8_sz > 0)
+            WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, argi16.data(), argi16.size(),
+                                argi8.data(), utf8_sz, nullptr, nullptr);
+
         args.push_back(argi8);
     }
 
