@@ -179,14 +179,14 @@ void ServerApp::SignalHandler(const boost::system::error_code& error, int signal
 }
 
 namespace {
-    std::string AIClientExe() {
+    std::filesystem::path AIClientExe() {
         static constexpr auto ai_client_exe_filename =
 #ifdef FREEORION_WIN32
             "freeorionca.exe";
 #else
             "freeorionca";
 #endif
-        return PathToString(GetBinDir() / ai_client_exe_filename);
+        return GetBinDir() / ai_client_exe_filename;
     }
 
     static constexpr auto non_empty_name = [](const auto& thing) { return !thing.player_name.empty(); };
@@ -253,14 +253,14 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
 #endif
 
     // binary / executable to run for AI clients
-    auto force_ai_executable = GetOptionsDB().Get<std::string>("ai-executable");
-    const std::string AI_CLIENT_EXE = force_ai_executable.empty() ? AIClientExe() : force_ai_executable;
+    auto force_ai_executable = GetOptionsDB().Get<std::filesystem::path>("ai-executable");
+    const std::filesystem::path AI_CLIENT_EXE = force_ai_executable.empty() ? AIClientExe() : force_ai_executable;
 
 
     // TODO: add other command line args to AI client invocation as needed
     std::vector<std::string> args;
     args.reserve(16);
-    args.push_back("\"" + AI_CLIENT_EXE + "\"");
+    args.push_back("\"" + PathToString(AI_CLIENT_EXE) + "\"");
 
     args.push_back("place_holder");
     const std::size_t player_name_in_vec_idx = args.size()-1;
@@ -286,7 +286,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
 
     args.push_back("--ai-path");
     args.push_back(GetOptionsDB().Get<std::string>("ai-path"));
-    DebugLogger() << "starting AIs with " << AI_CLIENT_EXE ;
+    DebugLogger() << "starting AIs with " << PathToString(AI_CLIENT_EXE);
     DebugLogger() << "ai-aggression set to " << max_aggression;
     DebugLogger() << "ai-path set to '" << GetOptionsDB().Get<std::string>("ai-path") << "'";
     {
@@ -324,7 +324,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
                       << " empire name:" << ai_psd.empire_name
                       << " save empire id: " << ai_psd.save_game_empire_id;
 
-        m_ai_client_processes.emplace(ai_psd, Process(m_io_context, AI_CLIENT_EXE, args));
+        m_ai_client_processes.emplace(ai_psd, Process(m_io_context, PathToString(AI_CLIENT_EXE), args));
     }
 
     // set initial AI process priority to low
