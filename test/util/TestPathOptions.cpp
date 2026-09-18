@@ -1,17 +1,19 @@
 #include <boost/test/unit_test.hpp>
 
+
 #include "util/OptionsDB.h"
+#include "util/Directories.h"
 #include "util/i18n.h"
 #include "util/XMLDoc.h"
 
 BOOST_AUTO_TEST_SUITE(TestPathOptions);
 
 BOOST_AUTO_TEST_CASE(LatinPath) {
-    std::filesystem::path latin1{"latin1"};
+    const std::filesystem::path latin1 = FilenameToPath("latin1");
 
-    GetOptionsDB().Add<std::filesystem::path>("test.latin1.path", UserStringNop("TEST_LATIN1"), std::move(latin1));
+    GetOptionsDB().Add<std::filesystem::path>("test.latin1.path", UserStringNop("TEST_LATIN1"), latin1);
     auto exp_latin1 = GetOptionsDB().Get<std::filesystem::path>("test.latin1.path");
-    BOOST_CHECK_EQUAL(std::filesystem::path{"latin1"}, exp_latin1);
+    BOOST_CHECK_EQUAL(latin1, exp_latin1);
 
     XMLDoc doc;
     GetOptionsDB().GetXML(doc);
@@ -21,15 +23,15 @@ BOOST_AUTO_TEST_CASE(LatinPath) {
     GetOptionsDB().SetFromXML(doc);
 
     exp_latin1 = GetOptionsDB().Get<std::filesystem::path>("test.latin1.path");
-    BOOST_CHECK_EQUAL(std::filesystem::path{"latin1"}, exp_latin1);
+    BOOST_CHECK_EQUAL(latin1, exp_latin1);
 }
 
 BOOST_AUTO_TEST_CASE(EscapePath) {
-    std::filesystem::path latin1{"lat&in1"};
+    const std::filesystem::path latin1 = FilenameToPath("lat&in1");
 
-    GetOptionsDB().Add<std::filesystem::path>("test.latampin1.path", UserStringNop("TEST_LATIN1"), std::move(latin1));
+    GetOptionsDB().Add<std::filesystem::path>("test.latampin1.path", UserStringNop("TEST_LATIN1"), latin1);
     auto exp_latin1 = GetOptionsDB().Get<std::filesystem::path>("test.latampin1.path");
-    BOOST_CHECK_EQUAL(std::filesystem::path{"lat&in1"}, exp_latin1);
+    BOOST_CHECK_EQUAL(latin1, exp_latin1);
 
     XMLDoc doc;
     GetOptionsDB().GetXML(doc);
@@ -39,33 +41,26 @@ BOOST_AUTO_TEST_CASE(EscapePath) {
     GetOptionsDB().SetFromXML(doc);
 
     exp_latin1 = GetOptionsDB().Get<std::filesystem::path>("test.latampin1.path");
-    BOOST_CHECK_EQUAL(std::filesystem::path{"lat&in1"}, exp_latin1);
+    BOOST_CHECK_EQUAL(FilenameToPath("lat&in1"), exp_latin1);
 }
 
 BOOST_AUTO_TEST_CASE(CyrPath) {
-    std::filesystem::path cyr{"кириллица"};
+    static constexpr std::string_view cyr_chars = "кириллица";
+    const std::filesystem::path cyr = FilenameToPath(cyr_chars);
 
-    static const char* cyrxml = 
-#if defined(FREEORION_WIN32)
-                      "&#208;&#186;&#208;&#184;&#209;&#8364;&#208;&#184;&#208;&#187;&#208;&#187;&#208;&#184;&#209;&#8224;&#208;&#176;"
-#else
-                      "&#208;&#186;&#208;&#184;&#209;&#128;&#208;&#184;&#208;&#187;&#208;&#187;&#208;&#184;&#209;&#134;&#208;&#176;"
-#endif
-    ;
-
-    GetOptionsDB().Add<std::filesystem::path>("test.cyr.path", UserStringNop("TEST_CYR"), std::move(cyr));
+    GetOptionsDB().Add<std::filesystem::path>("test.cyr.path", UserStringNop("TEST_CYR"), FilenameToPath(cyr_chars));
     auto exp_cyr = GetOptionsDB().Get<std::filesystem::path>("test.cyr.path");
-    BOOST_CHECK_EQUAL(std::filesystem::path{"кириллица"}, exp_cyr);
+    BOOST_CHECK_EQUAL(cyr, exp_cyr);
 
     XMLDoc doc;
     GetOptionsDB().GetXML(doc);
     auto textual_path = doc.root_node.Child("test").Child("cyr").Child("path").Text();
-    BOOST_CHECK_EQUAL(cyrxml, textual_path);
+    BOOST_CHECK_EQUAL(cyr_chars, textual_path);
 
     GetOptionsDB().SetFromXML(doc);
 
     exp_cyr = GetOptionsDB().Get<std::filesystem::path>("test.cyr.path");
-    BOOST_CHECK_EQUAL(std::filesystem::path{"кириллица"}, exp_cyr);
+    BOOST_CHECK_EQUAL(cyr, exp_cyr);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
