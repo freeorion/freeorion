@@ -1,5 +1,6 @@
 target_sources(freeoriond
     PUBLIC
+        $<$<PLATFORM_ID:Android>:${CMAKE_CURRENT_LIST_DIR}/AndroidAIService.h>
         ${CMAKE_CURRENT_LIST_DIR}/SaveLoad.h
         ${CMAKE_CURRENT_LIST_DIR}/ServerApp.h
         ${CMAKE_CURRENT_LIST_DIR}/ServerFramework.h
@@ -8,6 +9,7 @@ target_sources(freeoriond
         ${CMAKE_CURRENT_LIST_DIR}/ServerWrapper.h
         ${CMAKE_CURRENT_LIST_DIR}/UniverseGenerator.h
     PRIVATE
+        $<$<PLATFORM_ID:Android>:${CMAKE_CURRENT_LIST_DIR}/AndroidAIService.cpp>
         ${CMAKE_CURRENT_LIST_DIR}/dmain.cpp
         ${CMAKE_CURRENT_LIST_DIR}/SaveLoad.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ServerApp.cpp
