@@ -3,9 +3,9 @@ name: "Windows"
 on:
   workflow_call:
 jobs:
-  windows-2022-cmake:
-    name: MSVS 2022 on Windows CMake
-    runs-on: windows-2022
+  windows-2026-cmake:
+    name: MSVS 2026 on Windows CMake
+    runs-on: windows-2026
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
@@ -41,7 +41,7 @@ jobs:
           unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
           mkdir build
           pushd build
-          cmake -G "Visual Studio 17 2022" -T "v143" -A x64 -DBUILD_TESTING=On -DBUILD_CLIENT_GODOT=3 -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
+          cmake -G "Visual Studio 17 2026" -T "v143" -A x64 -DBUILD_TESTING=On -DBUILD_CLIENT_GODOT=3 -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
       - name: Build
         shell: pwsh
         run: |
