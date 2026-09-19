@@ -122,6 +122,7 @@ try:
     _T_OUT = TypeVar("_T_OUT", str, int, float, _Int)
 
     _SpeciesValue = str
+    _HullValue = str
 
     # Type hints for function arguments.  This could be a literal or _Int, _Float returned by other function.
     _StringParam = str

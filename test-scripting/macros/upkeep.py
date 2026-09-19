@@ -3,12 +3,13 @@ from focs._enums import ArmourClass, FighterHangarClass, ShortRangeClass, Troops
 from focs._sources import Source
 from focs._value_refs import (
     GameRule,
-    NamedIntegerLookup,
+    NumPartClassesInShipDesign,
+    PartOfClassInShipDesign,
     ShipDesignsInProduction,
     ShipDesignsOwned,
     ShipPartsOwned,
-    SpeciesColoniesOwned,
     StatisticIf,
+    UsedInDesignID,
     Vif,
 )
 
@@ -37,23 +38,13 @@ FLEET_UPKEEP_MULTIPLICATOR = (
     )
 )
 
-COLONY_UPKEEP_MULTIPLICATOR = 1 + 0.06 * SpeciesColoniesOwned(empire=Source.Owner)
-
-COLONIZATION_POLICY_MULTIPLIER = (
-    1
-    - (StatisticIf(float, condition=IsSource & EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_COLONIZATION")))
-    / 3
-    + (StatisticIf(float, condition=IsSource & EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_CENTRALIZATION")))
-    / 3
-)
-
 # ///////////////////////////
 # // PLC_DESIGN_SIMPLICITY //
 
 # gets registered in named_values.py as necessary vrefs are not implemented for the legacy focs.txt parser
-DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF = NamedIntegerLookup(
-    name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF"
-)
+DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF = NumPartClassesInShipDesign(
+    design=UsedInDesignID
+) + PartOfClassInShipDesign(name="Colony", design=UsedInDesignID)
 
 
 # The formula defining the cost factor depending on the complexity
