@@ -423,9 +423,9 @@ namespace {
 
             std::set<GG::UnicodeCharset> stringtable_charsets;
             {
-                std::string file_name = GetOptionsDB().Get<std::string>("resource.stringtable.path");
+                std::filesystem::path file_name = GetOptionsDB().Get<std::filesystem::path>("resource.stringtable.path");
                 std::string stringtable_str;
-                std::ifstream ifs(FilenameToPath(file_name));
+                std::ifstream ifs(file_name);
                 while (ifs) {
                     std::string line;
                     std::getline(ifs, line);
@@ -439,9 +439,9 @@ namespace {
 
             if (!GetOptionsDB().IsDefaultValue("resource.stringtable.path")) {
                 DebugLogger() << "Non-default stringtable!";
-                std::string file_name = GetOptionsDB().GetDefault<std::string>("resource.stringtable.path");
+                std::filesystem::path file_name = GetOptionsDB().GetDefault<std::filesystem::path>("resource.stringtable.path");
                 std::string stringtable_str;
-                std::ifstream ifs(FilenameToPath(file_name));
+                std::ifstream ifs(file_name);
                 while (ifs) {
                     std::string line;
                     std::getline(ifs, line);

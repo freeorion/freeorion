@@ -463,7 +463,7 @@ void OptionsWnd::CompleteConstruction() {
     current_page->Insert(row);
     window_reset_button->LeftClickedSignal.connect(GetApp().RepositionWindowsSignal);
 
-    FileOption(current_page, 0, "resource.stringtable.path",    UserString("OPTIONS_LANGUAGE"),
+    FileOption2(current_page, 0, "resource.stringtable.path",    UserString("OPTIONS_LANGUAGE"),
                GetRootDataDir() / "default" / "stringtables",
                {UserString("OPTIONS_LANGUAGE_FILE"), "*" + STRINGTABLE_FILE_SUFFIX},
                &ValidStringtableFile);

@@ -29,7 +29,7 @@ struct IUnknown; // Workaround for "combaseapi.h(229,21): error C2760: syntax er
 #include <boost/stacktrace.hpp>
 
 namespace {
-    std::map<std::string, std::shared_ptr<StringTable>> stringtables;
+    std::map<std::filesystem::path, std::shared_ptr<StringTable>> stringtables;
     std::shared_mutex                                   stringtable_access_mutex;
     std::atomic<bool>                                   stringtable_filename_init;
     std::mutex                                          stringtable_filename_init_mutex;
@@ -135,22 +135,21 @@ namespace {
 
         // set option default value based on system locale
         auto default_stringtable_path = GetDefaultStringTableFileName();
-        auto default_stringtable_path_string = PathToString(default_stringtable_path);
-        GetOptionsDB().SetDefault("resource.stringtable.path", default_stringtable_path_string);
+        GetOptionsDB().SetDefault("resource.stringtable.path", default_stringtable_path);
 
         // get option-configured stringtable path. may be the default empty
-        // string (set by call to:   db.Add<std::string>("resource.stringtable.path" ...
+        // string (set by call to:   db.Add<std::filesystem::path>("resource.stringtable.path" ...
         // or this may have been overridden from one of the config XML files or from
         // a command line argument.
-        std::string option_path = GetOptionsDB().Get<std::string>("resource.stringtable.path");
-        std::filesystem::path stringtable_path = FilenameToPath(option_path);
+        const std::filesystem::path option_path = GetOptionsDB().Get<std::filesystem::path>("resource.stringtable.path");
+        std::filesystem::path stringtable_path = option_path;
 
         // verify that option-derived stringtable file exists, with fallbacks
-        DebugLogger() << "Stringtable option path: " << option_path;
+        DebugLogger() << "Stringtable option path: " << PathToString(option_path);
 
         if (option_path.empty()) {
-            DebugLogger() << "Stringtable option path not specified yet, using default: " << default_stringtable_path_string;
-            GetOptionsDB().Set("resource.stringtable.path", default_stringtable_path_string);
+            DebugLogger() << "Stringtable option path not specified yet, using default: " << PathToString(default_stringtable_path);
+            GetOptionsDB().Set("resource.stringtable.path", default_stringtable_path);
             stringtable_filename_init = true;
             return;
         }
@@ -160,35 +159,35 @@ namespace {
         if (!IsExistingFile(stringtable_path)) {
             set_option = true;
             // try interpreting path as a filename located in the stringtables directory
-            stringtable_path = GetResourceDir() / "stringtables" / FilenameToPath(option_path);
+            stringtable_path = GetResourceDir() / "stringtables" / option_path;
         }
         if (!IsExistingFile(stringtable_path)) {
             set_option = true;
             // try interpreting path as directory and filename in resources directory
-            stringtable_path = GetResourceDir() / FilenameToPath(option_path);
+            stringtable_path = GetResourceDir() / option_path;
         }
         if (!IsExistingFile(stringtable_path)) {
             set_option = true;
             // fall back to default option value
             ErrorLogger() << "Stringtable option path file is missing: " << PathToString(stringtable_path);
-            DebugLogger() << "Resetting to default: " << default_stringtable_path_string;
+            DebugLogger() << "Resetting to default: " << PathToString(default_stringtable_path);
             stringtable_path = std::move(default_stringtable_path);
         }
 
         if (set_option)
-            GetOptionsDB().Set("resource.stringtable.path", PathToString(stringtable_path));
+            GetOptionsDB().Set("resource.stringtable.path", stringtable_path);
 
         stringtable_filename_init = true;
     }
 
     // get currently set stringtable filename option value, or the default value
     // if the currenty value is empty
-    std::string GetStringTableFileName() {
+    std::filesystem::path GetStringTablePath() {
         InitStringtableFileName();
 
-        std::string option_path = GetOptionsDB().Get<std::string>("resource.stringtable.path");
+        std::filesystem::path option_path = GetOptionsDB().Get<std::filesystem::path>("resource.stringtable.path");
         if (option_path.empty())
-            return GetOptionsDB().GetDefault<std::string>("resource.stringtable.path");
+            return GetOptionsDB().GetDefault<std::filesystem::path>("resource.stringtable.path");
         else
             return option_path;
     }
@@ -217,7 +216,7 @@ namespace {
         return retval;
     }
 
-    StringTable& GetStringTable(const std::string& stringtable_filename,
+    StringTable& GetStringTable(const std::filesystem::path& stringtable_filename,
                                 std::shared_lock<std::shared_mutex>& access_lock)
     {
         if (!access_lock)
@@ -228,7 +227,7 @@ namespace {
 
         // ensure the default stringtable is loaded first
         InitStringtableFileName();
-        auto default_stringtable_filename{GetOptionsDB().GetDefault<std::string>("resource.stringtable.path")};
+        auto default_stringtable_filename{GetOptionsDB().GetDefault<std::filesystem::path>("resource.stringtable.path")};
 
         if (default_stringtable_filename == stringtable_filename) {
             if (auto default_table{GetOrCreateStringTable(default_stringtable_filename, access_lock)})
@@ -246,29 +245,8 @@ namespace {
             throw std::runtime_error("couldn't get stringtable or default stringtable!");
     }
 
-    std::shared_mutex path_LUT_mutex;
-    std::map<std::filesystem::path, std::string> path_to_string_LUT;
-
-    StringTable& GetStringTable(const std::filesystem::path& stringtable_path,
-                                std::shared_lock<std::shared_mutex>& access_lock)
-    {
-        {
-            std::shared_lock path_LUT_read_lock{path_LUT_mutex};
-            auto path_it = path_to_string_LUT.find(stringtable_path);
-            if (path_it != path_to_string_LUT.end())
-                return GetStringTable(path_it->second, access_lock);
-        }
-
-        {
-            std::unique_lock path_LUT_write_lock{path_LUT_mutex};
-            const auto& string_of_path = path_to_string_LUT.emplace(stringtable_path,
-                                                                    PathToString(stringtable_path)).first->second;
-            return GetStringTable(string_of_path, access_lock);
-        }
-    }
-
     StringTable& GetStringTable(std::shared_lock<std::shared_mutex>& access_lock)
-    { return GetStringTable(GetStringTableFileName(), access_lock); }
+    { return GetStringTable(GetStringTablePath(), access_lock); }
 
     StringTable& GetDevDefaultStringTable(std::shared_lock<std::shared_mutex>& access_lock)
     { return GetStringTable(DevDefaultEnglishStringtablePath(), access_lock); }
