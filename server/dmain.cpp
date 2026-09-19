@@ -137,7 +137,7 @@ int main(int argc, char* argv[]) {
         db.Add<int>("network.server.listen.fd",                             UserStringNop("OPTIONS_DB_LISTEN_FD"),                  -1);
 #endif
         db.Add<int>("network.server.python.asyncio-interval",               UserStringNop("OPTIONS_DB_PYTHON_ASYNCIO_INTERVAL"),    -1);
-        db.Add<std::string>("ai-executable",                                UserStringNop("OPTIONS_DB_AI_EXECUTABLE"),              "");
+        db.Add<std::filesystem::path>("ai-executable",                      UserStringNop("OPTIONS_DB_AI_EXECUTABLE"),              {});
 
         // if config.xml and persistent_config.xml are present, read and set options entries
         db.SetFromFile(GetConfigPath(), FreeOrionVersionString());
