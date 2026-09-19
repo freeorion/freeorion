@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-26.04, ubuntu-24.04, ubuntu-22.04]
+        os: [ubuntu-26.04, ubuntu-24.04]
         compiler: [gcc, clang]
         client-godot: ["3"]
         build-type: [Release]
@@ -72,8 +72,8 @@ jobs:
         if: ${{ matrix.compiler == 'gcc' }}
         env:
           CCACHE_DIR: ${{ runner.temp }}/ccache
-          CC: ${{ matrix.os == 'ubuntu-22.04' && 'gcc-12' || 'gcc-14' }}
-          CXX: ${{ matrix.os == 'ubuntu-22.04' && 'g++-12' || 'g++-14' }}
+          CC: ${{ matrix.os == 'ubuntu-24.04' && 'gcc-14' || 'gcc-15' }}
+          CXX: ${{ matrix.os == 'ubuntu-24.04' && 'g++-14' || 'g++-15' }}
         run: |
           cd build
           cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} -DBUILD_PARSERS=${{ matrix.build-parsers }} ..
@@ -83,8 +83,8 @@ jobs:
           CCACHE_DIR: ${{ runner.temp }}/ccache
           CXXFLAGS: '-I/usr/include/SDL2 -I/usr/include/x86_64-linux-gnu/SDL2/ -I/usr/include/x86_64-linux-gnu/'
           CFLAGS: '-I/usr/include/SDL2 -I/usr/include/x86_64-linux-gnu/SDL2/ -I/usr/include/x86_64-linux-gnu/'
-          CC: ${{ matrix.os == 'ubuntu-22.04' && 'clang-15' || (matrix.os == 'ubuntu-24.04' && 'clang-18' || 'clang-21') }}
-          CXX: ${{ matrix.os == 'ubuntu-22.04' && 'clang++-15' || (matrix.os == 'ubuntu-24.04' && 'clang++-18' || 'clang++-21') }}
+          CC: ${{ (matrix.os == 'ubuntu-24.04' && 'clang-18' || 'clang-22') }}
+          CXX: ${{ (matrix.os == 'ubuntu-24.04' && 'clang++-18' || 'clang++-22') }}
         run: |
           cd build
           cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} ..
