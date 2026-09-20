@@ -325,7 +325,7 @@ namespace {
     { return Networking::is_mod(GetApp()); }
 
     void PlayTurnButtonClickSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.turn.press.sound.path"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::filesystem::path>("ui.button.turn.press.sound.path"), true); }
 
     bool ToggleBoolOption(const std::string& option_name) {
         const bool initially_enabled = GetOptionsDB().Get<bool>(option_name);
@@ -3026,7 +3026,7 @@ void MapWnd::InitTurn(ScriptingContext& context) {
     }
 
     if (GetOptionsDB().Get<bool>("ui.turn.start.sound.enabled"))
-        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.turn.start.sound.path"), true);
+        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::filesystem::path>("ui.turn.start.sound.path"), true);
 }
 
 void MapWnd::MidTurnUpdate() {

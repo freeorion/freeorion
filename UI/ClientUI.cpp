@@ -483,23 +483,23 @@ namespace {
         db.Add("audio.music.path",                         UserStringNop("OPTIONS_DB_BG_MUSIC"),                       GetRootDataDir() / "default" / "data" / "sound" / "artificial_intelligence_v3.ogg");
         db.Add("audio.music.volume",                       UserStringNop("OPTIONS_DB_MUSIC_VOLUME"),                   127,                            RangedValidator<int>(1, 255));
         db.Add("audio.effects.volume",                     UserStringNop("OPTIONS_DB_UI_SOUND_VOLUME"),                255,                            RangedValidator<int>(0, 255));
-        db.Add("ui.button.rollover.sound.path",            UserStringNop("OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER"),       (GetRootDataDir() / "default" / "data" / "sound" / "button_rollover.ogg").string());
-        db.Add("ui.button.press.sound.path",               UserStringNop("OPTIONS_DB_UI_SOUND_BUTTON_CLICK"),          (GetRootDataDir() / "default" / "data" / "sound" / "button_click.ogg").string());
-        db.Add("ui.button.turn.press.sound.path",          UserStringNop("OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK"),     (GetRootDataDir() / "default" / "data" / "sound" / "turn_button_click.ogg").string());
-        db.Add("ui.listbox.select.sound.path",             UserStringNop("OPTIONS_DB_UI_SOUND_LIST_SELECT"),           (GetRootDataDir() / "default" / "data" / "sound" / "list_select.ogg").string());
-        db.Add("ui.listbox.drop.sound.path",               UserStringNop("OPTIONS_DB_UI_SOUND_ITEM_DROP"),             (GetRootDataDir() / "default" / "data" / "sound" / "list_select.ogg").string());//TODO: replace with dedicated 'item_drop' sound
-        db.Add("ui.dropdownlist.select.sound.path",        UserStringNop("OPTIONS_DB_UI_SOUND_LIST_PULLDOWN"),         (GetRootDataDir() / "default" / "data" / "sound" / "list_pulldown.ogg").string());
-        db.Add("ui.input.keyboard.sound.path",             UserStringNop("OPTIONS_DB_UI_SOUND_TEXT_TYPING"),           (GetRootDataDir() / "default" / "data" / "sound" / "text_typing.ogg").string());
-        db.Add("ui.window.minimize.sound.path",            UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_MAXIMIZE"),       (GetRootDataDir() / "default" / "data" / "sound" / "window_maximize.ogg").string());
-        db.Add("ui.window.maximize.sound.path",            UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE"),       (GetRootDataDir() / "default" / "data" / "sound" / "window_minimize.ogg").string());
-        db.Add("ui.window.close.sound.path",               UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_CLOSE"),          (GetRootDataDir() / "default" / "data" / "sound" / "window_close.ogg").string());
-        db.Add("ui.alert.sound.path",                      UserStringNop("OPTIONS_DB_UI_SOUND_ALERT"),                 (GetRootDataDir() / "default" / "data" / "sound" / "alert.ogg").string());
-        db.Add("ui.map.fleet.button.rollover.sound.path",  UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER"), (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg").string());
-        db.Add("ui.map.fleet.button.press.sound.path",     UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK"),    (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_click.ogg").string());
-        db.Add("ui.map.system.icon.rollover.sound.path",   UserStringNop("OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER"),  (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg").string());
-        db.Add("ui.map.sidepanel.open.sound.path",         UserStringNop("OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN"),        (GetRootDataDir() / "default" / "data" / "sound" / "sidepanel_open.ogg").string());
+        db.Add("ui.button.rollover.sound.path",            UserStringNop("OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER"),       GetRootDataDir() / "default" / "data" / "sound" / "button_rollover.ogg");
+        db.Add("ui.button.press.sound.path",               UserStringNop("OPTIONS_DB_UI_SOUND_BUTTON_CLICK"),          GetRootDataDir() / "default" / "data" / "sound" / "button_click.ogg");
+        db.Add("ui.button.turn.press.sound.path",          UserStringNop("OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK"),     GetRootDataDir() / "default" / "data" / "sound" / "turn_button_click.ogg");
+        db.Add("ui.listbox.select.sound.path",             UserStringNop("OPTIONS_DB_UI_SOUND_LIST_SELECT"),           GetRootDataDir() / "default" / "data" / "sound" / "list_select.ogg");
+        db.Add("ui.listbox.drop.sound.path",               UserStringNop("OPTIONS_DB_UI_SOUND_ITEM_DROP"),             GetRootDataDir() / "default" / "data" / "sound" / "list_select.ogg");//TODO: replace with dedicated 'item_drop' sound
+        db.Add("ui.dropdownlist.select.sound.path",        UserStringNop("OPTIONS_DB_UI_SOUND_LIST_PULLDOWN"),         GetRootDataDir() / "default" / "data" / "sound" / "list_pulldown.ogg");
+        db.Add("ui.input.keyboard.sound.path",             UserStringNop("OPTIONS_DB_UI_SOUND_TEXT_TYPING"),           GetRootDataDir() / "default" / "data" / "sound" / "text_typing.ogg");
+        db.Add("ui.window.minimize.sound.path",            UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_MAXIMIZE"),       GetRootDataDir() / "default" / "data" / "sound" / "window_maximize.ogg");
+        db.Add("ui.window.maximize.sound.path",            UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE"),       GetRootDataDir() / "default" / "data" / "sound" / "window_minimize.ogg");
+        db.Add("ui.window.close.sound.path",               UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_CLOSE"),          GetRootDataDir() / "default" / "data" / "sound" / "window_close.ogg");
+        db.Add("ui.alert.sound.path",                      UserStringNop("OPTIONS_DB_UI_SOUND_ALERT"),                 GetRootDataDir() / "default" / "data" / "sound" / "alert.ogg");
+        db.Add("ui.map.fleet.button.rollover.sound.path",  UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER"), GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg");
+        db.Add("ui.map.fleet.button.press.sound.path",     UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK"),    GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_click.ogg");
+        db.Add("ui.map.system.icon.rollover.sound.path",   UserStringNop("OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER"),  GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg");
+        db.Add("ui.map.sidepanel.open.sound.path",         UserStringNop("OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN"),        GetRootDataDir() / "default" / "data" / "sound" / "sidepanel_open.ogg");
         db.Add("ui.turn.start.sound.enabled",              UserStringNop("OPTIONS_DB_UI_SOUND_NEWTURN_TOGGLE"),        false);
-        db.Add("ui.turn.start.sound.path",                 UserStringNop("OPTIONS_DB_UI_SOUND_NEWTURN_FILE"),          (GetRootDataDir() / "default" / "data" / "sound" / "newturn.ogg").string());
+        db.Add("ui.turn.start.sound.path",                 UserStringNop("OPTIONS_DB_UI_SOUND_NEWTURN_FILE"),          GetRootDataDir() / "default" / "data" / "sound" / "newturn.ogg");
 
         // fonts
         db.Add("ui.font.path",                             UserStringNop("OPTIONS_DB_UI_FONT"),                        (GetRootDataDir() / "default/data/fonts/Roboto-Regular.ttf").string());
@@ -1101,7 +1101,7 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound) {
         WndColor(), WndOuterBorderColor(), CtrlColor(), TextColor(),
         1, UserString("OK"));
     if (play_alert_sound)
-        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.alert.sound.path"), true);
+        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::filesystem::path>("ui.alert.sound.path"), true);
     dlg->Run();
 }
 

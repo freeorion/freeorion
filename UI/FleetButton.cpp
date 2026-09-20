@@ -396,10 +396,10 @@ void FleetButton::RenderRollover() {
 }
 
 void FleetButton::PlayFleetButtonRolloverSound()
-{ Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.map.fleet.button.rollover.sound.path"), true); }
+{ Sound::GetSound().PlaySound(GetOptionsDB().Get<std::filesystem::path>("ui.map.fleet.button.rollover.sound.path"), true); }
 
 void FleetButton::PlayFleetButtonOpenSound()
-{ Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.map.fleet.button.press.sound.path"), true); }
+{ Sound::GetSound().PlaySound(GetOptionsDB().Get<std::filesystem::path>("ui.map.fleet.button.press.sound.path"), true); }
 
 /////////////////////
 // Free Functions

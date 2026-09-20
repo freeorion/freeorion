@@ -69,7 +69,7 @@ namespace {
     constexpr std::string_view TAG_BOMBARD_PREFIX = "CTRL_BOMBARD_";
 
     void PlaySidePanelOpenSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.map.sidepanel.open.sound.path"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::filesystem::path>("ui.map.sidepanel.open.sound.path"), true); }
 
     struct RotatingPlanetData {
         RotatingPlanetData(const XMLElement& elem) {
