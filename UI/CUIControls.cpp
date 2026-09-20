@@ -34,22 +34,22 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
     void PlayButtonClickSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.press.sound.path"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::filesystem::path>("ui.button.press.sound.path"), true); }
 
     void PlayButtonRolloverSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.rollover.sound.path"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::filesystem::path>("ui.button.rollover.sound.path"), true); }
 
     void PlayListSelectSound(const GG::ListBox::SelectionSet&)
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.listbox.select.sound.path"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::filesystem::path>("ui.listbox.select.sound.path"), true); }
 
     void PlayDropDownListOpenSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.dropdownlist.select.sound.path"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::filesystem::path>("ui.dropdownlist.select.sound.path"), true); }
 
     void PlayItemDropSound(GG::ListBox::iterator)
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.listbox.drop.sound.path"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::filesystem::path>("ui.listbox.drop.sound.path"), true); }
 
     void PlayTextTypingSound(const std::string&)
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.input.keyboard.sound.path"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::filesystem::path>("ui.input.keyboard.sound.path"), true); }
 
     constexpr double ARROW_BRIGHTENING_SCALE_FACTOR = 1.5;
     constexpr double STATE_BUTTON_BRIGHTENING_SCALE_FACTOR = 1.25;

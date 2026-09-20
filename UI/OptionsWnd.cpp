@@ -1228,7 +1228,7 @@ void OptionsWnd::FileOption2(GG::ListBox* page, int indentation_level, std::stri
 void OptionsWnd::SoundFileOption(GG::ListBox* page, int indentation_level, std::string option_name,
                                  std::string text)
 {
-    FileOption(page, indentation_level, std::move(option_name), std::move(text), ClientUI::SoundDir(),
+    FileOption2(page, indentation_level, std::move(option_name), std::move(text), ClientUI::SoundDir(),
                {UserString("OPTIONS_SOUND_FILE"), "*" + SOUND_FILE_SUFFIX}, ValidSoundFile);
 }
 
@@ -1467,7 +1467,7 @@ void OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked(bool checked) {
         try {
             Sound::GetSound().Enable();
             GetOptionsDB().Set("audio.effects.enabled", true);
-            Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.press.sound.path"), true);
+            Sound::GetSound().PlaySound(GetOptionsDB().Get<std::filesystem::path>("ui.button.press.sound.path"), true);
         } catch (Sound::InitializationFailureException const &e) {
             SoundInitializationFailure(e);
         }
@@ -1503,7 +1503,7 @@ void OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid(int pos, int low, int hig
 void OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid(int pos, int low, int high) const {
     GetOptionsDB().Set("audio.effects.volume", pos);
     Sound::GetSound().SetUISoundsVolume(pos);
-    Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.press.sound.path"), true);
+    Sound::GetSound().PlaySound(GetOptionsDB().Get<std::filesystem::path>("ui.button.press.sound.path"), true);
 }
 
 void OptionsWnd::SoundOptionsFeedback::SetMusicButton(std::shared_ptr<GG::StateButton> button)

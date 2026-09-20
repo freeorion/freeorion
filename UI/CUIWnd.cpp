@@ -17,7 +17,7 @@
 
 namespace {
     void PlayOptionSound(std::string_view name)
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>(name), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::filesystem::path>(name), true); }
 
     void PlayMinimizeSound() { PlayOptionSound("ui.window.maximize.sound.path"); }
     void PlayMaximizeSound() { PlayOptionSound("ui.window.minimize.sound.path"); }

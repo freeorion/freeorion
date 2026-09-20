@@ -26,7 +26,7 @@
 
 namespace {
     bool PlaySounds()                   { return GetOptionsDB().Get<bool>("audio.effects.enabled"); }
-    void PlaySystemIconRolloverSound()  { if (PlaySounds()) Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.map.system.icon.rollover.sound.path")); }
+    void PlaySystemIconRolloverSound()  { if (PlaySounds()) Sound::GetSound().PlaySound(GetOptionsDB().Get<std::filesystem::path>("ui.map.system.icon.rollover.sound.path")); }
 
     // Wrap content int an rgba tag with color color. Opacity ignored.
     std::string ColorTag(const std::string& content, GG::Clr color){
