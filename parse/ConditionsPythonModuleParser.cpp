@@ -622,6 +622,8 @@ BOOST_PYTHON_MODULE(_conditions) {
     py::scope().attr("Monster") = make_wrapped<Condition::Monster>();
     py::scope().attr("Capital") = make_wrapped<Condition::Capital>();
     py::scope().attr("Stationary") = make_wrapped<Condition::Stationary>();
+    py::scope().attr("Aggressive") = make_wrapped<Condition::Aggressive>(true);
+    py::scope().attr("Passive") = make_wrapped<Condition::Aggressive>(false);
 
     py::scope().attr("NoOpCondition") = make_wrapped<Condition::NoOp>();
 
