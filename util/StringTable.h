@@ -34,7 +34,7 @@
 //! where:
 //!
 //! * The first line is the native language name.
-//! * Linse starting with a hash sign `#` are considered comments and are
+//! * Lines starting with a hash sign `#` are considered comments and are
 //!   ignored when loading the file.
 //! * Empty lines are ignored when loading the file.
 //! * The translation entries consist of an key followed by a newline, followed
