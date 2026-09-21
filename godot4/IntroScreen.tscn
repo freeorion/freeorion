@@ -1,11 +1,27 @@
-[gd_scene load_steps=5 format=3 uid="uid://badnwt3uvk5lb"]
+[gd_scene load_steps=6 format=3 uid="uid://badnwt3uvk5lb"]
 
 [ext_resource type="Script" uid="uid://n3jfn2qd3bn4" path="res://IntroScreen.gd" id="1_tf6mp"]
 [ext_resource type="Texture2D" uid="uid://b4offpks25ofu" path="res://assets/art/splash.png" id="2_yd5l1"]
 [ext_resource type="Texture2D" uid="uid://duom2uualidtr" path="res://assets/art/logo.png" id="3_uli3x"]
 [ext_resource type="AudioStream" uid="uid://3a4jg0i7pgkb" path="res://assets/sound/artificial_intelligence_v3.ogg" id="4_ni73i"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tf6mp"]
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0.08, 0.08, 0.08, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.63, 0.63, 0.63, 0.8)
+corner_radius_bottom_right = 10
+corner_detail = 1
+anti_aliasing = false
+
 [node name="IntroScreen" type="Control"]
+auto_translate_mode = 1
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -39,6 +55,7 @@ stream = ExtResource("4_ni73i")
 autoplay = true
 
 [node name="Version" type="Label" parent="."]
+auto_translate_mode = 2
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -47,3 +64,22 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 0
 grow_vertical = 0
+
+[node name="Menu" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.75
+anchor_top = 0.5
+anchor_right = 0.75
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_tf6mp")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Menu/VBoxContainer"]
+layout_mode = 2
+text = "INTRO_WINDOW_TITLE"
