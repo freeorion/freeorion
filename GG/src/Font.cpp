@@ -12,6 +12,7 @@
   #include <charconv>
 #endif
 #include <cmath>
+#include <fstream>
 #include <iterator>
 #include <numeric>
 #include <shared_mutex>
@@ -3273,12 +3274,6 @@ namespace {
 StrSize GG::StringIndexOfCodePoint(CPSize index, const Font::LineVec& line_data)
 { return StringIndexOfCodePointInLines(index, line_data); }
 
-FT_Error Font::GetFace(FT_Face& face)
-{
-    std::scoped_lock ft_lock{freetype_mutex};
-    return FT_New_Face(GetFreeTypeLibrary(), m_font_filename.c_str(), 0, std::addressof(face));
-}
-
 FT_Error Font::GetFace(const uint8_t* file_contents, const std::size_t file_sz, FT_Face& face)
 {
     std::scoped_lock ft_lock{freetype_mutex};
@@ -3497,6 +3492,13 @@ bool Font::GenerateGlyph(FT_Face face, uint32_t ch)
     }
 
     return retval;
+}
+
+std::vector<uint8_t> Font::GetFileContents(const std::string& font_filename) {
+    std::ifstream in(font_filename, std::ios::binary);
+    if (!in)
+        throw BadFile("Could not open font file \"" + font_filename + "\"");
+    return std::vector<uint8_t>(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
 }
 
 bool Font::IsDefaultFont() const noexcept
