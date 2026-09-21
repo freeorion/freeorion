@@ -56,7 +56,11 @@ namespace {
         db.Add<GSOG>("setup.starlane.frequency",    UserStringNop("OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY"), GALAXY_SETUP_MEDIUM,  RangedValidator(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
         db.Add<GSOG>("setup.specials.frequency",    UserStringNop("OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY"), GALAXY_SETUP_MEDIUM,  RangedValidator(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
         db.Add<GSOG>("setup.native.frequency",      UserStringNop("OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY"),   GALAXY_SETUP_MEDIUM,  RangedValidator(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
+#ifdef FREEORION_ANDROID
+        db.Add<int>("setup.ai.player.count",        UserStringNop("OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS"),     2,                    RangedValidator<int>(0, IApp::MAX_AI_PLAYERS()));
+#else
         db.Add<int>("setup.ai.player.count",        UserStringNop("OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS"),     6,                    RangedValidator<int>(0, IApp::MAX_AI_PLAYERS()));
+#endif
         db.Add<Aggression>("setup.ai.aggression",   UserStringNop("OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION"),  Aggression::MANIACAL, RangedValidator(Aggression::BEGINNER, Aggression::MANIACAL));
         using enum GalaxySetupOptionMonsterFreq;
         using GSOMF = GalaxySetupOptionMonsterFreq;
