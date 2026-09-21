@@ -1,0 +1,39 @@
+[gd_scene load_steps=5 format=3 uid="uid://badnwt3uvk5lb"]
+
+[ext_resource type="Script" uid="uid://n3jfn2qd3bn4" path="res://IntroScreen.gd" id="1_tf6mp"]
+[ext_resource type="Texture2D" uid="uid://b4offpks25ofu" path="res://assets/art/splash.png" id="2_yd5l1"]
+[ext_resource type="Texture2D" uid="uid://duom2uualidtr" path="res://assets/art/logo.png" id="3_uli3x"]
+[ext_resource type="AudioStream" uid="uid://3a4jg0i7pgkb" path="res://assets/sound/artificial_intelligence_v3.ogg" id="4_ni73i"]
+
+[node name="IntroScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_tf6mp")
+
+[node name="Splash" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_yd5l1")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Logo" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.1
+texture = ExtResource("3_uli3x")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_ni73i")
+autoplay = true
