@@ -698,8 +698,9 @@ public:
         m_pt_sz(pts)
     {
         if (!m_font_filename.empty()) {
+            auto file_contents = GetFileContents(m_font_filename);
             FTFaceWrapper wrapper;
-            FT_Error error = GetFace(wrapper.m_face);
+            FT_Error error = GetFace(file_contents, wrapper.m_face);
             CheckFace(wrapper.m_face, error);
             Init(wrapper.m_face);
         }
@@ -732,8 +733,9 @@ public:
         m_charsets(std::forward<CharSets>(charsets))
     {
         if (!m_font_filename.empty()) {
+            auto file_contents = GetFileContents(m_font_filename);
             FTFaceWrapper wrapper;
-            FT_Error error = GetFace(wrapper.m_face);
+            FT_Error error = GetFace(file_contents, wrapper.m_face);
             CheckFace(wrapper.m_face, error);
             Init(wrapper.m_face);
         }
@@ -945,13 +947,13 @@ protected:
     Font() = default;
 
 private:
-    FT_Error        GetFace(FT_Face& face);
     static FT_Error GetFace(const uint8_t* file_contents, const std::size_t file_sz, FT_Face& face);
     static FT_Error GetFace(const std::vector<uint8_t>& file_contents, FT_Face& face) { return GetFace(file_contents.data(), file_contents.size(), face); }
     void            CheckFace(FT_Face font, FT_Error error);
     void            Init(FT_Face& font);
 
     static bool     GenerateGlyph(FT_Face font, uint32_t ch);
+    static std::vector<uint8_t> GetFileContents(const std::string& font_filename);
 
     bool            IsDefaultFont() const noexcept;
 
