@@ -1,9 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://badnwt3uvk5lb"]
+[gd_scene load_steps=10 format=3 uid="uid://badnwt3uvk5lb"]
 
 [ext_resource type="Script" uid="uid://n3jfn2qd3bn4" path="res://IntroScreen.gd" id="1_tf6mp"]
 [ext_resource type="Texture2D" uid="uid://b4offpks25ofu" path="res://assets/art/splash.png" id="2_yd5l1"]
 [ext_resource type="Texture2D" uid="uid://duom2uualidtr" path="res://assets/art/logo.png" id="3_uli3x"]
 [ext_resource type="AudioStream" uid="uid://3a4jg0i7pgkb" path="res://assets/sound/artificial_intelligence_v3.ogg" id="4_ni73i"]
+[ext_resource type="StyleBox" uid="uid://convd3x2tdaht" path="res://assets/resources/ButtonNormal.tres" id="5_ni73i"]
+[ext_resource type="StyleBox" uid="uid://c57jooeo8dwop" path="res://assets/resources/ButtonHover.tres" id="5_yd5l1"]
+[ext_resource type="StyleBox" uid="uid://dfjpdfi62x2vl" path="res://assets/resources/ButtonPressed.tres" id="7_vm6xm"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tf6mp"]
 content_margin_left = 6.0
@@ -18,6 +21,23 @@ border_width_bottom = 1
 border_color = Color(0.63, 0.63, 0.63, 0.8)
 corner_radius_bottom_right = 10
 corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yd5l1"]
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8, 0.8, 0.8, 0.9)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
 anti_aliasing = false
 
 [node name="IntroScreen" type="Control"]
@@ -83,3 +103,19 @@ layout_mode = 2
 [node name="Title" type="Label" parent="Menu/VBoxContainer"]
 layout_mode = 2
 text = "INTRO_WINDOW_TITLE"
+
+[node name="MenuButtons" type="PanelContainer" parent="Menu/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_yd5l1")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu/VBoxContainer/MenuButtons"]
+layout_mode = 2
+
+[node name="ExitGame" type="Button" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = ExtResource("5_yd5l1")
+theme_override_styles/hover_pressed = ExtResource("7_vm6xm")
+theme_override_styles/hover = ExtResource("5_yd5l1")
+theme_override_styles/pressed = ExtResource("7_vm6xm")
+theme_override_styles/normal = ExtResource("5_ni73i")
+text = "INTRO_BTN_EXIT"
