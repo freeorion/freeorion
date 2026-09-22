@@ -5,7 +5,7 @@ on:
 jobs:
   windows-2026-cmake:
     name: MSVS 2026 on Windows CMake
-    runs-on: windows-2026
+    runs-on: windows-2025-vs2026
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
