@@ -148,9 +148,11 @@ def HULL_FUEL_EFFICIENCY_EFFECTSGROUP(label: str, multiplier: float):
     ]
 
 
+GREAT_FUEL_EFFICIENCY = HULL_FUEL_EFFICIENCY_EFFECTSGROUP("GREAT", 4)
+
 GOOD_FUEL_EFFICIENCY = HULL_FUEL_EFFICIENCY_EFFECTSGROUP("GOOD", 2)
 
-GREAT_FUEL_EFFICIENCY = HULL_FUEL_EFFICIENCY_EFFECTSGROUP("GREAT", 4)
+AVERAGE_FUEL_EFFICIENCY = HULL_FUEL_EFFICIENCY_EFFECTSGROUP("AVERAGE", 1)
 
 # This adds the hull's base fuel to the max fuel meter after applying the fuel efficiency multiplier.
 # Note the use of the default accountinglabel.
