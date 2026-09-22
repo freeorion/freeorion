@@ -521,7 +521,7 @@ if(MSVC)
         COMPILE_OPTIONS "${PARSEOBJ_COMPILE_OPTIONS}"
     )
 
-    target_precompile_headers(freeorionparseobj PRIVATE "msvc2022/Parsers/StdAfx.h")
+    target_precompile_headers(freeorionparseobj PRIVATE "msvc2026/Parsers/StdAfx.h")
 endif()
 
 target_compile_options(freeorionparseobj
