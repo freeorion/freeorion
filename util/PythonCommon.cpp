@@ -348,9 +348,8 @@ py::object PythonCommon::CompileEvalExpression(const char* expression, const py:
 void PythonCommon::SetModulesDirs(std::vector<std::filesystem::path> modules_dirs) {
     m_modules_dirs = std::move(modules_dirs);
     DebugLogger() << "Set Python Modules Directories (" << m_modules_dirs.size() << "):";
-    std::error_code ec;
     for (const auto& dir : m_modules_dirs)
-        DebugLogger() << "   " << PathToString(dir) << (std::filesystem::exists(dir, ec) ? " exists" : " does not exist");
+        DebugLogger() << "   " << PathToString(dir) << (IsExistingDir(dir) ? " exists" : " does not exist");
 }
 
 py::object PythonCommon::find_spec(const std::string& fullname, const py::object& path, const py::object& target) const {
