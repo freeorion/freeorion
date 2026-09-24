@@ -56,7 +56,7 @@ Species(
         "MONOPOLE_SPECIAL",
         "SUPERCONDUCTOR_SPECIAL",
         "ELERIUM_SPECIAL",
-        "POLAR_VORTEX_SPECIAL", #Stargazers, they find it pretty
+        "POLAR_VORTEX_SPECIAL",  # Stargazers, they find it pretty
         "PLC_CONTINUOUS_SCANNING",
         "PLC_CONFORMANCE",
         "PLC_ENVIRONMENTALISM",
