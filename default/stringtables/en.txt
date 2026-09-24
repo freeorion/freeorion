@@ -9965,7 +9965,6 @@ WORLDTREE_SPECIAL_DESC
 
 A gigantic tree has grown so large that its crown has left the atmosphere of the planet. Scientists suspect that it was planted by the Caretakers in ancient times.'''
 
-
 EQUATORIAL_MODONS_SPECIAL
 Equatorial Modons
 
@@ -9984,9 +9983,6 @@ That makes them ideal for a Gas Giant Generator.
 
 If a Gas Giant Generator is built on this planet, it will provide an additional bonus of [[value POLAR_VORTEX_INDUSTRY_BONUS]] to the industry of allied industry-focused planets in the system.
 '''
-
-
-
 
 ANCIENT_RUINS_DEPLETED_SPECIAL
 Ancient Ruins (Excavated)
