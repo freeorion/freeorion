@@ -29,7 +29,7 @@ Special
             priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + (NamedInteger name = "EQUATORIAL_MODONS_POPULATION_BONUS" value = Target.HabitableSize)
 
-       //The special is destroyed when the Gas Giant is transformed into an artificial planet
+        //The special is destroyed when the Gas Giant is transformed into an artificial planet
         EffectsGroup
             scope = Source
             activation = And [
