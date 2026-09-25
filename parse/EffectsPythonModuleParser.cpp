@@ -631,6 +631,16 @@ BOOST_PYTHON_MODULE(_effects) {
         const auto d = sso.second;
         py::def(sso.first, py::raw_function([d](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_set_species_opinion_(d, args, kw); }));
     }
+
+    // set_aggression
+    for (const auto& [name, aggr] : std::array{
+        std::pair{"SetAggressive", FleetAggression::FLEET_AGGRESSIVE},
+        std::pair{"SetObstructive", FleetAggression::FLEET_OBSTRUCTIVE},
+        std::pair{"SetDefensive", FleetAggression::FLEET_DEFENSIVE},
+        std::pair{"SetPassive", FleetAggression::FLEET_PASSIVE}})
+    {
+        py::scope().attr(name) = effect_wrapper(std::make_shared<Effect::SetAggression>(aggr));
+    }
 }
 
 

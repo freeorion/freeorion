@@ -40,6 +40,11 @@ Destroy = _Effect()
 
 NoOpEffect = _Effect()
 
+SetAggressive = _Effect()
+SetObstructive = _Effect()
+SetDefensive = _Effect()
+SetPassive = _Effect()
+
 def Conditional(
     *,
     condition: _Condition | bool,
