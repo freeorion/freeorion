@@ -4,7 +4,9 @@ ps auxx | grep 'Xvfb' | grep -v grep
 
 export SDL_VIDEODRIVER=x11
 
-for i in {1..2}; do
+SCREENSHOT_INDEX=1
+
+for i in {1..4}; do
   echo "::group::Launching freeorion at $(pwd) - $i"
 
   rm -f freeoriond${i}.log freeorion${i}.log
@@ -108,8 +110,9 @@ for i in {1..2}; do
 
       if [ -n "${SCREENSHOT_TEXT}" ]; then
         sleep 3
-        import -display :99 -window root $(pwd)/screenshot${i}.png
-        echo "screenshot-alt${i}=${SCREENSHOT_TEXT}" >> "$GITHUB_OUTPUT"
+        import -display :99 -window root $(pwd)/screenshot${SCREENSHOT_INDEX}.png
+        echo "screenshot-alt${SCREENSHOT_INDEX}=${SCREENSHOT_TEXT}" >> "$GITHUB_OUTPUT"
+        SCREENSHOT_INDEX=$(($SCREENSHOT_INDEX + 1))
       else
         echo "::error::Missing screenshot text"
       fi
@@ -127,6 +130,9 @@ for i in {1..2}; do
   echo FreeOrionD return code $?
   
   echo "::endgroup::"
+  if [ "$SCREENSHOT_INDEX" -gt 2 ]; then
+    break
+  fi
 done
 echo "::group::Launching freeorion godot"
 
