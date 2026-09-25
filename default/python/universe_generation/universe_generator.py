@@ -176,13 +176,13 @@ def create_universe(psd_map):  # noqa: C901
     seed_rng(seed_pool.pop())
     generate_natives(gsd.native_frequency, systems, home_systems)
 
-    print("Generating Space Monsters")
-    seed_rng(seed_pool.pop())
-    generate_monsters(gsd.monster_frequency, systems)
-
     print("Distributing Starting Specials")
     seed_rng(seed_pool.pop())
     distribute_specials(gsd.specials_frequency, fo.get_all_objects())
+
+    print("Generating Space Monsters")
+    seed_rng(seed_pool.pop())
+    generate_monsters(gsd.monster_frequency, systems)
 
     # finally, write some statistics to the log file
     print("############################################################")
