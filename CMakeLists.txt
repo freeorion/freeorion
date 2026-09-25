@@ -850,6 +850,15 @@ if(WIN32 AND BUILD_CLIENT_GG)
     )
 endif()
 
+if(WIN32 AND NOT BUILD_CLIENT_GODOT STREQUAL "OFF")
+    add_custom_command(TARGET freeoriongodot POST_BUILD
+        COMMAND
+            ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_PREFIX_PATH}/bin/python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}.dll" "$<TARGET_FILE_DIR:freeoriongodot>"
+        COMMAND
+            ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_PREFIX_PATH}/bin/python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}.zip" "$<TARGET_FILE_DIR:freeoriongodot>"
+    )
+endif()
+
 if(APPLE AND BUILD_CLIENT_GG)
     add_custom_command(TARGET freeorion POST_BUILD
         COMMAND
@@ -1126,7 +1135,7 @@ if(NOT APPLE AND NOT ANDROID)
         endif()
     endif()
 
-    if(BUILD_CLIENT_GODOT STREQUAL "3")
+    if(NOT BUILD_CLIENT_GODOT STREQUAL "OFF")
         install(
             TARGETS
                 freeoriongodot
