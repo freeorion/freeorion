@@ -252,6 +252,15 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
     setenv("DYLD_LIBRARY_PATH", library_path.c_str(), 1);
 #endif
 
+#ifdef FREEORION_ANDROID
+    int slot_id = 1;
+    std::vector<std::string> args;
+    args.reserve(4);
+    args.push_back("\"\"");
+    args.push_back("place_holder");
+    const std::size_t player_name_in_vec_idx = args.size()-1;
+    args.push_back(std::to_string(max_aggression));
+#else
     // binary / executable to run for AI clients
     auto force_ai_executable = GetOptionsDB().Get<std::filesystem::path>("ai-executable");
     const std::filesystem::path AI_CLIENT_EXE = force_ai_executable.empty() ? AIClientExe() : force_ai_executable;
@@ -309,6 +318,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
             DebugLogger() << "ai-log-dir not set.";
         }
     }
+#endif
 
     // for each AI client player, create a new AI client process
     for (const auto& ai_psd : player_setup_data | range_filter(Networking::is_ai)) {
@@ -323,8 +333,11 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
                       << " player id: " << ai_psd.player_id
                       << " empire name:" << ai_psd.empire_name
                       << " save empire id: " << ai_psd.save_game_empire_id;
-
+#ifdef FREEORION_ANDROID
+        m_ai_client_processes.emplace(ai_psd, AndroidAIService(slot_id++, args));
+#else
         m_ai_client_processes.emplace(ai_psd, Process(m_io_context, PathToString(AI_CLIENT_EXE), args));
+#endif
     }
 
     // set initial AI process priority to low
@@ -433,18 +446,20 @@ void ServerApp::CleanupAIs() {
 }
 
 void ServerApp::SetAIsProcessPriorityToLow(bool set_to_low) {
+#ifndef FREEORION_ANDROID
     for (auto& process : m_ai_client_processes) {
         if(!(process.second.SetLowPriority(set_to_low))) {
             if (set_to_low)
                 ErrorLogger() << "ServerApp::SetAIsProcessPriorityToLow : failed to lower priority for AI process";
             else
-#ifdef FREEORION_WIN32
+#  ifdef FREEORION_WIN32
                 ErrorLogger() << "ServerApp::SetAIsProcessPriorityToLow : failed to raise priority for AI process";
-#else
+#  else
                 ErrorLogger() << "ServerApp::SetAIsProcessPriorityToLow : cannot raise priority for AI process, requires superuser privileges on this system";
-#endif
+#  endif
         }
     }
+#endif
 }
 
 void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_connection) {
