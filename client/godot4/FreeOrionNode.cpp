@@ -2,10 +2,13 @@
 
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/os.hpp>
+#include <godot_cpp/classes/translation_server.hpp>
+#include <godot_cpp/classes/window.hpp>
 #include <godot_cpp/variant/callable.hpp>
 #include <godot_cpp/variant/packed_string_array.hpp>
 
 #include "GodotClientApp.h"
+#include "GodotI18n.h"
 
 #include "../ClientNetworking.h"
 #include "../../combat/CombatLogManager.h"
@@ -111,6 +114,18 @@ void FreeOrionNode::_ready() {
 #endif
 
     m_app = std::make_unique<GodotClientApp>();
+
+    if (godot::Window* window = get_window()) {
+        window->set_auto_translate_mode(godot::Node::AUTO_TRANSLATE_MODE_DISABLED);
+        window->set_title("FreeOrion " + get_version());
+    }
+
+    godot::String locale = godot::String(Language().c_str());
+    godot::Ref<GodotI18n> translation;
+    translation.instantiate();
+    translation->set_locale(locale);
+    godot::TranslationServer::get_singleton()->add_translation(translation);
+    godot::TranslationServer::get_singleton()->set_locale(locale);
 
     m_parsing_thread = godot::Ref<godot::Thread>();
     m_parsing_thread.instantiate();
