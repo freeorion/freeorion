@@ -156,6 +156,40 @@ HUNT_PLANETS
             ]
 '''
 
+// Wild monsters tend to grow slower as players will park the growth environment.
+// Encourages wild monsters to return to growth environment.
+// @1@ Planet Type
+// @2@ Maximum Probability of Movement
+HUNT_PLANET_TYPE
+'''EffectsGroup
+            scope = And [
+                Object id = Source.FleetID
+                Fleet
+                Number low = 1 condition = And [
+                    Planet
+                    Planet type = @1@
+                    Stealth high = Source.Detection
+                    WithinStarlaneJumps jumps = 1 condition = Source
+                ]
+            ]
+            activation = And [
+                Turn low = 10
+                Stationary
+                Unowned
+                Random Probability = min(@2@, ((abs(Source.Age - 20)/3)^2))
+            ]
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Contains And [
+                    Planet
+                    Planet type = @1@
+                    Stealth high = Source.Detection
+                    WithinStarlaneJumps jumps = 1 condition = Source
+                ]
+            ]
+'''
+
 GAS_GIANT_STEALTH_BONUS
 '''EffectsGroup
             scope = Source
