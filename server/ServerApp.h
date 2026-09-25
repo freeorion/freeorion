@@ -16,7 +16,13 @@
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
-#include "../util/Process.h"
+#ifdef FREEORION_ANDROID
+#  include "AndroidAIService.h"
+using AIProcessType = AndroidAIService;
+#else
+#  include "../util/Process.h"
+using AIProcessType = Process;
+#endif
 
 
 class OrderSet;
@@ -358,7 +364,7 @@ private:
         [[nodiscard]] auto operator<=>(const AIKey&) const = default;
 #endif
     };
-    std::map<AIKey, Process>                  m_ai_client_processes; ///< AI client child processes indexed by player name
+    std::map<AIKey, AIProcessType>            m_ai_client_processes; ///< AI client child processes indexed by player name
 
     GalaxySetupData                           m_galaxy_setup_data;   ///< stored setup data for the game currently being played
     boost::circular_buffer<ChatHistoryEntity> m_chat_history;        ///< Stored last chat messages.

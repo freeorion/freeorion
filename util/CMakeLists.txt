@@ -17,7 +17,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/Order.h
         ${CMAKE_CURRENT_LIST_DIR}/OrderSet.h
         ${CMAKE_CURRENT_LIST_DIR}/Pending.h
-        ${CMAKE_CURRENT_LIST_DIR}/Process.h
+        $<$<NOT:$<PLATFORM_ID:Android>>:${CMAKE_CURRENT_LIST_DIR}/Process.h>
         ${CMAKE_CURRENT_LIST_DIR}/PythonCommon.h
         ${CMAKE_CURRENT_LIST_DIR}/Random.h
         ${CMAKE_CURRENT_LIST_DIR}/SaveGamePreviewUtils.h
@@ -43,7 +43,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/OptionsDB.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Order.cpp
         ${CMAKE_CURRENT_LIST_DIR}/OrderSet.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/Process.cpp
+        $<$<NOT:$<PLATFORM_ID:Android>>:${CMAKE_CURRENT_LIST_DIR}/Process.cpp>
         ${CMAKE_CURRENT_LIST_DIR}/PythonCommon.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Random.cpp
         ${CMAKE_CURRENT_LIST_DIR}/SaveGamePreviewUtils.cpp
