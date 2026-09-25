@@ -1,0 +1,50 @@
+Special
+    name = "POLAR_VORTEX_SPECIAL"
+    description = "POLAR_VORTEX_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 0.2
+    spawnlimit = 99
+    location = And [
+        Planet
+        Planet type = GasGiant
+        Not ContainedBy And [
+            System
+            Contains Homeworld
+        ]
+    ]
+
+    effectsgroups = [
+
+        EffectsGroup
+            scope = And [
+                Planet
+                Not Population high = 0
+                InSystem id = Source.SystemID
+                Or [
+                    OwnedBy affiliation = AllyOf empire = Source.Owner
+                    OwnedBy empire = Source.Owner
+                    ]
+                Focus type= "FOCUS_INDUSTRY"
+            ]
+            activation = Contains Building name = "BLD_GAS_GIANT_GEN"
+
+            stackinggroup ="POLAR_VORTEX_SPECIAL_STACK"
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
+            effects = SetTargetIndustry value = Value + (NamedReal name = "POLAR_VORTEX_INDUSTRY_BONUS" value = 2)
+
+        //The special is destroyed when the Gas Giant is transformed into an artificial planet
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Not Planet type = GasGiant
+            ]
+
+            effects = RemoveSpecial name = "POLAR_VORTEX_SPECIAL"
+
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
+    ]
+    graphic = "icons/specials_large/stable_vortex.png"
+
+#include "/scripting/macros/priorities.macros"
+#include "/scripting/specials/specials.macros.txt"
