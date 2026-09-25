@@ -10,6 +10,8 @@ class Signaler:
 
 	signal parsing_completed
 
+	signal turn_update
+
 	func notify(signal_name: String):
 		emit_signal(signal_name)
 
@@ -42,6 +44,13 @@ func test_quickstart():
 	await wait_for_signal(signaler.started_game, 5.0, "Start game")
 	assert_signal_emitted(signaler, "started_game", "Start game")
 
+	GlobalFreeOrionNode.turn_update.connect(_on_freeorion_turn_update)
+
+	GlobalFreeOrionNode.start_turn()
+
+	await wait_for_signal(signaler.turn_update, 60.0, "Turn update")
+	assert_signal_emitted(signaler, "turn_update", "Turn update")
+
 	GlobalFreeOrionNode.queue_free()
 	signaler.free()
 
@@ -54,3 +63,7 @@ func _on_freeorion_parsing_completed():
 
 func _on_freeorion_start_game(_arg1):
 	signaler.notify("started_game")
+
+
+func _on_freeorion_turn_update():
+	signaler.notify("turn_update")
