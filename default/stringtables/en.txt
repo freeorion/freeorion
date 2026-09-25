@@ -11151,6 +11151,10 @@ VIS_BASIC_VISIBILITY
 Basic
 
 # Visibility levels
+VIS_TARGETABLE_VISIBILITY
+Targetable
+
+# Visibility levels
 VIS_PARTIAL_VISIBILITY
 Partial
 
