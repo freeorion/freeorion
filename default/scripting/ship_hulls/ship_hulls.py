@@ -154,6 +154,8 @@ GOOD_FUEL_EFFICIENCY = HULL_FUEL_EFFICIENCY_EFFECTSGROUP("GOOD", 2)
 
 AVERAGE_FUEL_EFFICIENCY = HULL_FUEL_EFFICIENCY_EFFECTSGROUP("AVERAGE", 1)
 
+BAD_FUEL_EFFICIENCY = HULL_FUEL_EFFICIENCY_EFFECTSGROUP("BAD", 0.6)
+
 # This adds the hull's base fuel to the max fuel meter after applying the fuel efficiency multiplier.
 # Note the use of the default accountinglabel.
 ADD_HULL_FUEL_TO_MAX_FUEL_METER = EffectsGroup(
