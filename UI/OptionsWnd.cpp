@@ -1268,7 +1268,7 @@ void OptionsWnd::ColorOption(GG::ListBox* page, int indentation_level, std::stri
 void OptionsWnd::FontOption(GG::ListBox* page, int indentation_level, std::string option_name,
                             std::string text)
 {
-    FileOption(page, indentation_level, std::move(option_name), std::move(text),
+    FileOption2(page, indentation_level, std::move(option_name), std::move(text),
                GetRootDataDir() / "default",
                {UserString("OPTIONS_FONT_FILE"), "*" + FONT_FILE_SUFFIX}, ValidFontFile);
 }
