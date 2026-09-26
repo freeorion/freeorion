@@ -502,14 +502,14 @@ namespace {
         db.Add("ui.turn.start.sound.path",                 UserStringNop("OPTIONS_DB_UI_SOUND_NEWTURN_FILE"),          GetRootDataDir() / "default" / "data" / "sound" / "newturn.ogg");
 
         // fonts
-        db.Add("ui.font.path",                             UserStringNop("OPTIONS_DB_UI_FONT"),                        (GetRootDataDir() / "default/data/fonts/Roboto-Regular.ttf").string());
-        db.Add("ui.font.bold.path",                        UserStringNop("OPTIONS_DB_UI_FONT_BOLD"),                   (GetRootDataDir() / "default" / "data" / "fonts" / "Roboto-Bold.ttf").string());
+        db.Add("ui.font.path",                             UserStringNop("OPTIONS_DB_UI_FONT"),                        GetRootDataDir() / "default/data/fonts/Roboto-Regular.ttf");
+        db.Add("ui.font.bold.path",                        UserStringNop("OPTIONS_DB_UI_FONT_BOLD"),                   GetRootDataDir() / "default" / "data" / "fonts" / "Roboto-Bold.ttf");
 #ifdef FREEORION_MACOSX
         db.Add("ui.font.size",                             UserStringNop("OPTIONS_DB_UI_FONT_SIZE"),                   15,                             RangedValidator<int>(4, 40));
 #else
         db.Add("ui.font.size",                             UserStringNop("OPTIONS_DB_UI_FONT_SIZE"),                   16,                             RangedValidator<int>(4, 40));
 #endif
-        db.Add("ui.font.title.path",                       UserStringNop("OPTIONS_DB_UI_TITLE_FONT"),                  (GetRootDataDir() / "default/data/fonts/Roboto-Regular.ttf").string());
+        db.Add("ui.font.title.path",                       UserStringNop("OPTIONS_DB_UI_TITLE_FONT"),                  GetRootDataDir() / "default/data/fonts/Roboto-Regular.ttf");
 #ifdef FREEORION_MACOSX
         db.Add("ui.font.title.size",                       UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),             16,                             RangedValidator<int>(4, 40));
 #else
@@ -1143,11 +1143,11 @@ std::shared_ptr<GG::Texture> ClientUI::GetTexture(const std::filesystem::path& p
 
 std::shared_ptr<const GG::Font> ClientUI::GetFont(int pts) const {
     try {
-       return m_app.GetFont(GetOptionsDB().Get<std::string>("ui.font.path"), // GetFont not actually a member of m_app (but rather static) but . disambiguates with free function GetFont
+       return m_app.GetFont(GetOptionsDB().Get<std::filesystem::path>("ui.font.path"), // GetFont not actually a member of m_app (but rather static) but . disambiguates with free function GetFont
                             pts, RequiredCharsets());
     } catch (...) {
         try {
-            return m_app.GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.path"),
+            return m_app.GetFont(GetOptionsDB().GetDefault<std::filesystem::path>("ui.font.path"),
                                  pts, RequiredCharsets());
         } catch (...) {
              return m_app.GetStyleFactory().DefaultFont(pts);
@@ -1157,11 +1157,11 @@ std::shared_ptr<const GG::Font> ClientUI::GetFont(int pts) const {
 
 std::shared_ptr<const GG::Font> ClientUI::GetBoldFont(int pts) const {
     try {
-        return m_app.GetFont(GetOptionsDB().Get<std::string>("ui.font.bold.path"),
+        return m_app.GetFont(GetOptionsDB().Get<std::filesystem::path>("ui.font.bold.path"),
                              pts, RequiredCharsets());
     } catch (...) {
         try {
-             return m_app.GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.bold.path"),
+             return m_app.GetFont(GetOptionsDB().GetDefault<std::filesystem::path>("ui.font.bold.path"),
                                   pts, RequiredCharsets());
         } catch (...) {
              return m_app.GetStyleFactory().DefaultFont(pts);
@@ -1171,11 +1171,11 @@ std::shared_ptr<const GG::Font> ClientUI::GetBoldFont(int pts) const {
 
 std::shared_ptr<const GG::Font> ClientUI::GetTitleFont(int pts) const {
     try {
-        return m_app.GetFont(GetOptionsDB().Get<std::string>("ui.font.title.path"),
+        return m_app.GetFont(GetOptionsDB().Get<std::filesystem::path>("ui.font.title.path"),
                              pts, RequiredCharsets());
     } catch (...) {
         try {
-            return m_app.GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.title.path"),
+            return m_app.GetFont(GetOptionsDB().GetDefault<std::filesystem::path>("ui.font.title.path"),
                                  pts, RequiredCharsets());
         } catch (...) {
              return m_app.GetStyleFactory().DefaultFont(pts);

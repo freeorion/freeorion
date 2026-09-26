@@ -693,7 +693,7 @@ public:
     /** Construct a font using only the printable ASCII characters.
         \throw Font::Exception Throws a subclass of Font::Exception if the
         condition specified for the subclass is met. */
-    Font(std::string font_filename, uint16_t pts) :
+    Font(std::filesystem::path font_filename, uint16_t pts) :
         m_font_filename(std::move(font_filename)),
         m_pt_sz(pts)
     {
@@ -711,7 +711,7 @@ private:
         from the in-memory contents \a file_contents.  \throw Font::Exception
         Throws a subclass of Font::Exception if the condition specified for
         the subclass is met. */
-    Font(std::string font_filename, uint16_t pts, const uint8_t* data, std::size_t data_size) :
+    Font(std::filesystem::path font_filename, uint16_t pts, const uint8_t* data, std::size_t data_size) :
         m_font_filename(std::move(font_filename)),
         m_pt_sz(pts)
     {
@@ -727,7 +727,7 @@ public:
         \a charsets from the data in \a font_filename. */
     template <typename CharSets = std::vector<UnicodeCharset>,
               std::enable_if_t<is_charset_container<CharSets>>* = nullptr>
-    Font(std::string font_filename, uint16_t pts, CharSets&& charsets) :
+    Font(std::filesystem::path font_filename, uint16_t pts, CharSets&& charsets) :
         m_font_filename(std::move(font_filename)),
         m_pt_sz(pts),
         m_charsets(std::forward<CharSets>(charsets))
@@ -746,7 +746,7 @@ private:
         \a charsets from the data at \a data up so \a data_size. */
     template <typename CharSets = std::vector<UnicodeCharset>,
               std::enable_if_t<is_charset_container<CharSets>>* = nullptr>
-    Font(std::string font_filename, uint16_t pts, const uint8_t* data, std::size_t data_size, CharSets&& charsets) :
+    Font(std::filesystem::path font_filename, uint16_t pts, const uint8_t* data, std::size_t data_size, CharSets&& charsets) :
         m_font_filename(std::move(font_filename)),
         m_pt_sz(pts),
         m_charsets(std::forward<CharSets>(charsets))
@@ -766,7 +766,7 @@ public:
               typename FontData = std::vector<uint8_t>,
               std::enable_if_t<is_charset_container<CharSets>>* = nullptr,
               std::enable_if_t<is_uint8_container<FontData>>* = nullptr>
-    Font(std::string font_filename, uint16_t pts, FontData&& file_contents, CharSets&& charsets) :
+    Font(std::filesystem::path font_filename, uint16_t pts, FontData&& file_contents, CharSets&& charsets) :
         Font(std::move(font_filename), pts, file_contents.data(), file_contents.size(), std::forward<CharSets>(charsets))
     {}
 
@@ -953,13 +953,13 @@ private:
     void            Init(FT_Face& font);
 
     static bool     GenerateGlyph(FT_Face font, uint32_t ch);
-    static std::vector<uint8_t> GetFileContents(const std::string& font_filename);
+    static std::vector<uint8_t> GetFileContents(const std::filesystem::path& font_filename);
 
     bool            IsDefaultFont() const noexcept;
 
     static std::shared_ptr<const Font> GetDefaultFont(uint16_t pts);
 
-    std::string                 m_font_filename;
+    const std::filesystem::path m_font_filename;
     uint16_t                    m_pt_sz = 0u;
     std::vector<UnicodeCharset> m_charsets; ///< The sets of glyphs that are covered by this font object
 
@@ -1076,20 +1076,20 @@ private:
         [[nodiscard]] bool operator<(const FontKey& rhs) const noexcept
         { return (filename < rhs.filename || (filename == rhs.filename && points < rhs.points)); }
 
-        std::string filename; ///< The name of the file from which this font was created.
+        std::filesystem::path filename; ///< The name of the file from which this font was created.
         uint16_t    points;   ///< The point size in which this font was rendered.
     };
 
 public:
     /** Returns true iff this manager contains a font with the given filename
         and point size, regardless of charsets. */
-    bool HasFont(std::string_view font_filename, uint16_t pts) const noexcept
+    bool HasFont(const std::filesystem::path& font_filename, uint16_t pts) const noexcept
     { return FontLookup(font_filename, pts) != m_rendered_fonts.end(); }
 
     /** Returns true iff this manager contains a font with the given filename
         and point size, containing the given charsets. */
     template <typename CharSets>
-    bool HasFont(std::string_view font_filename, uint16_t pts, CharSets&& charsets) const
+    bool HasFont(const std::filesystem::path& font_filename, uint16_t pts, CharSets&& charsets) const
     {
         const auto it = FontLookup(font_filename, pts);
         if (it == m_rendered_fonts.end())
@@ -1109,7 +1109,7 @@ public:
         \note May load the font if not yet available. */
     template <typename CharSets = std::vector<UnicodeCharset>,
               std::enable_if_t<is_charset_container<CharSets>>* = nullptr>
-    std::shared_ptr<const Font> GetFont(std::string_view font_filename, uint16_t pts, CharSets&& charsets = CharSets{})
+    std::shared_ptr<const Font> GetFont(const std::filesystem::path& font_filename, uint16_t pts, CharSets&& charsets = CharSets{})
     { return GetFontImpl(font_filename, pts, std::array<uint8_t, 0>{}, std::forward<CharSets>(charsets)); }
 
     /** Returns a shared_ptr to the requested font, supporting all the code
@@ -1119,14 +1119,14 @@ public:
               typename FontData = std::vector<uint8_t>,
               std::enable_if_t<is_charset_container<CharSets>>* = nullptr,
               std::enable_if_t<is_uint8_container<FontData>>* = nullptr>
-    std::shared_ptr<const Font> GetFont(std::string_view font_filename, uint16_t pts,
+    std::shared_ptr<const Font> GetFont(const std::filesystem::path& font_filename, uint16_t pts,
                                         const FontData& file_contents, CharSets&& charsets = CharSets{})
     { return GetFontImpl(font_filename, pts, file_contents, std::forward<CharSets>(charsets)); }
 
 
     /** Removes the indicated font from the font manager.  Due to shared_ptr
         semantics, the font may not be deleted until much later. */
-    void FreeFont(std::string_view font_filename, uint16_t pts);
+    void FreeFont(const std::filesystem::path& font_filename, uint16_t pts);
 
 private:
     FontManager() = default;
@@ -1134,7 +1134,7 @@ private:
     template <typename CharSets, typename FontData = std::array<uint8_t, 0>,
               std::enable_if_t<is_charset_container<CharSets>>* = nullptr,
               std::enable_if_t<is_uint8_container<FontData>>* = nullptr>
-    std::shared_ptr<const Font> GetFontImpl(std::string_view font_filename, uint16_t pts,
+    std::shared_ptr<const Font> GetFontImpl(const std::filesystem::path& font_filename, uint16_t pts,
                                             const FontData& data, CharSets&& charsets)
     {
         const auto it = FontLookup(font_filename, pts);
@@ -1147,8 +1147,8 @@ private:
                 return EMPTY_FONT;
             } else {
                 auto font = !data.empty() ?
-                    std::make_shared<const Font>(std::string(font_filename), pts, data, std::forward<CharSets>(charsets)) :
-                    std::make_shared<const Font>(std::string(font_filename), pts, std::forward<CharSets>(charsets));
+                    std::make_shared<const Font>(font_filename, pts, data, std::forward<CharSets>(charsets)) :
+                    std::make_shared<const Font>(font_filename, pts, std::forward<CharSets>(charsets));
                 return m_rendered_fonts.emplace_back(FontKey{font_filename, pts}, std::move(font)).second;
             }
 
@@ -1174,8 +1174,8 @@ private:
                            std::back_inserter(united_charsets));
             m_rendered_fonts.erase(it);
             auto font = !data.empty() ?
-                std::make_shared<Font>(std::string(font_filename), pts, data, std::move(united_charsets)) :
-                std::make_shared<Font>(std::string(font_filename), pts, std::move(united_charsets));
+                std::make_shared<Font>(font_filename, pts, data, std::move(united_charsets)) :
+                std::make_shared<Font>(font_filename, pts, std::move(united_charsets));
             return m_rendered_fonts.emplace_back(FontKey{font_filename, pts}, std::move(font)).second;
         }
     }
@@ -1183,7 +1183,7 @@ private:
     using FontContainer = std::vector<std::pair<FontKey, std::shared_ptr<const Font>>>;
     using FontContainerIt = FontContainer::const_iterator;
 
-    FontContainerIt FontLookup(std::string_view font_filename, uint16_t pts) const noexcept
+    FontContainerIt FontLookup(const std::filesystem::path& font_filename, uint16_t pts) const noexcept
     {
         return std::find_if(m_rendered_fonts.begin(), m_rendered_fonts.end(),
                             [font_filename, pts](const auto& key_font) {
