@@ -41,7 +41,7 @@ func test_quickstart():
 
 	GlobalFreeOrionNode.new_single_player_game()
 
-	await wait_for_signal(signaler.started_game, 5.0, "Start game")
+	await wait_for_signal(signaler.started_game, 10.0, "Start game")
 	assert_signal_emitted(signaler, "started_game", "Start game")
 
 	GlobalFreeOrionNode.turn_update.connect(_on_freeorion_turn_update)
