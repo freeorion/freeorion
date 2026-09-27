@@ -9,10 +9,16 @@ func _ready():
 	GlobalFreeOrionNode.start_network_thread()
 	GlobalFreeOrionNode.start_parsing_thread()
 
-	$Version.text = GlobalFreeOrionNode.get_version()
+	var dpi := DisplayServer.screen_get_dpi()
+	if dpi > 300:
+		get_window().content_scale_factor = 1.75
+	elif dpi > 200:
+		get_window().content_scale_factor = 1.35
+	else:
+		get_window().content_scale_factor = 1.0
 
-	var date = Time.get_date_dict_from_system(false)
-	var time = Time.get_time_dict_from_system(false)
+	var date := Time.get_date_dict_from_system(false)
+	var time := Time.get_time_dict_from_system(false)
 	var splash := "splash.png"
 	var logo := "logo.png"
 	if date.month == 4 and date.day == 1:
@@ -28,6 +34,8 @@ func _ready():
 		logo = "logo0104.png"
 	$Splash.texture = load(ART_DIR + splash)
 	$Logo.texture = load(ART_DIR + logo)
+
+	$Version.text = GlobalFreeOrionNode.get_version()
 
 
 func _on_freeorion_parsing_completed():
