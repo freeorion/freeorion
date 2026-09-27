@@ -170,7 +170,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs: export-android
     steps:
-      - uses: actions/cache@v5
+      - uses: actions/cache/restore@v5
         id: avd-cache
         with:
           path: |
@@ -200,6 +200,14 @@ jobs:
           working-directory: ./
           channel: beta
           script: echo "Generated AVD snapshot for caching."
+      - uses: actions/cache/save@v5
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+            ~/.android/debug.keystore
+          key: avd-test-godot-v2
       - name: Checkout sources
         uses: actions/checkout@v6
         with:

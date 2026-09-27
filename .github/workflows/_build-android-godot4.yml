@@ -268,3 +268,95 @@ jobs:
           if [ "${{ inputs.debug_sanitize }}" = "true" ]; then
             sed -i 's|gradle_build/compress_native_libraries=false|gradle_build/compress_native_libraries=true|' godot4/export_presets.cfg
           fi
+      - name: Export APK via Godot CLI
+        run: |
+          cd godot4
+          godot --headless -v --export-debug "Android" ../freeorion.apk
+      - name: Upload APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-godot4
+          path: freeorion.apk
+          if-no-files-found: error
+          retention-days: 1
+  run-android:
+    name: Run Android
+    runs-on: ubuntu-24.04
+    needs: export-android
+    steps:
+      - uses: actions/cache/restore@v5
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+            ~/.android/debug.keystore
+          key: avd-test-godot-v2
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: run emulator to generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 31
+          target: google_apis
+          arch: x86_64
+          profile: Galaxy Nexus
+          cores: 2
+          sdcard-path-or-size: 1G
+          avd-name: test
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          working-directory: ./
+          channel: beta
+          script: echo "Generated AVD snapshot for caching."
+      - uses: actions/cache/save@v5
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+            ~/.android/debug.keystore
+          key: avd-test-godot-v2
+      - name: Checkout sources
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: .github/android-apk-launch.sh
+      - name: Dowload APK
+        uses: actions/download-artifact@v8
+        with:
+          name: android-godot4
+          path: .
+      - name: run game on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 31
+          target: google_apis
+          arch: x86_64
+          profile: Galaxy Nexus
+          cores: 2
+          sdcard-path-or-size: 1G
+          avd-name: test
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          working-directory: ./
+          channel: beta
+          script: bash .github/android-apk-launch.sh 4 "${{ inputs.debug_sanitize }}"
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-test-logs-godot4-${{ github.run_number }}
+          path: |
+            freeorion*.log
+            logcat.log
+            AI_*.log
+            android-screenshot.png
+            server-stack-*.log
+          if-no-files-found: error
+          retention-days: 1
