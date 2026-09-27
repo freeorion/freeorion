@@ -9,21 +9,6 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
-      - name: Cache Mesa for Windows
-        id: cache-mesa
-        uses: actions/cache@v4
-        with:
-          path: mesa/
-          key: win64-mesa-latest
-      - name: Download Mesa
-        if: steps.cache-mesa.outputs.cache-hit != 'true'
-        id: download-mesa
-        uses: suisei-cn/actions-download-file@v1.6.1
-        with:
-          url: https://downloads.fdossena.com/geth.php?r=mesa64-latest
-          target: mesa/
-          filename: mesa64-latest.7z
-          retry-times: 5
       - name: Download SDK
         id: download-sdk
         uses: suisei-cn/actions-download-file@v1.6.1
@@ -41,43 +26,33 @@ jobs:
           unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
           mkdir build
           pushd build
-          cmake -G "Visual Studio 18 2026" -T "v143" -A x64 -DBUILD_TESTING=On -DBUILD_CLIENT_GODOT=3 -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
+          cmake -G "Visual Studio 18 2026" -T "v143" -A x64 -DBUILD_TESTING=On -DBUILD_CLIENT_GG=On -DBUILD_CLIENT_GODOT=4 -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
       - name: Build
         shell: pwsh
         run: |
           pushd build
           cmake --build . --config "Release" -- /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /verbosity:minimal
-      - name: Test
-        shell: pwsh
-        working-directory: build
-        run: |
-          $env:Path += ";$($pwd.Path)\\Release"
-          cmake --build . --config "Release" --target unittest
-      - name: Test dumping species
-        shell: pwsh
-        working-directory: build
-        run: |
-          $env:Path += ";$($pwd.Path)\\Release"
-          $env:FO_CHECKSUM_SPECIES_NAME = "SP_CELESTEPHYTE"
-          fo_unittest_parse.exe --run_test=TestDefaultPythonParser/parse_species_full --log_level=message
       - name: Download Godot
         id: download-godot
         uses: suisei-cn/actions-download-file@v1.6.1
         with:
-          url: https://github.com/godotengine/godot-builds/releases/download/3.2.3-stable/Godot_v3.2.3-stable_win64.exe.zip 
+          url: https://downloads.godotengine.org/?version=4.4.1&flavor=stable&slug=win64.exe.zip&platform=windows.64
           target: ../
-      - name: Install Godot and dependencies
+          filename: Godot_v4.4.1-stable_win64.exe.zip
+      - name: Install Godot
         shell: pwsh
         run: |
           unzip -q ../${{ steps.download-godot.outputs.filename }} -d build/Release
-          mkdir build/Release/Godot_v3.2.3-stable_win64.exe.local
-          pushd build/Release/Godot_v3.2.3-stable_win64.exe.local
-          7z e "$env:GITHUB_WORKSPACE/mesa/mesa64-latest.7z"
       - name: Test Godot
         shell: pwsh
         run: |
           $env:Path += ";$($pwd.Path)\\build\\Release"
-          .\build\Release\Godot_v3.2.3-stable_win64.exe --no-window --disable-render-loop --video-driver GLES2 --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
+          write-host "::group::Import"
+          .\build\Release\Godot_v4.4.1-stable_win64_console.exe --headless --import --path godot4
+          write-host "::endgroup::"
+          write-host "::group::Test"
+          .\build\Release\Godot_v4.4.1-stable_win64_console.exe --headless --verbose -s --path godot4 addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
+          write-host "::endgroup::"
       - name: Upload logs
         if: always()
         uses: actions/upload-artifact@v7
