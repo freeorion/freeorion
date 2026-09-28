@@ -1,11 +1,13 @@
-[gd_scene load_steps=10 format=3 uid="uid://badnwt3uvk5lb"]
+[gd_scene load_steps=12 format=3 uid="uid://badnwt3uvk5lb"]
 
 [ext_resource type="Script" uid="uid://n3jfn2qd3bn4" path="res://IntroScreen.gd" id="1_tf6mp"]
 [ext_resource type="Texture2D" uid="uid://b4offpks25ofu" path="res://assets/art/splash.png" id="2_yd5l1"]
 [ext_resource type="Texture2D" uid="uid://duom2uualidtr" path="res://assets/art/logo.png" id="3_uli3x"]
 [ext_resource type="AudioStream" uid="uid://3a4jg0i7pgkb" path="res://assets/sound/artificial_intelligence_v3.ogg" id="4_ni73i"]
+[ext_resource type="StyleBox" uid="uid://bmdl4tsghdlc5" path="res://assets/resources/ButtonFocus.tres" id="5_bftu0"]
 [ext_resource type="StyleBox" uid="uid://convd3x2tdaht" path="res://assets/resources/ButtonNormal.tres" id="5_ni73i"]
 [ext_resource type="StyleBox" uid="uid://c57jooeo8dwop" path="res://assets/resources/ButtonHover.tres" id="5_yd5l1"]
+[ext_resource type="StyleBox" uid="uid://doaace82cy3ad" path="res://assets/resources/ButtonDisabled.tres" id="6_vm6xm"]
 [ext_resource type="StyleBox" uid="uid://dfjpdfi62x2vl" path="res://assets/resources/ButtonPressed.tres" id="7_vm6xm"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tf6mp"]
@@ -113,7 +115,8 @@ layout_mode = 2
 
 [node name="ExitGame" type="Button" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
 layout_mode = 2
-theme_override_styles/focus = ExtResource("5_yd5l1")
+theme_override_styles/focus = ExtResource("5_bftu0")
+theme_override_styles/disabled = ExtResource("6_vm6xm")
 theme_override_styles/hover_pressed = ExtResource("7_vm6xm")
 theme_override_styles/hover = ExtResource("5_yd5l1")
 theme_override_styles/pressed = ExtResource("7_vm6xm")
