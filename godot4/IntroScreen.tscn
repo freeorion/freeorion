@@ -27,9 +27,9 @@ anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yd5l1"]
 content_margin_left = 14.0
-content_margin_top = 12.0
+content_margin_top = 19.0
 content_margin_right = 14.0
-content_margin_bottom = 12.0
+content_margin_bottom = 10.0
 bg_color = Color(0, 0, 0, 0)
 border_width_left = 1
 border_width_top = 1
@@ -113,6 +113,93 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_yd5l1")
 [node name="VBoxContainer" type="VBoxContainer" parent="Menu/VBoxContainer/MenuButtons"]
 layout_mode = 2
 theme_override_constants/separation = 10
+
+[node name="SinglePlayer" type="Button" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = ExtResource("5_bftu0")
+theme_override_styles/disabled = ExtResource("6_vm6xm")
+theme_override_styles/hover_pressed = ExtResource("7_vm6xm")
+theme_override_styles/hover = ExtResource("5_yd5l1")
+theme_override_styles/pressed = ExtResource("7_vm6xm")
+theme_override_styles/normal = ExtResource("5_ni73i")
+text = "INTRO_BTN_SINGLE_PLAYER"
+
+[node name="QuickStart" type="Button" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = ExtResource("5_bftu0")
+theme_override_styles/disabled = ExtResource("6_vm6xm")
+theme_override_styles/hover_pressed = ExtResource("7_vm6xm")
+theme_override_styles/hover = ExtResource("5_yd5l1")
+theme_override_styles/pressed = ExtResource("7_vm6xm")
+theme_override_styles/normal = ExtResource("5_ni73i")
+text = "INTRO_BTN_QUICK_START"
+
+[node name="MultiPlayer" type="Button" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = ExtResource("5_bftu0")
+theme_override_styles/disabled = ExtResource("6_vm6xm")
+theme_override_styles/hover_pressed = ExtResource("7_vm6xm")
+theme_override_styles/hover = ExtResource("5_yd5l1")
+theme_override_styles/pressed = ExtResource("7_vm6xm")
+theme_override_styles/normal = ExtResource("5_ni73i")
+text = "INTRO_BTN_MULTI_PLAYER"
+
+[node name="LoadGame" type="Control" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
+layout_mode = 2
+
+[node name="Options" type="Button" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = ExtResource("5_bftu0")
+theme_override_styles/disabled = ExtResource("6_vm6xm")
+theme_override_styles/hover_pressed = ExtResource("7_vm6xm")
+theme_override_styles/hover = ExtResource("5_yd5l1")
+theme_override_styles/pressed = ExtResource("7_vm6xm")
+theme_override_styles/normal = ExtResource("5_ni73i")
+text = "INTRO_BTN_OPTIONS"
+
+[node name="Pedia" type="Button" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = ExtResource("5_bftu0")
+theme_override_styles/disabled = ExtResource("6_vm6xm")
+theme_override_styles/hover_pressed = ExtResource("7_vm6xm")
+theme_override_styles/hover = ExtResource("5_yd5l1")
+theme_override_styles/pressed = ExtResource("7_vm6xm")
+theme_override_styles/normal = ExtResource("5_ni73i")
+text = "INTRO_BTN_PEDIA"
+
+[node name="About" type="Button" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = ExtResource("5_bftu0")
+theme_override_styles/disabled = ExtResource("6_vm6xm")
+theme_override_styles/hover_pressed = ExtResource("7_vm6xm")
+theme_override_styles/hover = ExtResource("5_yd5l1")
+theme_override_styles/pressed = ExtResource("7_vm6xm")
+theme_override_styles/normal = ExtResource("5_ni73i")
+text = "INTRO_BTN_ABOUT"
+
+[node name="Website" type="Button" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = ExtResource("5_bftu0")
+theme_override_styles/disabled = ExtResource("6_vm6xm")
+theme_override_styles/hover_pressed = ExtResource("7_vm6xm")
+theme_override_styles/hover = ExtResource("5_yd5l1")
+theme_override_styles/pressed = ExtResource("7_vm6xm")
+theme_override_styles/normal = ExtResource("5_ni73i")
+text = "INTRO_BTN_WEBSITE"
+
+[node name="Credits" type="Button" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = ExtResource("5_bftu0")
+theme_override_styles/disabled = ExtResource("6_vm6xm")
+theme_override_styles/hover_pressed = ExtResource("7_vm6xm")
+theme_override_styles/hover = ExtResource("5_yd5l1")
+theme_override_styles/pressed = ExtResource("7_vm6xm")
+theme_override_styles/normal = ExtResource("5_ni73i")
+text = "INTRO_BTN_CREDITS"
+
+[node name="Spacer" type="Control" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
+custom_minimum_size = Vector2(0, 19)
+layout_mode = 2
 
 [node name="ExitGame" type="Button" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
 layout_mode = 2
