@@ -3,7 +3,11 @@ package org.freeorion.godot;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
+import android.view.RoundedCorner;
+import android.view.View;
+import android.view.WindowInsets;
 
 import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.GodotPlugin;
@@ -80,4 +84,34 @@ public final class FreeOrionPlugin extends GodotPlugin {
         Log.i(TAG, "Stopping FreeOrionServerService");
         activity.stopService(new Intent(activity, FreeOrionServerService.class));
     }
+
+    @UsedByGodot
+    public int[] getRoundedCornerRadii() {
+        Activity activity = getActivity();
+        if (activity == null) {
+            Log.w(TAG, "No activity available; cannot query rounded corner");
+            return new int[] {0, 0, 0, 0};
+        }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            Log.w(TAG, "Old Android version; cannot query rounded corner");
+            return new int[] {0, 0, 0, 0};
+        }
+
+        View decorView = activity.getWindow().getDecorView();
+        WindowInsets insets = decorView.getRootWindowInsets();
+        if (insets == null) {
+            Log.w(TAG, "Insets missing; cannot query rounded corner");
+            return new int[] {0, 0, 0, 0};
+        }
+
+        int topLeft = getRadius(insets.getRoundedCorner(RoundedCorner.POSITION_TOP_LEFT));
+        int topRight = getRadius(insets.getRoundedCorner(RoundedCorner.POSITION_TOP_RIGHT));
+        int bottomRight = getRadius(insets.getRoundedCorner(RoundedCorner.POSITION_BOTTOM_RIGHT));
+        int bottomLeft = getRadius(insets.getRoundedCorner(RoundedCorner.POSITION_BOTTOM_LEFT));
+
+        return new int[] {topLeft, topRight, bottomRight, bottomLeft};
+    }
+
+    private int getRadius(RoundedCorner corner)
+    { return corner != null ? corner.getRadius() : 0; }
 }
