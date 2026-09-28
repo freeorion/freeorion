@@ -29,6 +29,11 @@ window/size/viewport_height=800
 
 enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/android-export/plugin.cfg")
 
+[gui]
+
+theme/custom_font="res://assets/fonts/Roboto-Regular.ttf"
+theme/custom_font_size=16
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
