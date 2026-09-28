@@ -133,15 +133,21 @@ bool PythonCommon::Initialize() {
 
     try {
         PyPreConfig preconfig;
-        PyPreConfig_InitPythonConfig(&preconfig);
+        PyPreConfig_InitIsolatedConfig(&preconfig);
 
         PyStatus status = Py_PreInitialize(&preconfig);
         if (PyStatus_Exception(status)) {
-            ErrorLogger() << "Unable to pre-initialize Python from pre-config";
+            ErrorLogger() << "Unable to pre-initialize Python from pre-config:";
+            if (status.err_msg)
+                ErrorLogger() << " Python error message: " << status.err_msg;
+            if (status.func)
+                ErrorLogger() << " Python function: " << status.func;
+            if (PyStatus_IsExit(status))
+                ErrorLogger() << " Python exit code: " << status.exitcode;
             return false;
         }
         PyConfig config;
-        PyConfig_InitPythonConfig(&config);
+        PyConfig_InitIsolatedConfig(&config);
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32) || defined(FREEORION_ANDROID)
         // There have been recurring issues on Windows and OSX to get FO to use the
         // Python framework shipped with the app (instead of falling back on the ones
@@ -176,7 +182,13 @@ bool PythonCommon::Initialize() {
         PyConfig_Clear(&config);
 
         if (PyStatus_Exception(status)) {
-            ErrorLogger() << "Unable to initialize Python interpreter from config";
+            ErrorLogger() << "Unable to initialize Python interpreter from config:";
+            if (status.err_msg)
+                ErrorLogger() << " Python error message: " << status.err_msg;
+            if (status.func)
+                ErrorLogger() << " Python function: " << status.func;
+            if (PyStatus_IsExit(status))
+                ErrorLogger() << " Python exit code: " << status.exitcode;
             return false;
         }
         DebugLogger() << "Python initialized";
