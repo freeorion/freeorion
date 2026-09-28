@@ -26,10 +26,10 @@ corner_detail = 1
 anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yd5l1"]
-content_margin_left = 6.0
-content_margin_top = 6.0
-content_margin_right = 6.0
-content_margin_bottom = 6.0
+content_margin_left = 14.0
+content_margin_top = 12.0
+content_margin_right = 14.0
+content_margin_bottom = 12.0
 bg_color = Color(0, 0, 0, 0)
 border_width_left = 1
 border_width_top = 1
@@ -112,6 +112,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_yd5l1")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Menu/VBoxContainer/MenuButtons"]
 layout_mode = 2
+theme_override_constants/separation = 10
 
 [node name="ExitGame" type="Button" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
 layout_mode = 2
