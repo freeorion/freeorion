@@ -1,0 +1,49 @@
+Special
+    name = "EQUATORIAL_MODONS_SPECIAL"
+    description = "EQUATORIAL_MODONS_SPECIAL_DESC"
+    stealth = 15
+    spawnrate = 0.1
+    spawnlimit = 99
+    location = And [
+        Planet
+        Planet type = [GasGiant]
+        Not ContainedBy And [
+            System
+            Contains Homeworld
+        ]
+    ]
+
+
+    effectsgroups = [
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Species
+                HasTag name = "GASEOUS"
+                Population low = 0.001
+            ]
+            stackinggroup = "EQUATORIAL_MODONS_STACK"
+            accountinglabel = "GROWTH_SPECIAL_LABEL"
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
+            effects = SetTargetPopulation value = Value + (NamedReal name = "EQUATORIAL_MODONS_POPULATION_BONUS" value = 6)  // Should be Target.HabitableSize but there's no Target when the Pedia shows the value
+
+
+        //The special is destroyed when the Gas Giant is transformed into an artificial planet
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Not Planet type = GasGiant
+            ]
+
+            effects = RemoveSpecial name = ThisSpecial
+
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
+
+    ]
+    graphic = "icons/specials_huge/slow_rotation.png"
+
+#include "/scripting/macros/priorities.macros"
+#include "/scripting/specials/specials.macros.txt"
