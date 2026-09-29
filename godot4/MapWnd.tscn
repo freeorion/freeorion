@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://bbmlrg7wbu7cs"]
+
+[ext_resource type="AudioStream" uid="uid://3a4jg0i7pgkb" path="res://assets/sound/artificial_intelligence_v3.ogg" id="1_vno04"]
+
+[node name="MapWnd" type="Control"]
+auto_translate_mode = 1
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_vno04")
+autoplay = true

@@ -5,6 +5,7 @@ const ART_DIR := "res://assets/art/"
 
 func _ready():
 	GlobalFreeOrionNode.parsing_completed.connect(_on_freeorion_parsing_completed)
+	GlobalFreeOrionNode.start_game.connect(_on_freeorion_start_game)
 
 	GlobalFreeOrionNode.start_network_thread()
 	GlobalFreeOrionNode.start_parsing_thread()
@@ -59,6 +60,7 @@ func _ready():
 
 func _on_freeorion_parsing_completed():
 	if GlobalFreeOrionNode.options_get_bool("quickstart"):
+		$Menu/VBoxContainer/MenuButtons/VBoxContainer/QuickStart.disabled = true
 		GlobalFreeOrionNode.new_single_player_game()
 	else:
 		$Menu/VBoxContainer/MenuButtons/VBoxContainer/QuickStart.disabled = false
@@ -69,4 +71,9 @@ func _on_exit_game_pressed() -> void:
 
 
 func _on_quick_start_pressed() -> void:
+	$Menu/VBoxContainer/MenuButtons/VBoxContainer/QuickStart.disabled = true
 	GlobalFreeOrionNode.new_single_player_game()
+
+
+func _on_freeorion_start_game(_is_new_game: bool) -> void:
+	get_tree().change_scene_to_file("res://MapWnd.tscn")
