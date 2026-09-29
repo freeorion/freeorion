@@ -1,0 +1,25 @@
+[gd_scene load_steps=9 format=3 uid="uid://bx4bc46ask5n6"]
+
+[ext_resource type="Script" uid="uid://ct2biok6kbrm6" path="res://CUIButton.gd" id="1_cuibtn"]
+[ext_resource type="StyleBox" uid="uid://bmdl4tsghdlc5" path="res://assets/resources/ButtonFocus.tres" id="2_focus"]
+[ext_resource type="StyleBox" uid="uid://convd3x2tdaht" path="res://assets/resources/ButtonNormal.tres" id="3_normal"]
+[ext_resource type="StyleBox" uid="uid://c57jooeo8dwop" path="res://assets/resources/ButtonHover.tres" id="4_hover"]
+[ext_resource type="StyleBox" uid="uid://doaace82cy3ad" path="res://assets/resources/ButtonDisabled.tres" id="5_disabled"]
+[ext_resource type="StyleBox" uid="uid://dfjpdfi62x2vl" path="res://assets/resources/ButtonPressed.tres" id="6_pressed"]
+[ext_resource type="AudioStream" uid="uid://by5iw4qhrsbwk" path="res://assets/sound/button_rollover.ogg" id="7_rollover"]
+[ext_resource type="AudioStream" uid="uid://p03v0smrp5ln" path="res://assets/sound/button_click.ogg" id="8_click"]
+
+[node name="CUIButton" type="Button"]
+theme_override_styles/focus = ExtResource("2_focus")
+theme_override_styles/disabled = ExtResource("5_disabled")
+theme_override_styles/hover_pressed = ExtResource("6_pressed")
+theme_override_styles/hover = ExtResource("4_hover")
+theme_override_styles/pressed = ExtResource("6_pressed")
+theme_override_styles/normal = ExtResource("3_normal")
+script = ExtResource("1_cuibtn")
+
+[node name="Rollover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_rollover")
+
+[node name="Click" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_click")
