@@ -111,30 +111,46 @@ layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="SinglePlayer" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+layout_mode = 2
+disabled = true
 text = "INTRO_BTN_SINGLE_PLAYER"
 
 [node name="QuickStart" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+layout_mode = 2
+disabled = true
 text = "INTRO_BTN_QUICK_START"
 
 [node name="MultiPlayer" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+layout_mode = 2
+disabled = true
 text = "INTRO_BTN_MULTI_PLAYER"
 
 [node name="LoadGame" type="Control" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
 layout_mode = 2
 
 [node name="Options" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+layout_mode = 2
+disabled = true
 text = "INTRO_BTN_OPTIONS"
 
 [node name="Pedia" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+layout_mode = 2
+disabled = true
 text = "INTRO_BTN_PEDIA"
 
 [node name="About" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+layout_mode = 2
+disabled = true
 text = "INTRO_BTN_ABOUT"
 
 [node name="Website" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+layout_mode = 2
+disabled = true
 text = "INTRO_BTN_WEBSITE"
 
 [node name="Credits" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+layout_mode = 2
+disabled = true
 text = "INTRO_BTN_CREDITS"
 
 [node name="Spacer" type="Control" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
@@ -142,4 +158,8 @@ custom_minimum_size = Vector2(0, 19)
 layout_mode = 2
 
 [node name="ExitGame" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+layout_mode = 2
 text = "INTRO_BTN_EXIT"
+
+[connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/VBoxContainer/QuickStart" to="." method="_on_quick_start_pressed"]
+[connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/VBoxContainer/ExitGame" to="." method="_on_exit_game_pressed"]

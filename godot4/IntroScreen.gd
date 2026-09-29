@@ -60,3 +60,13 @@ func _ready():
 func _on_freeorion_parsing_completed():
 	if GlobalFreeOrionNode.options_get_bool("quickstart"):
 		GlobalFreeOrionNode.new_single_player_game()
+	else:
+		$Menu/VBoxContainer/MenuButtons/VBoxContainer/QuickStart.disabled = false
+
+
+func _on_exit_game_pressed() -> void:
+	get_tree().quit()
+
+
+func _on_quick_start_pressed() -> void:
+	GlobalFreeOrionNode.new_single_player_game()
