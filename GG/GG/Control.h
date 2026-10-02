@@ -15,6 +15,7 @@
 #define _GG_Control_h_
 
 
+#include <GG/Clr.h>
 #include <GG/Wnd.h>
 
 

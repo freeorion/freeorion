@@ -17,7 +17,6 @@
 #include <GG/WndEvent.h>
 #include <GG/Wnd.h>
 
-
 using namespace GG;
 
 namespace {
@@ -949,13 +948,21 @@ void Wnd::HandleEvent(const WndEvent& event)
 {
     // Check if any of the filters block this event
     bool filtered = false;
-    ProcessThenRemoveExpiredPtrs(
-        m_filters,
-        [&filtered, this, &event](std::shared_ptr<Wnd>& wnd)
-        {
-            if (!filtered)
+
+    for (auto& filter_wnd : m_filters) {
+        if (!filtered)
+            if (auto wnd = filter_wnd.lock())
                 filtered = wnd->EventFilter(this, event);
-        });
+    }
+
+    // remove any expired pointers from filter list.
+#if defined(__cpp_lib_erase_if)
+    std::erase_if(m_filters, [](const auto& weak) { return weak.expired(); });
+#else
+    m_filters.erase(std::remove_if(m_filters.begin(), m_filters.end(),
+                                   [](const auto& weak) { return weak.expired(); }),
+                    m_filters.end());
+#endif
 
     if (filtered)
         return;

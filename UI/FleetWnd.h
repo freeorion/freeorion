@@ -96,10 +96,11 @@ public:
     int                     SystemID() const;                   ///< returns ID of system whose fleets are shown in this FleetWnd, which may be INVALID_OBJECT_ID if this FleetWnd isn't set to show fleets of a system
     int                     EmpireID() const;                   ///< returns ID of empire whose fleets are shown in this FleetWnd, which may be ALL_EMPIRES if this FleetWnd isn't set to show fleets of a particular empire
     bool                    ContainsFleet(int fleet_id) const;  ///< returns true if fleet with ID \a fleet_id is shown in this FleetWnd
+
     /** Return true if this FleetWnd contains all \p fleet_ids. */
     template <typename Set>
     bool                    ContainsFleets(Set fleet_ids) const;
-    const std::set<int>&    FleetIDs() const;                   ///< returns IDs of all fleets shown in this FleetWnd
+    const auto&             FleetIDs() const { return m_fleet_ids; }; ///< returns IDs of all fleets shown in this FleetWnd
     std::set<int>           SelectedFleetIDs() const;           ///< returns IDs of selected fleets in this FleetWnd
     std::set<int>           SelectedShipIDs() const;            ///< returns IDs of selected ships in this FleetWnd
     FleetAggression         GetNewFleetAggression() const;      ///< returns this FleetWnd's setting for new fleet aggression (auto, aggressive, obstructive, or passive)

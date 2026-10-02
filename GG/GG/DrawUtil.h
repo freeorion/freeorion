@@ -18,6 +18,7 @@
 
 #include <GG/Base.h>
 #include <GG/ClrConstants.h>
+#include <GG/PtRect.h>
 
 
 namespace GG {
