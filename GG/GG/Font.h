@@ -23,6 +23,7 @@
 #include <GG/AlignmentFlags.h>
 #include <GG/GLClientAndServerBuffer.h>
 #include <GG/FontFwd.h>
+#include <GG/PtRect.h>
 #include <GG/Texture.h>
 #include <GG/UnicodeCharsets.h>
 

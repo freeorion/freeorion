@@ -15,12 +15,13 @@
 #ifndef _GG_WndEvent_h_
 #define _GG_WndEvent_h_
 
+#include <GG/Base.h>
+#include <GG/Flags.h>
+#include <GG/PtRect.h>
 
 #include <map>
+#include <memory>
 #include <vector>
-#include <GG/Base.h>
-#include <GG/Exception.h>
-#include <GG/Flags.h>
 
 
 namespace GG {

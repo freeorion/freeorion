@@ -11,9 +11,13 @@
 #define _GLClientAndServerBuffer_h_
 
 
-#include <vector>
 #include <GG/Base.h>
+#include <GG/Clr.h>
+#include <GG/PtRect.h>
 
+#include <GL/glew.h>
+
+#include <vector>
 
 namespace GG {
 
