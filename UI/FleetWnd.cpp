@@ -389,25 +389,37 @@ FleetWnd* FleetUIManager::ActiveFleetWnd() const
 
 std::shared_ptr<FleetWnd> FleetUIManager::WndForFleetID(int fleet_id) const {
     std::shared_ptr<FleetWnd> retval;
-    GG::ProcessThenRemoveExpiredPtrs(
-        m_fleet_wnds,
-        [&retval, fleet_id](std::shared_ptr<FleetWnd>& wnd)
-        {
-            if (!retval && wnd->ContainsFleet(fleet_id))
+    for (auto& weak_fwnd : m_fleet_wnds) {
+        if (auto wnd = weak_fwnd.lock()) {
+            if (wnd->ContainsFleet(fleet_id)) {
                 retval = wnd;
-        });
+                break;
+            }
+        }
+    }
+
+    // remove any expired fleet windows
+    std::erase_if(m_fleet_wnds, [](const auto& weak) { return weak.expired(); });
+
     return retval;
 }
 
 std::shared_ptr<FleetWnd> FleetUIManager::WndForFleetIDs(const std::vector<int>& fleet_ids_) const {
     std::unordered_set<int> fleet_ids{fleet_ids_.begin(), fleet_ids_.end()};
     std::shared_ptr<FleetWnd> retval;
-    GG::ProcessThenRemoveExpiredPtrs(
-        m_fleet_wnds,
-        [&retval, fleet_ids](std::shared_ptr<FleetWnd>& wnd) {
-            if (!retval && wnd->ContainsFleets(fleet_ids))
+
+    for (auto& weak_fwnd : m_fleet_wnds) {
+        if (auto wnd = weak_fwnd.lock()) {
+            if (wnd->ContainsFleets(fleet_ids)) {
                 retval = wnd;
-        });
+                break;
+            }
+        }
+    }
+
+    // remove any expired fleet windows
+    std::erase_if(m_fleet_wnds, [](const auto& weak) { return weak.expired(); });
+
     return retval;
 }
 
@@ -453,12 +465,15 @@ std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(
 }
 
 void FleetUIManager::CullEmptyWnds() {
-    // scan through FleetWnds, deleting those that have no fleets
-    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
-                                     [](const std::shared_ptr<FleetWnd>& wnd) {
-                                        if (wnd->FleetIDs().empty())
-                                            wnd->CloseClicked();
-                                     });
+    for (auto& weak_fwnd : m_fleet_wnds) {
+        if (auto wnd = weak_fwnd.lock()) {
+            if (wnd->FleetIDs().empty())
+                wnd->CloseClicked();
+        }
+    }
+
+    // remove any expired fleet windows
+    std::erase_if(m_fleet_wnds, [](const auto& weak) { return weak.expired(); });
 }
 
 void FleetUIManager::SetActiveFleetWnd(std::shared_ptr<FleetWnd> fleet_wnd) {
@@ -485,11 +500,15 @@ bool FleetUIManager::CloseAll() {
     bool retval = false;
 
     // closing a fleet window removes it from m_fleet_wnds
-    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
-                                     [&retval](const std::shared_ptr<FleetWnd>& wnd) {
-                                         retval = true;
-                                         wnd->CloseClicked();
-                                     });
+    for (auto& weak_fwnd : m_fleet_wnds) {
+        if (auto wnd = weak_fwnd.lock()) {
+            retval = true;
+            wnd->CloseClicked();
+        }
+    }
+
+    // remove any expired fleet windows
+    std::erase_if(m_fleet_wnds, [](const auto& weak) { return weak.expired(); });
 
     m_active_fleet_wnd.reset();
     ActiveFleetWndChangedSignal();
@@ -501,10 +520,14 @@ bool FleetUIManager::CloseAll() {
 }
 
 void FleetUIManager::RefreshAll(int this_client_empire_id, const ScriptingContext& context) {
-    auto refresh_fleetwnd = [this_client_empire_id, &context](auto& wnd)
-    { wnd->Refresh(this_client_empire_id, context); };
+    // closing a fleet window removes it from m_fleet_wnds
+    for (auto& weak_fwnd : m_fleet_wnds) {
+        if (auto wnd = weak_fwnd.lock())
+            wnd->Refresh(this_client_empire_id, context);
+    }
 
-    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds, refresh_fleetwnd);
+    // remove any expired fleet windows
+    std::erase_if(m_fleet_wnds, [](const auto& weak) { return weak.expired(); });
 }
 
 FleetUIManager& FleetUIManager::GetFleetUIManager() {
@@ -530,9 +553,15 @@ void FleetUIManager::FleetWndClicked(std::shared_ptr<FleetWnd> fleet_wnd) {
 
 void FleetUIManager::EnableOrderIssuing(bool enable) {
     m_order_issuing_enabled = enable;
-    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
-                                 [&enable](std::shared_ptr<FleetWnd>& wnd)
-                                 { wnd->EnableOrderIssuing(enable); });
+
+    // closing a fleet window removes it from m_fleet_wnds
+    for (auto& weak_fwnd : m_fleet_wnds) {
+        if (auto wnd = weak_fwnd.lock())
+            wnd->EnableOrderIssuing(enable);
+    }
+
+    // remove any expired fleet windows
+    std::erase_if(m_fleet_wnds, [](const auto& weak) { return weak.expired(); });
 }
 
 namespace {
@@ -3372,9 +3401,6 @@ bool FleetWnd::ContainsFleets(Set fleet_ids) const {
 
     return fleet_ids.empty();
 }
-
-const std::set<int>& FleetWnd::FleetIDs() const
-{ return m_fleet_ids; }
 
 std::set<int> FleetWnd::SelectedFleetIDs() const {
     std::set<int> retval;
