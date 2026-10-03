@@ -110,6 +110,29 @@ GameRule(
     rank=next(ranker),
 )
 
+
+GameRule(
+    name="RULE_MINIMAL_DISTANCE_TO_STARTING_POSITION_FOR_SPECIALS",
+    description="RULE_MINIMAL_DISTANCE_TO_STARTING_POSITION_FOR_SPECIALS",
+    category="CONTENT",
+    type=int,
+    default=5,
+    min=0,
+    max=30,
+    rank=next(ranker),
+)
+
+GameRule(
+    name="RULE_MINIMAL_DISTANCE_TO_STARTING_POSITION_FOR_NATIVES",
+    description="RULE_MINIMAL_DISTANCE_TO_STARTING_POSITION_FOR_NATIVES_DESC",
+    category="CONTENT",
+    type=int,
+    default=5,
+    min=2,
+    max=30,
+    rank=next(ranker),
+)
+
 #########################################
 # Category "BALANCE"
 #########################################
