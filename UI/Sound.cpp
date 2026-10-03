@@ -14,6 +14,8 @@
 #include <vorbis/vorbisfile.h>
 
 #include <atomic>
+#include <filesystem>
+#include <fstream>
 #include <map>
 #include <mutex>
 
@@ -85,9 +87,10 @@ private:
     ALuint                        m_sources[NUM_SOURCES] = {0};             ///< OpenAL sound sources. The first one is used for music
     int                           m_music_loops = 0;                        ///< the number of loops of the current music to play (< 0 for loop forever)
     std::string                   m_music_name;                             ///< the name of the currently-playing music file
-    std::map<std::string, ALuint> m_sound_buffers;                          ///< the currently-cached (and possibly playing) sounds, if any; keyed on filename
+    std::map<std::filesystem::path, ALuint> m_sound_buffers;                ///< the currently-cached (and possibly playing) sounds, if any; keyed on filename
 
     ALuint                        m_music_buffers[NUM_MUSIC_BUFFERS] = {0}; ///< additional buffers for music.
+    std::ifstream                 m_music_ifs;
     OggVorbis_File                m_music_ogg_file = {};                    ///< the currently open music ogg file
     ALenum                        m_music_ogg_format = 0;                   ///< mono or stereo for current music
     ALsizei                       m_music_ogg_freq = 0;                     ///< sampling frequency for current music
@@ -121,7 +124,7 @@ namespace {
     int RefillBuffer(OggVorbis_File* ogg_file, ALenum ogg_format, ALsizei ogg_freq,
                      ALuint buffer_id, int file_required_buffer_size, int& loops)
     {
-        if (!alcGetCurrentContext())
+        if (!ogg_file || !alcGetCurrentContext())
             return 1;
 
         if (file_required_buffer_size > MAX_BUFFER_SIZE) {
@@ -153,7 +156,18 @@ namespace {
         while (file_bytes_remaining > 0 && space_left_in_audio_buffer > MIN_CHUNK_SIZE) {
             //std::cout << "file rem: " << file_bytes_remaining << " buf ref: " << space_left_in_audio_buffer << std::endl;
             auto* buffer_pos = std::next(audio_data_buffer.data(), bytes_read);
-            const auto bytes_new = ov_read(ogg_file, buffer_pos, file_bytes_remaining, endian, word, sgned, std::addressof(bit_stream));
+            //DebugLogger() << "bpos: " << static_cast<void*>(buffer_pos) << " file rem: " << file_bytes_remaining
+            //              << " buffer rem: " << space_left_in_audio_buffer;
+            const auto bytes_to_read = std::min(space_left_in_audio_buffer, file_bytes_remaining);
+            if (bytes_to_read <= 0)
+                break;
+            const auto bytes_new = ov_read(ogg_file, buffer_pos, bytes_to_read, endian, word, sgned, std::addressof(bit_stream));
+            //DebugLogger() << "ov_read returned: " << bytes_new;
+            if (bytes_new < 0) {
+                ErrorLogger() << "ov_read failed with return value: " << bytes_new;
+                break;
+            }
+
             bytes_read += bytes_new;
             file_bytes_remaining = file_required_buffer_size - bytes_read;
             space_left_in_audio_buffer = AUDIO_BUFFER_SIZE - bytes_read;
@@ -162,7 +176,11 @@ namespace {
                 if (loops != 0) {   // enter here to play the same file again
                     if (loops > 0)
                         loops--;
-                    ov_time_seek(ogg_file, 0.0); // rewind to beginning
+                    const auto seek_result = ov_time_seek(ogg_file, 0.0); // rewind to beginning
+                    if (seek_result != 0) {
+                        ErrorLogger() << "refill buffer ov_time_seek failed with result: " << seek_result;
+                        break;
+                    }
                 } else {
                     break;
                 }
@@ -405,41 +423,96 @@ void Sound::Impl::ShutdownOpenAL() {
 }
 
 namespace {
-#ifdef FREEORION_WIN32
-    ov_callbacks callbacks = {
-        (size_t (*)(void *, size_t, size_t, void *)) fread,
-        (int (*)(void *, ogg_int64_t, int))          _fseek64_wrap,
-        (int (*)(void *))                            fclose,
-        (long (*)(void *))                           ftell
-    };
-#endif
+    static_assert(std::is_signed_v<std::streamsize>);
+    static_assert(std::numeric_limits<std::streamsize>::digits <= std::numeric_limits<std::size_t>::digits);
+    static_assert(static_cast<std::size_t>(std::numeric_limits<std::streamsize>::max()) <= std::numeric_limits<std::size_t>::max());
+    constexpr auto max_streamsize = static_cast<std::size_t>(std::numeric_limits<std::streamsize>::max());
 
-    int FileIsBad(OggVorbis_File& ogg_file, FILE* file) {
-#ifdef FREEORION_WIN32
-        return ov_test_callbacks(file, std::addressof(ogg_file), nullptr, 0, callbacks);
-#else
-        return ov_test(file, std::addressof(ogg_file), nullptr, 0);
-#endif
+    std::size_t ReadCallback(void* ptr, std::size_t size, std::size_t nmemb, void* datasource) {
+        if (!datasource || !ptr || (size == 0) || (nmemb == 0))
+            return 0u;
+        const std::size_t max_nmemb = max_streamsize / size;
+        if (nmemb > max_nmemb)
+            return 0u;
+
+        const auto read_sz = static_cast<std::streamsize>(size * nmemb);
+
+        auto& ifs = *static_cast<std::ifstream*>(datasource);
+        ifs.read(static_cast<char*>(ptr), read_sz);
+
+        const auto bytes_read = ifs.gcount();
+        if (bytes_read <= 0)
+            return 0u;
+
+        auto items_read = static_cast<std::size_t>(bytes_read) / size;
+        return items_read;
     }
 
+    int SeekCallback(void* datasource, ogg_int64_t offset, int whence) {
+        if (!datasource)
+            return -1;
+        auto& ifs = *static_cast<std::ifstream*>(datasource);
+
+        std::ios_base::seekdir dir;
+        switch (whence) {
+        case SEEK_SET: dir = std::ios_base::beg; break;
+        case SEEK_CUR: dir = std::ios_base::cur; break;
+        case SEEK_END: dir = std::ios_base::end; break;
+        default: return -1;
+        }
+
+        ifs.clear();
+        ifs.seekg(static_cast<std::streamoff>(offset), dir);
+
+        return ifs ? 0 : -1; // any errors?
+    }
+
+    long TellCallback(void* datasource) {
+        if (!datasource)
+            return -1L;
+        auto& ifs = *static_cast<std::ifstream*>(datasource);
+        const auto pos = ifs.tellg();
+        static_assert(std::is_same_v<std::decay_t<decltype(pos)>, std::streampos>);
+
+        if (pos == std::streampos{-1})
+            return -1L;
+
+        const auto offset = static_cast<std::streamoff>(pos);
+        static_assert(std::numeric_limits<std::streamoff>::digits >= std::numeric_limits<long>::digits);
+        if (offset < 0 || offset > std::numeric_limits<long>::max())
+            return -1L;
+
+        return static_cast<long>(pos);
+    }
+
+    constexpr ov_callbacks callbacks = {
+        ReadCallback,
+        SeekCallback,
+        nullptr,
+        TellCallback
+    };
+
+
+    auto FileIsBad(OggVorbis_File& ogg_file, std::ifstream& file)
+    { return ov_test_callbacks(std::addressof(file), std::addressof(ogg_file), nullptr, 0, callbacks); }
+
     // Returns buffer ID and if (true/false) if the id is a valid buffer
-    std::pair<ALuint, bool> GetSoundBuffer(std::map<std::string, ALuint>& buffers, const std::string& filename) {
+    std::pair<ALuint, bool> GetSoundBuffer(std::map<std::filesystem::path, ALuint>& buffers, const std::filesystem::path& path) {
         // Check if the sound data of the file we want to play is already buffered
         {
-            const auto it = buffers.find(filename);
+            const auto it = buffers.find(path);
             if (it != buffers.end())
                 return {it->second, true};
         }
 
-
         // not already buffered, so buffer it
-        auto file = fopen(filename.c_str(), "rb");
-        if (!file)
+        std::ifstream ifs(path, std::ios::binary);
+        if (!ifs)
             return {0, false};
 
         OggVorbis_File ogg_file;
-        if (FileIsBad(ogg_file, file)) {
-            ErrorLogger() << "GetSoundBuffer: unable to open file " << filename
+        if (FileIsBad(ogg_file, ifs)) {
+            ErrorLogger() << "GetSoundBuffer: unable to open file " << PathToString(path)
                           << " possibly not a .ogg vorbis file. Aborting\n";
             return {0, false};
         }
@@ -449,13 +522,39 @@ namespace {
 
         // take some info needed later...
         const auto vorbis_info_ptr = ov_info(std::addressof(ogg_file), -1);
+        if (!vorbis_info_ptr) {
+            ov_clear(std::addressof(ogg_file));
+            ErrorLogger() << "PlaySound got null ov_info";
+            return {0, false};
+        }
+
+        const auto channels = vorbis_info_ptr->channels;
+        if (channels < 1 || channels > 2) {
+            ErrorLogger() << "PlaySound got unsupported number of channels: " << channels;
+            ov_clear(std::addressof(ogg_file));
+            return {0, false};
+        }
         const ALenum ogg_format = (vorbis_info_ptr->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
         const ALsizei ogg_freq = vorbis_info_ptr->rate;
-        const ogg_int64_t byte_size = ov_pcm_total(std::addressof(ogg_file), -1) * vorbis_info_ptr->channels * 2;
+        const ogg_int64_t sample_count = ov_pcm_total(std::addressof(ogg_file), -1);
+        if (sample_count < 1) {
+            ErrorLogger() << "PlaySound too few samples: " << sample_count;
+            ov_clear(std::addressof(ogg_file));
+            return {0, false};
+        }
+        static constexpr auto max_samples = std::numeric_limits<ogg_int64_t>::max() / 4; // assumes channels <= 2 as checked above and 16 bits per pixel
+        if (sample_count > max_samples) {
+            ErrorLogger() << "PlaySound too many samples: " << sample_count;
+            ov_clear(std::addressof(ogg_file));
+            return {0, false};
+        }
+        static constexpr auto TWO_BYTES_PER_SAMLE = 2;
+        const ogg_int64_t byte_size = sample_count * channels * TWO_BYTES_PER_SAMLE;
 
         // check that size of file isn't too huge
         if (byte_size > MAX_BUFFER_SIZE) {
-            ErrorLogger() << "PlaySound: unable to open file " << filename
+            ov_clear(std::addressof(ogg_file));
+            ErrorLogger() << "PlaySound: unable to open file " << PathToString(path)
                           << " : Too big (" << byte_size << ") for buffer (" << MAX_BUFFER_SIZE << ")";
             return {0, false};
         }
@@ -464,19 +563,23 @@ namespace {
         ALuint sound_handle;
         alGenBuffers(1, std::addressof(sound_handle));
         ALenum openal_error = alGetError();
-        if (openal_error != AL_NONE)
+        if (openal_error != AL_NONE) {
+            ov_clear(std::addressof(ogg_file));
             ErrorLogger() << "RefillBuffer: OpenAL ERROR: " << alGetString(openal_error);
+        }
 
         int loop = 0;
         RefillBuffer(std::addressof(ogg_file), ogg_format, ogg_freq, sound_handle, byte_size, loop);
 
         // create new buffer for this sound. should be no pre-existing buffer
         // stored under that filename due to check above
-        buffers.emplace(filename, sound_handle);
+        buffers.emplace(path, sound_handle);
 
         ov_clear(std::addressof(ogg_file));
         return {sound_handle, true};
     }
+
+    void GetSoundBuffer(auto, auto) = delete;
 }
 
 void Sound::Impl::PlayMusic(const std::filesystem::path& path, int loops) {
@@ -485,23 +588,23 @@ void Sound::Impl::PlayMusic(const std::filesystem::path& path, int loops) {
     if (!alcGetCurrentContext())
         return;
 
-    std::string filename = PathToString(path);
     m_music_loops = 0;
 
-    if (m_music_name.size() > 0)
+    if (m_music_name.size() > 0) {
         StopMusic();
+        m_music_name.clear();
+    }
 
-    FILE* file = fopen(filename.c_str(), "rb");
-    if (!file) {
-        ErrorLogger() << "PlayMusic: unable to open file " << filename << " I/O Error. Aborting\n";
+    m_music_ifs.open(path, std::ios::binary);
+    if (!m_music_ifs) {
+        ErrorLogger() << "PlayMusic: unable to open file " << PathToString(path) << " I/O Error. Aborting\n";
         return;
     }
 
-    int file_bad = FileIsBad(m_music_ogg_file, file);
+    int file_bad = FileIsBad(m_music_ogg_file, m_music_ifs);
     if (file_bad > 0) {
-        ErrorLogger() << "PlayMusic: unable to open file " << filename
+        ErrorLogger() << "PlayMusic: unable to open file " << PathToString(path)
                       << " possibly not a .ogg vorbis file. Aborting\n";
-        m_music_name.clear();
         ov_clear(std::addressof(m_music_ogg_file));
         return;
     }
@@ -511,10 +614,20 @@ void Sound::Impl::PlayMusic(const std::filesystem::path& path, int loops) {
 
     // take some info needed later...
     auto vorbis_info_ptr = ov_info(std::addressof(m_music_ogg_file), -1);
-    if (vorbis_info_ptr->channels == 1)
-        m_music_ogg_format = AL_FORMAT_MONO16;
-    else
-        m_music_ogg_format = AL_FORMAT_STEREO16;
+    if (!vorbis_info_ptr) {
+        ov_clear(std::addressof(m_music_ogg_file));
+        ErrorLogger() << "PlayMusic got null ov_info";
+        return;
+    }
+
+    const auto channels = vorbis_info_ptr->channels;
+    if (channels < 1 || channels > 2) {
+        ErrorLogger() << "PlayMusic got unsupported number of channels: " << channels;
+        ov_clear(std::addressof(m_music_ogg_file));
+        return;
+    }
+
+    m_music_ogg_format = (channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
     m_music_ogg_freq = vorbis_info_ptr->rate;
     m_music_loops = loops;
 
@@ -532,7 +645,7 @@ void Sound::Impl::PlayMusic(const std::filesystem::path& path, int loops) {
                                      m_music_buffers[1], MUSIC_BUFFER_SIZE, m_music_loops);
         if (refill_failed == 0) {
             alSourceQueueBuffers(m_sources[0], 1, std::addressof(m_music_buffers[1]));
-            m_music_name = filename; //playing something that takes up more than 2 buffers
+            m_music_name = PathToString(path.filename()); //playing something that takes up more than 2 buffers
         } else {
             openal_error = alGetError();
             if (openal_error != AL_NONE)
@@ -587,8 +700,7 @@ void Sound::Impl::PlaySound(const std::filesystem::path& path, bool is_ui_sound)
         return;
     }
 
-    std::string filename = PathToString(path);
-    auto [current_buffer, found_buffer] = GetSoundBuffer(m_sound_buffers, filename);
+    auto [current_buffer, found_buffer] = GetSoundBuffer(m_sound_buffers, path);
 
     if (found_buffer) {
         bool found_source = false;
