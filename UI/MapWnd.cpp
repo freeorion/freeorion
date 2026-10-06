@@ -1676,6 +1676,9 @@ int MapWnd::SelectedSystemID() const
 int MapWnd::SelectedPlanetID() const // TODO: noexcept ?
 { return m_production_wnd->SelectedPlanetID(); }
 
+int MapWnd::SelectedBuildingID() const
+{ return SidePanel::SelectedBuildingID(); }
+
 int MapWnd::SelectedFleetID() const {
     if (!m_selected_fleet_ids.empty())
         return *m_selected_fleet_ids.begin();
