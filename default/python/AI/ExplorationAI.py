@@ -95,12 +95,21 @@ def assign_scouts_to_explore_systems():  # noqa: C901
 
         # skip systems threatened by monsters
         sys_status = aistate.systemStatus.setdefault(sys_id, {})
-        if not aistate.character.may_explore_system(sys_status.setdefault("monsterThreat", 0)) or (
-            fo.currentTurn() < 20 and aistate.systemStatus[sys_id]["monsterThreat"] > 0
-        ):
+        sys_status.setdefault("monsterThreat", 0)
+        monsterThreat = aistate.systemStatus[sys_id]["monsterThreat"]
+
+        if not aistate.character.may_explore_system(monsterThreat):
             debug(
-                "Skipping exploration of system %d due to Big Monster, threat %d"
-                % (sys_id, aistate.systemStatus[sys_id]["monsterThreat"])
+                "Skipping exploration of system %d because AI character may not explore at monster threat %d"
+                % (sys_id, monsterThreat)
+            )
+            needs_coverage.remove(sys_id)
+            continue
+
+        if fo.currentTurn() < 20 and monsterThreat > 0:
+            debug(
+                "Skipping exploration of system %d on turn %d < 20 due to nonzero monster threat %d"
+                % (sys_id, fo.currentTurn(), monsterThreat)
             )
             needs_coverage.remove(sys_id)
             continue
