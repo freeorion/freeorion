@@ -1,0 +1,64 @@
+Special
+    name = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL"
+    description = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL_DESC"
+    spawnrate = 0.0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Turn low = (3 + SpecialAddedOnTurn name = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL" object = Source.ID )
+            stackinggroup = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL_GROUP"
+            priority = [[BEFORE_ANYTHING_ELSE_PRIORITY]]
+            effects = [
+                GenerateSitRepMessage
+                    message = "PLANET_SPECIAL_INFO"
+                    label = "SITREP_FIELD_RESEARCH_KILLED_LABEL"
+                    icon = "icons/tech/environmental_encapsulation.png"
+                    parameters = [
+	         tag = "system" data = Source.SystemID
+                          tag = "planet" data = Source.PlanetID
+                          tag = "special" data = ThisSpecial
+                          tag = "turn" data = CurrentTurn
+                          tag = "specialcapacity" data = SpecialCapacity name = ThisSpecial object = Source.ID
+                          tag = "specialaddedonturn" data = SpecialAddedOnTurn name = ThisSpecial object = Source.ID
+                          tag = "remark" data = "{removing the special}"
+                          tag = "remark2" data = Source.Research
+                    ]
+                RemoveSpecial name = ThisSpecial
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Turn low = (2 + SpecialAddedOnTurn name = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL" object = Source.ID )
+            stackinggroup = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL_GROUP"
+            priority = [[BEFORE_ANYTHING_ELSE_PRIORITY]]
+            effects = SetResearch value = Value - (SpecialCapacity name = ThisSpecial object = Source.ID)
+
+        EffectsGroup
+            scope = Source
+            activation = Turn low = (1 + SpecialAddedOnTurn name = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL" object = Source.ID )
+            stackinggroup = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL_GROUP"
+            priority = [[END_CLEANUP_PRIORITY]]
+            effects = [
+               GenerateSitRepMessage
+                    message = "PLANET_SPECIAL_INFO"
+                    label = "SITREP_FIELD_RESEARCH_KILLED_LABEL"
+                    icon = "icons/tech/environmental_encapsulation.png"
+                    parameters = [
+	         tag = "system" data = Source.SystemID
+                          tag = "planet" data = Source.PlanetID
+                          tag = "special" data = ThisSpecial
+                          tag = "turn" data = CurrentTurn
+                          tag = "specialcapacity" data = SpecialCapacity name = ThisSpecial object = Source.ID
+                          tag = "specialaddedonturn" data = SpecialAddedOnTurn name = ThisSpecial object = Source.ID
+                          tag = "remark" data = "{main application add research}"
+                          tag = "remark2" data = Source.Research
+                    ]
+               SetResearch value = Value + (SpecialCapacity name = ThisSpecial object = Source.ID)
+               SetTargetResearch value = Value + (SpecialCapacity name = ThisSpecial object = Source.ID)
+            ]
+    ]
+
+    graphic = "icons/policies/military_exploration.png"
+
+#include "/scripting/macros/misc.macros"
+#include "/scripting/macros/priorities.macros"
