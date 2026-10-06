@@ -213,6 +213,12 @@ void SDLGUI::ExitApp(int code)
 void SDLGUI::SetWindowTitle(const std::string& title)
 { SDL_SetWindowTitle(m_window, title.c_str()); }
 
+void SDLGUI::SetWindowIcon(const GG::Texture& icon)
+{
+    const auto icon_surface = CreateSDLSurfaceFrom(icon);
+    SDL_SetWindowIcon(m_window, icon_surface.get());
+}
+
 void SDLGUI::SetVideoMode(X width, Y height, bool fullscreen, bool fake_mode_change)
 {
     m_fullscreen = fullscreen;
@@ -650,3 +656,18 @@ void SDLGUI::Exit2DMode() {
 
 bool SDLGUI::FramebuffersAvailable() noexcept
 { return GLEW_EXT_framebuffer_object && GLEW_EXT_packed_depth_stencil; }
+
+SDLGUI::SDLSurfacePtr SDLGUI::CreateSDLSurfaceFrom(const GG::Texture& texture, bool remove_padding)
+{
+    SDL_Surface* surface = SDL_CreateRGBSurfaceWithFormat(0, Value(texture.Width()), Value(texture.Height()), 32, SDL_PIXELFORMAT_RGBA32);
+    glBindTexture(GL_TEXTURE_2D, texture.OpenGLId());
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    if (remove_padding && (texture.DefaultHeight() != texture.Height() || texture.DefaultWidth() != texture.Width())) {
+        SDL_Surface* non_padded_surface = SDL_CreateRGBSurfaceWithFormat(0, Value(texture.DefaultWidth()), Value(texture.DefaultHeight()), 32, SDL_PIXELFORMAT_RGBA32);
+        SDL_BlitSurface(surface, nullptr, non_padded_surface, nullptr);
+        SDL_FreeSurface(surface);
+        surface = non_padded_surface;
+    }
+    return SDLSurfacePtr(surface, SDL_FreeSurface);
+}
