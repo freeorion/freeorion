@@ -1168,8 +1168,6 @@ void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterat
 }
 
 void BuildDesignatorWnd::BuildSelector::AddBuildItemToQueue(GG::ListBox::iterator it, bool top) {
-    if ((*it)->Disabled())
-        return;
     if (ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>(it->get()))
         RequestBuildItemSignal(item_row->Item(), 1, top ? 0 : -1);
 }
@@ -1203,7 +1201,10 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-    if (!((*it)->Disabled())) {
+    if ((*it)->Disabled()) {
+        popup->AddMenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE_FORCE"), false, false, add_bottom_queue_action);
+        popup->AddMenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE_FORCE"), false, false, add_top_queue_action);
+    } else {
         popup->AddMenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"), false, false, add_bottom_queue_action);
         popup->AddMenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"), false, false, add_top_queue_action);
     }
@@ -1584,7 +1585,8 @@ void BuildDesignatorWnd::BuildItemRequested(ProductionQueue::ProductionItem item
     const auto& app = GetApp();
     const auto& context = app.GetContext();
     auto empire = context.GetEmpire(app.EmpireID());
-    if (empire && empire->EnqueuableItem(item, BuildLocation(), context))
+    // not checking if the item is enqueable or producable - visibility should have sufficed
+    if (empire)
         AddBuildToQueueSignal(std::move(item), num_to_build, BuildLocation(), pos);
 }
 
