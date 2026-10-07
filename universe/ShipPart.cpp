@@ -19,7 +19,7 @@
                                         }   }
 
 namespace {
-    constexpr int ARBITRARY_LARGE_TURNS = 999999;
+    constexpr int16_t ARBITRARY_LARGE_TURNS = 9999;
     constexpr float ARBITRARY_LARGE_COST = 999999.9f;
 
     // create effectsgroup that increases the value of \a meter_type
