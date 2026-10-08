@@ -276,7 +276,7 @@ namespace parse {
                 base_path = file_search_path;
                 match_path = (base_path / fn_match).lexically_normal();
             }
-            std::string fn_str = PathToString(FilenameToPath(fn_match).filename());
+            std::string fn_str = PathToString(StringToPath(fn_match).filename());
             if (fn_str.substr(0, 1) == "*") {
                 if (match_path.parent_path().empty()) {
                     DebugLogger() << "Parse: " << PathToString(match_path.parent_path()) << " is empty, skipping.";

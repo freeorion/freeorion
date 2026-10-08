@@ -26,6 +26,7 @@
 #include <GG/Font.h>
 #include <GG/GUI.h>
 #include <GG/StyleFactory.h>
+#include <GG/PathToString.h>
 #include <GG/utf8/utf8.h>
 
 
@@ -3451,7 +3452,7 @@ void Font::Init(FT_Face& face)
     m_texture->Init(buffer.BufferWidth(), buffer.BufferHeight(),
                     (uint8_t*)buffer.Buffer(), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 2);
 
-    GetTextureManager().StoreTexture(m_texture, m_font_filename.string() + " " + std::to_string(m_pt_sz) + " pts");
+    GetTextureManager().StoreTexture(m_texture, PathToString(m_font_filename) + " " + std::to_string(m_pt_sz) + " pts");
 
     // create Glyph objects from temp glyph data
     for (const auto& [codepoint, glyph_data] : temp_glyph_data) {

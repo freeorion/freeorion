@@ -821,7 +821,7 @@ void GGHumanClientApp::LoadSinglePlayerGame(std::string filename) {
 
     if (!filename.empty()) {
         std::error_code ec;
-        if (!exists(FilenameToPath(filename)), ec) {
+        if (!exists(StringToPath(filename)), ec) {
             std::string msg = "GGHumanClientApp::LoadSinglePlayerGame() given a nonexistent file \""
                             + filename + "\" to load. Aborting load.";
             DebugLogger() << msg;

@@ -144,7 +144,7 @@ namespace {
     }
 
     std::filesystem::path ConvertXMLTextToPath(std::string_view input_string)
-    { return FilenameToPath(ConvertXMLTextToString(input_string)); }
+    { return StringToPath(ConvertXMLTextToString(input_string)); }
 
 #if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14)) && defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934)))
     static_assert(ConvertXMLTextToString("").empty());
@@ -308,7 +308,7 @@ bool OptionsDB::CommitPersistent() {
             doc.WriteDoc(ofs);
             retval = true;
         } else {
-            std::string err_msg = UserString("UNABLE_TO_WRITE_PERSISTENT_CONFIG_XML") + " : " + config_file.string();
+            std::string err_msg = UserString("UNABLE_TO_WRITE_PERSISTENT_CONFIG_XML") + " : " + PathToString(config_file);
             ErrorLogger() << err_msg;
             std::cerr << err_msg << std::endl;
         }

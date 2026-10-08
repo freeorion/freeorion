@@ -373,7 +373,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
                 // save game on exit
                 std::string save_filename = GetAutoSaveFileName(m_server.CurrentTurn(),
                                                                 m_server.GetGalaxySetupData());
-                auto save_file_path = FilenameToPath(save_filename);
+                auto save_file_path = StringToPath(save_filename);
                 ServerSaveGameData server_data{m_server.CurrentTurn()};
                 int bytes_written = 0;
                 // save game...
@@ -763,7 +763,7 @@ sc::result Idle::react(const Hostless&) {
         DebugLogger(FSM) << "Loading file " << autostart_load_filename;
         try {
             // expect no players to send error message to
-            auto autostart_load_path = FilenameToPath(autostart_load_filename);
+            auto autostart_load_path = StringToPath(autostart_load_filename);
             bool load_success = LoadGame(autostart_load_path,   *server_save_game_data,
                                          player_save_game_data, server.GetUniverse(),
                                          server.Empires(),      server.GetSpeciesManager(),
@@ -2223,7 +2223,7 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
             try {
                 server.Networking().SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::LOADING_GAME));
 
-                auto load_path = FilenameToPath(m_single_player_setup_data->filename);
+                auto load_path = StringToPath(m_single_player_setup_data->filename);
                 std::error_code ec;
                 if (!std::filesystem::exists(load_path, ec))
                     ErrorLogger(FSM) << "Save file does not exist: " << PathToString(load_path);
@@ -2760,7 +2760,7 @@ sc::result PlayingGame::react(const ShutdownServer& msg) {
     {
         // save game on exit
         std::string save_filename = GetAutoSaveFileName(server.CurrentTurn(), server.GetGalaxySetupData());
-        auto save_path = FilenameToPath(save_filename);
+        auto save_path = StringToPath(save_filename);
         ServerSaveGameData server_data{server.CurrentTurn()};
         int bytes_written = 0;
         // save game...
@@ -3543,7 +3543,7 @@ sc::result WaitingForTurnEnd::react(const SaveGameRequest& msg) {
     try {
         ServerSaveGameData server_data{server.m_current_turn};
         const auto& save_filename = message.Text();
-        auto save_path = FilenameToPath(save_filename);
+        auto save_path = StringToPath(save_filename);
         int bytes_written = SaveGame(save_path,             server_data,        server.GetPlayerSaveGameData(),
                                      server.GetUniverse(),  server.Empires(),   server.GetSpeciesManager(),
                                      GetCombatLogManager(), server.m_galaxy_setup_data,

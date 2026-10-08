@@ -726,7 +726,7 @@ namespace FreeOrionPython {
                 "Returns the current game turn (int).");
 
         py::def("getAIDir",
-                +[]() -> std::string { return PathToString(GetResourceDir() / FilenameToPath(GetOptionsDB().Get<std::string>("ai-path"))); },
+                +[]() -> std::string { return PathToString(GetResourceDir() / StringToPath(GetOptionsDB().Get<std::string>("ai-path"))); },
                 py::return_value_policy<py::return_by_value>());
 
         py::def("initMeterEstimatesDiscrepancies",

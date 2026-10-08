@@ -22,7 +22,7 @@
 #endif
 #include <GG/GLClientAndServerBuffer.h>
 #include <GG/Texture.h>
-#include <GG/utf8/utf8.h>
+#include <GG/PathToString.h>
 
 
 using namespace GG;
@@ -35,25 +35,6 @@ namespace {
         while (value < input)
             value *= 2;
         return value;
-    }
-
-    namespace {
-#if defined(_WIN32)
-        std::string ToUTF8String(const std::filesystem::path::string_type& native_wstring) {
-            std::string u8_string;
-            utf8::utf16to8(native_wstring.begin(), native_wstring.end(), std::back_inserter(u8_string));
-            return u8_string;
-        }
-#endif
-
-        decltype(auto) PathToString(const std::filesystem::path& p) {
-#if defined (_WIN32)
-            return ToUTF8String(p.generic_wstring());
-#else
-            return p.generic_string();
-#endif
-        }
-        std::string PathToString(auto) = delete; // disable implicit conversions
     }
 }
 

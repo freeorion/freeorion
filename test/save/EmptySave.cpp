@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(empty_save) {
     GalaxySetupData galaxy_setup_data;
 
     std::string filename = "test-save";
-    auto path = FilenameToPath(filename);
+    auto path = StringToPath(filename);
 
     SaveGame(path,
              server_save_game_data,
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(env_save, *boost::unit_test::precondition(check_env())) {
     CombatLogManager combat_log_manager2;
     GalaxySetupData galaxy_setup_data2;
 
-    BOOST_CHECK(LoadGame(FilenameToPath(filename),
+    BOOST_CHECK(LoadGame(StringToPath(filename),
              server_save_game_data2,
              player_save_game_data2,
              universe2,

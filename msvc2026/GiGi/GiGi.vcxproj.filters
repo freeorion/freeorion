@@ -189,6 +189,9 @@
     <ClInclude Include="..\..\GG\GG\utf8\utf8.h">
       <Filter>Header Files\utf8</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\GG\GG\PathToString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\GG\src\dialogs\FileDlg.cpp">

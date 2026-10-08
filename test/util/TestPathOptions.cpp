@@ -9,7 +9,7 @@
 BOOST_AUTO_TEST_SUITE(TestPathOptions);
 
 BOOST_AUTO_TEST_CASE(LatinPath) {
-    const std::filesystem::path latin1 = FilenameToPath("latin1");
+    const std::filesystem::path latin1 = StringToPath("latin1");
 
     GetOptionsDB().Add<std::filesystem::path>("test.latin1.path", UserStringNop("TEST_LATIN1"), latin1);
     auto exp_latin1 = GetOptionsDB().Get<std::filesystem::path>("test.latin1.path");
@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(LatinPath) {
 }
 
 BOOST_AUTO_TEST_CASE(EscapePath) {
-    const std::filesystem::path latin1 = FilenameToPath("lat&in1");
+    const std::filesystem::path latin1 = StringToPath("lat&in1");
 
     GetOptionsDB().Add<std::filesystem::path>("test.latampin1.path", UserStringNop("TEST_LATIN1"), latin1);
     auto exp_latin1 = GetOptionsDB().Get<std::filesystem::path>("test.latampin1.path");
@@ -41,14 +41,14 @@ BOOST_AUTO_TEST_CASE(EscapePath) {
     GetOptionsDB().SetFromXML(doc);
 
     exp_latin1 = GetOptionsDB().Get<std::filesystem::path>("test.latampin1.path");
-    BOOST_CHECK_EQUAL(FilenameToPath("lat&in1"), exp_latin1);
+    BOOST_CHECK_EQUAL(StringToPath("lat&in1"), exp_latin1);
 }
 
 BOOST_AUTO_TEST_CASE(CyrPath) {
     static constexpr std::string_view cyr_chars = "кириллица";
-    const std::filesystem::path cyr = FilenameToPath(cyr_chars);
+    const std::filesystem::path cyr = StringToPath(cyr_chars);
 
-    GetOptionsDB().Add<std::filesystem::path>("test.cyr.path", UserStringNop("TEST_CYR"), FilenameToPath(cyr_chars));
+    GetOptionsDB().Add<std::filesystem::path>("test.cyr.path", UserStringNop("TEST_CYR"), StringToPath(cyr_chars));
     auto exp_cyr = GetOptionsDB().Get<std::filesystem::path>("test.cyr.path");
     BOOST_CHECK_EQUAL(cyr, exp_cyr);
 

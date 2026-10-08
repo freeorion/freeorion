@@ -1236,7 +1236,7 @@ void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, cons
         } else if (link_type == TextLinker::URL_TAG) {
             app.OpenURL(data);
         } else if (link_type == TextLinker::BROWSE_PATH_TAG) {
-            app.BrowsePath(FilenameToPath(data));
+            app.BrowsePath(StringToPath(data));
         }
     } catch (const std::exception& e) {
         ErrorLogger() << "EncyclopediaDetailPanel::HandleLinkClick caught exception for link type: "

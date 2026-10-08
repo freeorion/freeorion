@@ -205,6 +205,7 @@
     <ClCompile Include="..\..\test\system\SmokeTestGame.cpp" />
     <ClCompile Include="..\..\test\system\SmokeTestHostless.cpp" />
     <ClCompile Include="..\..\test\system\TestChecksum.cpp" />
+    <ClCompile Include="..\..\test\util\TestPathOptions.cpp" />
     <ClCompile Include="..\..\util\DependencyVersions.cpp" />
     <ClCompile Include="..\..\util\Process.cpp" />
     <ClCompile Include="StdAfx.cpp">

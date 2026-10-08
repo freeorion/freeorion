@@ -19,7 +19,6 @@
 
 
 #include <memory>
-#include <stack>
 #include <boost/unordered_map.hpp>
 #include <GG/AlignmentFlags.h>
 #include <GG/GLClientAndServerBuffer.h>
