@@ -104,7 +104,7 @@ namespace {
                     dlg->SelectDirectories(true);
                 dlg->Run();
                 if (!dlg->Result().empty()) {
-                    auto dlg_result_path = FilenameToPath(*dlg->Result().begin());
+                    auto dlg_result_path = StringToPath(*dlg->Result().begin());
                     auto path = m_return_relative_path ? fs::relative(dlg_result_path, m_path) : fs::absolute(dlg_result_path);
                     *m_edit << PathToString(path);
                     m_edit->EditedSignal(m_edit->Text());
@@ -125,7 +125,7 @@ namespace {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
-            fs::path path = FilenameToPath(file);
+            fs::path path = StringToPath(file);
             std::error_code ec;
             return boost::algorithm::ends_with(file, STRINGTABLE_FILE_SUFFIX) &&
                 fs::exists(path, ec) && !fs::is_directory(path, ec);
@@ -138,7 +138,7 @@ namespace {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
-            fs::path path = FilenameToPath(file);
+            fs::path path = StringToPath(file);
             std::error_code ec;
             return boost::algorithm::ends_with(file, FONT_FILE_SUFFIX) &&
                 fs::exists(path, ec) && !fs::is_directory(path, ec);
@@ -151,7 +151,7 @@ namespace {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
-            fs::path path = FilenameToPath(file);
+            fs::path path = StringToPath(file);
             std::error_code ec;
             return boost::algorithm::ends_with(file, MUSIC_FILE_SUFFIX) &&
                 fs::exists(path, ec) && !fs::is_directory(path, ec);
@@ -164,7 +164,7 @@ namespace {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
-            fs::path path = FilenameToPath(file);
+            fs::path path = StringToPath(file);
             std::error_code ec;
             return boost::algorithm::ends_with(file, SOUND_FILE_SUFFIX) &&
                 fs::exists(path, ec) && !fs::is_directory(path, ec);
@@ -177,7 +177,7 @@ namespace {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
-            fs::path path = FilenameToPath(file);
+            fs::path path = StringToPath(file);
             std::error_code ec;
             return fs::exists(path, ec) && fs::is_directory(path, ec);
         } catch (...) {
@@ -189,7 +189,7 @@ namespace {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
-            fs::path path = FilenameToPath(file);
+            fs::path path = StringToPath(file);
 #ifdef FREEORION_WIN32
             if (!boost::algorithm::ends_with(file, EXE_FILE_SUFFIX))
                 return false;
@@ -1107,7 +1107,7 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, std::s
                 edit->SetTextColor(GG::CLR_RED);
             } else {
                 edit->SetTextColor(ClientUI::TextColor());
-                GetOptionsDB().Set(on, FilenameToPath(str));
+                GetOptionsDB().Set(on, StringToPath(str));
             }
         }
     );

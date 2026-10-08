@@ -207,7 +207,7 @@ namespace {
             .append(boost::uuids::to_string(design.UUID())).append(DESIGN_FILENAME_EXTENSION)};
 
         std::error_code ec;
-        return std::filesystem::absolute(designs_dir_path / FilenameToPath(file_name), ec);
+        return std::filesystem::absolute(designs_dir_path / StringToPath(file_name), ec);
     }
 
 
@@ -574,7 +574,7 @@ namespace {
 
         const auto file_name{std::string{DESIGN_MANIFEST_PREFIX}.append(DESIGN_FILENAME_EXTENSION)};
         std::error_code ec;
-        auto file = std::filesystem::absolute(PathToString(designs_dir_path / FilenameToPath(file_name)), ec);
+        auto file = std::filesystem::absolute(PathToString(designs_dir_path / StringToPath(file_name)), ec);
 
         std::stringstream ss;
         ss << DESIGN_MANIFEST_PREFIX << "\n";

@@ -146,7 +146,7 @@ namespace {
     //! It also updates the data dir in the config.xml and persisten_config.xml files.
     void MigrateOldConfigDirsToXDGLocation()
     {
-        const fs::path old_path = FilenameToPath(getenv("HOME")) / ".freeorion";
+        const fs::path old_path = StringToPath(getenv("HOME")) / ".freeorion";
         const fs::path config_path = GetUserConfigDir();
         const fs::path data_path = GetUserDataDir();
 
@@ -272,7 +272,7 @@ void InitBinDir(std::string const& argv0)
     std::error_code ec;
 #if defined(FREEORION_WIN32)
     try {
-        fs::path binary_file = fs::absolute(FilenameToPath(argv0), ec);
+        fs::path binary_file = fs::absolute(StringToPath(argv0), ec);
         bin_dir = binary_file.parent_path();
     } catch (const fs::filesystem_error &) {
         bin_dir = initial_path;
@@ -614,7 +614,7 @@ void CompleteXDGMigration()
         fs::remove(sentinel, ec);
         // Update data dir in config file
         const fs::path options_save_dir = GetOptionsDB().Get<fs::path>("save.path");
-        const fs::path old_path = FilenameToPath(getenv("HOME")) / ".freeorion";
+        const fs::path old_path = StringToPath(getenv("HOME")) / ".freeorion";
         if (options_save_dir == old_path)
             GetOptionsDB().Set("save.path", GetUserDataDir());
     }
@@ -685,7 +685,7 @@ auto GetServerSaveDir() -> fs::path const
     return options_save_dir;
 }
 
-auto FilenameToPath(std::string_view path_str) -> fs::path
+auto StringToPath(std::string_view path_str) -> fs::path
 {
 #if defined(FREEORION_WIN32)
     // convert UTF-8 string to UTF-16

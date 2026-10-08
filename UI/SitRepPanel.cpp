@@ -104,7 +104,7 @@ namespace {
             } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
                 ui.ZoomToEncyclopediaEntry(data);
             } else if (link_type == TextLinker::BROWSE_PATH_TAG) {
-                app.BrowsePath(FilenameToPath(data));
+                app.BrowsePath(StringToPath(data));
             }
         } catch (const boost::bad_lexical_cast&) {
             ErrorLogger() << "SitrepPanel.cpp HandleLinkClick caught lexical cast exception for link type: " << link_type << " and data: " << data;

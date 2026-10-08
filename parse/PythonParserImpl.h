@@ -7,9 +7,11 @@
 #include <boost/python/stl_iterator.hpp>
 #include <boost/python/extract.hpp>
 
+auto PathToString(std::filesystem::path const& path) -> std::string;
+
 namespace py_parse { namespace detail {
     [[nodiscard]] inline bool parse_file(const PythonParser& parser, const std::filesystem::path& path) {
-        ScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::milliseconds(1));
+        ScopedTimer timer("parse_file \"" + PathToString(path.filename())  + "\"", std::chrono::milliseconds(1));
 
         std::string filename;
         std::string file_contents;

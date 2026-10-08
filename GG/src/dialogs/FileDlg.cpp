@@ -31,14 +31,14 @@ struct IUnknown; // Workaround for "combaseapi.h(229,21): error C2760: syntax er
 #include <GG/GUI.h>
 #include <GG/StyleFactory.h>
 #include <GG/TextControl.h>
-#include <GG/utf8/utf8.h>
+#include <GG/PathToString.h>
 #include <GG/WndEvent.h>
 
 
 using namespace GG;
+namespace fs = std::filesystem;
 
 namespace {
-
 using namespace boost::spirit::classic;
 
 // these functors are used by the if_p, while_p, and for_p parsers in UpdateList()
@@ -134,49 +134,6 @@ struct IndexedStringEnd
 
 bool WindowsRoot(const std::string& root_name)
 { return root_name.size() == 2 && std::isalpha(root_name[0]) && root_name[1] == ':'; }
-
-
-namespace fs = std::filesystem;
-
-namespace {
-    fs::path StringToPath(std::string_view str) {
-#if defined(_WIN32)
-        // convert UTF-8 path string to UTF-16
-        fs::path::string_type str_native;
-        utf8::utf8to16(str.begin(), str.end(), std::back_inserter(str_native));
-        return fs::path(str_native);
-#else
-        return fs::path(str);
-#endif
-    }
-    fs::path StringToPath(const std::string& str) { return StringToPath(std::string_view(str)); }
-    fs::path StringToPath(auto) = delete; // disable implicit conversions
-
-#if defined (_WIN32)
-    static_assert(std::is_same_v<fs::path::string_type, std::wstring>);
-    static_assert(std::is_same_v<std::wstring::value_type, wchar_t>);
-    static_assert(sizeof(wchar_t) == 2);
-    // convert UTF-16 path to UTF-8
-    std::string ToUTF8String(const fs::path::string_type& native_wstring) {
-        std::string u8_string;
-        utf8::utf16to8(native_wstring.begin(), native_wstring.end(), std::back_inserter(u8_string));
-        return u8_string;
-    }
-#else
-    static_assert(std::is_same_v<fs::path::string_type, std::string>);
-    static_assert(sizeof(std::string::value_type) == 1);
-#endif
-
-    std::string PathToString(const fs::path& p) {
-#if defined (_WIN32)
-        static_assert(noexcept(p.native()));
-        return ToUTF8String(p.native());
-#else
-        return p.string();
-#endif
-    }
-    std::string PathToString(auto) = delete; // disable implicit conversions
-}
 
 const auto initial_path_root_string = PathToString(std::filesystem::current_path().root_name());
 
@@ -315,7 +272,7 @@ void FileDlg::DoLayout()
     X button_width = Width() / 4 - H_SPACING;
     Y button_height = m_font->Height() + 2 * 5;
 
-    m_curr_dir_text->MoveTo(GG::Pt(H_SPACING, V_SPACING / 2));
+    m_curr_dir_text->MoveTo(Pt(H_SPACING, V_SPACING / 2));
 
     m_files_list->MoveTo(Pt(H_SPACING, m_curr_dir_text->Height() + V_SPACING));
     m_files_list->Resize(Pt(Width() - 2 * H_SPACING,
@@ -479,7 +436,7 @@ void FileDlg::FileSetChanged(const ListBox::SelectionSet& file_rows)
         m_ok_button->SetText(m_open_str);
 }
 
-void FileDlg::FileDoubleClicked(DropDownList::iterator it, GG::Pt, Flags<ModKey>)
+void FileDlg::FileDoubleClicked(DropDownList::iterator it, Pt, Flags<ModKey>)
 {
     m_files_list->DeselectAll();
     m_files_list->SelectRow(it);

@@ -307,7 +307,7 @@ void InitLoggingSystem(const std::string& log_file, std::string_view _unnamed_lo
     // Create a sink backend that logs to a file
     auto& file_sink_backend = FileSinkBackend();
     file_sink_backend = boost::make_shared<LoggerTextFileSinkFrontend::sink_backend_type>(
-        keywords::file_name = FilenameToPath(log_file),
+        keywords::file_name = StringToPath(log_file),
         keywords::auto_flush = true
     );
 

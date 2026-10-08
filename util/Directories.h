@@ -116,7 +116,7 @@ FO_COMMON_API auto GetUserDataDir() -> std::filesystem::path const;
 
 //! Converts UTF-8 string into a path, doing any required wide-character
 //! conversions as determined by the operating system / filesystem.
-FO_COMMON_API auto FilenameToPath(std::string_view path_str) -> std::filesystem::path;
+FO_COMMON_API auto StringToPath(std::string_view path_str) -> std::filesystem::path;
 
 //! Returns the directory that contains all game resources.
 //!

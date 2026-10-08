@@ -513,7 +513,7 @@ void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_se
     ScopedTimer timer("LoadGalaxySetupData");
 
     try {
-        fs::path path = FilenameToPath(filename);
+        fs::path path = StringToPath(filename);
         std::ifstream ifs(path, std::ios_base::binary);
 
         if (!ifs)
@@ -556,7 +556,7 @@ void LoadPlayerSaveHeaderData(const std::string& filename, std::vector<PlayerSav
 
     try {
         DebugLogger() << "Reading player save game data from: " << filename;
-        fs::path path = FilenameToPath(filename);
+        fs::path path = StringToPath(filename);
         std::ifstream ifs(path, std::ios_base::binary);
 
         if (!ifs)

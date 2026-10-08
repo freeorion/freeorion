@@ -63,7 +63,7 @@ ClientAppFixture::ClientAppFixture() :
         resource_dir = std::filesystem::path(resource_path_env);
 #else
     if (const char* resource_path_env = std::getenv("FO_TEST_RESOURCE_PATH"))
-        resource_dir = FilenameToPath(resource_path_env);
+        resource_dir = StringToPath(resource_path_env);
 #endif
 
     GetOptionsDB().Set<std::filesystem::path>("resource.path", std::move(resource_dir));

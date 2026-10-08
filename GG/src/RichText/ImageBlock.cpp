@@ -15,7 +15,7 @@
 #include <GG/RichText/RichText.h>
 #include <GG/TextControl.h>
 #include <GG/Texture.h>
-#include <GG/utf8/utf8.h>
+#include <GG/PathToString.h>
 
 
 using namespace GG;
@@ -98,7 +98,7 @@ public:
         // if not stored by name, interpet as a path
 
         // Get the path from the parameters, with or without prepending root path
-        fs::path param_path = NameToPath(tex_name);
+        fs::path param_path = StringToPath(tex_name);
         std::error_code ec;
         fs::path combined_path = fs::exists(param_path, ec) ? param_path : (m_root_path / param_path);
 
@@ -125,21 +125,6 @@ private:
         const auto src_param_it = std::find_if(params.begin(), params.end(),
                                                [](const auto p) noexcept { return p.first == "src"; });
         return (src_param_it == params.end()) ? "" : src_param_it->second;
-    }
-
-    // converts string to path
-    static fs::path NameToPath(std::string_view name)
-    {
-#if defined(_WIN32)
-        // convert UTF-8 path string to UTF-16
-        fs::path::string_type str_native;
-        str_native.reserve(name.size());
-        utf8::utf8to16(name.begin(), name.end(), std::back_inserter(str_native));
-        return fs::path(str_native);
-#else
-        return fs::path(std::string{name});
-#endif
-
     }
 };
 

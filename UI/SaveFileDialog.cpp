@@ -798,10 +798,10 @@ void SaveFileDialog::Confirm() {
         return;
     }
 
-    fs::path choice_path = FilenameToPath(choice);
+    fs::path choice_path = StringToPath(choice);
     DebugLogger() << "choice: " << choice << " valid utf-8: " << utf8::is_valid(choice.begin(), choice.end());
 
-    fs::path current_dir = FilenameToPath(GetDirPath());
+    fs::path current_dir = StringToPath(GetDirPath());
     DebugLogger() << [&]() {
         const auto cdpstr = PathToString(current_dir);
         return "current dir PathString: " + cdpstr +
@@ -913,7 +913,7 @@ void SaveFileDialog::UpdateDirectory(std::string newdir) {
 void SaveFileDialog::UpdatePreviewList() {
     // If no browsing, no reloading
     if (!m_server_previews) {
-        SetPreviewList(FilenameToPath(GetDirPath()));
+        SetPreviewList(StringToPath(GetDirPath()));
     } else {
         GetApp().RequestSavePreviews(GetDirPath());
     }
@@ -967,7 +967,7 @@ void SaveFileDialog::SetPreviewListCore(const std::function<void ()>& setup_prev
 bool SaveFileDialog::CheckChoiceValidity() {
     // Check folder validity
     if (!m_server_previews) {
-        fs::path dir = FilenameToPath(GetDirPath());
+        fs::path dir = StringToPath(GetDirPath());
         std::error_code ec;
         if (fs::exists(dir, ec) && fs::is_directory(dir, ec))
             m_current_dir_edit->SetColor(ClientUI::TextColor());
@@ -1035,7 +1035,7 @@ void SaveFileDialog::SetDirPath(std::string dirname) {
         }
     } else {
         // Normalize path
-        fs::path path = FilenameToPath(dirname);
+        fs::path path = StringToPath(dirname);
         std::error_code ec;
         if (fs::is_directory(path, ec)) {
             path = fs::canonical(path, ec);
@@ -1050,8 +1050,8 @@ fs::path SaveFileDialog::ResultPath() const {
     if (choice.empty())
         return {};
 
-    fs::path choice_path = FilenameToPath(choice);
-    fs::path current_dir = FilenameToPath(GetDirPath());
+    fs::path choice_path = StringToPath(choice);
+    fs::path current_dir = StringToPath(GetDirPath());
     fs::path chosen_full_path = current_dir / choice_path;
 
     return chosen_full_path;
