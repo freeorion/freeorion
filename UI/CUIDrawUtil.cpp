@@ -489,7 +489,7 @@ public:
             std::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
             std::string shader_text;
             if (!ReadFile(shader_path, shader_text)) {
-                ErrorLogger() << "ScanlineRenderer failed to read shader at path " << shader_path.string();
+                ErrorLogger() << "ScanlineRenderer failed to read shader at path " << PathToString(shader_path);
                 m_failed_init = true;
                 return;
             }

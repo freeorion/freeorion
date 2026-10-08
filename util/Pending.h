@@ -141,7 +141,11 @@ namespace Pending {
         if (success)
             promise.set_value(std::move(result));
         else
+#if defined(FREEORION_WIN32)
+            promise.set_exception(std::make_exception_ptr(std::runtime_error(PathToString(path))));
+#else
             promise.set_exception(std::make_exception_ptr(std::runtime_error(path.string())));
+#endif
         return Pending<decltype(parser(arg1, path, std::declval<bool&>()))>(promise.get_future(), PathToString(path.filename()));
     }
     void ParseSynchronously(auto, auto, auto) = delete; // disable implicit conversions
