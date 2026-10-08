@@ -3284,9 +3284,9 @@ FT_Error Font::GetFace(const uint8_t* file_contents, const std::size_t file_sz, 
 void Font::CheckFace(FT_Face face, FT_Error error)
 {
     if (error || !face)
-        throw BadFile("Face object created from \"" + m_font_filename.string() + "\" was invalid");
+        throw BadFile("Face object created from \"" + PathToString(m_font_filename) + "\" was invalid");
     if (!FT_IS_SCALABLE(face)) {
-        throw UnscalableFont("Attempted to create font \"" + m_font_filename.string() +
+        throw UnscalableFont("Attempted to create font \"" + PathToString(m_font_filename) +
                              "\" with uscalable font face");
     }
 }
@@ -3294,11 +3294,11 @@ void Font::CheckFace(FT_Face face, FT_Error error)
 void Font::Init(FT_Face& face)
 {
     if (!m_pt_sz)
-        throw InvalidPointSize("Attempted to create font \"" + m_font_filename.string() + "\" with 0 point size");
+        throw InvalidPointSize("Attempted to create font \"" + PathToString(m_font_filename) + "\" with 0 point size");
 
     // Set the character size and use default 72 DPI
     if (FT_Set_Char_Size(face, 0, static_cast<signed long>(m_pt_sz * 64), 0, 0)) // if error is returned
-        throw BadPointSize("Could not set font size while attempting to create font \"" + m_font_filename.string() + "\"");
+        throw BadPointSize("Could not set font size while attempting to create font \"" + PathToString(m_font_filename) + "\"");
 
     // Get the scalable font metrics for this font
     const auto scale = face->size->metrics.y_scale;
@@ -3498,7 +3498,7 @@ bool Font::GenerateGlyph(FT_Face face, uint32_t ch)
 std::vector<uint8_t> Font::GetFileContents(const std::filesystem::path& font_filename) {
     std::ifstream in(font_filename, std::ios::binary);
     if (!in)
-        throw BadFile("Could not open font file \"" + font_filename.string() + "\"");
+        throw BadFile("Could not open font file \"" + PathToString(font_filename) + "\"");
     return std::vector<uint8_t>(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
 }
 

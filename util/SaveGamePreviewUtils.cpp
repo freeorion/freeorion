@@ -42,7 +42,7 @@ namespace {
     bool LoadSaveGamePreviewData(const fs::path& path, FullPreview& full) {
         std::error_code ec;
         if (!fs::exists(path, ec)) {
-            DebugLogger() << "LoadSaveGamePreviewData: Save file note found: " << path.string();
+            DebugLogger() << "LoadSaveGamePreviewData: Save file note found: " << PathToString(path);
             return false;
         }
 
@@ -58,7 +58,7 @@ namespace {
         SaveGamePreviewData& save_preview_data = full.preview;
         GalaxySetupData& galaxy_setup_data = full.galaxy;
 
-        DebugLogger() << "LoadSaveGamePreviewData: Loading preview from: " << path.string();
+        DebugLogger() << "LoadSaveGamePreviewData: Loading preview from: " << PathToString(path);
         try {
             // read the first five letters of the stream and check if it is opening an xml file
             std::array<std::string::value_type, 5> xxx5{};
@@ -88,15 +88,15 @@ namespace {
             DebugLogger() << "Loaded preview with: " << save_preview_data.number_of_human_players << " human players";
 
         } catch (const std::exception& e) {
-            ErrorLogger() << "LoadSaveGamePreviewData: Failed to read preview of " << path.string() << " because: " << e.what();
+            ErrorLogger() << "LoadSaveGamePreviewData: Failed to read preview of " << PathToString(path) << " because: " << e.what();
             return false;
         }
 
         if (full.preview.Valid()) {
-            DebugLogger() << "LoadSaveGamePreviewData: Successfully loaded preview from: " << path.string();
+            DebugLogger() << "LoadSaveGamePreviewData: Successfully loaded preview from: " << PathToString(path);
             return true;
         } else {
-            DebugLogger() << "LoadSaveGamePreviewData: Passing save file with no preview: " << path.string();
+            DebugLogger() << "LoadSaveGamePreviewData: Passing save file with no preview: " << PathToString(path);
             return false;
         }
     }
@@ -133,7 +133,7 @@ bool SaveFileWithValidHeader(const std::filesystem::path& path) {
     std::vector<PlayerSaveHeaderData>   ignored_player_save_header_data;
     std::map<int, SaveGameEmpireData>   ignored_empire_save_game_data;
 
-    DebugLogger() << "SaveFileWithValidHeader: Loading headers from: " << path.string();
+    DebugLogger() << "SaveFileWithValidHeader: Loading headers from: " << PathToString(path);
     try {
         // read the first five letters of the stream and check if it is opening an xml file
         std::array<std::string::value_type, 5> xxx5{};
@@ -143,7 +143,7 @@ bool SaveFileWithValidHeader(const std::filesystem::path& path) {
         ifs.seekg(0, std::ios_base::beg);
         // binary deserialization iff document is not xml
         if (xml5 != xxx5) {
-            ScopedTimer timer("SaveFileWithValidHeader (binary): " + path.string(), true);
+            ScopedTimer timer("SaveFileWithValidHeader (binary): " + PathToString(path), true);
 
             freeorion_bin_iarchive ia(ifs);
 
