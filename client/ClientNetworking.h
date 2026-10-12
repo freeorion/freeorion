@@ -1,14 +1,11 @@
 #ifndef _ClientNetworking_h_
 #define _ClientNetworking_h_
 
-#include <boost/optional/optional_fwd.hpp>
-
+#include <chrono>
+#include <memory>
+#include <optional>
 #include <string>
 #include <vector>
-#include <memory>
-#include <chrono>
-
-#include <memory>
 
 namespace boost {
     namespace asio {
@@ -103,7 +100,7 @@ public:
 
     /** Return the next incoming message from the server if available or boost::none.
         Remove the message from the incoming message queue. */
-    [[nodiscard]] boost::optional<Message> GetMessage();
+    [[nodiscard]] std::optional<Message> GetMessage();
 
     /** Disconnects the client from the server. First tries to send any pending transmit messages. */
     void DisconnectFromServer();

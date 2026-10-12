@@ -165,7 +165,7 @@ void serialize(Archive& ar, SaveGameUIData& obj, unsigned int const version)
             for (auto& id_pair_pair : obj.ordered_ship_design_ids_and_obsolete) {
                 ordered_ship_design_ids.emplace_back(id_pair_pair.first);
                 if (id_pair_pair.second)
-                    ids_obsolete[id_pair_pair.first] = id_pair_pair.second.get();
+                    ids_obsolete[id_pair_pair.first] = id_pair_pair.second.value();
             }
             // serialize into archive
             TraceLogger() << "SaveGameUIData::serialize design data into archive";
@@ -184,8 +184,8 @@ void serialize(Archive& ar, SaveGameUIData& obj, unsigned int const version)
             for (int id : ordered_ship_design_ids) {
                 auto it = ids_obsolete.find(id);
                 auto opt_p_i = it == ids_obsolete.end() ?
-                    boost::optional<std::pair<bool, int>>() :
-                    boost::optional<std::pair<bool, int>>(it->second);
+                    std::optional<std::pair<bool, int>>() :
+                    std::optional<std::pair<bool, int>>(it->second);
                 obj.ordered_ship_design_ids_and_obsolete.emplace_back(id, opt_p_i);
             }
             TraceLogger() << "SaveGameUIData::serialize design data extracted";
