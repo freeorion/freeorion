@@ -211,9 +211,6 @@ private:
     bool   m_recently_edited = false; ///< The contents when the focus was last gained
 };
 
-void GG_API GetTranslatedCodePoint(Key key, uint32_t key_code_point,
-                                   Flags<ModKey> mod_keys, std::string& translated_code_point);
-
 }
 
 
