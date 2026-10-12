@@ -1,6 +1,17 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#if defined(FREEORION_WIN32)
+#  if !defined(NOMINMAX)
+#    define NOMINMAX
+#  endif
+#  include <windows.h>
+#  undef GetMessage
+#  undef SendMessage
+#  undef MessageBox
+#endif
+
 #include "GGHumanClientApp.h"
 
 #include "HumanClientFSM.h"
