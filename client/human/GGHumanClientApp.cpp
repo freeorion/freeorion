@@ -1735,6 +1735,22 @@ void GGHumanClientApp::OpenURL(const std::string& url) {
         ErrorLogger() << "GGHumanClientApp::OpenURL `" << command << "` returned a non-zero exit code: " << rv;
 }
 
+#if defined(_WIN32)
+namespace {
+    std::string ToUTF8String(const std::wstring& native_string) {
+        // convert UTF-16 native path to UTF-8
+        int utf8_sz = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS,
+                                          native_string.data(), native_string.size(),
+                                          NULL, 0, NULL, NULL);
+        std::string utf8_string(utf8_sz, 0);
+        if (utf8_sz > 0)
+            WideCharToMultiByte(CP_UTF8, 0, native_string.data(), native_string.size(),
+                                utf8_string.data(), utf8_sz, NULL, NULL);
+        return utf8_string;
+    }
+}
+#endif
+
 void GGHumanClientApp::BrowsePath(const std::filesystem::path& browse_path) {
     if (browse_path.empty() || browse_path == "/") {
         ErrorLogger() << "Invalid path: " << PathToString(browse_path);
@@ -1818,8 +1834,7 @@ void GGHumanClientApp::BrowsePath(const std::filesystem::path& browse_path) {
 #endif
 
 #ifdef _WIN32
-    std::string u8_command;
-    utf8::utf16to8(command.begin(), command.end(), std::back_inserter(u8_command));
+    std::string u8_command = ToUTF8String(command);
     InfoLogger() << "Sending OS request to browse directory: " << u8_command;
     // Flush all streams prior to _wsystem call per https://msdn.microsoft.com/en-us/library/277bwbdz.aspx
     std::fflush(NULL);
