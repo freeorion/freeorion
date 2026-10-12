@@ -55,7 +55,6 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/format.hpp>
-#include <boost/optional/optional.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/nil_generator.hpp>
@@ -67,6 +66,8 @@
 #include <thread>
 #include <sstream>
 #include <utility>
+
+
 #if !defined(__cpp_lib_integer_comparison_functions)
 namespace std {
     inline auto cmp_less(auto&& lhs, auto&& rhs) { return lhs < rhs; }
@@ -1280,7 +1281,7 @@ void GGHumanClientApp::UpdateCombatLogManager() {
 }
 
 namespace {
-    boost::optional<std::string> NewestSinglePlayerSavegame() {
+    std::optional<std::string> NewestSinglePlayerSavegame() {
         using namespace std::filesystem;
         try {
             std::multimap<file_time_type, path> files_by_write_time;
@@ -1306,7 +1307,7 @@ namespace {
             add_all_savegames_in(GetSaveDir() / "auto");
 
             if (files_by_write_time.empty())
-                return boost::none;
+                return std::nullopt;
 
             // Return the newest file that has a valid header
             for (auto file_it = files_by_write_time.rbegin();
@@ -1318,11 +1319,11 @@ namespace {
                     return PathToString(file);  // load succeeded, return path to OK file
             }
 
-            return boost::none;
+            return std::nullopt;
 
         } catch (const std::filesystem::filesystem_error& e) {
             ErrorLogger() << "File system error " << e.what() << " while finding newest autosave";
-            return boost::none;
+            return std::nullopt;
         }
     }
 
@@ -1496,12 +1497,12 @@ void GGHumanClientApp::Autosave() {
 }
 
 void GGHumanClientApp::ContinueSinglePlayerGame() {
-    if (const auto file = NewestSinglePlayerSavegame())
-        LoadSinglePlayerGame(*file);
+    if (auto file = NewestSinglePlayerSavegame())
+        LoadSinglePlayerGame(std::move(*file));
 }
 
 bool GGHumanClientApp::IsLoadGameAvailable() const
-{ return bool(NewestSinglePlayerSavegame()); }
+{ return NewestSinglePlayerSavegame().has_value(); }
 
 std::string GGHumanClientApp::SelectLoadFile() {
     return m_ui.GetFilenameWithSaveFileDialog(
