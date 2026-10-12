@@ -22,24 +22,22 @@
 #include "../universe/ShipDesign.h"
 #include "../universe/ShipPart.h"
 #include "../universe/ShipHull.h"
-#include "../universe/ValueRef.h"
 
 #include <GG/StaticGraphic.h>
 #include <GG/TabWnd.h>
 
-#include <boost/algorithm/string/replace.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
-#include <boost/uuid/random_generator.hpp>
 
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
+#include <functional>
 #include <iterator>
+#include <optional>
 #include <unordered_map>
 #include <unordered_set>
 
-#include <functional>
 
 struct Availability {
     // Declaring an enum inside a struct makes the syntax when using the enum 
@@ -236,12 +234,12 @@ namespace {
 
         bool IsKnown(const int id) const;
 
-        /** Return true if design \p id is obsolete or boost::none if \p id is not in the manager. */
-        boost::optional<bool> IsObsolete(const int id, const Universe& universe) const;
+        /** Return true if design \p id is obsolete or std::nullopt if \p id is not in the manager. */
+        std::optional<bool> IsObsolete(const int id, const Universe& universe) const;
         /** Return UI event number that obsoletes \p hull if it is obsolete. */
-        boost::optional<int> IsHullObsolete(const std::string& hull) const;
+        std::optional<int> IsHullObsolete(const std::string& hull) const;
         /** Return UI event number that obsoletes \p part if it is obsolete. */
-        boost::optional<int> IsPartObsolete(const std::string& part) const;
+        std::optional<int> IsPartObsolete(const std::string& part) const;
 
     private:
         /* Increment and return the obsolete ui event counter. */
@@ -256,14 +254,14 @@ namespace {
         void SetPartObsolete(const std::string& part, const bool obsolete);
 
         void Load(const int obsolete_ui_event_count,
-                  const std::vector<std::pair<int, boost::optional<std::pair<bool, int>>>>& design_ids_and_obsoletes,
+                  const std::vector<std::pair<int, std::optional<std::pair<bool, int>>>>& design_ids_and_obsoletes,
                   const std::vector<std::pair<std::string, std::pair<bool, int>>>& hulls_and_obsoletes,
                   const std::unordered_map<std::string, int>& obsolete_parts);
 
         /** Save modifies each of its parameters to store obsolete and
             ordering data in the UI save data.*/
         void Save(int& obsolete_ui_event_count,
-                  std::vector<std::pair<int, boost::optional<std::pair<bool, int>>>>& design_ids_and_obsoletes,
+                  std::vector<std::pair<int, std::optional<std::pair<bool, int>>>>& design_ids_and_obsoletes,
                   std::vector<std::pair<std::string, std::pair<bool, int>>>& hulls_and_obsoletes,
                   std::unordered_map<std::string, int>& obsolete_parts);
 
@@ -281,7 +279,7 @@ namespace {
         // For the state information ((false, ui_event), (true, ui_event), none)
         // correspond to (not obsolete, obsolete and defer to parts and hull obsolescence)
         boost::unordered_map<int,
-                             std::pair<boost::optional<std::pair<bool, int>>,
+                             std::pair<std::optional<std::pair<bool, int>>,
                                        std::list<int>::const_iterator>> m_id_to_obsolete_and_loc;
 
         // An index from the hull name to the obsolescence state and the location in m_ordered_hull_ids list.
@@ -326,8 +324,8 @@ namespace {
 
         /** Future ship design type being parsed by parser.  mutable so that it can
         be assigned to m_saved_designs when completed.*/
-        mutable boost::optional<std::future<PredefinedShipDesignManager::ParsedShipDesignsType>>
-            m_pending_designs = boost::none;
+        mutable std::optional<std::future<PredefinedShipDesignManager::ParsedShipDesignsType>>
+            m_pending_designs = std::nullopt;
 
         mutable std::list<boost::uuids::uuid> m_ordered_uuids;
         /// Saved designs with filename
@@ -513,7 +511,7 @@ namespace {
             throw;
         }
 
-        m_pending_designs = boost::none;
+        m_pending_designs = std::nullopt;
 
         m_ordered_uuids = std::list<boost::uuids::uuid>(ordering.begin(), ordering.end());
 
@@ -721,7 +719,7 @@ namespace {
         const auto insert_before_it = (is_valid_next_id ? next_it->second.second :m_ordered_design_ids.end());
         const auto inserted_it = m_ordered_design_ids.insert(insert_before_it, id);
 
-        m_id_to_obsolete_and_loc[id] = std::pair(boost::none, inserted_it);
+        m_id_to_obsolete_and_loc[id] = std::pair(std::nullopt, inserted_it);
     }
 
     bool DisplayedShipDesignManager::MoveBefore(const int moved_id, const int next_id) {
@@ -787,19 +785,19 @@ namespace {
     [[nodiscard]] bool DisplayedShipDesignManager::IsKnown(const int id) const
     { return range_contains(m_id_to_obsolete_and_loc | range_keys, id); };
 
-    boost::optional<bool> DisplayedShipDesignManager::IsObsolete(const int id, const Universe& universe) const {
-        // A non boost::none value for a specific design overrides the hull and part values
+    std::optional<bool> DisplayedShipDesignManager::IsObsolete(const int id, const Universe& universe) const {
+        // A non std::nullopt value for a specific design overrides the hull and part values
         auto it_id = m_id_to_obsolete_and_loc.find(id);
 
         // Unknown design
         if (it_id == m_id_to_obsolete_and_loc.end())
-            return boost::none;
+            return std::nullopt;
 
         const auto design = universe.GetShipDesign(id);
         if (!design) {
             ErrorLogger() << "DisplayedShipDesignManager::IsObsolete design id "
                           << id << " is unknown to the server";
-            return boost::none;
+            return std::nullopt;
         }
 
         // Check the UI (un)obsoleting events for design, hull and parts.  Events
@@ -827,17 +825,17 @@ namespace {
         return latest_obsolete_event > latest_unobsolete_event;
     }
 
-    boost::optional<int> DisplayedShipDesignManager::IsHullObsolete(const std::string& hull) const {
+    std::optional<int> DisplayedShipDesignManager::IsHullObsolete(const std::string& hull) const {
         auto it_hull = m_hull_to_obsolete_and_loc.find(hull);
         if (it_hull == m_hull_to_obsolete_and_loc.end())
-            return boost::none;
+            return std::nullopt;
 
-        return (it_hull->second.first.first ?  boost::optional<int>(it_hull->second.first.second) : boost::none);
+        return (it_hull->second.first.first ? std::optional<int>(it_hull->second.first.second) : std::nullopt);
     }
 
-    boost::optional<int> DisplayedShipDesignManager::IsPartObsolete(const std::string& part) const {
+    std::optional<int> DisplayedShipDesignManager::IsPartObsolete(const std::string& part) const {
         auto it_part = m_obsolete_parts.find(part);
-        return (it_part != m_obsolete_parts.end()) ?  boost::optional<int>(it_part->second) : boost::none ;
+        return (it_part != m_obsolete_parts.end()) ?  std::optional<int>(it_part->second) : std::nullopt ;
     }
 
     int DisplayedShipDesignManager::NextUIObsoleteEvent() {
@@ -874,7 +872,7 @@ namespace {
 
     void DisplayedShipDesignManager::Load(
         const int obsolete_ui_event_count,
-        const std::vector<std::pair<int, boost::optional<std::pair<bool, int>>>>& design_ids_and_obsoletes,
+        const std::vector<std::pair<int, std::optional<std::pair<bool, int>>>>& design_ids_and_obsoletes,
         const std::vector<std::pair<std::string, std::pair<bool, int>>>& hulls_and_obsoletes,
         const std::unordered_map<std::string, int>& obsolete_parts)
     {
@@ -938,7 +936,7 @@ namespace {
 
     void DisplayedShipDesignManager::Save(
         int& obsolete_ui_event_count,
-        std::vector<std::pair<int, boost::optional<std::pair<bool, int>>>>& design_ids_and_obsoletes,
+        std::vector<std::pair<int, std::optional<std::pair<bool, int>>>>& design_ids_and_obsoletes,
         std::vector<std::pair<std::string, std::pair<bool, int>>>& hulls_and_obsoletes,
         std::unordered_map<std::string, int>& obsolete_parts)
     {
@@ -989,22 +987,22 @@ namespace {
         /** Given the GUI's displayed availabilities as stored in this
             AvailabilityManager, return the displayed state of the \p design.
             Return none if the \p design should not be displayed. */
-        boost::optional<DisplayedAvailabilies> DisplayedDesignAvailability(const ShipDesign& design) const;
+        std::optional<DisplayedAvailabilies> DisplayedDesignAvailability(const ShipDesign& design) const;
         /** Given the GUI's displayed availabilities as stored in this
             AvailabilityManager, return the displayed state of the hull \p
             name. Return none if the hull should not be displayed. */
-        boost::optional<DisplayedAvailabilies> DisplayedHullAvailability(const std::string& name) const;
+        std::optional<DisplayedAvailabilies> DisplayedHullAvailability(const std::string& name) const;
         /** Given the GUI's displayed availabilities as stored in this
             AvailabilityManager, return the displayed state of the part \p
             name. Return none if the part should not be displayed. */
-        boost::optional<DisplayedAvailabilies> DisplayedPartAvailability(const std::string& name) const;
+        std::optional<DisplayedAvailabilies> DisplayedPartAvailability(const std::string& name) const;
 
     private:
         /** Given the GUI's displayed availabilities as stored in this
             AvailabilityManager and that the X is \p available and \p obsolete,
             return the displayed state of the X. Return none if the X should
             not be displayed. */
-        boost::optional<DisplayedAvailabilies> DisplayedXAvailability(bool available, bool obsolete) const;
+        std::optional<DisplayedAvailabilies> DisplayedXAvailability(bool available, bool obsolete) const;
 
         // A tuple of the toogle state of the 3-tuple of coupled
         // availability filters in the GUI:
@@ -1041,7 +1039,7 @@ namespace {
     constexpr void AvailabilityManager::ToggleAvailability(const Availability::Enum type) noexcept
     { SetAvailability(type, !GetAvailability(type)); }
 
-    [[nodiscard]] boost::optional<AvailabilityManager::DisplayedAvailabilies>
+    [[nodiscard]] std::optional<AvailabilityManager::DisplayedAvailabilies>
     AvailabilityManager::DisplayedDesignAvailability(const ShipDesign& design) const {
         const auto& app = GetApp();
         const ScriptingContext& context = app.GetContext();
@@ -1055,7 +1053,7 @@ namespace {
         return DisplayedXAvailability(available, is_obsolete);
     }
 
-    [[nodiscard]] boost::optional<AvailabilityManager::DisplayedAvailabilies>
+    [[nodiscard]] std::optional<AvailabilityManager::DisplayedAvailabilies>
     AvailabilityManager::DisplayedHullAvailability(const std::string& id) const {
         int empire_id = GetApp().EmpireID();
         const Empire* empire = GetEmpire(empire_id);  // may be nullptr
@@ -1067,7 +1065,7 @@ namespace {
         return DisplayedXAvailability(available, obsolete);
     }
 
-    [[nodiscard]] boost::optional<AvailabilityManager::DisplayedAvailabilies>
+    [[nodiscard]] std::optional<AvailabilityManager::DisplayedAvailabilies>
     AvailabilityManager::DisplayedPartAvailability(const std::string& id) const {
         int empire_id = GetApp().EmpireID();
         const Empire* empire = GetEmpire(empire_id);  // may be nullptr
@@ -1079,7 +1077,7 @@ namespace {
         return DisplayedXAvailability(available, obsolete);
     }
 
-    [[nodiscard]] boost::optional<AvailabilityManager::DisplayedAvailabilies>
+    [[nodiscard]] std::optional<AvailabilityManager::DisplayedAvailabilies>
     AvailabilityManager::DisplayedXAvailability(bool available, bool obsolete) const {
         const auto& [showing_obsolete, showing_available, showing_future] = m_availabilities;
 
@@ -1091,7 +1089,7 @@ namespace {
             || (showing_future && !available && !obsolete));
 
         if (!show)
-            return boost::none;
+            return std::nullopt;
 
         return std::make_tuple(showing_obsolete && obsolete,
                                showing_available && available,
@@ -2115,13 +2113,13 @@ public:
     static constexpr std::string_view BASES_LIST_BOX_DROP_TYPE = "BasesListBoxRow";
 
     BasesListBox(const AvailabilityManager& availabilities_state,
-                 boost::optional<std::string_view> drop_type = boost::none,
-                 boost::optional<std::string_view> empty_prompt = boost::none);
+                 std::optional<std::string_view> drop_type = std::nullopt,
+                 std::optional<std::string_view> empty_prompt = std::nullopt);
     BasesListBox(const AvailabilityManager& availabilities_state,
-                 boost::optional<std::string_view> drop_type,
+                 std::optional<std::string_view> drop_type,
                  const std::string& empty_prompt) :
         BasesListBox(availabilities_state, std::move(drop_type),
-                     boost::optional<std::string_view>{empty_prompt})
+                     std::optional<std::string_view>{empty_prompt})
     {}
     void CompleteConstruction() override;
 
@@ -2349,8 +2347,8 @@ void BasesListBox::CompletedDesignListBoxRow::CompleteConstruction() {
 }
 
 BasesListBox::BasesListBox(const AvailabilityManager& availabilities_state,
-                           boost::optional<std::string_view> drop_type,
-                           boost::optional<std::string_view> empty_prompt) :
+                           std::optional<std::string_view> drop_type,
+                           std::optional<std::string_view> empty_prompt) :
     QueueListBox(std::move(drop_type),
                  empty_prompt ? std::string{*empty_prompt} : UserString("ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT")),
     m_empire_id_shown(ALL_EMPIRES),
@@ -2467,7 +2465,7 @@ void BasesListBox::ItemRightClickedImpl(GG::ListBox::iterator it, GG::Pt pt, GG:
 class EmptyHullsListBox : public BasesListBox {
 public:
     EmptyHullsListBox(const AvailabilityManager& availabilities_state,
-                      boost::optional<std::string_view> drop_type = boost::none) :
+                      std::optional<std::string_view> drop_type = std::nullopt) :
         BasesListBox::BasesListBox(availabilities_state, drop_type, UserString("ALL_AVAILABILITY_FILTERS_BLOCKING_PROMPT"))
     {}
 
@@ -2487,7 +2485,7 @@ protected:
 class CompletedDesignsListBox : public BasesListBox {
 public:
     CompletedDesignsListBox(const AvailabilityManager& availabilities_state,
-                            boost::optional<std::string_view> drop_type = boost::none) :
+                            std::optional<std::string_view> drop_type = std::nullopt) :
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {};
 
@@ -2505,7 +2503,7 @@ protected:
 class SavedDesignsListBox : public BasesListBox {
 public:
     SavedDesignsListBox(const AvailabilityManager& availabilities_state,
-                        boost::optional<std::string_view> drop_type = boost::none) :
+                        std::optional<std::string_view> drop_type = std::nullopt) :
         BasesListBox::BasesListBox(availabilities_state, drop_type, UserString("ADD_FIRST_SAVED_DESIGN_QUEUE_PROMPT"))
     {};
 
@@ -2537,7 +2535,7 @@ protected:
 class MonstersListBox : public BasesListBox {
 public:
     MonstersListBox(const AvailabilityManager& availabilities_state,
-                    boost::optional<std::string_view> drop_type = boost::none) :
+                    std::optional<std::string_view> drop_type = std::nullopt) :
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {}
 
@@ -2554,7 +2552,7 @@ protected:
 class AllDesignsListBox : public BasesListBox {
 public:
     AllDesignsListBox(const AvailabilityManager& availabilities_state,
-                      boost::optional<std::string_view> drop_type = boost::none) :
+                      std::optional<std::string_view> drop_type = std::nullopt) :
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {}
 
@@ -3737,10 +3735,10 @@ public:
     MainPanel(std::string_view config_name);
     void CompleteConstruction() override;
 
-    /** If editing a current design return a ShipDesign* otherwise boost::none. */
-    boost::optional<const ShipDesign*> EditingCurrentDesign() const;
-    /** If editing a saved design return a ShipDesign* otherwise boost::none. */
-    boost::optional<const ShipDesign*> EditingSavedDesign() const;
+    /** If editing a current design return a ShipDesign* otherwise std::nullopt. */
+    std::optional<const ShipDesign*> EditingCurrentDesign() const;
+    /** If editing a saved design return a ShipDesign* otherwise std::nullopt. */
+    std::optional<const ShipDesign*> EditingSavedDesign() const;
 
     std::vector<std::string>            Parts() const;              //!< names of parts in slots of current shown design.  empty slots are represented with empty stri
     const std::string&                  Hull() const noexcept;      //!< name of hull of current shown design
@@ -3754,11 +3752,11 @@ public:
     /** Returns a pointer to the design currently being modified (if any).  May
       * return an empty pointer if not currently modifying a design. */
     std::shared_ptr<const ShipDesign>   GetIncompleteDesign() const;
-    boost::optional<int>                GetReplacedDesignID() const;//!< ID of completed design selected to be replaced.
+    std::optional<int>                GetReplacedDesignID() const;//!< ID of completed design selected to be replaced.
 
     /** If a design with the same hull and parts is registered with the empire then return the
-      * design, otherwise return boost::none. */
-    boost::optional<const ShipDesign*>  CurrentDesignIsRegistered() const;
+      * design, otherwise return std::nullopt. */
+    std::optional<const ShipDesign*>  CurrentDesignIsRegistered() const;
 
     void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
 
@@ -3891,8 +3889,8 @@ private:
 
     const ShipHull*                             m_hull = nullptr;
     std::vector<std::shared_ptr<SlotControl>>   m_slots;
-    boost::optional<int>                        m_replaced_design_id = boost::none;     // The design id if this design is replacable
-    boost::optional<boost::uuids::uuid>         m_replaced_design_uuid = boost::none;   // The design uuid if this design is replacable
+    std::optional<int>                        m_replaced_design_id = std::nullopt;     // The design id if this design is replacable
+    std::optional<boost::uuids::uuid>         m_replaced_design_uuid = std::nullopt;   // The design uuid if this design is replacable
 
     /// Whether to add new designs to current or saved designs
     /// This tracks the last relevant selected tab in the base selector
@@ -3962,24 +3960,24 @@ void DesignWnd::MainPanel::CompleteConstruction() {
     SaveDefaultedOptions();
 }
 
-boost::optional<const ShipDesign*> DesignWnd::MainPanel::EditingSavedDesign() const {
+std::optional<const ShipDesign*> DesignWnd::MainPanel::EditingSavedDesign() const {
     // Is there a valid replaced_uuid that indexes a saved design?
     if (!m_replaced_design_uuid)
-        return boost::none;
+        return std::nullopt;
 
     if (auto* maybe_design = GetSavedDesignsManager().GetDesign(*m_replaced_design_uuid))
         return maybe_design;
-    return boost::none;
+    return std::nullopt;
 }
 
-boost::optional<const ShipDesign*> DesignWnd::MainPanel::EditingCurrentDesign() const {
+std::optional<const ShipDesign*> DesignWnd::MainPanel::EditingCurrentDesign() const {
     // Is there a valid replaced_uuid that indexes a saved design?
     if (!m_replaced_design_id || !GetDisplayedDesignsManager().IsKnown(*m_replaced_design_id))
-        return boost::none;
+        return std::nullopt;
 
     if (auto* maybe_design = GetApp().GetContext().ContextUniverse().GetShipDesign(*m_replaced_design_id))
         return maybe_design;
-    return boost::none;
+    return std::nullopt;
 }
 
 std::vector<std::string> DesignWnd::MainPanel::Parts() const {
@@ -4053,17 +4051,17 @@ std::shared_ptr<const ShipDesign> DesignWnd::MainPanel::GetIncompleteDesign() co
     return m_incomplete_design;
 }
 
-boost::optional<int> DesignWnd::MainPanel::GetReplacedDesignID() const
+std::optional<int> DesignWnd::MainPanel::GetReplacedDesignID() const
 { return m_replaced_design_id; }
 
-boost::optional<const ShipDesign*> DesignWnd::MainPanel::CurrentDesignIsRegistered() const {
+std::optional<const ShipDesign*> DesignWnd::MainPanel::CurrentDesignIsRegistered() const {
     auto& app = GetApp();
     const auto& universe = app.GetContext().ContextUniverse();
     const int empire_id = app.EmpireID();
     const auto empire = GetEmpire(empire_id);
     if (!empire) {
         ErrorLogger() << "DesignWnd::MainPanel::CurrentDesignIsRegistered couldn't get the current empire.";
-        return boost::none;
+        return std::nullopt;
     }
 
     if (const auto& cur_design = GetIncompleteDesign()) {
@@ -4073,7 +4071,7 @@ boost::optional<const ShipDesign*> DesignWnd::MainPanel::CurrentDesignIsRegister
                 return ship_design;
         }
     }
-    return boost::none;
+    return std::nullopt;
 }
 
 void DesignWnd::MainPanel::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -4315,8 +4313,8 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
     } else {
         // Allow editing of monsters if the design is a saved design
         const auto is_saved_monster = GetSavedDesignsManager().GetDesign(ship_design->UUID());
-        m_replaced_design_id = is_saved_monster ? ship_design->ID() : boost::optional<int>();
-        m_replaced_design_uuid = is_saved_monster ? ship_design->UUID() : boost::optional<boost::uuids::uuid>();
+        m_replaced_design_id = is_saved_monster ? ship_design->ID() : std::optional<int>();
+        m_replaced_design_uuid = is_saved_monster ? ship_design->UUID() : std::optional<boost::uuids::uuid>();
     }
 
     m_design_name->SetText(ship_design->Name());
@@ -4338,8 +4336,8 @@ void DesignWnd::MainPanel::SetDesign(const boost::uuids::uuid& uuid)
 void DesignWnd::MainPanel::SetDesignComponents(const std::string& hull,
                                                const std::vector<std::string>& parts)
 {
-    m_replaced_design_id = boost::none;
-    m_replaced_design_uuid = boost::none;
+    m_replaced_design_id = std::nullopt;
+    m_replaced_design_uuid = std::nullopt;
     SetHull(hull, false);
     SetParts(parts);
 }
