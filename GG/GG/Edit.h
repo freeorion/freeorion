@@ -214,8 +214,6 @@ private:
 void GG_API GetTranslatedCodePoint(Key key, uint32_t key_code_point,
                                    Flags<ModKey> mod_keys, std::string& translated_code_point);
 
-CPSize GG_API NextWordEdgeFrom(std::string_view text, CPSize from_position, bool search_right = true);
-
 }
 
 
