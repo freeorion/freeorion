@@ -690,23 +690,3 @@ void Edit::AdjustView()
 
     m_first_char_shown = move_to;
 }
-
-
-////////////////////////////////////////////////////////////
-// Free Functions
-////////////////////////////////////////////////////////////
-void GG::GetTranslatedCodePoint(Key, uint32_t key_code_point, Flags<ModKey>,
-                                std::string& translated_code_point)
-{
-    // only process it if it's a valid code point or a known printable
-    // key, and no significant modifiers are in use
-    if (key_code_point) {
-        try {
-            uint32_t chars[] = { key_code_point };
-            utf8::utf32to8(chars, chars + 1, std::back_inserter(translated_code_point));
-        } catch (const utf8::invalid_code_point&) {
-            translated_code_point.clear();
-        }
-    }
-}
-
