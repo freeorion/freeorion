@@ -25,11 +25,12 @@
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/thread/thread.hpp>
-#include <boost/optional/optional.hpp>
 
-#include <thread>
+#include <optional>
 #include <queue>
+#include <thread>
 #include <utility>
+
 #if !defined(__cpp_lib_integer_comparison_functions)
 namespace std {
     inline auto cmp_less_equal(auto&& lhs, auto&& rhs) { return lhs <= rhs; }
@@ -200,7 +201,7 @@ public:
 
     /** Return the next incoming message from the server if available or boost::none.
         Remove the message from the incoming message queue. */
-    boost::optional<Message> GetMessage();
+    std::optional<Message> GetMessage();
 
     void DisconnectFromServer();
 
@@ -460,7 +461,7 @@ void ClientNetworking::Impl::SendSelfMessage(Message&& message) {
     m_incoming_messages.PushBack(std::move(message));
 }
 
-boost::optional<Message> ClientNetworking::Impl::GetMessage() {
+std::optional<Message> ClientNetworking::Impl::GetMessage() {
     auto message = m_incoming_messages.PopFront();
     if (message)
         TraceLogger(network) << "ClientNetworking::GetMessage() : received message " << *message;
@@ -814,5 +815,5 @@ void ClientNetworking::SendMessage(Message message)
 void ClientNetworking::SendSelfMessage(Message message)
 { m_impl->SendSelfMessage(std::move(message)); }
 
-boost::optional<Message> ClientNetworking::GetMessage()
+std::optional<Message> ClientNetworking::GetMessage()
 { return m_impl->GetMessage(); }

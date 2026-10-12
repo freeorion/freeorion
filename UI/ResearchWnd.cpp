@@ -288,7 +288,7 @@ namespace {
 //////////////////////////////////////////////////
 class ResearchQueueListBox : public QueueListBox {
 public:
-    ResearchQueueListBox(boost::optional<std::string_view> drop_type_str,
+    ResearchQueueListBox(std::optional<std::string_view> drop_type_str,
                          std::string prompt_str) :
         QueueListBox(std::move(drop_type_str), std::move(prompt_str))
     {}
