@@ -3889,8 +3889,8 @@ private:
 
     const ShipHull*                             m_hull = nullptr;
     std::vector<std::shared_ptr<SlotControl>>   m_slots;
-    std::optional<int>                        m_replaced_design_id = std::nullopt;     // The design id if this design is replacable
-    std::optional<boost::uuids::uuid>         m_replaced_design_uuid = std::nullopt;   // The design uuid if this design is replacable
+    std::optional<int>                          m_replaced_design_id = std::nullopt;     // The design id if this design is replacable
+    std::optional<boost::uuids::uuid>           m_replaced_design_uuid = std::nullopt;   // The design uuid if this design is replacable
 
     /// Whether to add new designs to current or saved designs
     /// This tracks the last relevant selected tab in the base selector

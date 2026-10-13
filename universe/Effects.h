@@ -2,10 +2,8 @@
 #define _Effects_h_
 
 
-#include <boost/optional/optional.hpp>
 #include "Effect.h"
 #include "../util/Export.h"
-
 
 namespace Condition {
     using ObjectSet = std::vector<const UniverseObjectCXBase*>;
@@ -39,11 +37,21 @@ class FO_COMMON_API SetMeter final : public Effect {
 public:
     SetMeter(MeterType meter,
              std::unique_ptr<ValueRef::ValueRef<double>>&& value,
-             boost::optional<std::string> accounting_label = boost::none);
+             std::string accounting_label = {}) :
+        m_meter(meter),
+        m_value(std::move(value)),
+        m_accounting_label(std::move(accounting_label))
+    {}
     SetMeter(MeterType meter,
              std::unique_ptr<ValueRef::ValueRef<double>>&& value,
              const char* accounting_label) :
         SetMeter(meter, std::move(value), std::string{accounting_label})
+    {}
+    SetMeter(MeterType meter,
+             std::unique_ptr<ValueRef::ValueRef<double>>&& value,
+             auto&& optional_label)
+        requires requires { std::string{optional_label.value_or("")}; } :
+        SetMeter(meter, std::move(value), optional_label.value_or(""))
     {}
 
     [[nodiscard]] bool operator==(const Effect& rhs) const override;
@@ -61,12 +69,12 @@ public:
                  bool include_empire_meter_effects = false,
                  bool only_generate_sitrep_effects = false) const override;
 
-    [[nodiscard]] std::string        Dump(uint8_t ntabs = 0) const override;
-    [[nodiscard]] bool               IsMeterEffect() const noexcept override { return true; }
-    void                             SetTopLevelContent(const std::string& content_name) override;
-    [[nodiscard]] MeterType          GetMeterType() const noexcept { return m_meter; };
-    [[nodiscard]] const std::string& AccountingLabel() const noexcept { return m_accounting_label; }
-    [[nodiscard]] uint32_t           GetCheckSum() const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    [[nodiscard]] bool        IsMeterEffect() const noexcept override { return true; }
+    void                      SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] MeterType   GetMeterType() const noexcept { return m_meter; };
+    [[nodiscard]] const auto& AccountingLabel() const noexcept { return m_accounting_label; }
+    [[nodiscard]] uint32_t    GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Effect> Clone() const override;
 
