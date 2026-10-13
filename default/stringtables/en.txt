@@ -1325,7 +1325,6 @@ RULE_BASIC_VIS_SYSTEM_INFO_SHOWN_DESC
 
 <u>If Off</u>: Basic level visible systems that have never been detected at higher visibility have unknown name and star type.'''
 
-
 RULE_MINIMAL_DISTANCE_TO_STARTING_POSITION_FOR_SPECIALS
 Minimal distance from any player's Starting Position where Specials will spawn
 
@@ -1348,8 +1347,6 @@ A high value for this parameter (more than half the mean distance between two pl
 
 The default is set to two (2) to minimize the perturbation of the distribution of Natives in the default settings of the Galaxy (which has 6 AI empires in addition to the player, and 150 systems, resulting in a quite cramped Galaxy). On bigger galaxies, it could be better to use a higher value for that parameter.
 Use a higher value than five (5) only if you understand what you're doing.'''
-
-
 
 RULE_HIDDEN_POLICIES
 Hide Empire Policies
