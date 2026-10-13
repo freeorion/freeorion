@@ -1936,7 +1936,7 @@ void serialize(Archive& ar, ShipDesign& obj, unsigned int const version)
         & make_nvp("m_3D_model", obj.m_3D_model)
         & make_nvp("m_name_desc_in_stringtable", obj.m_name_desc_in_stringtable);
     if constexpr (Archive::is_loading::value) {
-        obj.ForceValidDesignOrThrow(boost::none, true);
+        obj.ForceValidDesignOrThrow(std::nullopt, true);
         obj.BuildStatCaches();
     }
 }
