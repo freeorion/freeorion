@@ -104,7 +104,7 @@ ParsedShipDesign::ParsedShipDesign(
 ////////////////////////////////////////////////
 ShipDesign::ShipDesign() = default;
 
-ShipDesign::ShipDesign(const boost::optional<std::invalid_argument>& should_throw,
+ShipDesign::ShipDesign(const std::optional<std::invalid_argument>& should_throw,
                        std::string name, std::string description,
                        int designed_on_turn, int designed_by_empire,
                        std::string hull, std::vector<std::string> parts,
@@ -129,7 +129,7 @@ ShipDesign::ShipDesign(const boost::optional<std::invalid_argument>& should_thro
 }
 
 ShipDesign::ShipDesign(const ParsedShipDesign& design) :
-    ShipDesign(boost::none, design.m_name, design.m_description,
+    ShipDesign(std::nullopt, design.m_name, design.m_description,
                design.m_designed_on_turn, design.m_designed_by_empire,
                design.m_hull, design.m_parts,
                design.m_icon, design.m_3D_model, design.m_name_desc_in_stringtable,
@@ -543,7 +543,7 @@ void ShipDesign::SetID(int id)
 bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::string>& parts_in)
 { return !MaybeInvalidDesign(hull, std::vector<std::string>(parts_in), true); }
 
-boost::optional<std::pair<std::string, std::vector<std::string>>>
+std::optional<std::pair<std::string, std::vector<std::string>>>
 ShipDesign::MaybeInvalidDesign(std::string hull, std::vector<std::string> parts, bool produce_log)
 {
     bool is_valid = true;
@@ -682,13 +682,13 @@ ShipDesign::MaybeInvalidDesign(std::string hull, std::vector<std::string> parts,
         }
     }
 
-    if (is_valid) // if valid, return none to indicate no modifications needed
-        return boost::none;
+    if (is_valid) // if valid, return nullopt to indicate no modifications needed
+        return std::nullopt;
     else
         return std::pair(std::move(hull), std::move(parts)); // return modified design
 }
 
-void ShipDesign::ForceValidDesignOrThrow(const boost::optional<std::invalid_argument>& should_throw,
+void ShipDesign::ForceValidDesignOrThrow(const std::optional<std::invalid_argument>& should_throw,
                                          bool produce_log)
 {
     auto force_valid = MaybeInvalidDesign(m_hull, m_parts, produce_log);

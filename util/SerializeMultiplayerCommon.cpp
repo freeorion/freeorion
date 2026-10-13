@@ -153,10 +153,9 @@ void serialize(Archive& ar, SaveGameUIData& obj, unsigned int const version)
         & make_nvp("obsolete_ui_event_count", obj.obsolete_ui_event_count);
     TraceLogger() << "SaveGameUIData::serialize processed obsolete UI event count";
     if (Archive::is_saving::value || version >= 3) {
-        // serializing / deserializing boost::optional can cause problem, so
+        // serializing / deserializing optional can cause problem, so
         // store instead in separate containers
 
-        // std::vector<std::pair<int, boost::optional<std::pair<bool, int>>>> ordered_ship_design_ids_and_obsolete;
         std::vector<int> ordered_ship_design_ids;
         std::map<int, std::pair<bool, int>> ids_obsolete;
 
@@ -172,6 +171,7 @@ void serialize(Archive& ar, SaveGameUIData& obj, unsigned int const version)
             ar  & BOOST_SERIALIZATION_NVP(ordered_ship_design_ids)
                 & BOOST_SERIALIZATION_NVP(ids_obsolete);
             TraceLogger() << "SaveGameUIData::serialize design data into archive completed";
+
         } else {    // is_loading with version >= 3
             // deserialize into temp containers
             TraceLogger() << "SaveGameUIData::serialize design data from archive";
@@ -179,21 +179,32 @@ void serialize(Archive& ar, SaveGameUIData& obj, unsigned int const version)
                 & BOOST_SERIALIZATION_NVP(ids_obsolete);
             TraceLogger() << "SaveGameUIData::serialize design data from archive completed";
 
-            // extract from temp containers into member storage with boost::optional
+            // extract from temp containers into member storage with optional
             obj.ordered_ship_design_ids_and_obsolete.clear();
             for (int id : ordered_ship_design_ids) {
                 auto it = ids_obsolete.find(id);
-                auto opt_p_i = it == ids_obsolete.end() ?
-                    std::optional<std::pair<bool, int>>() :
+                auto opt_p_i = (it == ids_obsolete.end()) ?
+                    std::nullopt :
                     std::optional<std::pair<bool, int>>(it->second);
                 obj.ordered_ship_design_ids_and_obsolete.emplace_back(id, opt_p_i);
             }
             TraceLogger() << "SaveGameUIData::serialize design data extracted";
         }
+
     } else {    // is_loading with version < 3
         // (attempt to) directly deserialize / load design ordering and obsolescence
         try {
-            ar  & make_nvp("ordered_ship_design_ids_and_obsolete", obj.ordered_ship_design_ids_and_obsolete);
+            std::vector<std::pair<int, boost::optional<std::pair<bool, int>>>> osdiao;
+            ar  & make_nvp("ordered_ship_design_ids_and_obsolete", osdiao);
+            obj.ordered_ship_design_ids_and_obsolete.clear();
+            for (auto& [id, pair_opt] : osdiao) {
+                obj.ordered_ship_design_ids_and_obsolete.emplace_back(
+                    id,
+                    pair_opt.has_value() ?
+                        std::optional<std::pair<bool, int>>(*pair_opt) :
+                        std::nullopt);
+            }
+
         } catch (const std::exception& e) {
             ErrorLogger() << "Deserializing ship design ids and obsoletes failed with '" << e.what() << "'. Skipping hull order and obsoletion, and obsolete ship parts.";
             return;

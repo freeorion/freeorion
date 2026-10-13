@@ -1,7 +1,5 @@
 #include "MessageQueue.h"
 
-#include <boost/optional/optional.hpp>
-
 bool MessageQueue::Empty() const {
     std::scoped_lock lock(m_monitor);
     return m_queue.empty();

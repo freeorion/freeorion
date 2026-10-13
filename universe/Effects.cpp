@@ -448,16 +448,6 @@ std::unique_ptr<Effect> NoOp::Clone() const
 ///////////////////////////////////////////////////////////
 // SetMeter                                              //
 ///////////////////////////////////////////////////////////
-SetMeter::SetMeter(MeterType meter,
-                   std::unique_ptr<ValueRef::ValueRef<double>>&& value,
-                   boost::optional<std::string> accounting_label) :
-    m_meter(meter),
-    m_value(std::move(value))
-{
-    if (accounting_label)
-        m_accounting_label = std::move(*accounting_label);
-}
-
 bool SetMeter::operator==(const Effect& rhs) const {
     if (this == std::addressof(rhs))
         return true;

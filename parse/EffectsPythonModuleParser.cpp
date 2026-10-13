@@ -153,14 +153,14 @@ namespace {
     effect_wrapper insert_set_meter_(const MeterType m, const py::tuple& args, const py::dict& kw) {
         auto value = pyobject_to_vref_or_cast<double, int>(kw["value"]);
 
-        boost::optional<std::string> accountinglabel;
         if (kw.has_key("accountinglabel")) {
-            accountinglabel = py::extract<std::string>(kw["accountinglabel"])();
+            std::string accounting_label = py::extract<std::string>(kw["accountinglabel"])();
+            return effect_wrapper(std::make_shared<Effect::SetMeter>(
+                m, std::move(value), std::move(accounting_label)));
+        } else {
+            return effect_wrapper(std::make_shared<Effect::SetMeter>(
+                m, std::move(value)));
         }
-        return effect_wrapper(std::make_shared<Effect::SetMeter>(
-            m,
-            std::move(value),
-            accountinglabel));
     }
 
     effect_wrapper insert_ship_part_set_meter_(const MeterType m, const py::tuple& args, const py::dict& kw) {

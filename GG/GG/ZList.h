@@ -15,12 +15,8 @@
 #ifndef _GG_ZList_h_
 #define _GG_ZList_h_
 
-
-#include <functional>
 #include <list>
 #include <memory>
-#include <optional>
-#include <set>
 #include <vector>
 #include <GG/Base.h>
 
