@@ -68,6 +68,7 @@ option(BUILD_CLIENT_GG "Build GiGi client" ON)
 option(BUILD_SERVER "Build server" ON)
 option(BUILD_AI "Build AI" ON)
 option(BUILD_PARSERS "Build parsers" ON)
+option(BUILD_HANDLER_LOG_PYTHON_ERROR "Build handler to log Python error" ON)
 option(ENABLE_CPPCHECK "Enable cppcheck check"  OFF)
 
 set(BUILD_CLIENT_GODOT "OFF" CACHE STRING "Build Godot client (experimental)")
@@ -445,6 +446,7 @@ target_compile_definitions(freeorioncommon
         $<$<NOT:$<PLATFORM_ID:Android>>:BOOST_ALL_DYN_LINK>
     PRIVATE
         -DFREEORION_BUILD_COMMON
+        $<$<BOOL:${BUILD_HANDLER_LOG_PYTHON_ERROR}>:FREEORION_HANDLER_LOG_PYTHON_ERROR>
 )
 
 target_include_directories(freeorioncommon SYSTEM
