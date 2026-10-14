@@ -257,7 +257,7 @@ void PythonCommon::HandleErrorAlreadySet() {
         ErrorLogger() << "Python interpreter exited with SystemExit(), sys.exit(), exit, quit or some other alias.";
         return;
     }
-
+#ifdef FREEORION_HANDLER_LOG_PYTHON_ERROR
     PyObject *extype, *value, *traceback;
     PyErr_Fetch(std::addressof(extype), std::addressof(value), std::addressof(traceback));
     PyErr_NormalizeException(std::addressof(extype), std::addressof(value), std::addressof(traceback));
@@ -277,6 +277,9 @@ void PythonCommon::HandleErrorAlreadySet() {
         boost::algorithm::trim_right(line);
         ErrorLogger() << line;
     }
+#else
+    PyErr_Print();
+#endif
     return;
 }
 
