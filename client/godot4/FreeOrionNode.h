@@ -27,6 +27,8 @@ private:
 
     godot::String get_user_config_dir() const; ///< Returns user config dir
 
+    int get_current_turn() const; ///< Returns the current turn number, or INVALID_GAME_TURN if no game is running
+
     void network_thread(); ///< Function called in a separate networking thread
 
     void parsing_thread(); ///< Function called in a separate parsing thread
