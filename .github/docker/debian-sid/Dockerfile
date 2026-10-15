@@ -17,6 +17,7 @@ path-include=/usr/lib/x86_64-linux-gnu/libmvec_nonshared.a\n\
 path-include=/usr/lib/x86_64-linux-gnu/libpthread.a\n\
 path-include=/usr/lib/x86_64-linux-gnu/libpthread-2.0.a\n\
 path-include=/usr/lib/x86_64-linux-gnu/libpthread_nonshared.a\n\
+path-include=/usr/lib/x86_64-linux-gnu/libboost_exception.a\n\
 " > /etc/dpkg/dpkg.cfg.d/docker-no-static-libraries
 
 RUN echo "# don't install recommends and suggests packages\n\
