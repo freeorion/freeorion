@@ -53,6 +53,7 @@ public:
     static boost::python::object CompileEvalExpression(const char* expression, const boost::python::dict& globals);
 
     void SetModulesDirs(std::vector<std::filesystem::path> modules_dirs);
+    void SetFillBuiltins(bool fill_builtins);
 
     //! @name Modules finder and loader
     //! Methods exposed to Python as a meta path finder and a loader
@@ -78,6 +79,7 @@ private:
     std::vector<std::filesystem::path> m_modules_dirs;
     boost::optional<boost::python::list> m_meta_path;
     int m_meta_path_len = 0;
+    bool m_fill_builtins = false;
     //! @}
 };
 

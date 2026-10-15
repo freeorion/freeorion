@@ -101,6 +101,7 @@ auto PythonServer::InitModules() -> bool
         python_auth_dir,
         python_chat_dir
     });
+    SetFillBuiltins(true);
     InitModuleLoader();
 
     // import universe generator script file
