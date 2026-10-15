@@ -364,6 +364,9 @@ void PythonCommon::SetModulesDirs(std::vector<std::filesystem::path> modules_dir
         DebugLogger() << "   " << PathToString(dir) << (IsExistingDir(dir) ? " exists" : " does not exist");
 }
 
+void PythonCommon::SetFillBuiltins(bool fill_builtins)
+{ m_fill_builtins = fill_builtins; }
+
 py::object PythonCommon::find_spec(const std::string& fullname, const py::object& path, const py::object& target) const {
     std::vector<std::filesystem::path> namespace_dirs;
     std::string parent;
@@ -482,6 +485,10 @@ py::object PythonCommon::exec_module(py::object& module) {
         // and still import will work
         DebugLogger() << "Executing module file " << PathToString(module_path);
         try {
+            if (m_fill_builtins && !globals.contains("__builtins__")) {
+                py::object builtins = py::import("builtins");
+                globals["__builtins__"] = builtins.attr("__dict__");
+            }
             CompileEval(file_contents.c_str(), module_path, globals);
         } catch (const boost::python::error_already_set&) {
             HandleErrorAlreadySet();
