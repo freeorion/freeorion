@@ -34,6 +34,7 @@ from focs._value_refs import (
     VectorCount,
 )
 from macros.priorities import END_CLEANUP_PRIORITY
+from species.species_macros.population import IsPopulated
 
 ETA_NEXT_TURN = CurrentTurn + LocalCandidate.ETA - 1
 
@@ -161,12 +162,26 @@ effectsgroups = [
             )
         ),
         activation=OwnerHasTech(name="PRO_ORBITAL_GEN"),
-        effects=GenerateSitRepMessage(
-            message="SITREP_GAS_GIANT_GENERATION_REMINDER",
-            label="CUSTOM_2",
-            icon="icons/building/gas-giant-generator.png",
-            parameters={"buildingtype": "BLD_GAS_GIANT_GEN", "planet": Target.ID},
-            empire=Source.Owner,
+        effects=Conditional(
+            condition=IsPopulated(),
+            effects=[
+                GenerateSitRepMessage(
+                    message="SITREP_GAS_GIANT_GENERATION_REMINDER",
+                    label="CUSTOM_2",
+                    icon="icons/building/gas-giant-generator.png",
+                    parameters={"buildingtype": "BLD_GAS_GIANT_GEN", "planet": Target.ID},
+                    empire=Source.Owner,
+                ),
+            ],
+            else_=[
+                GenerateSitRepMessage(
+                    message="SITREP_GAS_GIANT_GENERATION_PRIME_REMINDER",
+                    label="CUSTOM_2",
+                    icon="icons/building/gas-giant-generator.png",
+                    parameters={"buildingtype": "BLD_GAS_GIANT_GEN", "planet": Target.ID},
+                    empire=Source.Owner,
+                ),
+            ],
         ),
     ),
     # Tell all the others that you have better detection tech (the information is public anyway)
