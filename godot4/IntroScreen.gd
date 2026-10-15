@@ -35,6 +35,25 @@ func _ready():
 	$Splash.texture = load(ART_DIR + splash)
 	$Logo.texture = load(ART_DIR + logo)
 
+	var safe_area := DisplayServer.get_display_safe_area()
+	var window_size := DisplayServer.window_get_size()
+	var phys_margin_right := float(window_size.x - safe_area.end.x)
+	var phys_margin_bottom := float(window_size.y - safe_area.end.y)
+	var scale_factor := get_window().content_scale_factor
+	var logical_margin_x := phys_margin_right / scale_factor
+	var logical_margin_y := phys_margin_bottom / scale_factor
+	var phys_corner_margin := 0.0
+	if Engine.has_singleton("FreeOrion"):
+		var plugin := Engine.get_singleton("FreeOrion")
+		var radii: Array = plugin.getRoundedCornerRadii()
+		phys_corner_margin = float(radii[2])  # RoundedCorner.POSITION_BOTTOM_RIGHT
+	var logical_corner_margin := phys_corner_margin / scale_factor
+	if logical_corner_margin > 0:
+		logical_corner_margin = logical_corner_margin * (1.0 - sqrt(2.0) / 2.0)
+	var margin_x := maxf(logical_margin_x, logical_corner_margin)
+	var margin_y := maxf(logical_margin_y, logical_corner_margin)
+	$Version.offset_right = -margin_x
+	$Version.offset_bottom = -margin_y
 	$Version.text = GlobalFreeOrionNode.get_version()
 
 
