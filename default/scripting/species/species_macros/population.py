@@ -7,6 +7,7 @@ from focs._conditions import (
     IsSource,
     OwnedBy,
     Planet,
+    Population,
     ResourceSupplyConnected,
     Star,
     TargetPopulation,
@@ -303,3 +304,13 @@ LIGHT_SENSITIVE = [
         effects=SetTargetPopulation(value=Value - Source.HabitableSize),
     ),
 ]
+
+
+def IsPopulated():
+    """Returns a condition which matches objects which have enough population to not be considered an outpost.
+    If the object is a planet and has less population it is considered an outpost.
+    If the object has no species, but enough population this is currently undefined (and should not happen).
+
+    :returns: a focs condition checking that an object has a species and at least 0.001 population
+    """
+    return HasSpecies() & Population(low=0.001)
