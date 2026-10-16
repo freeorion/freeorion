@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [x86_64, armeabi-v7a, arm64-v8a]
+        arch: ${{ inputs.debug_sanitize && fromJSON('["x86_64"]') || fromJSON('["x86_64", "armeabi-v7a", "arm64-v8a"]') }}
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
@@ -350,6 +350,44 @@ jobs:
           working-directory: ./
           channel: beta
           script: bash .github/android-apk-launch.sh 4 "${{ inputs.debug_sanitize }}"
+      - uses: nttld/setup-ndk@v1
+        id: setup-ndk
+        if: always() && inputs.debug_sanitize
+        with:
+          ndk-version: ${{ env.NDK_VERSION }}
+          add-to-path: false
+      - name: Download debug symbols
+        if: always() && inputs.debug_sanitize
+        uses: actions/download-artifact@v8
+        with:
+          name: android-debug-binaries-godot4-x86_64
+          path: symbols/
+      - name: Decode stack trace
+        if: always() && inputs.debug_sanitize
+        run: |
+          NDK_STACK="${{ steps.setup-ndk.outputs.ndk-path }}/ndk-stack"
+          if [ ! -f "$NDK_STACK" ]; then
+            echo "::error::ndk-stack not found at $NDK_STACK"
+            exit 1
+          fi
+          echo "::group::Preparing symbols for ndk-stack"
+          mkdir -p symbols/lib/x86_64
+          find symbols/ -type f \( -name "*.debug" -o -name "*.so" \) ! -path "symbols/lib/x86_64/*" | while read -r FILE; do
+            BASENAME=$(basename "$FILE" | sed 's/\.debug$//')
+            mv "$FILE" "symbols/lib/x86_64/$BASENAME"
+          done
+          echo "::endgroup::"
+          for STACK_FILE in server-stack-*.log tombstone-*.log; do
+            if [ ! -f "$STACK_FILE" ]; then continue; fi
+            echo "::group::Decoding $STACK_FILE"
+            # Add tombstone signature to each thread
+            PREPARED="$(mktemp)"
+            awk '/^".*" sysTid=/ { print "*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***" } { print }' \
+              "$STACK_FILE" > "$PREPARED"
+            "$NDK_STACK" -sym symbols/lib/x86_64/ -dump "$PREPARED" 2>&1 | tee "decoded-$STACK_FILE"
+            rm -f "$PREPARED"
+            echo "::endgroup::"
+          done
       - name: Upload logs
         if: always()
         uses: actions/upload-artifact@v7
@@ -362,5 +400,7 @@ jobs:
             android-screenshot.png
             server-stack-*.log
             tombstone-*.log
+            decoded-server-stack-*.log
+            decoded-tombstone-*.log
           if-no-files-found: error
           retention-days: 1
