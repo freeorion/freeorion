@@ -9,6 +9,10 @@ on:
         type: boolean
 env:
   GODOT_VERSION: "4.7.2"
+  GODOT_FLAVOR: "stable"
+  # Matches NDK for Godot4
+  # https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/platform/android/java/app/config.gradle#L16
+  NDK_VERSION: "r29"
 jobs:
   android:
     name: ${{ matrix.arch }} (${{ inputs.debug_sanitize && 'RelWithDebInfo_ASan' || 'MinSizeRel' }})
@@ -28,9 +32,7 @@ jobs:
       - uses: nttld/setup-ndk@v1
         id: setup-ndk
         with:
-          # Matches NDK for Godot4
-          # https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/platform/android/java/app/config.gradle#L16
-          ndk-version: r29
+          ndk-version: ${{ env.NDK_VERSION }}
           add-to-path: false
       - name: Setup configuration
         run: |
@@ -207,21 +209,21 @@ jobs:
           path: godot4/
       - name: Install Godot and Templates
         run: |
-          wget --content-disposition "https://downloads.godotengine.org/?version=${{ env.GODOT_VERSION }}&flavor=stable&slug=linux.x86_64.zip&platform=linux.64"
-          wget --content-disposition "https://downloads.godotengine.org/?version=${{ env.GODOT_VERSION }}&flavor=stable&slug=export_templates.tpz&platform=templates"
+          wget --content-disposition "https://downloads.godotengine.org/?version=${{ env.GODOT_VERSION }}&flavor=${{ env.GODOT_FLAVOR }}&slug=linux.x86_64.zip&platform=linux.64"
+          wget --content-disposition "https://downloads.godotengine.org/?version=${{ env.GODOT_VERSION }}&flavor=${{ env.GODOT_FLAVOR }}&slug=export_templates.tpz&platform=templates"
 
-          unzip Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64.zip
-          sudo mv Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64 /usr/local/bin/godot
+          unzip Godot_v${{ env.GODOT_VERSION }}-${{ env.GODOT_FLAVOR }}_linux.x86_64.zip
+          sudo mv Godot_v${{ env.GODOT_VERSION }}-${{ env.GODOT_FLAVOR }}_linux.x86_64 /usr/local/bin/godot
 
-          mkdir -p ~/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.stable
-          unzip Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
-          mv templates/* ~/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.stable/
+          mkdir -p ~/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.${{ env.GODOT_FLAVOR }}
+          unzip Godot_v${{ env.GODOT_VERSION }}-${{ env.GODOT_FLAVOR }}_export_templates.tpz
+          mv templates/* ~/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.${{ env.GODOT_FLAVOR }}/
       - name: Install Android build template into project
         run: |
           mkdir -p godot4/android/build
-          unzip -o -q ~/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.stable/android_source.zip -d godot4/android/build
+          unzip -o -q ~/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.${{ env.GODOT_FLAVOR }}/android_source.zip -d godot4/android/build
           echo -n "" > godot4/android/build/.gdignore
-          echo -n "${{ env.GODOT_VERSION }}.stable" > godot4/android/.build_version
+          echo -n "${{ env.GODOT_VERSION }}.${{ env.GODOT_FLAVOR }}" > godot4/android/.build_version
       - name: Set up Java and Android SDK
         uses: android-actions/setup-android@v4
         with:
