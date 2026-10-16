@@ -2,16 +2,16 @@
 
 [resource]
 content_margin_left = 4.0
-content_margin_top = 4.0
+content_margin_top = 3.0
 content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.08, 0.08, 0.08, 0.85)
+content_margin_bottom = 3.0
+bg_color = Color(0.0588235, 0.0588235, 0.0588235, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.9, 0.9, 0.9, 1)
-corner_radius_top_left = 5
-corner_radius_bottom_right = 5
+border_color = Color(0.878431, 0.878431, 0.878431, 1)
+corner_radius_top_left = 7
+corner_radius_bottom_right = 7
 corner_detail = 1
 anti_aliasing = false
