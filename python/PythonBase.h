@@ -2,11 +2,11 @@
 #define __FreeOrion__Python__PythonBase__
 
 #include "../util/boost_fix.h"
-#include <boost/optional.hpp>
 #include <boost/python.hpp>
 #include <boost/python/dict.hpp>
 
 #include <filesystem>
+#include <optional>
 #include <vector>
 #include <string>
 
@@ -29,8 +29,8 @@ public:
 private:
     void         Finalize();                           // stops Python interpreter and releases its resources
 
-    boost::optional<boost::python::dict> m_namespace;           // stores main namespace in optional to be finalized before Python interpreter
-    boost::python::object*  m_python_module_error = nullptr;    // used to track if and which Python module contains the "error_report" function ErrorReport should call
+    std::optional<boost::python::dict> m_namespace;         // stores main namespace in optional to be finalized before Python interpreter
+    boost::python::object*  m_python_module_error = nullptr;// used to track if and which Python module contains the "error_report" function ErrorReport should call
 };
 
 // returns root folder containing all the Python scripts

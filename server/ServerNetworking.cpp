@@ -149,7 +149,7 @@ PlayerConnection::PlayerConnection(boost::asio::io_context& io_context,
 
 namespace {
     struct AsyncCloseClosure {
-        AsyncCloseClosure(boost::optional<boost::asio::ip::tcp::socket> &&socket, int id) :
+        AsyncCloseClosure(std::optional<boost::asio::ip::tcp::socket> &&socket, int id) :
             m_socket(std::move(socket)),
             m_id(id)
         {}
@@ -162,7 +162,7 @@ namespace {
             }
         }
     private:
-        boost::optional<boost::asio::ip::tcp::socket> m_socket;
+        std::optional<boost::asio::ip::tcp::socket> m_socket;
         const int m_id;
     };
 }

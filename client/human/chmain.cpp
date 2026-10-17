@@ -7,7 +7,6 @@
 #include "../../UI/Hotkeys.h"
 
 #include "chmain.h"
-#include <GG/utf8/utf8.h>
 
 #include <boost/format.hpp>
 #include <filesystem>
@@ -63,8 +62,15 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 #endif
-#ifdef FREEORION_WIN32
-#include <windows.h>
+
+#if defined(FREEORION_WIN32)
+#  if !defined(NOMINMAX)
+#    define NOMINMAX
+#  endif
+#  include <windows.h>
+#  undef GetMessage
+#  undef SendMessage
+#  undef MessageBox
 
 int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     // copy UTF-16 command line arguments to UTF-8 vector

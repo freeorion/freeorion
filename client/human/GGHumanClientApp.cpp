@@ -1,6 +1,17 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#if defined(FREEORION_WIN32)
+#  if !defined(NOMINMAX)
+#    define NOMINMAX
+#  endif
+#  include <windows.h>
+#  undef GetMessage
+#  undef SendMessage
+#  undef MessageBox
+#endif
+
 #include "GGHumanClientApp.h"
 
 #include "HumanClientFSM.h"
@@ -44,7 +55,6 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/format.hpp>
-#include <boost/optional/optional.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/nil_generator.hpp>
@@ -56,6 +66,8 @@
 #include <thread>
 #include <sstream>
 #include <utility>
+
+
 #if !defined(__cpp_lib_integer_comparison_functions)
 namespace std {
     inline auto cmp_less(auto&& lhs, auto&& rhs) { return lhs < rhs; }
@@ -1269,7 +1281,7 @@ void GGHumanClientApp::UpdateCombatLogManager() {
 }
 
 namespace {
-    boost::optional<std::string> NewestSinglePlayerSavegame() {
+    std::optional<std::string> NewestSinglePlayerSavegame() {
         using namespace std::filesystem;
         try {
             std::multimap<file_time_type, path> files_by_write_time;
@@ -1295,7 +1307,7 @@ namespace {
             add_all_savegames_in(GetSaveDir() / "auto");
 
             if (files_by_write_time.empty())
-                return boost::none;
+                return std::nullopt;
 
             // Return the newest file that has a valid header
             for (auto file_it = files_by_write_time.rbegin();
@@ -1307,11 +1319,11 @@ namespace {
                     return PathToString(file);  // load succeeded, return path to OK file
             }
 
-            return boost::none;
+            return std::nullopt;
 
         } catch (const std::filesystem::filesystem_error& e) {
             ErrorLogger() << "File system error " << e.what() << " while finding newest autosave";
-            return boost::none;
+            return std::nullopt;
         }
     }
 
@@ -1485,12 +1497,12 @@ void GGHumanClientApp::Autosave() {
 }
 
 void GGHumanClientApp::ContinueSinglePlayerGame() {
-    if (const auto file = NewestSinglePlayerSavegame())
-        LoadSinglePlayerGame(*file);
+    if (auto file = NewestSinglePlayerSavegame())
+        LoadSinglePlayerGame(std::move(*file));
 }
 
 bool GGHumanClientApp::IsLoadGameAvailable() const
-{ return bool(NewestSinglePlayerSavegame()); }
+{ return NewestSinglePlayerSavegame().has_value(); }
 
 std::string GGHumanClientApp::SelectLoadFile() {
     return m_ui.GetFilenameWithSaveFileDialog(
@@ -1723,6 +1735,22 @@ void GGHumanClientApp::OpenURL(const std::string& url) {
         ErrorLogger() << "GGHumanClientApp::OpenURL `" << command << "` returned a non-zero exit code: " << rv;
 }
 
+#if defined(_WIN32)
+namespace {
+    std::string ToUTF8String(const std::wstring& native_string) {
+        // convert UTF-16 native path to UTF-8
+        int utf8_sz = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS,
+                                          native_string.data(), native_string.size(),
+                                          NULL, 0, NULL, NULL);
+        std::string utf8_string(utf8_sz, 0);
+        if (utf8_sz > 0)
+            WideCharToMultiByte(CP_UTF8, 0, native_string.data(), native_string.size(),
+                                utf8_string.data(), utf8_sz, NULL, NULL);
+        return utf8_string;
+    }
+}
+#endif
+
 void GGHumanClientApp::BrowsePath(const std::filesystem::path& browse_path) {
     if (browse_path.empty() || browse_path == "/") {
         ErrorLogger() << "Invalid path: " << PathToString(browse_path);
@@ -1806,8 +1834,7 @@ void GGHumanClientApp::BrowsePath(const std::filesystem::path& browse_path) {
 #endif
 
 #ifdef _WIN32
-    std::string u8_command;
-    utf8::utf16to8(command.begin(), command.end(), std::back_inserter(u8_command));
+    std::string u8_command = ToUTF8String(command);
     InfoLogger() << "Sending OS request to browse directory: " << u8_command;
     // Flush all streams prior to _wsystem call per https://msdn.microsoft.com/en-us/library/277bwbdz.aspx
     std::fflush(NULL);

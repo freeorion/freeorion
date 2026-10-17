@@ -6,11 +6,7 @@
 #include <unordered_set>
 #include <valarray>
 #include <vector>
-#include <boost/graph/graph_concepts.hpp>
-#include <boost/optional/optional.hpp>
-#include <boost/unordered_set.hpp>
 #include <GG/Layout.h>
-#include <GG/MultiEdit.h>
 #include <GG/PtRect.h>
 #include <GG/WndEvent.h>
 #include "CensusBrowseWnd.h"
@@ -283,7 +279,7 @@ namespace {
      * objects on the lane is compressed into the space between the apparent
      * ends of the lane, but is proportional to the distance of the actual
      * position along the lane. */
-    boost::optional<std::pair<double, double>> ScreenPosOnStarlane(
+    std::optional<std::pair<double, double>> ScreenPosOnStarlane(
         double X, double Y, int lane_start_sys_id, int lane_end_sys_id,
         LaneEndpoints screen_lane_endpoints, const ScriptingContext& context)
     {
@@ -294,7 +290,7 @@ namespace {
         if (!next || !prev) {
             ErrorLogger() << "ScreenPosOnStarlane couldn't find next system " << lane_start_sys_id
                           << " or prev system " << lane_end_sys_id;
-            return boost::none;
+            return std::nullopt;
         }
 
         // get fractional distance along lane that fleet's universe position is
@@ -3326,9 +3322,9 @@ namespace GetPathsThroughSupplyLanes {
         // Merged paths are indicated with multiple preceding systems.
         std::vector<int> one_hop_back;
         // The originating terminal point.
-        // If single origin is boost::none then two paths with at least
+        // If single origin is std::nullopt then two paths with at least
         // two different terminal points merged.
-        boost::optional<int> single_origin;
+        std::optional<int> single_origin;
     };
 
     struct PrevCurrInfo {
@@ -3475,7 +3471,7 @@ namespace GetPathsThroughSupplyLanes {
                     {
                         // Single origin becomes multi-origin and these
                         // points are both marked as midpoints.
-                        previous->second.single_origin = boost::none;
+                        previous->second.single_origin = std::nullopt;
                         reachable_midpoints.push_back(curr.curr);
                         reachable_midpoints.push_back(next);
 
@@ -4891,11 +4887,11 @@ void MapWnd::DoFleetButtonsLayout(const ObjectMap& objects) {
 
 }
 
-boost::optional<std::pair<double, double>> MapWnd::MovingFleetMapPositionOnLane(
+std::optional<std::pair<double, double>> MapWnd::MovingFleetMapPositionOnLane(
     const std::shared_ptr<const Fleet>& fleet) const
 {
     if (!fleet)
-        return boost::none;
+        return std::nullopt;
 
     // get endpoints of lane on screen
     const int sys1_id = fleet->PreviousSystemID();
@@ -4975,7 +4971,7 @@ namespace {
     }
 
     /** Return the starlane's endpoints if the \p fleet is on a starlane. */
-    boost::optional<std::pair<int, int>> IsOnStarlane(const std::shared_ptr<const Fleet>& fleet,
+    std::optional<std::pair<int, int>> IsOnStarlane(const std::shared_ptr<const Fleet>& fleet,
                                                       const ObjectMap& objects)
     {
         // get endpoints of lane on screen
@@ -4986,14 +4982,14 @@ namespace {
         if (sys1 && sys1->HasStarlaneTo(sys2_id))
             return std::pair(std::min(sys1_id, sys2_id), std::max(sys1_id, sys2_id));
 
-        return boost::none;
+        return std::nullopt;
     }
 
     /** If the \p fleet has a valid destination, is not at a system and is
         on a starlane, return the starlane's endpoint system ids */
-    boost::optional<std::pair<int, int>> IsMovingOnStarlane(const auto& fleet, const ObjectMap& objects) {
+    std::optional<std::pair<int, int>> IsMovingOnStarlane(const auto& fleet, const ObjectMap& objects) {
         if (!IsMoving(fleet))
-            return boost::none;
+            return std::nullopt;
 
         return IsOnStarlane(fleet, objects);
     }
