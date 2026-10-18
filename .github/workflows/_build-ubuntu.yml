@@ -5,7 +5,7 @@ on:
 
 jobs:
   ubuntu:
-    name: ${{ matrix.os }} with ${{ matrix.compiler }}
+    name: "${{ matrix.os }} with ${{ matrix.compiler }} (parsers: ${{ matrix.build-parsers }}, asan: ${{ matrix.asan }})"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -13,21 +13,22 @@ jobs:
         os: [ubuntu-26.04, ubuntu-24.04]
         compiler: [gcc, clang]
         client-godot: ["3"]
-        build-type: [Release]
         build-parsers: ["ON"]
+        asan: [false]
         include:
-          - os: ubuntu-24.04
-            compiler: gcc-asan
-            client-godot: "3"
-            build-type: RelWithDebInfo
-            build-parsers: "ON"
           - os: ubuntu-24.04
             compiler: gcc
             client-godot: "3"
-            build-type: Release
+            build-parsers: "ON"
+            asan: true
+          - os: ubuntu-24.04
+            compiler: gcc
+            client-godot: "3"
             build-parsers: "OFF"
+            asan: false
     env:
       CACHE_NAME: linux
+      BUILD_TYPE: ${{ matrix.asan && 'RelWithDebInfo' || 'Release' }}
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
@@ -69,14 +70,14 @@ jobs:
       - name: Build directory
         run: mkdir build
       - name: Configure for gcc
-        if: ${{ matrix.compiler == 'gcc' }}
+        if: ${{ matrix.compiler == 'gcc' && ! matrix.asan }}
         env:
           CCACHE_DIR: ${{ runner.temp }}/ccache
           CC: ${{ matrix.os == 'ubuntu-24.04' && 'gcc-14' || 'gcc-15' }}
           CXX: ${{ matrix.os == 'ubuntu-24.04' && 'g++-14' || 'g++-15' }}
         run: |
           cd build
-          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} -DBUILD_PARSERS=${{ matrix.build-parsers }} ..
+          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_PARSERS=${{ matrix.build-parsers }} ..
       - name: Configure for clang
         if: ${{ matrix.compiler == 'clang' }}
         env:
@@ -87,10 +88,10 @@ jobs:
           CXX: ${{ (matrix.os == 'ubuntu-24.04' && 'clang++-18' || 'clang++-22') }}
         run: |
           cd build
-          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} ..
+          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
       # try to catch possible issues with memory access
       - name: Configure for gcc with address sanitizer
-        if: ${{ matrix.compiler == 'gcc-asan' }}
+        if: ${{ matrix.compiler == 'gcc' && matrix.asan }}
         env:
           CCACHE_DIR: ${{ runner.temp }}/ccache
           CXXFLAGS: '-fsanitize=address -g'
@@ -100,7 +101,7 @@ jobs:
           LDFLAGS: '-fsanitize=address'
         run: |
           cd build
-          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} ..
+          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
       - name: Build
         env:
           CCACHE_DIR: ${{ runner.temp }}/ccache
@@ -116,15 +117,15 @@ jobs:
       - name: Run C++ unit tests
         env:
           FO_TEST_HOSTLESS_GAMES: 1
-          ASAN_OPTIONS: ${{ matrix.compiler == 'gcc-asan' && 'detect_leaks=0:abort_on_error=1' || ''}}
+          ASAN_OPTIONS: ${{ matrix.asan && 'detect_leaks=0:abort_on_error=1' || ''}}
         run: |
           cd build
-          cmake --build . --config ${{ matrix.build-type }} --target unittest
+          cmake --build . --config $BUILD_TYPE --target unittest
       - name: Run Godot unit tests
         if: matrix.client-godot == '3' && matrix.build-parsers == 'ON'
         env:
-          ASAN_OPTIONS: ${{ matrix.compiler == 'gcc-asan' && 'detect_leaks=0:abort_on_error=1' || ''}}
-          LD_PRELOAD: ${{ matrix.compiler == 'gcc-asan' && '/usr/lib/gcc/x86_64-linux-gnu/13/libasan.so' || '' }}
+          ASAN_OPTIONS: ${{ matrix.asan && 'detect_leaks=0:abort_on_error=1' || ''}}
+          LD_PRELOAD: ${{ matrix.asan && '/usr/lib/gcc/x86_64-linux-gnu/13/libasan.so' || '' }}
         run: |
           cp `which godot3-server` build/
           ./build/godot3-server --disable-render-loop --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
