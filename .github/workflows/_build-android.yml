@@ -241,5 +241,6 @@ jobs:
           path: |
             freeorion-godot.log
             logcat.log
+            tombstone-*.log
           if-no-files-found: error
           retention-days: 1

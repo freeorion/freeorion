@@ -360,5 +360,6 @@ jobs:
             AI_*.log
             android-screenshot.png
             server-stack-*.log
+            tombstone-*.log
           if-no-files-found: error
           retention-days: 1
