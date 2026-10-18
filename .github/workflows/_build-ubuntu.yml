@@ -30,8 +30,8 @@ jobs:
       CACHE_NAME: linux
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
-      - uses: actions/cache@v4
+        uses: actions/checkout@v7
+      - uses: actions/cache@v6
         id: build-ubuntu-install-cache-id
         with:
           path: ${{ runner.temp }}/cache-build-linux-install
@@ -50,7 +50,7 @@ jobs:
           string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
           file(APPEND "$ENV{GITHUB_OUTPUT}" "timestamp=${current_date}")
       - name: Cache files with ccache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ${{ runner.temp }}/ccache
           key: build-${{ matrix.os }}-${{ matrix.compiler }}-ccache-${{ steps.build-ubuntu-ccache-timestamp.outputs.timestamp }}
