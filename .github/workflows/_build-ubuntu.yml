@@ -16,8 +16,13 @@ jobs:
         build-parsers: ["ON"]
         asan: [false]
         include:
-          - os: ubuntu-24.04
+          - os: ubuntu-26.04
             compiler: gcc
+            client-godot: "3"
+            build-parsers: "ON"
+            asan: true
+          - os: ubuntu-26.04
+            compiler: clang
             client-godot: "3"
             build-parsers: "ON"
             asan: true
@@ -30,6 +35,45 @@ jobs:
       CACHE_NAME: linux
       BUILD_TYPE: ${{ matrix.asan && 'RelWithDebInfo' || 'Release' }}
     steps:
+      - name: Set compiler environment variables
+        run: |
+          MATRIX_KEY="${{ matrix.os }}:${{ matrix.compiler }}"
+          case "$MATRIX_KEY" in
+            "ubuntu-24.04:gcc")
+              echo "CC=gcc-14" >> $GITHUB_ENV
+              echo "CXX=g++-14" >> $GITHUB_ENV
+              ;;
+            "ubuntu-26.04:gcc")
+              echo "CC=gcc-15" >> $GITHUB_ENV
+              echo "CXX=g++-15" >> $GITHUB_ENV
+              ;;
+            "ubuntu-24.04:clang")
+              echo "CC=clang-18" >> $GITHUB_ENV
+              echo "CXX=clang++-18" >> $GITHUB_ENV
+              ;;
+            "ubuntu-26.04:clang")
+              echo "CC=clang-22" >> $GITHUB_ENV
+              echo "CXX=clang++-22" >> $GITHUB_ENV
+              ;;
+            *)
+              echo "::error::Unsupported combination of OS and compiler: $MATRIX_KEY"
+              exit 1
+              ;;
+          esac
+
+          EXTRA_CFLAGS=""
+          EXTRA_LDFLAGS=""
+          if [ "${{ matrix.asan }}" = "true" ]; then
+            EXTRA_CFLAGS="${EXTRA_CFLAGS:+$EXTRA_CFLAGS }-fsanitize=address -g"
+            EXTRA_LDFLAGS="-fsanitize=address"
+            if [ "${{ matrix.compiler }}" = "clang" ]; then
+              EXTRA_LDFLAGS="${EXTRA_LDFLAGS:+$EXTRA_LDFLAGS }-shared-libasan"
+            fi
+          fi
+          [ -n "$EXTRA_CFLAGS" ] && echo "CFLAGS=$EXTRA_CFLAGS" >> $GITHUB_ENV
+          [ -n "$EXTRA_CFLAGS" ] && echo "CXXFLAGS=$EXTRA_CFLAGS" >> $GITHUB_ENV
+          [ -n "$EXTRA_LDFLAGS" ] && echo "LDFLAGS=$EXTRA_LDFLAGS" >> $GITHUB_ENV
+          exit 0
       - name: Checkout sources
         uses: actions/checkout@v7
       - uses: actions/cache@v6
@@ -54,9 +98,9 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ${{ runner.temp }}/ccache
-          key: build-${{ matrix.os }}-${{ matrix.compiler }}-ccache-${{ steps.build-ubuntu-ccache-timestamp.outputs.timestamp }}
+          key: build-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.asan }}-ccache-${{ steps.build-ubuntu-ccache-timestamp.outputs.timestamp }}
           restore-keys: |
-            build-${{ matrix.os }}-${{ matrix.compiler }}-ccache-
+            build-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.asan }}-ccache-
       - name: Configure ccache
         env:
           CCACHE_DIR: ${{ runner.temp }}/ccache
@@ -69,39 +113,12 @@ jobs:
           ccache --show-stats || true
       - name: Build directory
         run: mkdir build
-      - name: Configure for gcc
-        if: ${{ matrix.compiler == 'gcc' && ! matrix.asan }}
+      - name: Configure
         env:
           CCACHE_DIR: ${{ runner.temp }}/ccache
-          CC: ${{ matrix.os == 'ubuntu-24.04' && 'gcc-14' || 'gcc-15' }}
-          CXX: ${{ matrix.os == 'ubuntu-24.04' && 'g++-14' || 'g++-15' }}
         run: |
           cd build
           cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_PARSERS=${{ matrix.build-parsers }} ..
-      - name: Configure for clang
-        if: ${{ matrix.compiler == 'clang' }}
-        env:
-          CCACHE_DIR: ${{ runner.temp }}/ccache
-          CXXFLAGS: '-I/usr/include/SDL2 -I/usr/include/x86_64-linux-gnu/SDL2/ -I/usr/include/x86_64-linux-gnu/'
-          CFLAGS: '-I/usr/include/SDL2 -I/usr/include/x86_64-linux-gnu/SDL2/ -I/usr/include/x86_64-linux-gnu/'
-          CC: ${{ (matrix.os == 'ubuntu-24.04' && 'clang-18' || 'clang-22') }}
-          CXX: ${{ (matrix.os == 'ubuntu-24.04' && 'clang++-18' || 'clang++-22') }}
-        run: |
-          cd build
-          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
-      # try to catch possible issues with memory access
-      - name: Configure for gcc with address sanitizer
-        if: ${{ matrix.compiler == 'gcc' && matrix.asan }}
-        env:
-          CCACHE_DIR: ${{ runner.temp }}/ccache
-          CXXFLAGS: '-fsanitize=address -g'
-          CFLAGS: '-fsanitize=address -g'
-          CC: gcc-14
-          CXX: g++-14
-          LDFLAGS: '-fsanitize=address'
-        run: |
-          cd build
-          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
       - name: Build
         env:
           CCACHE_DIR: ${{ runner.temp }}/ccache
@@ -119,13 +136,22 @@ jobs:
           FO_TEST_HOSTLESS_GAMES: 1
           ASAN_OPTIONS: ${{ matrix.asan && 'detect_leaks=0:abort_on_error=1' || ''}}
         run: |
+          if [ "${{ matrix.asan }}" = "true" ] && [ "${{ matrix.compiler }}" = "clang" ]; then
+            export LD_PRELOAD=$($CC -print-file-name=libclang_rt.asan-x86_64.so)
+          fi
           cd build
           cmake --build . --config $BUILD_TYPE --target unittest
       - name: Run Godot unit tests
         if: matrix.client-godot == '3' && matrix.build-parsers == 'ON'
         env:
           ASAN_OPTIONS: ${{ matrix.asan && 'detect_leaks=0:abort_on_error=1' || ''}}
-          LD_PRELOAD: ${{ matrix.asan && '/usr/lib/gcc/x86_64-linux-gnu/13/libasan.so' || '' }}
         run: |
+          if [ "${{ matrix.asan }}" = "true" ]; then
+            if [ "${{ matrix.compiler }}" = "clang" ]; then
+              export LD_PRELOAD=$($CC -print-file-name=libclang_rt.asan-x86_64.so)
+            else
+              export LD_PRELOAD=$($CC -print-file-name=libasan.so)
+            fi
+          fi
           cp `which godot3-server` build/
           ./build/godot3-server --disable-render-loop --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
