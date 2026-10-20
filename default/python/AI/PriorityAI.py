@@ -328,7 +328,7 @@ def _calculate_colonisation_priority():
 def _calculate_outpost_priority():
     """Calculates the demand for outpost ships by colonisable planets."""
     global allotted_outpost_targets
-    base_outpost_cost = AIDependencies.OUTPOST_POD_COST
+    base_outpost_cost = AIDependencies.outpost_pod_cost()
 
     aistate = get_aistate()
     enemies_sighted = aistate.misc.get("enemies_sighted", {})
