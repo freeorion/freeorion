@@ -1,19 +1,17 @@
-[gd_scene load_steps=10 format=3 uid="uid://badnwt3uvk5lb"]
+[gd_scene load_steps=8 format=3 uid="uid://badnwt3uvk5lb"]
 
 [ext_resource type="Script" uid="uid://n3jfn2qd3bn4" path="res://IntroScreen.gd" id="1_tf6mp"]
+[ext_resource type="PackedScene" uid="uid://bx4bc46ask5n6" path="res://CUIButton.tscn" id="2_cuibtn"]
 [ext_resource type="Texture2D" uid="uid://b4offpks25ofu" path="res://assets/art/splash.png" id="2_yd5l1"]
 [ext_resource type="Texture2D" uid="uid://duom2uualidtr" path="res://assets/art/logo.png" id="3_uli3x"]
 [ext_resource type="AudioStream" uid="uid://3a4jg0i7pgkb" path="res://assets/sound/artificial_intelligence_v3.ogg" id="4_ni73i"]
-[ext_resource type="StyleBox" uid="uid://convd3x2tdaht" path="res://assets/resources/ButtonNormal.tres" id="5_ni73i"]
-[ext_resource type="StyleBox" uid="uid://c57jooeo8dwop" path="res://assets/resources/ButtonHover.tres" id="5_yd5l1"]
-[ext_resource type="StyleBox" uid="uid://dfjpdfi62x2vl" path="res://assets/resources/ButtonPressed.tres" id="7_vm6xm"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tf6mp"]
 content_margin_left = 6.0
 content_margin_top = 6.0
 content_margin_right = 6.0
 content_margin_bottom = 6.0
-bg_color = Color(0.08, 0.08, 0.08, 0.85)
+bg_color = Color(0.137255, 0.137255, 0.137255, 0.941176)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
@@ -24,10 +22,10 @@ corner_detail = 1
 anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yd5l1"]
-content_margin_left = 6.0
-content_margin_top = 6.0
-content_margin_right = 6.0
-content_margin_bottom = 6.0
+content_margin_left = 14.0
+content_margin_top = 19.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
 bg_color = Color(0, 0, 0, 0)
 border_width_left = 1
 border_width_top = 1
@@ -110,12 +108,58 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_yd5l1")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Menu/VBoxContainer/MenuButtons"]
 layout_mode = 2
+theme_override_constants/separation = 10
 
-[node name="ExitGame" type="Button" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
+[node name="SinglePlayer" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
 layout_mode = 2
-theme_override_styles/focus = ExtResource("5_yd5l1")
-theme_override_styles/hover_pressed = ExtResource("7_vm6xm")
-theme_override_styles/hover = ExtResource("5_yd5l1")
-theme_override_styles/pressed = ExtResource("7_vm6xm")
-theme_override_styles/normal = ExtResource("5_ni73i")
+disabled = true
+text = "INTRO_BTN_SINGLE_PLAYER"
+
+[node name="QuickStart" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+layout_mode = 2
+disabled = true
+text = "INTRO_BTN_QUICK_START"
+
+[node name="MultiPlayer" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+layout_mode = 2
+disabled = true
+text = "INTRO_BTN_MULTI_PLAYER"
+
+[node name="LoadGame" type="Control" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
+layout_mode = 2
+
+[node name="Options" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+layout_mode = 2
+disabled = true
+text = "INTRO_BTN_OPTIONS"
+
+[node name="Pedia" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+layout_mode = 2
+disabled = true
+text = "INTRO_BTN_PEDIA"
+
+[node name="About" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+layout_mode = 2
+disabled = true
+text = "INTRO_BTN_ABOUT"
+
+[node name="Website" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+layout_mode = 2
+disabled = true
+text = "INTRO_BTN_WEBSITE"
+
+[node name="Credits" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+layout_mode = 2
+disabled = true
+text = "INTRO_BTN_CREDITS"
+
+[node name="Spacer" type="Control" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
+custom_minimum_size = Vector2(0, 19)
+layout_mode = 2
+
+[node name="ExitGame" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+layout_mode = 2
 text = "INTRO_BTN_EXIT"
+
+[connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/VBoxContainer/QuickStart" to="." method="_on_quick_start_pressed"]
+[connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/VBoxContainer/ExitGame" to="." method="_on_exit_game_pressed"]
