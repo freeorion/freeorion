@@ -37,7 +37,7 @@ ClientAppFixture::ClientAppFixture() :
     // Dirty hack to output log to console.
     InitLoggingSystem("/proc/self/fd/1", "Test");
 #else
-    InitLoggingSystem(PathToString(GetUserDataDir() / "test.log"), "Test");
+    InitLoggingSystem(PathToString(GetUserCacheDir() / "test.log"), "Test");
 #endif
     //InitLoggingOptionsDBSystem();
 
