@@ -142,15 +142,15 @@ void Process::Free() {
 Process::Impl::Impl(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv) :
 #if BOOST_VERSION >= 108000
 #  if defined(FREEORION_WIN32)
-    m_child(io_context, ToWString(cmd), ToWStringArray(argv.cbegin() + 1, argv.cend()))
+    m_child(io_context, ToWString(cmd), ToWStringArray(argv.cbegin(), argv.cend()))
 #  else
-    m_child(io_context, cmd, std::vector(argv.cbegin() + 1, argv.cend()))
+    m_child(io_context, cmd, argv)
 #  endif
 #else
 #  if defined(FREEORION_WIN32)
-    m_child(ToWString(cmd), boost::process::args = ToWStringArray(argv.cbegin() + 1, argv.cend()), io_context)
+    m_child(ToWString(cmd), boost::process::args = ToWStringArray(argv.cbegin(), argv.cend()), io_context)
 #  else
-    m_child(cmd, boost::process::args = std::vector(argv.cbegin() + 1, argv.cend()), io_context)
+    m_child(cmd, boost::process::args = argv, io_context)
 #  endif
 #endif
 {
