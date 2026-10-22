@@ -82,3 +82,5 @@ func _on_freeorion_start_game(_is_new_game: bool) -> void:
 
 func _on_multi_player_pressed() -> void:
 	$Menu/VBoxContainer/MenuButtons/VBoxContainer/MultiPlayer.disabled = true
+	$Popup.add_child(preload("res://ServerConnectWnd.tscn").instantiate())
+	$Popup.visible = true
