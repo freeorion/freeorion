@@ -69,6 +69,7 @@ option(BUILD_SERVER "Build server" ON)
 option(BUILD_AI "Build AI" ON)
 option(BUILD_PARSERS "Build parsers" ON)
 option(BUILD_HANDLER_LOG_PYTHON_ERROR "Build handler to log Python error" ON)
+option(BUILD_UNIVERSE_EVAL_SOURCES_DEFERRED "Use deferred (same thread) evaluation activation condition on input source objects instead of async (new detached thread)" OFF)
 option(ENABLE_CPPCHECK "Enable cppcheck check"  OFF)
 
 set(BUILD_CLIENT_GODOT "OFF" CACHE STRING "Build Godot client (experimental)")
@@ -447,6 +448,7 @@ target_compile_definitions(freeorioncommon
     PRIVATE
         -DFREEORION_BUILD_COMMON
         $<$<BOOL:${BUILD_HANDLER_LOG_PYTHON_ERROR}>:FREEORION_HANDLER_LOG_PYTHON_ERROR>
+        $<$<BOOL:${BUILD_UNIVERSE_EVAL_SOURCES_DEFERRED}>:FREEORION_BUILD_UNIVERSE_EVAL_SOURCES_DEFERRED>
 )
 
 target_include_directories(freeorioncommon SYSTEM
