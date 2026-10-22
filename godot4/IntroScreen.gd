@@ -64,6 +64,7 @@ func _on_freeorion_parsing_completed():
 		GlobalFreeOrionNode.new_single_player_game()
 	else:
 		$Menu/VBoxContainer/MenuButtons/VBoxContainer/QuickStart.disabled = false
+		$Menu/VBoxContainer/MenuButtons/VBoxContainer/MultiPlayer.disabled = false
 
 
 func _on_exit_game_pressed() -> void:
@@ -77,3 +78,7 @@ func _on_quick_start_pressed() -> void:
 
 func _on_freeorion_start_game(_is_new_game: bool) -> void:
 	get_tree().change_scene_to_file("res://MapWnd.tscn")
+
+
+func _on_multi_player_pressed() -> void:
+	$Menu/VBoxContainer/MenuButtons/VBoxContainer/MultiPlayer.disabled = true
