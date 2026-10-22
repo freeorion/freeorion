@@ -35,12 +35,10 @@ public:
     Process();
 
     /** Ctor requiring a command and a full argv-style command line.  The
-        command may be a relative or an absolute path name.  The first token on
-        the command line must be the name of the executable of the process to be
-        created.
+        command may be a relative or an absolute path name.
 
         Example:
-        cmd: "/usr/bin/cvs", argv: "cvs update -C project_file.cpp".
+        cmd: "/usr/bin/cvs", argv: "update -C project_file.cpp".
 
         Of course, each arg should be in its own string within argv, and argv
         strings containing spaces must be enclosed in quotes.

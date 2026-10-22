@@ -256,7 +256,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
     int slot_id = 1;
     std::vector<std::string> args;
     args.reserve(4);
-    args.push_back("\"\"");
+    args.push_back("\"\""); // AI process process arguments as is so it need have some 0th argument
     args.push_back("place_holder");
     const std::size_t player_name_in_vec_idx = args.size()-1;
     args.push_back(std::to_string(max_aggression));
@@ -269,7 +269,6 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
     // TODO: add other command line args to AI client invocation as needed
     std::vector<std::string> args;
     args.reserve(16);
-    args.push_back("\"" + PathToString(AI_CLIENT_EXE) + "\"");
 
     args.push_back("place_holder");
     const std::size_t player_name_in_vec_idx = args.size()-1;
