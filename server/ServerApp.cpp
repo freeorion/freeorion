@@ -155,7 +155,7 @@ ServerApp::~ServerApp() {
 void ServerApp::InitLogging() {
     // Force the log file if requested.
     if (GetOptionsDB().Get<std::string>("log-file").empty()) {
-        const std::string SERVER_LOG_FILENAME(PathToString(GetUserDataDir() / "freeoriond.log"));
+        const std::string SERVER_LOG_FILENAME(PathToString(GetUserCacheDir() / "freeoriond.log"));
         GetOptionsDB().Set("log-file", SERVER_LOG_FILENAME);
     }
     // Force the log threshold if requested.
