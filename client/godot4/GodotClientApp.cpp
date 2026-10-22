@@ -66,7 +66,7 @@ namespace {
 
 GodotClientApp::GodotClientApp() {
     if (GetOptionsDB().Get<std::string>("log-file").empty()) {
-        const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserDataDir() / "freeorion-godot.log").string());
+        const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserCacheDir() / "freeorion-godot.log").string());
         GetOptionsDB().Set("log-file", HUMAN_CLIENT_LOG_FILENAME);
     }
 

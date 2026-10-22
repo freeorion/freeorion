@@ -292,7 +292,7 @@ GGHumanClientApp::GGHumanClientApp(GG::X width, GG::Y height, std::string name, 
 }
 
 namespace {
-    auto DefaultLogPath() { return PathToString(GetUserDataDir() / "freeorion.log"); }
+    auto DefaultLogPath() { return PathToString(GetUserCacheDir() / "freeorion.log"); }
 
     static constexpr std::string_view unnamed_logger_identifer = "Client";
 }
