@@ -162,4 +162,5 @@ layout_mode = 2
 text = "INTRO_BTN_EXIT"
 
 [connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/VBoxContainer/QuickStart" to="." method="_on_quick_start_pressed"]
+[connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/VBoxContainer/MultiPlayer" to="." method="_on_multi_player_pressed"]
 [connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/VBoxContainer/ExitGame" to="." method="_on_exit_game_pressed"]
