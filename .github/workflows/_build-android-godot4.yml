@@ -60,6 +60,7 @@ jobs:
             -DCMAKE_CXX_FLAGS="${{ env.CONF_CMAKE_CXX_FLAGS }}" \
             -DCMAKE_SHARED_LINKER_FLAGS="${{ env.CONF_CMAKE_SHARED_LINKER_FLAGS }}" \
             -DANDROID_ALLOW_UNDEFINED_SYMBOLS=Off \
+            -DBUILD_UNIVERSE_EVAL_SOURCES_DEFERRED="${{ inputs.debug_sanitize && 'On' || 'Off' }}" \
             -DBUILD_SERVER=On \
             -DBUILD_AI=On \
             -DBUILD_CLIENT_GG=Off \

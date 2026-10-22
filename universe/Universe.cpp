@@ -1318,7 +1318,13 @@ namespace {
 
             };
 
-            futures.emplace_back(i, std::async(std::launch::async, eval_active_sources));
+            futures.emplace_back(i, std::async(
+#ifdef FREEORION_BUILD_UNIVERSE_EVAL_SOURCES_DEFERRED
+                std::launch::deferred,
+#else
+                std::launch::async,
+#endif
+                eval_active_sources));
 
             // save evaluation lookup index in cache
             already_evaluated_activation_condition_idx.emplace_back(effects_group.Activation(), i);
