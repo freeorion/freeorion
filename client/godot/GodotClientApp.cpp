@@ -114,7 +114,6 @@ void GodotClientApp::StartServer() {
     std::vector<std::string> args;
     std::string ai_config = GetOptionsDB().Get<std::string>("ai-config");
     std::string ai_path = GetOptionsDB().Get<std::string>("ai-path");
-    args.emplace_back("\"" + PathToString(SERVER_CLIENT_EXE) + "\"");
     args.emplace_back("--resource.path");
     args.emplace_back("\"" + PathToString(GetOptionsDB().Get<std::filesystem::path>("resource.path")) + "\"");
 

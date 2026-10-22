@@ -43,7 +43,6 @@ BOOST_AUTO_TEST_CASE(host_server) {
     BOOST_TEST_MESSAGE(PathToString(SERVER_CLIENT_EXE));
 
     std::vector<std::string> args{
-        "\"" + PathToString(SERVER_CLIENT_EXE) + "\"",
         "--singleplayer",
         "--testing",
         "--log-level", "info",

@@ -97,7 +97,6 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
         BOOST_TEST_MESSAGE(PathToString(SERVER_CLIENT_EXE));
 
         std::vector<std::string> args {
-            "\"" + PathToString(SERVER_CLIENT_EXE) + "\"",
             "--hostless",
             "--save.auto.hostless.enabled", save_game ? "1" : "0",
             "--setup.ai.player.count", "0",
