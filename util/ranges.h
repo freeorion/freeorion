@@ -110,11 +110,21 @@ inline const auto& range_reverse = boost::adaptors::reversed;
 
 static constexpr struct range_keys_t {} range_keys{};
 auto operator|(auto&& r, const range_keys_t&)
-{ return boost::adaptors::keys(std::forward<decltype(r)>(r)); }
+{
+    if constexpr (std::is_reference_v<decltype(*boost::begin(r))>)
+        return boost::adaptors::keys(std::forward<decltype(r)>(r));
+    else
+        return std::forward<decltype(r)>(r) | boost::adaptors::transformed([](auto&& p) { return p.first; });
+}
 
 static constexpr struct range_values_t {} range_values{};
 auto operator|(auto&& r, const range_values_t&)
-{ return boost::adaptors::values(std::forward<decltype(r)>(r)); }
+{
+    if constexpr (std::is_reference_v<decltype(*boost::begin(r))>)
+        return boost::adaptors::values(std::forward<decltype(r)>(r));
+    else
+        return std::forward<decltype(r)>(r) | boost::adaptors::transformed([](auto&& p) { return p.second; });
+}
 
 template <typename Rng, typename Pred>
 inline auto range_find_if(Rng&& rng, Pred&& pred) { return boost::range::find_if(std::forward<Rng>(rng), std::forward<Pred>(pred)); }
