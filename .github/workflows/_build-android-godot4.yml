@@ -13,6 +13,11 @@ env:
   # Matches NDK for Godot4
   # https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/platform/android/java/app/config.gradle#L16
   NDK_VERSION: "r29"
+  # Matches default for Godot4
+  # https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/platform/android/java/app/config.gradle#L14
+  JAVA_VERSION: "17"
+  # https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/platform/android/java/gradle/wrapper/gradle-wrapper.properties#L4
+  GRADLE_VERSION: "8.11.1"
 jobs:
   android:
     name: ${{ matrix.arch }} (${{ inputs.debug_sanitize && 'RelWithDebInfo_ASan' || 'MinSizeRel' }})
@@ -163,10 +168,15 @@ jobs:
         uses: android-actions/setup-android@v4
         with:
           packages: platform-tools
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
-          gradle-version: "8.11.1"
+          gradle-version: ${{ env.GRADLE_VERSION }}
       - name: Build FreeOrion Android plugin
         run: |
           cd godot4/android-plugin
@@ -232,10 +242,15 @@ jobs:
       - name: Install Android Build Tools
         run: |
           sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
-          gradle-version: "8.11.1"
+          gradle-version: ${{ env.GRADLE_VERSION }}
       - name: Download FreeOrion Android plugin
         uses: actions/download-artifact@v8
         with:
