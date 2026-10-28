@@ -23,8 +23,6 @@ jobs:
             godot: "OFF"
           - image: void-musl
             godot: "OFF"
-          - image: debian-sid-i386
-            godot: "OFF"
           - image: debian-sid
             godot: "4"
           # - image: alpine - broken Boost 1.84
