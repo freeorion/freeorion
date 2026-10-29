@@ -5,38 +5,8 @@
 [ext_resource type="Texture2D" uid="uid://b4offpks25ofu" path="res://assets/art/splash.png" id="2_yd5l1"]
 [ext_resource type="Texture2D" uid="uid://duom2uualidtr" path="res://assets/art/logo.png" id="3_uli3x"]
 [ext_resource type="AudioStream" uid="uid://3a4jg0i7pgkb" path="res://assets/sound/artificial_intelligence_v3.ogg" id="4_ni73i"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tf6mp"]
-content_margin_left = 6.0
-content_margin_top = 6.0
-content_margin_right = 6.0
-content_margin_bottom = 6.0
-bg_color = Color(0.137255, 0.137255, 0.137255, 0.941176)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.63, 0.63, 0.63, 0.8)
-corner_radius_bottom_right = 10
-corner_detail = 1
-anti_aliasing = false
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yd5l1"]
-content_margin_left = 14.0
-content_margin_top = 19.0
-content_margin_right = 14.0
-content_margin_bottom = 10.0
-bg_color = Color(0, 0, 0, 0)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.8, 0.8, 0.8, 0.9)
-corner_radius_top_left = 1
-corner_radius_top_right = 1
-corner_radius_bottom_right = 1
-corner_radius_bottom_left = 1
-anti_aliasing = false
+[ext_resource type="StyleBox" uid="uid://bc0mda4jt0w3s" path="res://assets/resources/WndOuter.tres" id="5_uli3x"]
+[ext_resource type="StyleBox" uid="uid://mo35a1kan85v" path="res://assets/resources/WndInner.tres" id="6_ni73i"]
 
 [node name="IntroScreen" type="Control"]
 auto_translate_mode = 1
@@ -93,7 +63,7 @@ anchor_right = 0.75
 anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_tf6mp")
+theme_override_styles/panel = ExtResource("5_uli3x")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Menu"]
 layout_mode = 2
@@ -104,7 +74,7 @@ text = "INTRO_WINDOW_TITLE"
 
 [node name="MenuButtons" type="PanelContainer" parent="Menu/VBoxContainer"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_yd5l1")
+theme_override_styles/panel = ExtResource("6_ni73i")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Menu/VBoxContainer/MenuButtons"]
 layout_mode = 2
@@ -161,5 +131,18 @@ layout_mode = 2
 layout_mode = 2
 text = "INTRO_BTN_EXIT"
 
+[node name="Popup" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = ExtResource("5_uli3x")
+
 [connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/VBoxContainer/QuickStart" to="." method="_on_quick_start_pressed"]
+[connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/VBoxContainer/MultiPlayer" to="." method="_on_multi_player_pressed"]
 [connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/VBoxContainer/ExitGame" to="." method="_on_exit_game_pressed"]

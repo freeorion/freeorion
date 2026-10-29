@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://cmev1o4xqk6yo"]
+
+[ext_resource type="StyleBox" uid="uid://mo35a1kan85v" path="res://assets/resources/WndInner.tres" id="1_pmgsy"]
+
+[node name="ServerConnectWnd" type="VBoxContainer"]
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "SCONNECT_WINDOW_TITLE"
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 2
+theme_override_styles/panel = ExtResource("1_pmgsy")

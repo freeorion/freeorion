@@ -1,6 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://bbmlrg7wbu7cs"]
+[gd_scene load_steps=3 format=3 uid="uid://bbmlrg7wbu7cs"]
 
 [ext_resource type="AudioStream" uid="uid://3a4jg0i7pgkb" path="res://assets/sound/artificial_intelligence_v3.ogg" id="1_vno04"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_toolbar"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.137255, 0.137255, 0.137255, 0.941176)
+border_width_left = 0
+border_width_top = 0
+border_width_right = 0
+border_width_bottom = 1
+border_color = Color(0.25098, 0.25098, 0.25098, 1)
 
 [node name="MapWnd" type="Control"]
 auto_translate_mode = 1
@@ -14,3 +26,11 @@ grow_vertical = 2
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("1_vno04")
 autoplay = true
+
+[node name="ToolBar" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 42.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_toolbar")
