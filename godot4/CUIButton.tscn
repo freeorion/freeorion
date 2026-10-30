@@ -10,6 +10,7 @@
 [ext_resource type="AudioStream" uid="uid://p03v0smrp5ln" path="res://assets/sound/button_click.ogg" id="8_click"]
 
 [node name="CUIButton" type="Button"]
+theme_override_colors/font_disabled_color = Color(1, 1, 1, 1)
 theme_override_styles/focus = ExtResource("2_focus")
 theme_override_styles/disabled = ExtResource("5_disabled")
 theme_override_styles/hover_pressed = ExtResource("6_pressed")
