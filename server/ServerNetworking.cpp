@@ -736,8 +736,13 @@ void ServerNetworking::Init() {
     if (message_endpoint.protocol() == boost::asio::ip::tcp::v6())
         m_player_connection_acceptor.set_option(
             boost::asio::ip::v6_only(false));  // may be true by default on some systems
+#ifdef FREEORION_MACOSX
+    m_player_connection_acceptor.set_option(
+        boost::asio::socket_base::linger(false, 0));
+#else
     m_player_connection_acceptor.set_option(
         boost::asio::socket_base::linger(true, SOCKET_LINGER_TIME));
+#endif
     m_player_connection_acceptor.bind(message_endpoint);
     m_player_connection_acceptor.listen();
 
