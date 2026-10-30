@@ -340,7 +340,11 @@ void ClientNetworking::Impl::LaunchNetworkThread(const ClientNetworking* const s
     // and for the other side of the connection to close,
     // linger may/may not cause close() to block until the linger time has elapsed.
     TraceLogger(network) << "ClientNetworking::Impl::LaunchNetworkThread(" << self << ")";
+#ifdef FREEORION_MACOSX
+    m_socket.set_option(boost::asio::socket_base::linger(false, 0));
+#else
     m_socket.set_option(boost::asio::socket_base::linger(true, SOCKET_LINGER_TIME));
+#endif
 
     // keep alive is an OS dependent option that will keep the TCP connection alive and
     // then deliver an OS dependent error when/if the other side of the connection
