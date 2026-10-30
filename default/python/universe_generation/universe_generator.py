@@ -182,7 +182,7 @@ def create_universe(psd_map):  # noqa: C901
 
     print("Distributing Starting Specials")
     seed_rng(seed_pool.pop())
-    distribute_specials(gsd.specials_frequency, fo.get_all_objects())
+    distribute_specials(gsd.specials_frequency, fo.get_all_objects(),home_systems)
 
     # finally, write some statistics to the log file
     print("############################################################")
