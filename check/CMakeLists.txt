@@ -23,15 +23,3 @@ endif()
 if(ENABLE_CPPCHECK AND TARGET check-cpp)
     add_dependencies(check check-cpp)
 endif()
-
-if(TARGET check-pep8)
-    add_dependencies(check check-pep8)
-endif()
-
-if(TARGET check-pep8-focs)
-    add_dependencies(check check-pep8-focs)
-endif()
-
-if(TARGET check-pep8-focs-test)
-    add_dependencies(check check-pep8-focs-test)
-endif()
