@@ -86,7 +86,6 @@ packages via the command line.
 
   * [Debian package] stable release: `# apt-get install freeorion`
   * [Ubuntu package] stable release: `# apt-get install freeorion`
-  * [Fedora package] stable release: `# dnf install freeorion`
   * [Gentoo package] stable release: `# emerge games-strategy/freeorion`
   * [Void package] stable release: `# xbps-install freeorion`
   * [ArchLinux package] stable release: `# pacman -S freeorion`
@@ -169,7 +168,6 @@ accompanying license file.
 [FreeOrion Development]: https://github.com/freeorion/freeorion
 [Debian Package]: https://packages.debian.org/source/sid/freeorion
 [Ubuntu Package]: https://launchpad.net/ubuntu/+source/freeorion
-[Fedora Package]: https://apps.fedoraproject.org/packages/freeorion
 [Gentoo package]: https://packages.gentoo.org/packages/games-strategy/freeorion
 [openSUSE Package]: https://build.opensuse.org/package/show/games/freeorion
 [Void package]: https://github.com/voidlinux/void-packages/tree/master/srcpkgs/freeorion
