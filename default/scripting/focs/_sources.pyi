@@ -28,6 +28,8 @@ class _Object:
     Owner: _Empire
     Age: _Int
     CreationTurn: _Int
+    Name: str
+    Detection: _Float
     # Unowned
     # OwnedBy
     # Specials??

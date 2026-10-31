@@ -45,6 +45,8 @@ SCAVANGE_FUEL_UNOWNED = EffectsGroup(
 
 REGULAR_HULL_DETECTION = EffectsGroup(scope=IsSource, effects=SetDetection(value=Value + 25))
 
+GOOD_VISION = EffectsGroup(scope=IsSource, accountinglabel="GOOD_VISION_LABEL", effects=SetDetection(value=Value + 50))
+
 UNOWNED_GOOD_VISION = EffectsGroup(
     scope=IsSource, activation=Unowned, accountinglabel="GOOD_VISION_LABEL", effects=SetDetection(value=Value + 50)
 )
