@@ -38,6 +38,7 @@ CanColonize = _Condition()
 IsAnyObject = _Condition()
 CanProduceShips = _Condition()
 NoObject = _Condition()
+All = _Condition()
 
 ContentFocus = _Focus()
 

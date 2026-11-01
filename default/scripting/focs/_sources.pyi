@@ -28,6 +28,7 @@ class _Object:
     Owner: _Empire
     Age: _Int
     CreationTurn: _Int
+    Name: str
     # Unowned
     # OwnedBy
     # Specials??
@@ -69,6 +70,7 @@ class _Planet(_Object):
     MaxDefense: _Float
     MaxShield: _Float
     MaxTroops: _Float
+    Detection: _Float
 
 class _Ship(_Object):
     Species: _SpeciesValue
@@ -90,6 +92,8 @@ class _Ship(_Object):
     DamageStructurePerBattleMax: _Float
     Fuel: _Float
     Hull: _HullValue
+    Detection: _Float
+    LastTurnActiveInBattle: _Int
 
 class _Fleet(_Object):
     PreviousSystemID: _SystemID
@@ -112,7 +116,6 @@ class Source(_Planet, _Ship, _Fleet):
     Size: _Float
 
 class LocalCandidate(_Planet, _Ship, _Fleet):
-    LastTurnActiveInBattle: _Int
     LastTurnAttackedByShip: _Int
     ETA: _Int
     ArrivedOnTurn: _Int
