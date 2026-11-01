@@ -208,17 +208,15 @@ protected:
 };
 
 
-template <class N>
-struct is_vector { static const int value = 0; };
-
-template <class N, class A>
-struct is_vector<std::vector<N, A> > { static const int value = 1; };
+template<typename T> struct is_vector : std::false_type {};
+template<typename T> struct is_vector<std::vector<T>> : std::true_type {};
+template<typename T> constexpr bool is_vector_v = is_vector<T>::value;
 
 template<typename T>
 decltype(auto) FlexibleToString(const T& t)
 {
     static_assert(!std::is_enum_v<T>);
-    static_assert(!is_vector<T>::value);
+    static_assert(!is_vector_v<T>);
 
     if constexpr (std::is_floating_point_v<std::decay_t<T>>) {
         return DoubleToString(t, 3, false);
