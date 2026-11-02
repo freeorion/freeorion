@@ -2,13 +2,12 @@
 #define _ShipDesign_h_
 
 
-#include <boost/functional/hash.hpp>
-#include <boost/optional/optional.hpp>
-#include <boost/uuid/nil_generator.hpp>
-#include <boost/uuid/uuid.hpp>
 #include "ConstantsFwd.h"
 #include "EnumsFwd.h"
 #include "../util/Pending.h"
+#include <boost/functional/hash.hpp>
+#include <boost/uuid/nil_generator.hpp>
+#include <boost/uuid/uuid.hpp>
 #include <unordered_map>
 
 class Universe;
@@ -68,7 +67,7 @@ public:
         the constructor will not throw, but will return an invalid ship design
         with a empty "" hull.
     */
-    ShipDesign(const boost::optional<std::invalid_argument>& should_throw,
+    ShipDesign(const std::optional<std::invalid_argument>& should_throw,
                std::string name, std::string description,
                int designed_on_turn, int designed_by_empire, std::string hull,
                std::vector<std::string> parts,
@@ -138,10 +137,10 @@ public:
     [[nodiscard]] float AdjustedAttack(float shield) const;
     [[nodiscard]] float Defense() const;
 
-    [[nodiscard]] const auto&              Hull() const noexcept           { return m_hull; }      ///< returns name of hull on which design is based
-    [[nodiscard]] const auto&              Parts() const noexcept          { return m_parts; }     ///< returns vector of names of all parts in this design, with position in vector corresponding to slot positions
-    [[nodiscard]] std::vector<std::string> Parts(ShipSlotType slot_type) const;            ///< returns vector of names of parts in slots of indicated type in this design, unrelated to slot positions
-    [[nodiscard]] std::vector<std::string> Weapons() const;                                ///< returns vector of names of weapon parts in, unrelated to slot positions
+    [[nodiscard]] const auto&              Hull() const noexcept           { return m_hull; }  ///< returns name of hull on which design is based
+    [[nodiscard]] const auto&              Parts() const noexcept          { return m_parts; } ///< returns vector of names of all parts in this design, with position in vector corresponding to slot positions
+    [[nodiscard]] std::vector<std::string> Parts(ShipSlotType slot_type) const;                ///< returns vector of names of parts in slots of indicated type in this design, unrelated to slot positions
+    [[nodiscard]] std::vector<std::string> Weapons() const;                                    ///< returns vector of names of weapon parts in, unrelated to slot positions
 
     [[nodiscard]] const auto&              Tags() const noexcept           { return m_tags; };
     [[nodiscard]] bool                     HasTag(std::string_view tag) const
@@ -184,7 +183,7 @@ private:
       * Also pad parts with "" if it is shorter than the \p hull number of slots.
       * Otherwise (ie. when the input hull and parts do make a valid design), return none.
       * If \p produce_log is true then produce log messages. */
-    [[nodiscard]] static boost::optional<std::pair<std::string, std::vector<std::string>>>
+    [[nodiscard]] static std::optional<std::pair<std::string, std::vector<std::string>>>
         MaybeInvalidDesign(std::string hull, std::vector<std::string> parts, bool produce_log);
 
     /** Force design invariants to be true. If design invariants are not begin
@@ -194,7 +193,7 @@ private:
       *
       * \p should_throw is not used but it is a literal reminder that
       * std::invalid_argument should be caught. */
-    void ForceValidDesignOrThrow(const boost::optional<std::invalid_argument>& should_throw, bool produce_log);
+    void ForceValidDesignOrThrow(const std::optional<std::invalid_argument>& should_throw, bool produce_log);
 
     void BuildStatCaches();
 

@@ -21,7 +21,6 @@
 #include <boost/log/utility/setup/filter_parser.hpp>
 #include <boost/log/utility/setup/formatter_parser.hpp>
 
-#include <boost/optional.hpp>
 #include <boost/unordered_map.hpp>
 
 #include "Directories.h"
@@ -84,9 +83,9 @@ namespace {
     const std::string& DisplayName(const std::string& channel_name) noexcept 
     { return (channel_name.empty() ? LocalUnnamedLoggerIdentifier() : channel_name); }
 
-    boost::optional<LogLevel>& ForcedThreshold() noexcept {
+    std::optional<LogLevel>& ForcedThreshold() noexcept {
         // Create forced threshold as a static function variable to avoid static initialization fiasco
-        static boost::optional<LogLevel> forced_threshold = boost::none;
+        static std::optional<LogLevel> forced_threshold = std::nullopt;
         return forced_threshold;
     }
 
@@ -364,7 +363,7 @@ void ShutdownLoggingSystemFileSink() {
     GetLoggersToSinkFrontEnds().ShutdownFileSinks();
 }
 
-void OverrideAllLoggersThresholds(boost::optional<LogLevel> threshold) {
+void OverrideAllLoggersThresholds(std::optional<LogLevel> threshold) {
     if (threshold)
         InfoLogger(log) << "Overriding the thresholds of all loggers to be " << to_string(*threshold);
     else

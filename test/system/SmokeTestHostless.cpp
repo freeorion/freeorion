@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
         }
     }
 
-    boost::optional<Process> server;
+    std::optional<Process> server;
     if (launch_server) {
         BOOST_REQUIRE(!PingLocalHostServer());
 

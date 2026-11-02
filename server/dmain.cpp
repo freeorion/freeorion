@@ -23,7 +23,13 @@ unroll and hide the stack trace, print a message and still crash anyways. */
 #endif
 
 #if defined(FREEORION_WIN32)
+#  if !defined(NOMINMAX)
+#    define NOMINMAX
+#  endif
 #  include <windows.h>
+#  undef GetMessage
+#  undef SendMessage
+#  undef MessageBox
 #endif
 
 #ifdef FREEORION_ANDROID

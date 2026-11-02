@@ -46,8 +46,8 @@ public:
         As..." is selected in an app, and there is a current filename).  If \a
         directory is specified, it is taken as-is if it is absolute, or
         relative to the filesystem::current_path() during static initialization
-        if it is relative.  If \a directory is "", the initial directory is
-        WorkingDirectory().
+        if it is relative. If \a directory is "", the initial directory is
+        the what the working directory was upon program startup.
         \a save indicates whether this is a save or load dialog;
         \a multi indicates whether multiple file selections are allowed.
         \throw GG::FileDlg::BadInitialDirectory Throws when \a directory is invalid. */
@@ -96,10 +96,6 @@ public:
         considered to match all files, so ("All Files", "") is perfectly
         correct. */
     void SetFileFilters(const std::vector<std::pair<std::string, std::string>>& filters);
-
-    /** Returns the current directory (the one that will be used by default on
-        the next invocation of FileDlg::Run()) */
-    static const auto& WorkingDirectory() noexcept { return s_working_dir; }
 
     /** The base class for FileDlg exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
@@ -152,8 +148,6 @@ private:
 
     std::string      m_init_directory; ///< directory passed to constructor
     std::string      m_init_filename; ///< filename passed to constructor
-
-    static std::filesystem::path s_working_dir; ///< declared static so each instance of FileDlg opens up the same directory
 };
 
 }

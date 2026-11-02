@@ -663,7 +663,7 @@ void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool a
     }
 
     // reset override in case this function is later repurposed
-    OverrideAllLoggersThresholds(boost::none);
+    OverrideAllLoggersThresholds(std::nullopt);
 }
 
 void OptionsDB::GetXML(XMLDoc& doc, bool non_default_only, bool include_version) const {

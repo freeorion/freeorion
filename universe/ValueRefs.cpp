@@ -305,24 +305,24 @@ static_assert(StringToPropertyWithEmptyNone("Invalid!!!") == Property::Unknown);
 static_assert(StringToPropertyWithEmptyNone("") == Property::None);
 
 template <typename EnumT>
-std::string EnumToString(EnumT t)
+std::string_view EnumToString(EnumT t)
 {
     static_assert(std::is_enum_v<EnumT>);
-    const auto maybe_retval = to_string(t);
-    static_assert(std::is_same_v<decltype(maybe_retval), const std::string_view>);
+    static_assert(std::is_same_v<decltype(to_string(t)), std::string_view>);
+    const std::string_view maybe_retval = to_string(t);
     if (UserStringExists(maybe_retval))
         return UserString(maybe_retval);
     else
-        return std::string{maybe_retval};
+        return maybe_retval;
 }
 
-std::string FlexibleToString(const StarType& t) { return EnumToString(t); }
-std::string FlexibleToString(const PlanetEnvironment& t) { return EnumToString(t); }
-std::string FlexibleToString(const PlanetType& t) { return EnumToString(t); }
-std::string FlexibleToString(const PlanetSize& t) { return EnumToString(t); }
-std::string FlexibleToString(const ShipPartClass& t) { return EnumToString(t); }
-std::string FlexibleToString(const Visibility& t) { return EnumToString(t); }
-std::string FlexibleToString(const UniverseObjectType& t) { return EnumToString(t); }
+std::string_view FlexibleToString(const StarType& t) { return EnumToString(t); }
+std::string_view FlexibleToString(const PlanetEnvironment& t) { return EnumToString(t); }
+std::string_view FlexibleToString(const PlanetType& t) { return EnumToString(t); }
+std::string_view FlexibleToString(const PlanetSize& t) { return EnumToString(t); }
+std::string_view FlexibleToString(const ShipPartClass& t) { return EnumToString(t); }
+std::string_view FlexibleToString(const Visibility& t) { return EnumToString(t); }
+std::string_view FlexibleToString(const UniverseObjectType& t) { return EnumToString(t); }
 
 std::string ValueRefBase::InvariancePattern() const {
     return std::string{RootCandidateInvariant() ? "R" : "r"}

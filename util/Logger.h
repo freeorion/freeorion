@@ -1,9 +1,8 @@
 #ifndef _Logger_h_
 #define _Logger_h_
 
+#include "Export.h"
 
-#include <string>
-#include <array>
 #include "boost_fix.h"
 #include <boost/log/sources/global_logger_storage.hpp>
 #include <boost/log/sources/severity_channel_logger.hpp>
@@ -13,8 +12,9 @@
 #include <boost/preprocessor/logical/and.hpp>
 #include <boost/signals2/signal.hpp>
 
-#include "Export.h"
-
+#include <array>
+#include <optional>
+#include <string>
 
 /** \file
     \brief The logging system consists of named loggers with levels.
@@ -216,7 +216,7 @@ FO_COMMON_API void ShutdownLoggingSystemFileSink();
 
 /** Sets all logger thresholds to \p threshold permanently. If \p threshold is boost::none then
     remove the ovverride and allow subsequent SetLoggerThreshold() to work as normal. */
-FO_COMMON_API void OverrideAllLoggersThresholds(boost::optional<LogLevel> threshold);
+FO_COMMON_API void OverrideAllLoggersThresholds(std::optional<LogLevel> threshold);
 
 FO_COMMON_API const std::string& DefaultExecLoggerName() noexcept;
 

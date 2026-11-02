@@ -13,9 +13,6 @@
 
 using namespace GG;
 
-////////////////////////////////////////////////
-// GG::TextControl
-////////////////////////////////////////////////
 namespace {
     template <typename T>
     constexpr auto to_addr(T it) noexcept
@@ -28,6 +25,9 @@ namespace {
     }
 }
 
+////////////////////////////////////////////////
+// GG::TextControl
+////////////////////////////////////////////////
 std::string_view TextControl::Text(CPSize from, CPSize to) const noexcept
 {
     if (from == INVALID_CP_SIZE || to == INVALID_CP_SIZE)
@@ -212,9 +212,8 @@ namespace {
 
 void TextControl::operator+=(char c)
 {
-    if (!IsValidUTFChar(c))
-        throw utf8::invalid_utf8(c);
-    SetText(m_text + c);
+    if (IsValidUTFChar(c))
+        SetText(m_text + c);
 }
 
 void TextControl::Clear()

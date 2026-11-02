@@ -295,7 +295,7 @@ public:
     void operator<<(T&& t);
 
     void operator+=(const std::string& s); ///< Appends \a s to text.
-    void operator+=(char c);               ///< Appends \a c to text.
+    void operator+=(char c);               ///< Appends \a c to text. If c is not a valid utf8 char (ie. c >= 0 && c <= 0x7F), does nothing.
     void Clear();                          ///< Sets text to the empty string.
 
     /** Inserts \a c at position \a pos within the text.  \note Just as with

@@ -76,7 +76,7 @@ bool PythonBase::InitCommonImports() {
 void PythonBase::Finalize() {
     if (Py_IsInitialized()) {
         // cleanup python objects before interpterer shutdown
-        m_namespace = boost::none;
+        m_namespace = std::nullopt;
         if (m_python_module_error != nullptr) {
             (*m_python_module_error) = py::object();
             m_python_module_error = nullptr;
