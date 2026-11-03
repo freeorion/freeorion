@@ -127,7 +127,6 @@ text = "INTRO_BTN_WEBSITE"
 
 [node name="Credits" parent="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer" instance=ExtResource("2_cuibtn")]
 layout_mode = 2
-disabled = true
 text = "INTRO_BTN_CREDITS"
 
 [node name="Spacer" type="Control" parent="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer"]
@@ -152,4 +151,5 @@ theme_override_styles/panel = ExtResource("5_uli3x")
 
 [connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer/QuickStart" to="." method="_on_quick_start_pressed"]
 [connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer/MultiPlayer" to="." method="_on_multi_player_pressed"]
+[connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer/Credits" to="." method="_on_credits_pressed"]
 [connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer/ExitGame" to="." method="_on_exit_game_pressed"]
