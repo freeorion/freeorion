@@ -3,6 +3,7 @@
 [ext_resource type="StyleBox" uid="uid://mo35a1kan85v" path="res://assets/resources/WndInner.tres" id="1_pmgsy"]
 
 [node name="ServerConnectWnd" type="VBoxContainer"]
+auto_translate_mode = 1
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 2
@@ -10,4 +11,9 @@ text = "SCONNECT_WINDOW_TITLE"
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 2
+size_flags_vertical = 3
 theme_override_styles/panel = ExtResource("1_pmgsy")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
