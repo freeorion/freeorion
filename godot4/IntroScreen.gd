@@ -84,3 +84,8 @@ func _on_multi_player_pressed() -> void:
 	$Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer/MultiPlayer.disabled = true
 	$Popup.add_child(preload("res://ServerConnectWnd.tscn").instantiate())
 	$Popup.visible = true
+
+
+func _on_credits_pressed() -> void:
+	var credits_wnd := preload("res://CreditsWnd.tscn").instantiate()
+	add_child(credits_wnd)
