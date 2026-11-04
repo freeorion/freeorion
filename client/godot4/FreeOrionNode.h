@@ -45,6 +45,8 @@ private:
 
     bool options_get_bool(godot::String option) const;
 
+    godot::String options_get_string(godot::String option) const;
+
     void HandleMessage(Message&&); ///< Processes message in the networking thread
 
     std::unique_ptr<GodotClientApp> m_app;
