@@ -34,6 +34,7 @@ void FreeOrionNode::_bind_methods() {
     godot::ClassDB::bind_method(godot::D_METHOD("start_turn"), &FreeOrionNode::start_turn);
     godot::ClassDB::bind_method(godot::D_METHOD("options_get_bool"), &FreeOrionNode::options_get_bool);
     godot::ClassDB::bind_method(godot::D_METHOD("options_get_string"), &FreeOrionNode::options_get_string);
+    godot::ClassDB::bind_method(godot::D_METHOD("options_find_options", "prefix", "allow_unrecognized"), &FreeOrionNode::options_find_options, DEFVAL(false));
 
     ADD_SIGNAL(godot::MethodInfo("parsing_completed"));
     ADD_SIGNAL(godot::MethodInfo("start_game", godot::PropertyInfo(godot::Variant::BOOL, "is_new_game")));
@@ -204,6 +205,13 @@ bool FreeOrionNode::options_get_bool(godot::String option) const
 
 godot::String FreeOrionNode::options_get_string(godot::String option) const
 { return godot::String(GetOptionsDB().Get<std::string>(option.utf8().get_data()).c_str()); }
+
+godot::PackedStringArray FreeOrionNode::options_find_options(godot::String prefix, bool allow_unrecognized) const {
+    godot::PackedStringArray options;
+    for (const auto& option : GetOptionsDB().FindOptions(prefix.utf8().get_data(), allow_unrecognized))
+        options.push_back(godot::String::utf8(option.data(), option.size()));
+    return options;
+}
 
 void FreeOrionNode::HandleMessage(Message&& msg) {
     try {
