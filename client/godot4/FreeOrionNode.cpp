@@ -25,6 +25,7 @@ void FreeOrionNode::_bind_methods() {
     godot::ClassDB::bind_method(godot::D_METHOD("get_user_data_dir"), &FreeOrionNode::get_user_data_dir);
     godot::ClassDB::bind_method(godot::D_METHOD("get_user_config_dir"), &FreeOrionNode::get_user_config_dir);
     godot::ClassDB::bind_method(godot::D_METHOD("get_current_turn"), &FreeOrionNode::get_current_turn);
+    godot::ClassDB::bind_method(godot::D_METHOD("get_single_player_game"), &FreeOrionNode::get_single_player_game);
     godot::ClassDB::bind_method(godot::D_METHOD("network_thread"), &FreeOrionNode::network_thread);
     godot::ClassDB::bind_method(godot::D_METHOD("parsing_thread"), &FreeOrionNode::parsing_thread);
     godot::ClassDB::bind_method(godot::D_METHOD("start_network_thread"), &FreeOrionNode::start_network_thread);
@@ -160,6 +161,9 @@ godot::String FreeOrionNode::get_user_config_dir() const
 
 int FreeOrionNode::get_current_turn() const
 { return m_app ? m_app->CurrentTurn() : INVALID_GAME_TURN; }
+
+bool FreeOrionNode::get_single_player_game() const
+{ return m_app ? m_app->SinglePlayerGame() : false; }
 
 void FreeOrionNode::network_thread() {
     DebugLogger() << "FreeOrionNode::network_thread(): Freeorion networking started";
