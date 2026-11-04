@@ -36,6 +36,7 @@ void FreeOrionNode::_bind_methods() {
     godot::ClassDB::bind_method(godot::D_METHOD("options_get_string"), &FreeOrionNode::options_get_string);
     godot::ClassDB::bind_method(godot::D_METHOD("options_find_options", "prefix", "allow_unrecognized"), &FreeOrionNode::options_find_options, DEFVAL(false));
     godot::ClassDB::bind_method(godot::D_METHOD("options_exists"), &FreeOrionNode::options_exists);
+    godot::ClassDB::bind_method(godot::D_METHOD("options_add_string"), &FreeOrionNode::options_add_string);
 
     ADD_SIGNAL(godot::MethodInfo("parsing_completed"));
     ADD_SIGNAL(godot::MethodInfo("start_game", godot::PropertyInfo(godot::Variant::BOOL, "is_new_game")));
@@ -216,6 +217,12 @@ godot::PackedStringArray FreeOrionNode::options_find_options(godot::String prefi
 
 bool FreeOrionNode::options_exists(godot::String option) const
 { return GetOptionsDB().OptionExists(option.utf8().get_data()); }
+
+void FreeOrionNode::options_add_string(godot::String option, godot::String description, godot::String value) {
+    GetOptionsDB().Add<std::string>(option.utf8().get_data(),
+        description.utf8().get_data(),
+        value.utf8().get_data());
+}
 
 void FreeOrionNode::HandleMessage(Message&& msg) {
     try {
