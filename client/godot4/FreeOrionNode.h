@@ -54,6 +54,8 @@ private:
 
     void options_add_string(godot::String option, godot::String description, godot::String value);
 
+    void options_set_string(godot::String option, godot::String value);
+
     void HandleMessage(Message&&); ///< Processes message in the networking thread
 
     std::unique_ptr<GodotClientApp> m_app;
