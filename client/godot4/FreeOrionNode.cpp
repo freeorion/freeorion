@@ -38,6 +38,10 @@ void FreeOrionNode::_bind_methods() {
     godot::ClassDB::bind_method(godot::D_METHOD("options_exists"), &FreeOrionNode::options_exists);
     godot::ClassDB::bind_method(godot::D_METHOD("options_add_string"), &FreeOrionNode::options_add_string);
     godot::ClassDB::bind_method(godot::D_METHOD("options_set_string"), &FreeOrionNode::options_set_string);
+    godot::ClassDB::bind_method(godot::D_METHOD("options_commit", "only_if_dirty", "only_non_default"),
+                                &FreeOrionNode::options_commit,
+                                DEFVAL(true),
+                                DEFVAL(true));
 
     ADD_SIGNAL(godot::MethodInfo("parsing_completed"));
     ADD_SIGNAL(godot::MethodInfo("start_game", godot::PropertyInfo(godot::Variant::BOOL, "is_new_game")));
@@ -227,6 +231,9 @@ void FreeOrionNode::options_add_string(godot::String option, godot::String descr
 
 void FreeOrionNode::options_set_string(godot::String option, godot::String value)
 { GetOptionsDB().Set<std::string>(option.utf8().get_data(), value.utf8().get_data()); }
+
+bool FreeOrionNode::options_commit(bool only_if_dirty, bool only_non_default)
+{ return GetOptionsDB().Commit(only_if_dirty, only_non_default); }
 
 void FreeOrionNode::HandleMessage(Message&& msg) {
     try {
