@@ -1,6 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://bbmlrg7wbu7cs"]
+[gd_scene load_steps=5 format=3 uid="uid://bbmlrg7wbu7cs"]
 
+[ext_resource type="Script" uid="uid://bhqrk7g1l6rwf" path="res://MapWnd.gd" id="1_gm06g"]
 [ext_resource type="AudioStream" uid="uid://3a4jg0i7pgkb" path="res://assets/sound/artificial_intelligence_v3.ogg" id="1_vno04"]
+[ext_resource type="PackedScene" uid="uid://bx4bc46ask5n6" path="res://CUIButton.tscn" id="2_jir7t"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_toolbar"]
 content_margin_left = 5.0
@@ -8,9 +10,6 @@ content_margin_top = 5.0
 content_margin_right = 5.0
 content_margin_bottom = 5.0
 bg_color = Color(0.137255, 0.137255, 0.137255, 0.941176)
-border_width_left = 0
-border_width_top = 0
-border_width_right = 0
 border_width_bottom = 1
 border_color = Color(0.25098, 0.25098, 0.25098, 1)
 
@@ -22,6 +21,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_gm06g")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("1_vno04")
@@ -34,3 +34,13 @@ anchor_right = 1.0
 offset_bottom = 42.0
 grow_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_toolbar")
+
+[node name="BtnTurn" parent="ToolBar" instance=ExtResource("2_jir7t")]
+auto_translate_mode = 2
+layout_mode = 0
+offset_left = 5.0
+offset_top = 8.0
+offset_right = 13.0
+offset_bottom = 14.0
+
+[connection signal="pressed" from="ToolBar/BtnTurn" to="." method="_on_btn_turn_pressed"]
