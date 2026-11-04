@@ -33,6 +33,7 @@ void FreeOrionNode::_bind_methods() {
     godot::ClassDB::bind_method(godot::D_METHOD("new_single_player_game"), &FreeOrionNode::new_single_player_game);
     godot::ClassDB::bind_method(godot::D_METHOD("start_turn"), &FreeOrionNode::start_turn);
     godot::ClassDB::bind_method(godot::D_METHOD("options_get_bool"), &FreeOrionNode::options_get_bool);
+    godot::ClassDB::bind_method(godot::D_METHOD("options_get_string"), &FreeOrionNode::options_get_string);
 
     ADD_SIGNAL(godot::MethodInfo("parsing_completed"));
     ADD_SIGNAL(godot::MethodInfo("start_game", godot::PropertyInfo(godot::Variant::BOOL, "is_new_game")));
@@ -198,9 +199,11 @@ void FreeOrionNode::start_turn() {
     m_app->StartTurn(ui_data);
 }
 
-bool FreeOrionNode::options_get_bool(godot::String option) const {
-    return GetOptionsDB().Get<bool>(option.utf8().get_data());
-}
+bool FreeOrionNode::options_get_bool(godot::String option) const
+{ return GetOptionsDB().Get<bool>(option.utf8().get_data()); }
+
+godot::String FreeOrionNode::options_get_string(godot::String option) const
+{ return godot::String(GetOptionsDB().Get<std::string>(option.utf8().get_data()).c_str()); }
 
 void FreeOrionNode::HandleMessage(Message&& msg) {
     try {
