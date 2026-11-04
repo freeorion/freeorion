@@ -2,6 +2,10 @@ class_name CUIButton
 extends Button
 
 
+func set_click_sound(stream: Resource) -> void:
+	$Click.stream = stream
+
+
 func _ready() -> void:
 	mouse_entered.connect(_on_mouse_entered)
 	pressed.connect(_on_pressed)

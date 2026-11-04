@@ -4,6 +4,7 @@ extends Control
 func _ready() -> void:
 	GlobalFreeOrionNode.start_game.connect(_on_freeorion_start_game)
 	GlobalFreeOrionNode.turn_update.connect(_on_freeorion_turn_update)
+	$ToolBar/BtnTurn.set_click_sound(preload("res://assets/sound/turn_button_click.ogg"))
 	_update_btn_turn()
 
 
