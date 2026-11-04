@@ -258,7 +258,25 @@ def generate_classic_research_orders():  # noqa: C901
         research_queue_list = get_research_queue_techs()
 
     #
-
+    # check to accelerate planetary defense and point defense
+    if True:  # just to help with cold-folding / organization
+        if enemies_sighted:
+            insert_idx = (
+                num_techs_accelerated
+                if "SHP_MIL_ROBO_CONT" not in research_queue_list
+                else research_queue_list.index("SHP_MIL_ROBO_CONT") + 1
+            )
+            for defense_tech in ["DEF_GARRISON_1", "DEF_DEFENSE_NET_1", "SHP_SPACE_FLUX_BASICS"]:
+                if not tech_is_complete(defense_tech) and defense_tech not in research_queue_list[: insert_idx + 1]:
+                    res = fo.issueEnqueueTechOrder(defense_tech, insert_idx)
+                    num_techs_accelerated += 1
+                    insert_idx += 1
+                    debug(
+                        "Enemies sighted, so attempted to fast-track %s , got result %d",
+                        defense_tech,
+                        res,
+                    )
+                research_queue_list = get_research_queue_techs()
     #
     # check to accelerate xeno_arch
     if True:  # just to help with cold-folding /  organization
