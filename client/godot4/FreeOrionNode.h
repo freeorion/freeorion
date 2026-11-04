@@ -56,6 +56,8 @@ private:
 
     void options_set_string(godot::String option, godot::String value);
 
+    bool options_commit(bool only_if_dirty = true, bool only_non_default = true);
+
     void HandleMessage(Message&&); ///< Processes message in the networking thread
 
     std::unique_ptr<GodotClientApp> m_app;
