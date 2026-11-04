@@ -50,6 +50,8 @@ private:
 
     godot::PackedStringArray options_find_options(godot::String prefix, bool allow_unrecognized = false) const;
 
+    bool options_exists(godot::String option) const;
+
     void HandleMessage(Message&&); ///< Processes message in the networking thread
 
     std::unique_ptr<GodotClientApp> m_app;
