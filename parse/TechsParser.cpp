@@ -69,7 +69,7 @@ namespace {
         categories.emplace(std::move(name), std::move(category_ptr));
     }
 
-    boost::python::object insert_category_(const boost::python::tuple& args, const boost::python::dict& kw) {
+    boost::python::object insert_category_(const boost::python::tuple&, const boost::python::dict& kw) {
         auto name = boost::python::extract<std::string>(kw["name"])();
         auto graphic = boost::python::extract<std::string>(kw["graphic"])();
         auto colour = boost::python::extract<boost::python::tuple>(kw["colour"])();
@@ -90,7 +90,6 @@ namespace {
     }
 
     boost::python::object py_insert_tech_(boost::python::object scope,
-                                          const boost::python::tuple& args,
                                           const boost::python::dict& kw)
     {
         auto name = boost::python::extract<std::string>(kw["name"])();
@@ -189,8 +188,8 @@ BOOST_PYTHON_MODULE(_techs) {
     boost::python::object current_module = boost::python::scope();
 
     def("Tech", boost::python::raw_function(
-        [current_module](const boost::python::tuple& args, const boost::python::dict& kw)
-        { return py_insert_tech_(current_module, args, kw); }));
+        [current_module](const boost::python::tuple&, const boost::python::dict& kw)
+        { return py_insert_tech_(current_module, kw); }));
 }
 
 BOOST_PYTHON_MODULE(_techs_categories) {

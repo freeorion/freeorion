@@ -21,9 +21,6 @@ extern "C" BOOST_SYMBOL_EXPORT PyObject* PyInit__empire_statistics();
 namespace {
     using start_rule_payload = std::map<std::string, std::unique_ptr<ValueRef::ValueRef<double>>>;
 
-    boost::python::object py_insert_empire_statistics_scoped_(boost::python::object scope, const boost::python::tuple& args,
-                                                       const boost::python::dict& kw);
-
     struct py_grammar {
         const PythonParser& parser;
         boost::python::object module;
@@ -47,8 +44,8 @@ namespace {
         }
     };
 
-    boost::python::object py_insert_empire_statistics_scoped_(boost::python::object scope, const boost::python::tuple& args,
-                                                       const boost::python::dict& kw)
+    boost::python::object py_insert_empire_statistics_scoped_(boost::python::object scope,
+                                                              const boost::python::dict& kw)
     {
         auto name = boost::python::extract<std::string>(kw["name"])();
 
@@ -70,8 +67,8 @@ BOOST_PYTHON_MODULE(_empire_statistics) {
     boost::python::object current_module = boost::python::scope();
 
     boost::python::def("EmpireStatistic", boost::python::raw_function(
-        [current_module](const boost::python::tuple& args, const boost::python::dict& kw)
-        { return py_insert_empire_statistics_scoped_(current_module, args, kw); }));
+        [current_module](const boost::python::tuple&, const boost::python::dict& kw)
+        { return py_insert_empire_statistics_scoped_(current_module, kw); }));
 }
 
 namespace parse {

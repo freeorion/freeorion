@@ -37,8 +37,8 @@ namespace {
         }
     };
 
-    boost::python::object py_insert_encyclopedia_article_scoped_(boost::python::object scope, const boost::python::tuple& args,
-                                                       const boost::python::dict& kw)
+    boost::python::object py_insert_encyclopedia_article_scoped_(boost::python::object scope,
+                                                                 const boost::python::dict& kw)
     {
         auto name = boost::python::extract<std::string>(kw["name"])();
         auto category = boost::python::extract<std::string>(kw["category"])();
@@ -60,8 +60,8 @@ BOOST_PYTHON_MODULE(_encyclopedia_articles) {
     boost::python::object current_module = boost::python::scope();
 
     boost::python::def("Article", boost::python::raw_function(
-        [current_module](const boost::python::tuple& args, const boost::python::dict& kw)
-        { return py_insert_encyclopedia_article_scoped_(current_module, args, kw); }));
+        [current_module](const boost::python::tuple&, const boost::python::dict& kw)
+        { return py_insert_encyclopedia_article_scoped_(current_module, kw); }));
 
 }
 
