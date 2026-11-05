@@ -52,7 +52,7 @@ namespace {
         }
     };
 
-    boost::python::object py_insert_buildings_(boost::python::object scope, const boost::python::tuple& args,
+    boost::python::object py_insert_buildings_(boost::python::object scope,
                                              const boost::python::dict& kw)
     {
         auto name = boost::python::extract<std::string>(kw["name"])();
@@ -153,8 +153,8 @@ BOOST_PYTHON_MODULE(_buildings) {
     boost::python::object current_module = boost::python::scope();
 
     boost::python::def("BuildingType", boost::python::raw_function(
-        [current_module](const boost::python::tuple& args, const boost::python::dict& kw)
-        { return py_insert_buildings_(current_module, args, kw); }));
+        [current_module](const boost::python::tuple&, const boost::python::dict& kw)
+        { return py_insert_buildings_(current_module, kw); }));
 }
 
 namespace parse {

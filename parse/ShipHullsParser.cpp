@@ -252,7 +252,7 @@ namespace {
         const ShipHull::Slot slot;
     };
 
-    ship_slot_wrapper py_insert_slot_(const boost::python::tuple& args,
+    ship_slot_wrapper py_insert_slot_(const boost::python::tuple&,
                                       const boost::python::dict& kw)
     {
         auto type = boost::python::extract<enum_wrapper<ShipSlotType>>(kw["type"])().value;
@@ -264,7 +264,7 @@ namespace {
         return ship_slot_wrapper(ShipHull::Slot(type, x, y));
     }
 
-    boost::python::object py_insert_hull_(boost::python::object scope, const boost::python::tuple& args,
+    boost::python::object py_insert_hull_(boost::python::object scope,
                                           const boost::python::dict& kw)
     {
         auto name = boost::python::extract<std::string>(kw["name"])();
@@ -385,8 +385,8 @@ BOOST_PYTHON_MODULE(_ship_hulls) {
     boost::python::object current_module = boost::python::scope();
 
     boost::python::def("Hull", boost::python::raw_function(
-        [current_module](const boost::python::tuple& args, const boost::python::dict& kw)
-        { return py_insert_hull_(current_module, args, kw); }));
+        [current_module](const boost::python::tuple&, const boost::python::dict& kw)
+        { return py_insert_hull_(current_module, kw); }));
 }
 
 namespace parse {
