@@ -40,7 +40,7 @@ namespace parse { namespace detail {
             [ _val = construct_movable_(new_<Effect::MoveTo>(deconstruct_movable_(_1, _pass))) ]
             ;
 
-        move_in_orbit
+        /* move_in_orbit
             =    tok.MoveInOrbit_
             >    label(tok.speed_) >  double_rules.expr [ _a = _1 ]
             >   (
@@ -56,7 +56,7 @@ namespace parse { namespace detail {
                             deconstruct_movable_(_1, _pass))) ]
                 )
             )
-            ;
+            ; */
 
         move_towards
             =    tok.MoveTowards_
@@ -150,7 +150,7 @@ namespace parse { namespace detail {
 
         start
             %=  move_to
-            |   move_in_orbit
+         /* |   move_in_orbit */
             |   move_towards
             |   set_destination
             |   set_aggression
@@ -167,7 +167,7 @@ namespace parse { namespace detail {
             ;
 
         move_to.name("MoveTo");
-        move_in_orbit.name("MoveInOrbit");
+     /* move_in_orbit.name("MoveInOrbit"); */
         move_towards.name("MoveTowards");
         set_destination.name("SetDestination");
         set_aggression.name("SetAggression");
@@ -184,7 +184,7 @@ namespace parse { namespace detail {
 
 #if DEBUG_EFFECT_PARSERS
         debug(move_to);
-        debug(move_in_orbit);
+     /* debug(move_in_orbit); */
         debug(move_towards)
             debug(set_destination);
         debug(set_aggression);
