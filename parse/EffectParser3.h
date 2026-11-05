@@ -32,7 +32,7 @@ namespace parse { namespace detail {
         effect_parser_rule         add_special_1;
         effect_parser_rule         add_special_2;
         effect_parser_rule         remove_special;
-        effect_parser_rule         add_starlanes;
+     /* effect_parser_rule         add_starlanes; */
         effect_parser_rule         remove_starlanes;
         effect_parser_rule         set_star_type;
         effect_parser_rule         set_texture;

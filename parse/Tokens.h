@@ -9,7 +9,7 @@
     (accountinglabel)                           \
     (activation)                                \
     (AddSpecial)                                \
-    (AddStarlanes)                              \
+ /* (AddStarlanes) */                           \
     (Adequate)                                  \
     (adoptioncost)                              \
     (affiliation)                               \
