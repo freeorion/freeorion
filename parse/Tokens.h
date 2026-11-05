@@ -263,7 +263,7 @@
     (MostSpentResearchableTech)                 \
     (MostSpentTransferrableTech)                \
     (mountableSlotTypes)                        \
-    (MoveInOrbit)                               \
+ /* (MoveInOrbit) */                            \
     (MoveTo)                                    \
     (MoveTowards)                               \
     (name)                                      \
