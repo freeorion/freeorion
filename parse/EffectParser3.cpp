@@ -125,11 +125,11 @@ namespace parse { namespace detail {
                 _val = construct_movable_(new_<Effect::RemoveSpecial>(deconstruct_movable_(_1, _pass))) ]
             ;
 
-        add_starlanes
+        /* add_starlanes
             =   tok.AddStarlanes_
             >   label(tok.endpoint_) > condition_parser [
                 _val = construct_movable_(new_<Effect::AddStarlanes>(deconstruct_movable_(_1, _pass))) ]
-            ;
+            ; */
 
         remove_starlanes
             =   tok.RemoveStarlanes_
@@ -160,7 +160,7 @@ namespace parse { namespace detail {
             |   add_special_2
             |   add_special_1
             |   remove_special
-            |   add_starlanes
+         /* |   add_starlanes */
             |   remove_starlanes
             |   set_star_type
             |   set_texture
@@ -177,7 +177,7 @@ namespace parse { namespace detail {
         add_special_1.name("AddSpecial");
         add_special_2.name("AddSpecial");
         remove_special.name("RemoveSpecial");
-        add_starlanes.name("AddStarlanes");
+     /* add_starlanes.name("AddStarlanes"); */
         remove_starlanes.name("RemoveStarlanes");
         set_star_type.name("SetStarType");
         set_texture.name("SetTexture");
@@ -194,7 +194,7 @@ namespace parse { namespace detail {
         debug(add_special_1);
         debug(add_special_2);
         debug(remove_special);
-        debug(add_starlanes);
+     /* debug(add_starlanes); */
         debug(remove_starlanes);
         debug(set_star_type);
         debug(set_texture);
