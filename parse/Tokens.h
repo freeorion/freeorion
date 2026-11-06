@@ -24,7 +24,7 @@
     (ArrivedOnTurn)                             \
     (Asteroids)                                 \
     (Barren)                                    \
-    (Basic)                                     \
+ /* (Basic) */                                  \
     (BlackHole)                                 \
     (Blue)                                      \
     (Bombard)                                   \
@@ -199,7 +199,7 @@
     (InSystem)                                  \
     (Integer)                                   \
     (Internal)                                  \
-    (Invisible)                                 \
+ /* (Invisible) */                              \
     (Item)                                      \
     (jumps)                                     \
     (JumpsBetween)
@@ -325,7 +325,7 @@
     (Part)                                      \
     (PartCapacity)                              \
     (PartClass)                                 \
-    (Partial)                                   \
+ /* (Partial) */                                \
     (partname)                                  \
     (PartSecondaryStat)
 
