@@ -34,11 +34,11 @@ jobs:
       run: |
         # sudo apt-get -qq -y --no-install-recommends install \
         sudo apt-get install --assume-yes \
-            libboost1.74-all-dev \
+            libboost1.90-all-dev \
             libglew-dev \
             libopenal-dev \
             zlib1g \
-            python3.10 \
+            python3.14 \
             python3-dev \
             libfreetype6-dev \
             libpng-dev \
