@@ -749,7 +749,7 @@ namespace {
                                              std::forward_as_tuple(VarText::BUILDING_TYPE_TAG, building_name));
 
             // species
-            for (auto& [species_name, species] : GetApp().GetSpeciesManager().AllSpecies())
+            for (const auto& [species_name, species] : GetApp().GetSpeciesManager().AllSpecies())
                 if (dir_name == "ALL_SPECIES" ||
                    (dir_name == "NATIVE_SPECIES" && species.Native()) ||
                    (dir_name == "PLAYABLE_SPECIES" && species.Playable()) ||

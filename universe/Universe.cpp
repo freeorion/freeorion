@@ -1601,7 +1601,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             species_objects[species_name].push_back(planet);
     }
     // allocate storage for target sets and dispatch condition evaluations
-    for ([[maybe_unused]] auto& [species_name, species] : context.species.AllSpecies()) {
+    for ([[maybe_unused]] const auto& [species_name, species] : context.species.AllSpecies()) {
         auto species_objects_it = species_objects.find(species_name);
         if (species_objects_it == species_objects.end())
             continue;
@@ -1639,7 +1639,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         species_objects[species_name].push_back(ship);
     }
     // allocate storage for target sets and dispatch condition evaluations
-    for ([[maybe_unused]] auto& [species_name, species] : context.species.AllSpecies()) {
+    for ([[maybe_unused]] const auto& [species_name, species] : context.species.AllSpecies()) {
         auto species_objects_it = species_objects.find(species_name);
         if (species_objects_it == species_objects.end())
             continue;
