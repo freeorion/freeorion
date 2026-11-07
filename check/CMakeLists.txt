@@ -23,3 +23,11 @@ endif()
 if(ENABLE_CPPCHECK AND TARGET check-cpp)
     add_dependencies(check check-cpp)
 endif()
+
+add_custom_target(check-old-parse-tokens
+    COMMAND
+        "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/check/checkOldParseTokens.py"
+        "${CMAKE_SOURCE_DIR}/parse/Tokens.h"
+        "${CMAKE_SOURCE_DIR}/default/scripting/"
+)
