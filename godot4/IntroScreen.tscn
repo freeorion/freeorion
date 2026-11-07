@@ -76,58 +76,64 @@ text = "INTRO_WINDOW_TITLE"
 layout_mode = 2
 theme_override_styles/panel = ExtResource("6_ni73i")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Menu/VBoxContainer/MenuButtons"]
+[node name="MarginContainer" type="MarginContainer" parent="Menu/VBoxContainer/MenuButtons"]
+layout_mode = 2
+theme_override_constants/margin_left = 9
+theme_override_constants/margin_top = 9
+theme_override_constants/margin_right = 9
+theme_override_constants/margin_bottom = 9
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu/VBoxContainer/MenuButtons/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="SinglePlayer" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+[node name="SinglePlayer" parent="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer" instance=ExtResource("2_cuibtn")]
 layout_mode = 2
 disabled = true
 text = "INTRO_BTN_SINGLE_PLAYER"
 
-[node name="QuickStart" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+[node name="QuickStart" parent="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer" instance=ExtResource("2_cuibtn")]
 layout_mode = 2
 disabled = true
 text = "INTRO_BTN_QUICK_START"
 
-[node name="MultiPlayer" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+[node name="MultiPlayer" parent="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer" instance=ExtResource("2_cuibtn")]
 layout_mode = 2
 disabled = true
 text = "INTRO_BTN_MULTI_PLAYER"
 
-[node name="LoadGame" type="Control" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
+[node name="LoadGame" type="Control" parent="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Options" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+[node name="Options" parent="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer" instance=ExtResource("2_cuibtn")]
 layout_mode = 2
 disabled = true
 text = "INTRO_BTN_OPTIONS"
 
-[node name="Pedia" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+[node name="Pedia" parent="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer" instance=ExtResource("2_cuibtn")]
 layout_mode = 2
 disabled = true
 text = "INTRO_BTN_PEDIA"
 
-[node name="About" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+[node name="About" parent="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer" instance=ExtResource("2_cuibtn")]
 layout_mode = 2
 disabled = true
 text = "INTRO_BTN_ABOUT"
 
-[node name="Website" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+[node name="Website" parent="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer" instance=ExtResource("2_cuibtn")]
 layout_mode = 2
 disabled = true
 text = "INTRO_BTN_WEBSITE"
 
-[node name="Credits" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+[node name="Credits" parent="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer" instance=ExtResource("2_cuibtn")]
 layout_mode = 2
-disabled = true
 text = "INTRO_BTN_CREDITS"
 
-[node name="Spacer" type="Control" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer"]
+[node name="Spacer" type="Control" parent="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 19)
 layout_mode = 2
 
-[node name="ExitGame" parent="Menu/VBoxContainer/MenuButtons/VBoxContainer" instance=ExtResource("2_cuibtn")]
+[node name="ExitGame" parent="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer" instance=ExtResource("2_cuibtn")]
 layout_mode = 2
 text = "INTRO_BTN_EXIT"
 
@@ -143,6 +149,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = ExtResource("5_uli3x")
 
-[connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/VBoxContainer/QuickStart" to="." method="_on_quick_start_pressed"]
-[connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/VBoxContainer/MultiPlayer" to="." method="_on_multi_player_pressed"]
-[connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/VBoxContainer/ExitGame" to="." method="_on_exit_game_pressed"]
+[connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer/QuickStart" to="." method="_on_quick_start_pressed"]
+[connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer/MultiPlayer" to="." method="_on_multi_player_pressed"]
+[connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer/Credits" to="." method="_on_credits_pressed"]
+[connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer/ExitGame" to="." method="_on_exit_game_pressed"]

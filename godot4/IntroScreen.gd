@@ -60,11 +60,11 @@ func _ready():
 
 func _on_freeorion_parsing_completed():
 	if GlobalFreeOrionNode.options_get_bool("quickstart"):
-		$Menu/VBoxContainer/MenuButtons/VBoxContainer/QuickStart.disabled = true
+		$Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer/QuickStart.disabled = true
 		GlobalFreeOrionNode.new_single_player_game()
 	else:
-		$Menu/VBoxContainer/MenuButtons/VBoxContainer/QuickStart.disabled = false
-		$Menu/VBoxContainer/MenuButtons/VBoxContainer/MultiPlayer.disabled = false
+		$Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer/QuickStart.disabled = false
+		$Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer/MultiPlayer.disabled = false
 
 
 func _on_exit_game_pressed() -> void:
@@ -72,7 +72,7 @@ func _on_exit_game_pressed() -> void:
 
 
 func _on_quick_start_pressed() -> void:
-	$Menu/VBoxContainer/MenuButtons/VBoxContainer/QuickStart.disabled = true
+	$Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer/QuickStart.disabled = true
 	GlobalFreeOrionNode.new_single_player_game()
 
 
@@ -81,6 +81,11 @@ func _on_freeorion_start_game(_is_new_game: bool) -> void:
 
 
 func _on_multi_player_pressed() -> void:
-	$Menu/VBoxContainer/MenuButtons/VBoxContainer/MultiPlayer.disabled = true
+	$Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer/MultiPlayer.disabled = true
 	$Popup.add_child(preload("res://ServerConnectWnd.tscn").instantiate())
 	$Popup.visible = true
+
+
+func _on_credits_pressed() -> void:
+	var credits_wnd := preload("res://CreditsWnd.tscn").instantiate()
+	add_child(credits_wnd)
