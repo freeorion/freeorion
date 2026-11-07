@@ -6,6 +6,7 @@
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/thread.hpp>
+#include <godot_cpp/variant/packed_string_array.hpp>
 
 class GodotClientApp;
 class Message;
@@ -29,6 +30,8 @@ private:
 
     int get_current_turn() const; ///< Returns the current turn number, or INVALID_GAME_TURN if no game is running
 
+    bool get_single_player_game() const; ///< Returns true if this game is a single-player game
+
     void network_thread(); ///< Function called in a separate networking thread
 
     void parsing_thread(); ///< Function called in a separate parsing thread
@@ -42,6 +45,18 @@ private:
     void start_turn(); ///< Starts new turn
 
     bool options_get_bool(godot::String option) const;
+
+    godot::String options_get_string(godot::String option) const;
+
+    godot::PackedStringArray options_find_options(godot::String prefix, bool allow_unrecognized = false) const;
+
+    bool options_exists(godot::String option) const;
+
+    void options_add_string(godot::String option, godot::String description, godot::String value);
+
+    void options_set_string(godot::String option, godot::String value);
+
+    bool options_commit(bool only_if_dirty = true, bool only_non_default = true);
 
     void HandleMessage(Message&&); ///< Processes message in the networking thread
 

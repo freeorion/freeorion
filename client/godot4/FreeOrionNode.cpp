@@ -25,6 +25,7 @@ void FreeOrionNode::_bind_methods() {
     godot::ClassDB::bind_method(godot::D_METHOD("get_user_data_dir"), &FreeOrionNode::get_user_data_dir);
     godot::ClassDB::bind_method(godot::D_METHOD("get_user_config_dir"), &FreeOrionNode::get_user_config_dir);
     godot::ClassDB::bind_method(godot::D_METHOD("get_current_turn"), &FreeOrionNode::get_current_turn);
+    godot::ClassDB::bind_method(godot::D_METHOD("get_single_player_game"), &FreeOrionNode::get_single_player_game);
     godot::ClassDB::bind_method(godot::D_METHOD("network_thread"), &FreeOrionNode::network_thread);
     godot::ClassDB::bind_method(godot::D_METHOD("parsing_thread"), &FreeOrionNode::parsing_thread);
     godot::ClassDB::bind_method(godot::D_METHOD("start_network_thread"), &FreeOrionNode::start_network_thread);
@@ -32,6 +33,15 @@ void FreeOrionNode::_bind_methods() {
     godot::ClassDB::bind_method(godot::D_METHOD("new_single_player_game"), &FreeOrionNode::new_single_player_game);
     godot::ClassDB::bind_method(godot::D_METHOD("start_turn"), &FreeOrionNode::start_turn);
     godot::ClassDB::bind_method(godot::D_METHOD("options_get_bool"), &FreeOrionNode::options_get_bool);
+    godot::ClassDB::bind_method(godot::D_METHOD("options_get_string"), &FreeOrionNode::options_get_string);
+    godot::ClassDB::bind_method(godot::D_METHOD("options_find_options", "prefix", "allow_unrecognized"), &FreeOrionNode::options_find_options, DEFVAL(false));
+    godot::ClassDB::bind_method(godot::D_METHOD("options_exists"), &FreeOrionNode::options_exists);
+    godot::ClassDB::bind_method(godot::D_METHOD("options_add_string"), &FreeOrionNode::options_add_string);
+    godot::ClassDB::bind_method(godot::D_METHOD("options_set_string"), &FreeOrionNode::options_set_string);
+    godot::ClassDB::bind_method(godot::D_METHOD("options_commit", "only_if_dirty", "only_non_default"),
+                                &FreeOrionNode::options_commit,
+                                DEFVAL(true),
+                                DEFVAL(true));
 
     ADD_SIGNAL(godot::MethodInfo("parsing_completed"));
     ADD_SIGNAL(godot::MethodInfo("start_game", godot::PropertyInfo(godot::Variant::BOOL, "is_new_game")));
@@ -161,6 +171,9 @@ godot::String FreeOrionNode::get_user_config_dir() const
 int FreeOrionNode::get_current_turn() const
 { return m_app ? m_app->CurrentTurn() : INVALID_GAME_TURN; }
 
+bool FreeOrionNode::get_single_player_game() const
+{ return m_app ? m_app->SinglePlayerGame() : false; }
+
 void FreeOrionNode::network_thread() {
     DebugLogger() << "FreeOrionNode::network_thread(): Freeorion networking started";
     while(!quit) {
@@ -194,9 +207,33 @@ void FreeOrionNode::start_turn() {
     m_app->StartTurn(ui_data);
 }
 
-bool FreeOrionNode::options_get_bool(godot::String option) const {
-    return GetOptionsDB().Get<bool>(option.utf8().get_data());
+bool FreeOrionNode::options_get_bool(godot::String option) const
+{ return GetOptionsDB().Get<bool>(option.utf8().get_data()); }
+
+godot::String FreeOrionNode::options_get_string(godot::String option) const
+{ return godot::String(GetOptionsDB().Get<std::string>(option.utf8().get_data()).c_str()); }
+
+godot::PackedStringArray FreeOrionNode::options_find_options(godot::String prefix, bool allow_unrecognized) const {
+    godot::PackedStringArray options;
+    for (const auto& option : GetOptionsDB().FindOptions(prefix.utf8().get_data(), allow_unrecognized))
+        options.push_back(godot::String::utf8(option.data(), option.size()));
+    return options;
 }
+
+bool FreeOrionNode::options_exists(godot::String option) const
+{ return GetOptionsDB().OptionExists(option.utf8().get_data()); }
+
+void FreeOrionNode::options_add_string(godot::String option, godot::String description, godot::String value) {
+    GetOptionsDB().Add<std::string>(option.utf8().get_data(),
+        description.utf8().get_data(),
+        value.utf8().get_data());
+}
+
+void FreeOrionNode::options_set_string(godot::String option, godot::String value)
+{ GetOptionsDB().Set<std::string>(option.utf8().get_data(), value.utf8().get_data()); }
+
+bool FreeOrionNode::options_commit(bool only_if_dirty, bool only_non_default)
+{ return GetOptionsDB().Commit(only_if_dirty, only_non_default); }
 
 void FreeOrionNode::HandleMessage(Message&& msg) {
     try {
