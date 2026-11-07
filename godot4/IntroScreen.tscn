@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://badnwt3uvk5lb"]
+[gd_scene load_steps=9 format=3 uid="uid://badnwt3uvk5lb"]
 
 [ext_resource type="Script" uid="uid://n3jfn2qd3bn4" path="res://IntroScreen.gd" id="1_tf6mp"]
 [ext_resource type="PackedScene" uid="uid://bx4bc46ask5n6" path="res://CUIButton.tscn" id="2_cuibtn"]
@@ -7,6 +7,7 @@
 [ext_resource type="AudioStream" uid="uid://3a4jg0i7pgkb" path="res://assets/sound/artificial_intelligence_v3.ogg" id="4_ni73i"]
 [ext_resource type="StyleBox" uid="uid://bc0mda4jt0w3s" path="res://assets/resources/WndOuter.tres" id="5_uli3x"]
 [ext_resource type="StyleBox" uid="uid://mo35a1kan85v" path="res://assets/resources/WndInner.tres" id="6_ni73i"]
+[ext_resource type="Script" uid="uid://ccpmt78nfnf51" path="res://CUIWndPanelContainer.gd" id="6_vm6xm"]
 
 [node name="IntroScreen" type="Control"]
 auto_translate_mode = 1
@@ -64,6 +65,7 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = ExtResource("5_uli3x")
+script = ExtResource("6_vm6xm")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Menu"]
 layout_mode = 2
@@ -148,6 +150,7 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = ExtResource("5_uli3x")
+script = ExtResource("6_vm6xm")
 
 [connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer/QuickStart" to="." method="_on_quick_start_pressed"]
 [connection signal="pressed" from="Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer/MultiPlayer" to="." method="_on_multi_player_pressed"]
