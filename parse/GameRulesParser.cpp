@@ -32,7 +32,7 @@ namespace {
             module(parser_.LoadModule(&PyInit__game_rules)),
             game_rules(game_rules_)
         {
-             module.attr("__grammar") = boost::cref(*this);           
+            module.attr("__grammar") = boost::cref(*this);           
         }
            
         ~py_grammar() {
@@ -40,7 +40,7 @@ namespace {
         }
     };
 
-    object insert_rule_(object scope, const tuple& args, const dict& kw) {
+    object insert_rule_(object scope, const dict& kw) {
         auto name{extract<std::string>(kw["name"])()};
         auto desc{extract<std::string>(kw["description"])()};
         auto category{extract<std::string>(kw["category"])()};
@@ -114,7 +114,7 @@ BOOST_PYTHON_MODULE(_game_rules) {
 
     boost::python::object current_module = boost::python::scope();
 
-    boost::python::def("GameRule", raw_function([current_module](const tuple& args, const dict& kw) { return insert_rule_(current_module, args, kw); }));
+    boost::python::def("GameRule", raw_function([current_module](const tuple&, const dict& kw) { return insert_rule_(current_module, kw); }));
 }
 
 namespace parse {

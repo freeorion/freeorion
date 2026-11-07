@@ -86,7 +86,7 @@ namespace {
             p.ordering.push_back(*it);
     }
 
-    boost::python::object py_insert_species_(boost::python::object scope, const boost::python::tuple& args,
+    boost::python::object py_insert_species_(boost::python::object scope,
                                              const boost::python::dict& kw)
     {
         const auto species_name{boost::python::extract<std::string>(kw["name"])()};
@@ -200,8 +200,8 @@ BOOST_PYTHON_MODULE(_species) {
     boost::python::object current_module = boost::python::scope();
 
     def("Species", boost::python::raw_function(
-        [current_module](const boost::python::tuple& args, const boost::python::dict& kw)
-        { return py_insert_species_(current_module, args, kw); }));
+        [current_module](const boost::python::tuple&, const boost::python::dict& kw)
+        { return py_insert_species_(current_module, kw); }));
     def("FocusType", boost::python::raw_function(insert_focus_type_));
 }
 
