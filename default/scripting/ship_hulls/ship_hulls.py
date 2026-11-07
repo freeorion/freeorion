@@ -1,3 +1,5 @@
+from typing import Literal
+
 from focs._conditions import (
     ContainedBy,
     Contains,
@@ -46,6 +48,38 @@ SCAVANGE_FUEL_UNOWNED = EffectsGroup(
 REGULAR_HULL_DETECTION = EffectsGroup(scope=IsSource, effects=SetDetection(value=Value + 25))
 
 GOOD_VISION = EffectsGroup(scope=IsSource, accountinglabel="GOOD_VISION_LABEL", effects=SetDetection(value=Value + 50))
+
+
+"""Macro to set vision bonus to separate values with same label
+
+:param level WEAK, POOR, MODERATE, GOOD, EXCELLENT
+:param unowned_detection_bonus detection strength when unowned
+:param owned_detection_bonus vision range when owned
+"""
+
+
+def UNOWNED_OWNED_VISION_BONUS(
+    level: Literal["WEAK", "POOR", "MODERATE", "GOOD", "EXCELLENT"],
+    unowned_detection_bonus: float,
+    owned_detection_bonus: float,
+):
+    return [
+        EffectsGroup(
+            scope=IsSource,
+            activation=Unowned,
+            stackinggroup=f"{level}_VISION_BONUS",
+            accountinglabel=f"{level}_VISION_LABEL",
+            effects=SetDetection(value=Value + unowned_detection_bonus),
+        ),
+        EffectsGroup(
+            scope=IsSource,
+            activation=~Unowned,
+            stackinggroup=f"{level}_VISION_BONUS",
+            accountinglabel=f"{level}_VISION_LABEL",
+            effects=SetDetection(value=Value + owned_detection_bonus),
+        ),
+    ]
+
 
 UNOWNED_GOOD_VISION = EffectsGroup(
     scope=IsSource, activation=Unowned, accountinglabel="GOOD_VISION_LABEL", effects=SetDetection(value=Value + 50)
