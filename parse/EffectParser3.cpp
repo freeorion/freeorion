@@ -40,7 +40,7 @@ namespace parse { namespace detail {
             [ _val = construct_movable_(new_<Effect::MoveTo>(deconstruct_movable_(_1, _pass))) ]
             ;
 
-        move_in_orbit
+        /* move_in_orbit
             =    tok.MoveInOrbit_
             >    label(tok.speed_) >  double_rules.expr [ _a = _1 ]
             >   (
@@ -56,7 +56,7 @@ namespace parse { namespace detail {
                             deconstruct_movable_(_1, _pass))) ]
                 )
             )
-            ;
+            ; */
 
         move_towards
             =    tok.MoveTowards_
@@ -125,11 +125,11 @@ namespace parse { namespace detail {
                 _val = construct_movable_(new_<Effect::RemoveSpecial>(deconstruct_movable_(_1, _pass))) ]
             ;
 
-        add_starlanes
+        /* add_starlanes
             =   tok.AddStarlanes_
             >   label(tok.endpoint_) > condition_parser [
                 _val = construct_movable_(new_<Effect::AddStarlanes>(deconstruct_movable_(_1, _pass))) ]
-            ;
+            ; */
 
         remove_starlanes
             =   tok.RemoveStarlanes_
@@ -150,7 +150,7 @@ namespace parse { namespace detail {
 
         start
             %=  move_to
-            |   move_in_orbit
+         /* |   move_in_orbit */
             |   move_towards
             |   set_destination
             |   set_aggression
@@ -160,14 +160,14 @@ namespace parse { namespace detail {
             |   add_special_2
             |   add_special_1
             |   remove_special
-            |   add_starlanes
+         /* |   add_starlanes */
             |   remove_starlanes
             |   set_star_type
             |   set_texture
             ;
 
         move_to.name("MoveTo");
-        move_in_orbit.name("MoveInOrbit");
+     /* move_in_orbit.name("MoveInOrbit"); */
         move_towards.name("MoveTowards");
         set_destination.name("SetDestination");
         set_aggression.name("SetAggression");
@@ -177,14 +177,14 @@ namespace parse { namespace detail {
         add_special_1.name("AddSpecial");
         add_special_2.name("AddSpecial");
         remove_special.name("RemoveSpecial");
-        add_starlanes.name("AddStarlanes");
+     /* add_starlanes.name("AddStarlanes"); */
         remove_starlanes.name("RemoveStarlanes");
         set_star_type.name("SetStarType");
         set_texture.name("SetTexture");
 
 #if DEBUG_EFFECT_PARSERS
         debug(move_to);
-        debug(move_in_orbit);
+     /* debug(move_in_orbit); */
         debug(move_towards)
             debug(set_destination);
         debug(set_aggression);
@@ -194,7 +194,7 @@ namespace parse { namespace detail {
         debug(add_special_1);
         debug(add_special_2);
         debug(remove_special);
-        debug(add_starlanes);
+     /* debug(add_starlanes); */
         debug(remove_starlanes);
         debug(set_star_type);
         debug(set_texture);

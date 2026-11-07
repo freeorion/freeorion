@@ -22,7 +22,7 @@ namespace parse { namespace detail {
 
         parse::double_parser_rules double_rules;
         effect_parser_rule         move_to;
-        doubles_string_rule        move_in_orbit;
+     /* doubles_string_rule        move_in_orbit; */
         doubles_string_rule        move_towards;
         effect_parser_rule         set_destination;
         effect_parser_rule         set_aggression;
@@ -32,7 +32,7 @@ namespace parse { namespace detail {
         effect_parser_rule         add_special_1;
         effect_parser_rule         add_special_2;
         effect_parser_rule         remove_special;
-        effect_parser_rule         add_starlanes;
+     /* effect_parser_rule         add_starlanes; */
         effect_parser_rule         remove_starlanes;
         effect_parser_rule         set_star_type;
         effect_parser_rule         set_texture;

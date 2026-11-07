@@ -9,7 +9,7 @@
     (accountinglabel)                           \
     (activation)                                \
     (AddSpecial)                                \
-    (AddStarlanes)                              \
+ /* (AddStarlanes) */                           \
     (Adequate)                                  \
     (adoptioncost)                              \
     (affiliation)                               \
@@ -263,7 +263,7 @@
     (MostSpentResearchableTech)                 \
     (MostSpentTransferrableTech)                \
     (mountableSlotTypes)                        \
-    (MoveInOrbit)                               \
+ /* (MoveInOrbit) */                            \
     (MoveTo)                                    \
     (MoveTowards)                               \
     (name)                                      \
