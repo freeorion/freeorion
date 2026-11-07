@@ -30,4 +30,5 @@ add_custom_target(check-old-parse-tokens
         "${CMAKE_SOURCE_DIR}/check/checkOldParseTokens.py"
         "${CMAKE_SOURCE_DIR}/parse/Tokens.h"
         "${CMAKE_SOURCE_DIR}/default/scripting/"
+        "${CMAKE_SOURCE_DIR}/parse/"
 )
