@@ -114,7 +114,13 @@ auto operator|(auto&& r, const range_keys_t&)
     if constexpr (std::is_reference_v<decltype(*boost::begin(r))>)
         return boost::adaptors::keys(std::forward<decltype(r)>(r));
     else
-        return std::forward<decltype(r)>(r) | boost::adaptors::transformed([](auto&& p) { return p.first; });
+        return std::forward<decltype(r)>(r) | boost::adaptors::transformed([](auto&& p) -> decltype(auto) {
+            if constexpr (std::is_reference_v<decltype(p.first)>) {
+                return (p.first);
+            } else {
+                return p.first;
+            }
+        });
 }
 
 static constexpr struct range_values_t {} range_values{};
@@ -123,7 +129,13 @@ auto operator|(auto&& r, const range_values_t&)
     if constexpr (std::is_reference_v<decltype(*boost::begin(r))>)
         return boost::adaptors::values(std::forward<decltype(r)>(r));
     else
-        return std::forward<decltype(r)>(r) | boost::adaptors::transformed([](auto&& p) { return p.second; });
+        return std::forward<decltype(r)>(r) | boost::adaptors::transformed([](auto&& p) -> decltype(auto) {
+            if constexpr (std::is_reference_v<decltype(p.second)>) {
+                return (p.second);
+            } else {
+                return p.second;
+            }
+        });
 }
 
 template <typename Rng, typename Pred>
