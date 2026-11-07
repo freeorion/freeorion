@@ -210,6 +210,7 @@ jobs:
           mv default/scripting godot4/default/
           mv default/stringtables godot4/default/
           mv default/python godot4/default/
+          mv default/credits.xml godot4/default/
           mkdir -p godot4/default/python/lib/
           cp ../${{ steps.download-python-lib.outputs.filename }} godot4/default/python/lib/python311.zip
           unzip -t godot4/default/python/lib/python311.zip
