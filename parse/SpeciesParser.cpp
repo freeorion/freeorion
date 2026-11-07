@@ -238,16 +238,14 @@ namespace parse {
         }
 
         TraceLogger(parsing) << "Start parsing FOCS for Species: " << species_.size();
-        for (auto& [sp_name, sp] : species_)
+        for (const auto& [sp_name, sp] : species_)
             TraceLogger(parsing) << "Species " << sp_name << " : " << sp.GetCheckSum() << "\n" << sp.Dump();
         TraceLogger(parsing) << "End parsing FOCS for Species" << species_.size();
 
         if (!manifest_file.empty()) {
             try {
                 auto p_grammar = py_manifest_grammar(parser, ordering);
-                file_success = py_parse::detail::parse_file(
-                    parser, manifest_file) && file_success;
-
+                file_success = py_parse::detail::parse_file(parser, manifest_file) && file_success;
             } catch (const std::runtime_error& e) {
                 ErrorLogger() << "Failed to species census manifest in " << manifest_file << " from " << path
                               << " because " << e.what();
