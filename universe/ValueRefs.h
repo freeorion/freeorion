@@ -782,7 +782,7 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
                              std::unique_ptr<ValueRef<std::string>>&& string_ref1 = nullptr,
                              std::unique_ptr<ValueRef<std::string>>&& string_ref2 = nullptr,
                              bool return_immediate_value = false) :
-        Variable<T>(CalcRTSLI(int_ref1, int_ref2, int_ref3, string_ref1, string_ref2),
+        Variable<T>(CalcRTSLIC(int_ref1, int_ref2, int_ref3, string_ref1, string_ref2),
                     variable_name, // no move because is passed to checksum calc below
                     return_immediate_value ? ValueToReturn::Immediate : ValueToReturn::Initial,
                     ReferenceType::INVALID_REFERENCE_TYPE,
@@ -821,9 +821,9 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
     { return std::make_unique<ComplexVariable<T>>(*this); }
 
 protected:
-    [[nodiscard]] static std::array<bool, 4> CalcRTSLI(const auto& ...ops) {
+    [[nodiscard]] static std::array<bool, 5> CalcRTSLIC(const auto& ...ops) {
         const auto rtslice = RefsRTSLICE(ops...);
-        return {rtslice[0], rtslice[1], rtslice[2], rtslice[3]};
+        return {rtslice[0], rtslice[1], rtslice[2], rtslice[3], rtslice[4]};
     }
 
     const std::unique_ptr<ValueRef<int>> m_int_ref1;
