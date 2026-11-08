@@ -1,4 +1,5 @@
 #include <gdextension_interface.h>
+#include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
@@ -8,19 +9,33 @@
 
 #include "FreeOrionNode.h"
 #include "GodotI18n.h"
+#include "GodotOptionsDB.h"
+
+namespace {
+    GodotOptionsDB* s_options_db = nullptr;
+}
 
 void initialize_freeorion_module(godot::ModuleInitializationLevel p_level) {
-    if (p_level != godot::MODULE_INITIALIZATION_LEVEL_SCENE) {
+    if (p_level != godot::MODULE_INITIALIZATION_LEVEL_SCENE)
         return;
-    }
 
     GDREGISTER_CLASS(FreeOrionNode);
     GDREGISTER_CLASS(GodotI18n);
+    GDREGISTER_ABSTRACT_CLASS(GodotOptionsDB);
+
+    s_options_db = memnew(GodotOptionsDB);
+    godot::Engine::get_singleton()->register_singleton("OptionsDB", s_options_db);
 }
 
 void uninitialize_freeorion_module(godot::ModuleInitializationLevel p_level) {
-    if (p_level != godot::MODULE_INITIALIZATION_LEVEL_SCENE) {
+    if (p_level != godot::MODULE_INITIALIZATION_LEVEL_SCENE)
         return;
+
+    if (s_options_db) {
+        if (godot::Engine* engine = godot::Engine::get_singleton())
+            engine->unregister_singleton("OptionsDB");
+        godot::memdelete(s_options_db);
+        s_options_db = nullptr;
     }
 }
 
