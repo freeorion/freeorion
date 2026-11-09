@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://cmev1o4xqk6yo"]
+[gd_scene load_steps=5 format=3 uid="uid://cmev1o4xqk6yo"]
 
 [ext_resource type="StyleBox" uid="uid://mo35a1kan85v" path="res://assets/resources/WndInner.tres" id="1_pmgsy"]
+[ext_resource type="StyleBox" uid="uid://dax41f3qka5ho" path="res://assets/resources/EditDisabled.tres" id="2_p1mh8"]
+[ext_resource type="StyleBox" uid="uid://cosc8rw8j2h0n" path="res://assets/resources/EditFocus.tres" id="2_qj1oa"]
+[ext_resource type="StyleBox" uid="uid://b4jh7tjgkkiip" path="res://assets/resources/EditNormal.tres" id="2_van7o"]
 
 [node name="ServerConnectWnd" type="VBoxContainer"]
 auto_translate_mode = 1
@@ -17,3 +20,19 @@ theme_override_styles/panel = ExtResource("1_pmgsy")
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
 layout_mode = 2
 theme_override_constants/separation = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="PlayerNameLabel" type="Label" parent="PanelContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "PLAYER_NAME_LABEL"
+
+[node name="PlayerNameEdit" type="LineEdit" parent="PanelContainer/VBoxContainer/HBoxContainer"]
+auto_translate_mode = 2
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/focus = ExtResource("2_qj1oa")
+theme_override_styles/read_only = ExtResource("2_p1mh8")
+theme_override_styles/normal = ExtResource("2_van7o")
