@@ -83,7 +83,17 @@ GodotClientApp::GodotClientApp() {
 }
 
 GodotClientApp::~GodotClientApp() {
-
+    m_networking->DisconnectFromServer();
+#ifdef FREEORION_ANDROID
+    if (auto* engine = godot::Engine::get_singleton()) {
+        if (auto* plugin = engine->get_singleton("FreeOrion"))
+            plugin->call("stopServer");
+        else
+            ErrorLogger() << "GodotClientApp::~GodotClientApp: FreeOrion plugin singleton not found";
+    }
+#else
+    m_server_process.RequestTermination();
+#endif
 }
 
 void GodotClientApp::StartParsingContent() {
@@ -178,7 +188,7 @@ void GodotClientApp::FreeServer() {
         if (auto* plugin = engine->get_singleton("FreeOrion"))
             plugin->call("stopServer");
         else
-            ErrorLogger() << "GodotClientApp::StartServer: FreeOrion plugin singleton not found";
+            ErrorLogger() << "GodotClientApp::FreeServer: FreeOrion plugin singleton not found";
     }
 #else
     m_server_process.Free();
