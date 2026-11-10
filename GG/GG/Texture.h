@@ -17,12 +17,12 @@
 #ifndef _GG_Texture_h_
 #define _GG_Texture_h_
 
-
-#include <filesystem>
-#include <GG/Base.h>
 #include <GG/Exception.h>
+#include <GL/glew.h>
+#include <filesystem>
+#include <map>
 #include <mutex>
-
+#include <vector>
 
 namespace GG {
     class GL2DVertexBuffer;

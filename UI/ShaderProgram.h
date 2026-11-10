@@ -1,7 +1,7 @@
 #ifndef _ShaderProgram_h_
 #define _ShaderProgram_h_
 
-#include <GG/Base.h>
+#include <GL/glew.h>
 
 #include <memory>
 #include <string>

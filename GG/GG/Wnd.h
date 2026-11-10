@@ -17,6 +17,7 @@
 
 #include <atomic>
 #include <list>
+#include <map>
 #include <memory>
 #include <set>
 #include <vector>
@@ -24,6 +25,7 @@
 #include <GG/Base.h>
 #include <GG/Exception.h>
 #include <GG/Flags.h>
+#include <GG/PtRect.h>
 
 
 namespace GG {
