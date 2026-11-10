@@ -44,12 +44,39 @@ namespace std {
 
 extern template TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const PythonParser& parser, const std::filesystem::path& path, bool& success);
 
+namespace {
+    using namespace boost::xpressive;
+    // avoid static initialization fiasco
+
+    const sregex& GetMacroKey() {
+        static const sregex macro_key = +_w;   // word character (alnum | _), one or more times, greedy
+        return macro_key;
+    }
+    const sregex& GetMacroText() {
+        static const sregex macro_text = -*_;  // any character, zero or more times, not greedy
+        return macro_text;
+    }
+    const sregex& GetMacroDefinition() {
+        static const sregex macro_definition = (s1 = GetMacroKey()) >> _n >> "'''" >> (s2 = GetMacroText()) >> "'''" >> _n;
+        return macro_definition;
+    }
+    const sregex& GetMacroInsertion() {
+        static const sregex macro_insertion = "[[" >> *space >> (s1 = GetMacroKey()) >> *space >> !("(" >> (s2 = +~(set = ')', '\n')) >> ")") >> "]]";
+        return macro_insertion;
+    }
+    const sregex& GetFilenameText() {
+        static const sregex filename_text = -+_;   // any character, one or more times, not greedy
+        return filename_text;
+    }
+    const sregex& GetFilenameInsertion() {
+        static const sregex filename_insertion = bol >> "#include" >> *space >> "\"" >> (s1 = GetFilenameText()) >> "\"" >> *space >> _n;
+        return filename_insertion;
+    }
+
+}
+
 namespace parse {
     using namespace boost::xpressive;
-    const sregex MACRO_KEY = +_w;   // word character (alnum | _), one or more times, greedy
-    const sregex MACRO_TEXT = -*_;  // any character, zero or more times, not greedy
-    const sregex MACRO_DEFINITION = (s1 = MACRO_KEY) >> _n >> "'''" >> (s2 = MACRO_TEXT) >> "'''" >> _n;
-    const sregex MACRO_INSERTION = "[[" >> *space >> (s1 = MACRO_KEY) >> *space >> !("(" >> (s2 = +~(set = ')', '\n')) >> ")") >> "]]";
 
     void parse_and_erase_macro_definitions(std::string& text, std::map<std::string, std::string>& macros) {
         try {
@@ -57,7 +84,7 @@ namespace parse {
             while (true) {
                 // find next macro definition
                 smatch match;
-                if (!regex_search(text_it, text.end(), match, MACRO_DEFINITION, regex_constants::match_default))
+                if (!regex_search(text_it, text.end(), match, GetMacroDefinition(), regex_constants::match_default))
                     break;
 
                 //const std::string& matched_text = match.str();  // [[MACRO_KEY]] '''macro text'''
@@ -96,7 +123,7 @@ namespace parse {
         try {
             std::size_t position = 0; // position in the text, past the already processed part
             smatch match;
-            while (regex_search(text.begin() + position, text.end(), match, MACRO_INSERTION, regex_constants::match_default)) {
+            while (regex_search(text.begin() + position, text.end(), match, GetMacroInsertion(), regex_constants::match_default)) {
                 position += match.position() + match.length();
                 retval.insert(match[1]);
             }
@@ -149,7 +176,7 @@ namespace parse {
         try {
             std::size_t position = 0; // position in the text, past the already processed part
             smatch match;
-            while (regex_search(text.begin() + position, text.end(), match, MACRO_INSERTION, regex_constants::match_default)) {
+            while (regex_search(text.begin() + position, text.end(), match, GetMacroInsertion(), regex_constants::match_default)) {
                 position += match.position();
                 const std::string& matched_text = match.str();  // [[MACRO_KEY]] or [[MACRO_KEY(foo,bar,...)]]
                 const std::string& macro_key = match[1];        // just MACRO_KEY
@@ -213,9 +240,6 @@ namespace parse {
         //DebugLogger() << "after macro substitution text: " << text;
     }
 
-    const sregex FILENAME_TEXT = -+_;   // any character, one or more times, not greedy
-    const sregex FILENAME_INSERTION = bol >> "#include" >> *space >> "\"" >> (s1 = FILENAME_TEXT) >> "\"" >> *space >> _n;
-
     std::set<std::string> missing_include_files;
 
     /** \brief Resolve script directives
@@ -260,7 +284,7 @@ namespace parse {
                                        std::set<std::filesystem::path>& files_included)
     {
         smatch match;
-        while (regex_search(text.begin(), text.end(), match, FILENAME_INSERTION, regex_constants::match_default)) {
+        while (regex_search(text.begin(), text.end(), match, GetFilenameInsertion(), regex_constants::match_default)) {
             const std::string& fn_match = match[1];
             if (fn_match.empty()) {
                 continue;
