@@ -1,0 +1,54 @@
+from focs._conditions import All, IsSource
+from focs._effects import (
+    EffectsGroup,
+    SetDamage,
+    SetMaxDamage,
+    SetMaxSecondaryStat,
+    SetSecondaryStat,
+)
+from focs._enums import External, Internal
+from focs._ship_hulls import Hull, Slot
+from focs._value_refs import Value
+from macros.misc_pre import SHIP_WEAPON_DAMAGE_FACTOR
+from ship_hulls.monster.monster import MONSTER_SHIELD_REGENERATION
+from ship_hulls.ship_hulls import UNOWNED_OWNED_VISION_BONUS
+
+Hull(
+    name="SH_GUARD_3_BODY",
+    description="SH_GUARD_3_BODY_DESC",
+    speed=0,
+    fuel=0,
+    NoDefaultFuelEffect=True,
+    stealth=5,
+    structure=800,
+    slots=[
+        Slot(type=External, position=(0.13, 0.52)),
+        Slot(type=External, position=(0.32, 0.32)),
+        Slot(type=External, position=(0.60, 0.20)),
+        Slot(type=External, position=(0.25, 0.75)),
+        Slot(type=External, position=(0.58, 0.65)),
+        Slot(type=External, position=(0.85, 0.45)),
+        Slot(type=Internal, position=(0.38, 0.52)),
+        Slot(type=Internal, position=(0.62, 0.42)),
+    ],
+    buildcost=1,
+    buildtime=2,
+    producible=False,
+    tags=["UNOWNED_FRIENDLY", "PEDIA_HULL_MONSTER_GUARD"],
+    location=All,
+    effectsgroups=[
+        MONSTER_SHIELD_REGENERATION,
+        *UNOWNED_OWNED_VISION_BONUS("GOOD", 50, 50),
+        EffectsGroup(
+            scope=IsSource,
+            effects=[
+                SetMaxSecondaryStat(partname="SR_ARC_DISRUPTOR", value=Value + 3),
+                SetMaxDamage(partname="SR_WEAPON_4_1", value=Value + (15 * SHIP_WEAPON_DAMAGE_FACTOR)),
+                SetSecondaryStat(partname="SR_ARC_DISRUPTOR", value=Value + 3),
+                SetDamage(partname="SR_WEAPON_4_1", value=Value + (15 * SHIP_WEAPON_DAMAGE_FACTOR)),
+            ],
+        ),
+    ],
+    icon="",
+    graphic="icons/monsters/warden.png",
+)
