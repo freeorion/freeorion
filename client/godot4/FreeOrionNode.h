@@ -44,20 +44,6 @@ private:
 
     void start_turn(); ///< Starts new turn
 
-    bool options_get_bool(godot::String option) const;
-
-    godot::String options_get_string(godot::String option) const;
-
-    godot::PackedStringArray options_find_options(godot::String prefix, bool allow_unrecognized = false) const;
-
-    bool options_exists(godot::String option) const;
-
-    void options_add_string(godot::String option, godot::String description, godot::String value);
-
-    void options_set_string(godot::String option, godot::String value);
-
-    bool options_commit(bool only_if_dirty = true, bool only_non_default = true);
-
     void HandleMessage(Message&&); ///< Processes message in the networking thread
 
     std::unique_ptr<GodotClientApp> m_app;
