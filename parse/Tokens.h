@@ -33,7 +33,7 @@
 #define TOKEN_SEQ_2                             \
     (Building)                                  \
     (BuildingTypesOwned)                        \
-    (BuildingType)                              \
+ /* (BuildingType) */                           \
     (BuildingTypeCost)                          \
     (BuildingTypesProduced)                     \
     (BuildingTypesScrapped)                     \
@@ -83,7 +83,7 @@
     (DamageStructurePerBattleMax)               \
     (data)                                      \
     (default)                                   \
-    (DefaultFocus)                              \
+ /* (DefaultFocus) */                           \
     (Defense)                                   \
     (Described)                                 \
     (description)                               \
@@ -131,7 +131,7 @@
 
 #define TOKEN_SEQ_4                             \
     (Field)                                     \
-    (FieldType)                                 \
+ /* (FieldType)*/                               \
     (Fighter)                                   \
     (FighterBay)                                \
     (FighterHangar)                             \
