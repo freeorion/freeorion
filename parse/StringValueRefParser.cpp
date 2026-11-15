@@ -43,10 +43,10 @@ namespace parse {
         bound_variable_name
             %=   tok.Name_
             |    tok.Species_
-            |    tok.BuildingType_
-            |    tok.FieldType_
+         /* |    tok.BuildingType_ */
+         /* |    tok.FieldType_ */
             |    tok.Focus_
-            |    tok.DefaultFocus_
+         /* |    tok.DefaultFocus_ */
             |    tok.Hull_
             ;
 
