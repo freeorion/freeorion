@@ -21,9 +21,9 @@ namespace parse { namespace detail {
 
         enum_expr
             =   tok.Uninhabitable_  [ _val = PlanetEnvironment::PE_UNINHABITABLE ]
-            |   tok.Hostile_        [ _val = PlanetEnvironment::PE_HOSTILE ]
-            |   tok.Poor_           [ _val = PlanetEnvironment::PE_POOR ]
-            |   tok.Adequate_       [ _val = PlanetEnvironment::PE_ADEQUATE ]
+         /* |   tok.Hostile_        [ _val = PlanetEnvironment::PE_HOSTILE ] */
+         /* |   tok.Poor_           [ _val = PlanetEnvironment::PE_POOR ] */
+         /* |   tok.Adequate_       [ _val = PlanetEnvironment::PE_ADEQUATE ] */
             |   tok.Good_           [ _val = PlanetEnvironment::PE_GOOD ]
             ;
     }

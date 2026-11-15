@@ -10,7 +10,7 @@
     (activation)                                \
     (AddSpecial)                                \
  /* (AddStarlanes) */                           \
-    (Adequate)                                  \
+ /* (Adequate)*/                                \
     (adoptioncost)                              \
     (affiliation)                               \
     (Age)                                       \
@@ -180,7 +180,7 @@
  /* (HistogramMin) */                           \
  /* (HistogramSpread) */                        \
     (Homeworld)                                 \
-    (Hostile)                                   \
+ /* (Hostile) */                                \
     (Huge)                                      \
     (hull)                                      \
     (Hull)                                      \
@@ -343,7 +343,7 @@
     (PlanetTypeDifference)                      \
     (Playable)                                  \
     (Policy)                                    \
-    (Poor)                                      \
+ /* (Poor) */                                   \
     (Population)                                \
     (PopulationCenter)                          \
     (position)                                  \
