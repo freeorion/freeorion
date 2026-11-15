@@ -59,7 +59,7 @@ func _ready():
 
 
 func _on_freeorion_parsing_completed():
-	if GlobalFreeOrionNode.options_get_bool("quickstart"):
+	if OptionsDB.get_bool("quickstart"):
 		$Menu/VBoxContainer/MenuButtons/MarginContainer/VBoxContainer/QuickStart.disabled = true
 		GlobalFreeOrionNode.new_single_player_game()
 	else:
