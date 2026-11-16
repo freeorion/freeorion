@@ -32,6 +32,8 @@ private:
 
     bool get_single_player_game() const; ///< Returns true if this game is a single-player game
 
+    godot::String get_credits_bbcode() const;
+
     void network_thread(); ///< Function called in a separate networking thread
 
     void parsing_thread(); ///< Function called in a separate parsing thread
