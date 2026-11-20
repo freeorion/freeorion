@@ -205,6 +205,7 @@ PythonParser::PythonParser(PythonCommon& _python) :
             .def(py::other<value_ref_wrapper<int>>() & py::self_ns::self)
             .def(py::self_ns::self | py::self_ns::self)
             .def(py::self_ns::self | py::other<value_ref_wrapper<int>>())
+            .def(py::other<value_ref_wrapper<int>>() | py::self_ns::self)
             .def(~py::self_ns::self);
         py::class_<effect_wrapper>("Effect", py::no_init);
         py::class_<effect_group_wrapper>("EffectsGroup", py::no_init);
