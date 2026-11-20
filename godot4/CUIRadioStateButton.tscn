@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3 uid="uid://def30geg53eqr"]
+
+[ext_resource type="StyleBox" uid="uid://neiwh4k4sytm" path="res://assets/resources/RadioStateButton.tres" id="1_p6h64"]
+[ext_resource type="Script" uid="uid://daadkbdnicnqy" path="res://CUIRadioStateButton.gd" id="1_riki2"]
+[ext_resource type="AudioStream" uid="uid://by5iw4qhrsbwk" path="res://assets/sound/button_rollover.ogg" id="1_tixac"]
+[ext_resource type="AudioStream" uid="uid://p03v0smrp5ln" path="res://assets/sound/button_click.ogg" id="2_riki2"]
+
+[node name="CUIRadioStateButton" type="Button"]
+auto_translate_mode = 2
+theme_override_styles/focus = ExtResource("1_p6h64")
+theme_override_styles/disabled = ExtResource("1_p6h64")
+theme_override_styles/hover = ExtResource("1_p6h64")
+theme_override_styles/pressed = ExtResource("1_p6h64")
+theme_override_styles/normal = ExtResource("1_p6h64")
+script = ExtResource("1_riki2")
+
+[node name="Rollover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_tixac")
+
+[node name="Click" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_riki2")
