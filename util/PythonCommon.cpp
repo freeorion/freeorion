@@ -6,11 +6,14 @@
 #include "../util/Directories.h"
 #include "../util/Logger.h"
 
-#ifdef FREEORION_WIN32
-#ifndef NOMINMAX
-#  define NOMINMAX
-#endif
-#include <windows.h>
+#if defined(FREEORION_WIN32)
+#  if !defined(NOMINMAX)
+#    define NOMINMAX
+#  endif
+#  include <windows.h>
+#  undef GetMessage
+#  undef SendMessage
+#  undef MessageBox
 #endif
 
 namespace py = boost::python;

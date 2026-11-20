@@ -8,17 +8,17 @@
 
 #include <GG/GUI.h>
 
-#include <boost/optional.hpp>
 #include <filesystem>
 #include <fstream>
+#include <optional>
 
 
 namespace {
 
-boost::optional<std::string> ReadFile(const std::filesystem::path& file_path) {
+std::optional<std::string> ReadFile(const std::filesystem::path& file_path) {
     std::ifstream fin(file_path);
     if (!fin.is_open())
-        return boost::none;
+        return std::nullopt;
 
     std::stringstream buffer;
     buffer << fin.rdbuf();

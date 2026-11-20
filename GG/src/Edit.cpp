@@ -27,6 +27,96 @@ namespace {
     constexpr auto fmt = FORMAT_LEFT | FORMAT_IGNORETAGS;
 }
 
+
+namespace {
+    CPSize NextWordEdgeFrom(std::string_view text, CPSize from_position, bool search_right) {
+        auto words = GUI::GetGUI()->FindWords(text);
+        CPSize retval = CP0;
+
+        if (!search_right) {
+            // searching ON THE LEFT from the reference position
+
+            // start with the leftmost word, traverse words to the right
+            // until past the reference point
+            for (const auto& [rng_from, rng_to] : words) {
+                if (rng_from > from_position) {
+                    // found word is after of the position. can stop
+                    // searching and use whatever the last found word's position was
+                    break;
+
+                } else if (rng_from < from_position && rng_to >= from_position) {
+                    // found word starting before and ending at/after the position. can
+                    // stop searching and use the start of the found word.
+                    retval = rng_from;
+                    break;
+
+                } else if (rng_to < from_position) {
+                    // found word ending before the position. can use the start
+                    // or end of the found word...
+                    if (rng_to < from_position - CP1) {
+                        // there is a gap between the end of the word and the search
+                        // reference position. use one past the end of the word
+                        retval = rng_to + CP1;
+                        // don't break, as there might be later words that are closer to
+                        // the search reference position
+                    } else {
+                        // the end of the word is immediately before the search
+                        // reference position. use the start of the word.
+                        retval = rng_from;
+                        // can stop searching since the word is right next to the
+                        // search reference position
+                        break;
+                    }
+                }
+            }
+            return retval;
+
+        } else {
+            // searching ON THE RIGHT from the reference position
+            if (!words.empty())
+                retval = std::max(from_position, words.rbegin()->second);
+
+            // start and the rightmost end, traverse the words leftwards
+            // until past the reference point
+            for (auto rit = words.rbegin(); rit != words.rend(); ++rit) {
+                auto [word_from, word_to] = *rit;
+                if (word_to < from_position) {
+                    // found word is before the position. can stop
+                    // searching and use whatever the last found word's position was
+                    break;
+
+                } else if (word_from <= from_position && word_to > from_position) {
+                    // found word starting before/at and ending after the position. can
+                    // stop searching and use the end of the found word.
+                    retval = word_to;
+                    break;
+
+                } else if (word_from > from_position) {
+                    // found word starting after the position. can use the start
+                    // or end of the found word...
+                    if (word_from > from_position + CP1) {
+                        // there is a gap between the end of the word and the search
+                        // reference position. use one before the start of the word
+                        retval = word_from - CP1;
+                    } else {
+                        // the start of the word is immediately after the search
+                        // reference position. use the end of the word.
+                        retval = word_to;
+                        // can stop searching since the word is right next to the
+                        // search reference position
+                        break;
+                    }
+                    // don't break, as there might be later words that are closer to
+                    // the search reference position
+                }
+            }
+
+            return retval;
+        }
+    }
+}
+
+
 ////////////////////////////////////////////////
 // GG::Edit
 ////////////////////////////////////////////////
@@ -600,109 +690,3 @@ void Edit::AdjustView()
 
     m_first_char_shown = move_to;
 }
-
-
-////////////////////////////////////////////////////////////
-// Free Functions
-////////////////////////////////////////////////////////////
-void GG::GetTranslatedCodePoint(Key, uint32_t key_code_point, Flags<ModKey>,
-                                std::string& translated_code_point)
-{
-    // only process it if it's a valid code point or a known printable
-    // key, and no significant modifiers are in use
-    if (key_code_point) {
-        try {
-            uint32_t chars[] = { key_code_point };
-            utf8::utf32to8(chars, chars + 1, std::back_inserter(translated_code_point));
-        } catch (const utf8::invalid_code_point&) {
-            translated_code_point.clear();
-        }
-    }
-}
-
-CPSize GG::NextWordEdgeFrom(std::string_view text, CPSize from_position, bool search_right) {
-    auto words = GUI::GetGUI()->FindWords(text);
-    CPSize retval = CP0;
-
-    if (!search_right) {
-        // searching ON THE LEFT from the reference position
-
-        // start with the leftmost word, traverse words to the right
-        // until past the reference point
-        for (const auto& [rng_from, rng_to] : words) {
-            if (rng_from > from_position) {
-                // found word is after of the position. can stop
-                // searching and use whatever the last found word's position was
-                break;
-
-            } else if (rng_from < from_position && rng_to >= from_position) {
-                // found word starting before and ending at/after the position. can
-                // stop searching and use the start of the found word.
-                retval = rng_from;
-                break;
-
-            } else if (rng_to < from_position) {
-                // found word ending before the position. can use the start
-                // or end of the found word...
-                if (rng_to < from_position - CP1) {
-                    // there is a gap between the end of the word and the search
-                    // reference position. use one past the end of the word
-                    retval = rng_to + CP1;
-                    // don't break, as there might be later words that are closer to
-                    // the search reference position
-                } else {
-                    // the end of the word is immediately before the search
-                    // reference position. use the start of the word.
-                    retval = rng_from;
-                    // can stop searching since the word is right next to the
-                    // search reference position
-                    break;
-                }
-            }
-        }
-        return retval;
-
-    } else {
-        // searching ON THE RIGHT from the reference position
-        if (!words.empty())
-            retval = std::max(from_position, words.rbegin()->second);
-
-        // start and the rightmost end, traverse the words leftwards
-        // until past the reference point
-        for (auto rit = words.rbegin(); rit != words.rend(); ++rit) {
-            auto [word_from, word_to] = *rit;
-            if (word_to < from_position) {
-                // found word is before the position. can stop
-                // searching and use whatever the last found word's position was
-                break;
-
-            } else if (word_from <= from_position && word_to > from_position) {
-                // found word starting before/at and ending after the position. can
-                // stop searching and use the end of the found word.
-                retval = word_to;
-                break;
-
-            } else if (word_from > from_position) {
-                // found word starting after the position. can use the start
-                // or end of the found word...
-                if (word_from > from_position + CP1) {
-                    // there is a gap between the end of the word and the search
-                    // reference position. use one before the start of the word
-                    retval = word_from - CP1;
-                } else {
-                    // the start of the word is immediately after the search
-                    // reference position. use the end of the word.
-                    retval = word_to;
-                    // can stop searching since the word is right next to the
-                    // search reference position
-                    break;
-                }
-                // don't break, as there might be later words that are closer to
-                // the search reference position
-            }
-        }
-
-        return retval;
-    }
-}
-

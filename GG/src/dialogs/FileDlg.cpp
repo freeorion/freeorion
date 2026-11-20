@@ -131,25 +131,26 @@ struct IndexedStringEnd
 
     const std::shared_ptr<std::vector<std::string>> m_strings;
 };
-
-bool WindowsRoot(const std::string& root_name)
-{ return root_name.size() == 2 && std::isalpha(root_name[0]) && root_name[1] == ':'; }
-
-const auto initial_path_root_string = PathToString(std::filesystem::current_path().root_name());
-
-bool Win32Paths()
-{ return WindowsRoot(initial_path_root_string); }
-
-constexpr X H_SPACING{10};
-constexpr Y V_SPACING{10};
-constexpr X DEFAULT_WIDTH{500};  ///< default width for the dialog
-constexpr Y DEFAULT_HEIGHT{450}; ///< default height for the dialog
 }
 
+namespace {
+    bool WindowsRoot(const std::string& root_name)
+    { return root_name.size() == 2 && std::isalpha(root_name[0]) && root_name[1] == ':'; }
+}
 
-// static member definition(s)
-fs::path FileDlg::s_working_dir = fs::current_path();
+namespace {
+    fs::path s_working_dir = fs::current_path();
+    const auto initial_path_root_string = PathToString(fs::current_path().root_name());
 
+    bool Win32Paths()
+    { return WindowsRoot(initial_path_root_string); }
+
+    constexpr X H_SPACING{10};
+    constexpr Y V_SPACING{10};
+    constexpr X DEFAULT_WIDTH{500};  ///< default width for the dialog
+    constexpr Y DEFAULT_HEIGHT{450}; ///< default height for the dialog
+
+}
 
 FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
                  const std::shared_ptr<const Font>& font, Clr color, Clr border_color, Clr text_color) :

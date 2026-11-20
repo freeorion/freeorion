@@ -1,11 +1,5 @@
 #include "MessageQueue.h"
 
-#include <boost/optional/optional.hpp>
-
-MessageQueue::MessageQueue(std::mutex& monitor) :
-    m_monitor{monitor}
-{}
-
 bool MessageQueue::Empty() const {
     std::scoped_lock lock(m_monitor);
     return m_queue.empty();
@@ -27,10 +21,10 @@ void MessageQueue::PushBack(Message message) {
     m_queue.push(std::move(message));
 }
 
-boost::optional<Message> MessageQueue::PopFront() {
+std::optional<Message> MessageQueue::PopFront() {
     std::scoped_lock lock(m_monitor);
     if (m_queue.empty())
-        return boost::none;
+        return std::nullopt;
     Message message = std::move(m_queue.front());
     m_queue.pop();
     return message;

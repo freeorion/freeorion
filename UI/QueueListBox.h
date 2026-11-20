@@ -1,9 +1,8 @@
 #ifndef _QueueListBox_h_
 #define _QueueListBox_h_
 
-#include <boost/optional/optional.hpp>
-
 #include "CUIControls.h"
+#include <optional>
 
 /** A simple ListBox row containing only a static label.*/
 struct PromptRow : GG::ListBox::Row {
@@ -20,7 +19,7 @@ class QueueListBox :
     public CUIListBox
 {
 public:
-    QueueListBox(boost::optional<std::string_view> drop_type_str, std::string prompt_str);
+    QueueListBox(std::optional<std::string_view> drop_type_str, std::string prompt_str);
 
     void CompleteConstruction() override;
 

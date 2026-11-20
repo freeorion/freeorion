@@ -234,16 +234,16 @@ decltype(auto) FlexibleToString(const T& t)
     }
 }
 
-[[nodiscard]] FO_COMMON_API std::string FlexibleToString(const StarType& t);
-[[nodiscard]] FO_COMMON_API std::string FlexibleToString(const PlanetEnvironment& t);
-[[nodiscard]] FO_COMMON_API std::string FlexibleToString(const PlanetType& t);
-[[nodiscard]] FO_COMMON_API std::string FlexibleToString(const PlanetSize& t);
-[[nodiscard]] FO_COMMON_API std::string FlexibleToString(const ShipPartClass& t);
-[[nodiscard]] FO_COMMON_API std::string FlexibleToString(const Visibility& t);
-[[nodiscard]] FO_COMMON_API std::string FlexibleToString(const UniverseObjectType& t);
+[[nodiscard]] FO_COMMON_API std::string_view FlexibleToString(const StarType& t);
+[[nodiscard]] FO_COMMON_API std::string_view FlexibleToString(const PlanetEnvironment& t);
+[[nodiscard]] FO_COMMON_API std::string_view FlexibleToString(const PlanetType& t);
+[[nodiscard]] FO_COMMON_API std::string_view FlexibleToString(const PlanetSize& t);
+[[nodiscard]] FO_COMMON_API std::string_view FlexibleToString(const ShipPartClass& t);
+[[nodiscard]] FO_COMMON_API std::string_view FlexibleToString(const Visibility& t);
+[[nodiscard]] FO_COMMON_API std::string_view FlexibleToString(const UniverseObjectType& t);
 
 template <typename EnumT>
-std::string EnumToString(EnumT t);
+std::string_view EnumToString(EnumT t);
 
 // after declarations of specialization of FlexibleToString for enums
 template<typename T>
@@ -303,6 +303,8 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
     [[nodiscard]] std::string EvalAsString() const override final {
         if constexpr (std::is_same_v<T, std::string>)
             return Eval();
+        else if constexpr (std::is_same_v<decltype(FlexibleToString(Eval())), std::string_view>)
+            return std::string{FlexibleToString(Eval())};
         else
             return FlexibleToString(Eval());
     }

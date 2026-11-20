@@ -11,7 +11,6 @@
 #include <boost/container/flat_map.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/python/detail/destroy.hpp>
-#include <boost/signals2/optional_last_value.hpp>
 #include <boost/signals2/signal.hpp>
 #include "ConstantsFwd.h"
 #include "Enums.h"
