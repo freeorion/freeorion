@@ -286,7 +286,7 @@ void ModalListPicker::SignalChanged(std::optional<DropDownList::iterator> it)
     } else {
         // There will be at least 1 shared_ptr, one held by parent and one by Run(), if the parent
         // has not already tried to destroy this.  This should never happen.
-        if (weak_this.use_count() < 1)
+        if (weak_this.expired())
             return;
 
         SelChangedSignal(*it);
