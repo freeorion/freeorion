@@ -841,15 +841,6 @@ private:
 ////////////////////////////////////////////////////////////
 // MapWndPopup
 ////////////////////////////////////////////////////////////
-MapWndPopup::MapWndPopup(std::string t, GG::X default_x, GG::Y default_y, GG::X default_w, GG::Y default_h,
-                         GG::Flags<GG::WndFlag> flags, std::string_view config_name) :
-    CUIWnd(std::move(t), default_x, default_y, default_w, default_h, flags, config_name)
-{}
-
-MapWndPopup::MapWndPopup(std::string t, GG::Flags<GG::WndFlag> flags, std::string_view config_name) :
-    CUIWnd(std::move(t), flags, config_name)
-{}
-
 void MapWndPopup::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
@@ -877,12 +868,6 @@ MapWndPopup::~MapWndPopup() {
     if (auto mapwnd = GetApp().GetUI().GetMapWnd(ClientUI::ConstructFlag::NEVER))
         mapwnd->RemovePopup(this);
 }
-
-void MapWndPopup::CloseClicked()
-{ CUIWnd::CloseClicked(); }
-
-void MapWndPopup::Close()
-{ CloseClicked(); }
 
 
 ////////////////////////////////////////////////
@@ -5943,7 +5928,7 @@ void MapWnd::RemovePopup(MapWndPopup* popup) {
     if (!popup)
         return;
 
-    auto it = range_find_if(m_popups, [popup](const auto& xx){ return xx.lock().get() == popup;});
+    auto it = range_find_if(m_popups, [popup](const auto& xx) noexcept { return xx.lock().get() == popup;});
     if (it != m_popups.end())
         m_popups.erase(it);
 }
@@ -7390,7 +7375,7 @@ namespace {
     int JumpsForRoute(const RouteListType& route) {
         int count = static_cast<int>(route.size());
         if (count > 0) // dont count source system
-            -- count;
+            --count;
         return count;
     }
 
@@ -7419,7 +7404,7 @@ namespace {
         static constexpr auto to_lane_end = [](const auto& lane) noexcept { return lane.end; };
 
         return starlanes | range_filter(lane_starts_in_system_in_ids)
-            | range_transform(to_lane_end) | range_to<boost::container::flat_set<int>>();
+                         | range_transform(to_lane_end) | range_to<boost::container::flat_set<int>>();
     }
 
     /** Get the shortest suitable route from @p start_id to @p destination_id as known to @p empire_id */
