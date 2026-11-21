@@ -1,10 +1,9 @@
 ﻿#include "VarText.h"
 
 #include "../universe/NamedValueRefManager.h"
-#include "../universe/ValueRefs.h"
 #include "../universe/Universe.h"
+#include "../universe/ScriptingContext.h"
 #include "../universe/ShipDesign.h"
-#include "../universe/System.h"
 #include "../universe/Planet.h"
 #include "../universe/Species.h"
 #include "../Empire/Empire.h"
