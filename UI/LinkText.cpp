@@ -6,7 +6,6 @@
 #include "../universe/NamedValueRefManager.h"
 #include "../universe/Species.h"
 #include "../universe/UniverseObject.h"
-#include "../universe/ValueRefs.h"
 #include "../util/AppInterface.h"
 #include "../util/Directories.h"
 #include "../util/Logger.h"
