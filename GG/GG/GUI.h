@@ -237,7 +237,8 @@ public:
     void            RegisterModal(std::shared_ptr<Wnd> wnd);
     void            RunModal(const bool& done);
     void            RunModal(std::shared_ptr<Wnd> wnd);
-    void            Remove(const std::shared_ptr<Wnd>& wnd);               ///< removes \a wnd from the z-list.  Removing a null pointer or removing the same window multiple times is a no-op.
+    void            Remove(const Wnd* wnd);                                ///< removes \a wnd from the z-list.  Removing a null pointer or removing the same window multiple times is a no-op.
+    void            Remove(const std::shared_ptr<Wnd>& wnd) { Remove(wnd.get()); }
     void            MoveUp(const std::shared_ptr<Wnd>& wnd);               ///< moves \a wnd to the top of the z-list
     void            MoveDown(const std::shared_ptr<Wnd>& wnd);             ///< moves \a wnd to the bottom of the z-list
 

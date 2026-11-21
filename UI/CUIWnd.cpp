@@ -478,7 +478,7 @@ void CUIWnd::CloseClicked() {
     if (auto parent = Parent())
         parent->DetachChild(this);
     else
-        GetApp().Remove(shared_from_this());
+        GetApp().Remove(this);
 
     //m_minimized_buffer.clear();
     //m_outer_border_buffer.clear();

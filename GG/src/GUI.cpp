@@ -1337,7 +1337,7 @@ void GUI::RunModal(const bool& done)
 
 void GUI::RunModal(std::shared_ptr<Wnd> wnd)
 {
-    if (!wnd)
+    if (!wnd || !m_impl)
         return;
     //std::cout << "RunModal start on " << wnd->Name() << "  at: " << wnd.get() << "\n";
     while (!wnd->ModalDone()) {
@@ -1352,12 +1352,12 @@ void GUI::RunModal(std::shared_ptr<Wnd> wnd)
     }
 }
 
-void GUI::Remove(const std::shared_ptr<Wnd>& wnd)
+void GUI::Remove(const Wnd* wnd)
 {
-    if (!wnd)
+    if (!wnd || !m_impl)
         return;
 
-    if (!m_impl->m_modal_wnds.empty() && m_impl->m_modal_wnds.back().first == wnd) // if it's the current modal window, remove it from the modal list
+    if (!m_impl->m_modal_wnds.empty() && m_impl->m_modal_wnds.back().first.get() == wnd) // if it's the current modal window, remove it from the modal list
         m_impl->m_modal_wnds.pop_back();
     else // if it's not a modal window, remove it from the z-order
         m_impl->m_zlist.Remove(wnd);

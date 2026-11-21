@@ -89,7 +89,7 @@ void PasswordEnterWnd::OkClicked() {
     GetApp().Networking().SendMessage(
         AuthResponseMessage(*m_player_name_edit, m_password_edit->RawText()));
     // hide window
-    GetApp().Remove(shared_from_this());
+    GetApp().Remove(this);
 }
 
 void PasswordEnterWnd::CancelClicked()
