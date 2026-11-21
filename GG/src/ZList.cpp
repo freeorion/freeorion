@@ -94,7 +94,7 @@ bool ZList::Remove(const Wnd* const wnd)
     if (!wnd)
         return false;
 
-    auto is_wnd = [wnd](const auto& test_wnd) { return wnd == test_wnd.get(); };
+    auto is_wnd = [wnd](const auto& test_wnd) noexcept { return wnd == test_wnd.get(); };
     auto it = std::find_if(m_list.begin(), m_list.end(), is_wnd);
 
     if (it == m_list.end())
