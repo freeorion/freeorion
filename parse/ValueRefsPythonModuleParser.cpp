@@ -302,6 +302,20 @@ namespace {
             nullptr)));
     }
 
+    py::object insert_building_type_cost(const py::tuple&, const boost::python::dict& kw) {
+        auto empire{pyobject_to_vref<int>(kw["empire"])};
+        auto location{pyobject_to_vref<int>(kw["location"])};
+        auto type{pyobject_to_vref<std::string>(kw["type"])};
+
+        return py::object(value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
+            "BuildingTypeCost",
+            std::move(empire),
+            std::move(location),
+            nullptr,
+            std::move(type),
+            nullptr)));
+    }
+
     value_ref_wrapper<double> insert_double_complex_variable_(const char* variable, const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<std::string>> name;
         if (kw.has_key("name")) {
@@ -686,6 +700,8 @@ BOOST_PYTHON_MODULE(_value_refs) {
         const auto f_insert_int_complex_variable = [variable](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_int_complex_variable_(variable, args, kw); };
         py::def(variable, boost::python::raw_function(f_insert_int_complex_variable));
     }
+
+    py::def("BuildingTypeCost", py::raw_function(insert_building_type_cost));
 
     // name_property_rule
     for (const char* variable : {"HullFuel",
