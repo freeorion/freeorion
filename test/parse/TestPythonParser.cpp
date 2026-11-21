@@ -2,6 +2,7 @@
 
 #include "parse/Parse.h"
 #include "parse/PythonParser.h"
+#include "Empire/Government.h"
 #include "universe/BuildingType.h"
 #include "universe/Conditions.h"
 #include "universe/Effects.h"
@@ -976,7 +977,17 @@ BOOST_AUTO_TEST_CASE(parse_ship_hulls) {
     }
 }
 
+BOOST_AUTO_TEST_CASE(parse_policies) {
+    PythonParser parser(m_python);
 
+    auto policies_p = Pending::StartAsyncParsing(parse::policies<std::vector<Policy>>, m_scripting_dir / "policies");
+    auto policies_opt = Pending::WaitForPendingUnlocked(std::move(policies_p));
+
+    BOOST_REQUIRE(policies_opt);
+
+    const auto policies = *std::move(policies_opt);
+    BOOST_CHECK_EQUAL(0, policies.size());
+}
 
 BOOST_AUTO_TEST_SUITE_END()
 
