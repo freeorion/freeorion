@@ -34,7 +34,7 @@
     (Building)                                  \
     (BuildingTypesOwned)                        \
  /* (BuildingType) */                           \
-    (BuildingTypeCost)                          \
+ /* (BuildingTypeCost) */                       \
     (BuildingTypesProduced)                     \
     (BuildingTypesScrapped)                     \
     (buildtime)                                 \
