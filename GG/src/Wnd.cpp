@@ -949,7 +949,8 @@ void Wnd::HandleEvent(const WndEvent& event)
     // Check if any of the filters block this event
     bool filtered = false;
 
-    for (auto& filter_wnd : m_filters) {
+    const auto filters{m_filters};
+    for (auto& filter_wnd : filters) {
         if (!filtered)
             if (auto wnd = filter_wnd.lock())
                 filtered = wnd->EventFilter(this, event);

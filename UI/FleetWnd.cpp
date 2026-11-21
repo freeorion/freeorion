@@ -465,7 +465,8 @@ std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(
 }
 
 void FleetUIManager::CullEmptyWnds() {
-    for (auto& weak_fwnd : m_fleet_wnds) {
+    const std::vector fleet_wnds(m_fleet_wnds.begin(), m_fleet_wnds.end());
+    for (auto& weak_fwnd : fleet_wnds) {
         if (auto wnd = weak_fwnd.lock()) {
             if (wnd->FleetIDs().empty())
                 wnd->CloseClicked();
@@ -500,7 +501,8 @@ bool FleetUIManager::CloseAll() {
     bool retval = false;
 
     // closing a fleet window removes it from m_fleet_wnds
-    for (auto& weak_fwnd : m_fleet_wnds) {
+    const std::vector fleet_wnds(m_fleet_wnds.begin(), m_fleet_wnds.end());
+    for (auto& weak_fwnd : fleet_wnds) {
         if (auto wnd = weak_fwnd.lock()) {
             retval = true;
             wnd->CloseClicked();
@@ -521,7 +523,8 @@ bool FleetUIManager::CloseAll() {
 
 void FleetUIManager::RefreshAll(int this_client_empire_id, const ScriptingContext& context) {
     // closing a fleet window removes it from m_fleet_wnds
-    for (auto& weak_fwnd : m_fleet_wnds) {
+    const std::vector fleet_wnds(m_fleet_wnds.begin(), m_fleet_wnds.end());
+    for (auto& weak_fwnd : fleet_wnds) {
         if (auto wnd = weak_fwnd.lock())
             wnd->Refresh(this_client_empire_id, context);
     }
@@ -555,7 +558,8 @@ void FleetUIManager::EnableOrderIssuing(bool enable) {
     m_order_issuing_enabled = enable;
 
     // closing a fleet window removes it from m_fleet_wnds
-    for (auto& weak_fwnd : m_fleet_wnds) {
+    const std::vector fleet_wnds(m_fleet_wnds.begin(), m_fleet_wnds.end());
+    for (auto& weak_fwnd : fleet_wnds) {
         if (auto wnd = weak_fwnd.lock())
             wnd->EnableOrderIssuing(enable);
     }

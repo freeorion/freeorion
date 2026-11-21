@@ -7333,21 +7333,23 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
 }
 
 void MapWnd::CloseAllPopups() {
-    for (auto& weak_wnd : m_popups) {
+    const auto popups{m_popups};
+    for (auto& weak_wnd : popups) {
         if (auto wnd = weak_wnd.lock())
             wnd->Close();
     }
 
-    std::erase_if(m_popups, [](const auto& weak) { return weak.expired(); });
+    std::erase_if(m_popups, [](const auto& weak) noexcept { return weak.expired(); });
 }
 
 void MapWnd::HideAllPopups() {
-    for (auto& weak_wnd : m_popups) {
+    const auto popups{m_popups};
+    for (auto& weak_wnd : popups) {
         if (auto wnd = weak_wnd.lock())
             wnd->Hide();
     }
 
-    std::erase_if(m_popups, [](const auto& weak) { return weak.expired(); });
+    std::erase_if(m_popups, [](const auto& weak) noexcept { return weak.expired(); });
 }
 
 void MapWnd::SetFleetExploring(const int fleet_id, ScriptingContext& context, int empire_id) {
@@ -7867,10 +7869,11 @@ void MapWnd::DispatchFleetsExploring(ScriptingContext& context, int empire_id) {
 }
 
 void MapWnd::ShowAllPopups() {
-    for (auto& weak_wnd : m_popups) {
+    const auto popups{m_popups};
+    for (auto& weak_wnd : popups) {
         if (auto wnd = weak_wnd.lock())
             wnd->Show();
     }
 
-    std::erase_if(m_popups, [](const auto& weak) { return weak.expired(); });
+    std::erase_if(m_popups, [](const auto& weak) noexcept { return weak.expired(); });
 }
