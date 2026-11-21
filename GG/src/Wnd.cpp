@@ -17,7 +17,6 @@
 #include <GG/WndEvent.h>
 #include <GG/Wnd.h>
 
-
 using namespace GG;
 
 namespace {
@@ -418,32 +417,28 @@ void Wnd::AttachChild(std::shared_ptr<Wnd> wnd)
     if (!wnd)
         return;
 
-    try {
-        // TODO use weak_from_this when converting to C++17
-        auto my_shared = shared_from_this();
-
-        // Remove from previous parent.
-        if (auto parent = wnd->Parent())
-            parent->DetachChild(wnd.get());
-
-        auto this_as_layout = std::dynamic_pointer_cast<Layout>(my_shared);
-
-        GUI::GetGUI()->Remove(wnd);
-        wnd->SetParent(std::move(my_shared));
-
-        if (this_as_layout)
-            wnd->m_containing_layout = std::move(this_as_layout);
-
-        m_children.push_back(std::move(wnd));
-
-    } catch (const std::bad_weak_ptr&) {
+    auto my_shared = weak_from_this().lock();
+    if (!my_shared) {
         std::cerr << "\nWnd::AttachChild called either during the constructor "
-                  << "or after the destructor has run. Not attaching child.\n"
-                  << "parent = " << m_name << " child = " << (wnd ? wnd->m_name : "???");
-        // Soft failure:
+                    << "or after the destructor has run. Not attaching child.\n"
+                    << "parent = " << m_name << " child = " << (wnd ? wnd->m_name : "???");
         // Intentionally do nothing, to create minimal disruption to non-dev
         // players if a dev accidentally puts an AttachChild in its own constructor.
     }
+
+    // Remove from previous parent.
+    if (auto parent = wnd->Parent())
+        parent->DetachChild(wnd.get());
+
+    auto this_as_layout = std::dynamic_pointer_cast<Layout>(my_shared);
+
+    GUI::GetGUI()->Remove(wnd);
+    wnd->SetParent(std::move(my_shared));
+
+    if (this_as_layout)
+        wnd->m_containing_layout = std::move(this_as_layout);
+
+    m_children.push_back(std::move(wnd));
 }
 
 void Wnd::MoveChildUp(const std::shared_ptr<Wnd>& wnd)
@@ -525,7 +520,7 @@ void Wnd::InstallEventFilter(std::shared_ptr<Wnd> wnd)
     RemoveEventFilter(wnd);
 
     m_filters.push_back(wnd);
-    wnd->m_filtering.insert(shared_from_this());
+    wnd->m_filtering.insert(weak_from_this());
 }
 
 void Wnd::RemoveEventFilter(const std::shared_ptr<Wnd>& wnd)
@@ -536,7 +531,7 @@ void Wnd::RemoveEventFilter(const std::shared_ptr<Wnd>& wnd)
                                  [&wnd](const auto& x) noexcept { return x.lock() == wnd; });
     if (it != m_filters.end())
         m_filters.erase(it);
-    wnd->m_filtering.erase(shared_from_this());
+    wnd->m_filtering.erase(weak_from_this());
 }
 
 void Wnd::HorizontalLayout()
@@ -949,13 +944,22 @@ void Wnd::HandleEvent(const WndEvent& event)
 {
     // Check if any of the filters block this event
     bool filtered = false;
-    ProcessThenRemoveExpiredPtrs(
-        m_filters,
-        [&filtered, this, &event](std::shared_ptr<Wnd>& wnd)
-        {
-            if (!filtered)
+
+    const auto filters{m_filters};
+    for (auto& filter_wnd : filters) {
+        if (!filtered)
+            if (auto wnd = filter_wnd.lock())
                 filtered = wnd->EventFilter(this, event);
-        });
+    }
+
+    // remove any expired pointers from filter list.
+#if defined(__cpp_lib_erase_if)
+    std::erase_if(m_filters, [](const auto& weak) { return weak.expired(); });
+#else
+    m_filters.erase(std::remove_if(m_filters.begin(), m_filters.end(),
+                                   [](const auto& weak) { return weak.expired(); }),
+                    m_filters.end());
+#endif
 
     if (filtered)
         return;

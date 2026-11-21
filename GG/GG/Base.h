@@ -15,13 +15,8 @@
 #define _GG_Base_h_
 
 
-#include <functional>
-#include <memory>
-#include <GL/glew.h>
-#include <GG/Clr.h>
 #include <GG/Enum.h>
 #include <GG/Export.h>
-#include <GG/PtRect.h>
 
 
 /** \namespace GG \brief The namespace that encloses all GG classes,
@@ -52,78 +47,6 @@ private:
 };
 
 /** Apply \p process to each weak_ptr in \p container and then remove any that are expired.*/
-
-// vector
-template <typename Container>
-void ProcessThenRemoveExpiredPtrs(
-    Container& container,
-    const std::function<void(std::shared_ptr<typename Container::value_type::element_type>&)>& process,
-    typename std::add_pointer_t<decltype(std::declval<Container>().at(std::declval<typename Container::size_type>()))> = nullptr)
-{
-    // Process
-    for (const auto& weak : container)
-        if (auto wnd = weak.lock())
-            process(wnd);
-
-    // Remove if the process caused the pointer to expire.
-    Container not_expired{};
-    for (auto& weak : container) {
-        if (!weak.expired()) {
-            // Swap them to avoid another reference count check
-            not_expired.push_back(std::shared_ptr<typename Container::value_type::element_type>());
-            not_expired.back().swap(weak);
-        }
-    }
-    container.swap(not_expired);
-}
-
-// set, unordered_set
-template <typename Container>
-void ProcessThenRemoveExpiredPtrs(
-    Container& container,
-    const std::function<void(std::shared_ptr<typename Container::value_type::element_type>&)>& process,
-    decltype(std::declval<Container>().erase(std::declval<typename Container::iterator>()))* = nullptr,
-    decltype(std::declval<Container>().equal_range(std::declval<
-                                                   typename std::add_const_t<
-                                                   typename std::add_lvalue_reference_t<
-                                                   typename Container::key_type>>>()))* = nullptr)
-{
-    auto it = container.begin();
-    while (it != container.end()) {
-        // Process
-        if (auto wnd = it->lock())
-            process(wnd);
-
-        // Remove if the process caused the pointer to expire.
-        if (!it->expired())
-            ++it;
-        else
-            it = container.erase(it);
-    }
-}
-
-// list types
-template <typename Container>
-void ProcessThenRemoveExpiredPtrs(
-    Container& container,
-    const std::function<void(std::shared_ptr<typename Container::value_type::element_type>&)>& process,
-    decltype(std::declval<Container>().erase(std::declval<typename Container::iterator>()))* = nullptr,
-    decltype(std::declval<Container>().splice(std::declval<typename Container::const_iterator>(),
-                                              std::declval<typename std::add_lvalue_reference_t<Container>>()))* = nullptr)
-{
-    auto it = container.begin();
-    while (it != container.end()) {
-        // Process
-        if (auto wnd = it->lock())
-            process(wnd);
-
-        // Remove if the process caused the pointer to expire.
-        if (!it->expired())
-            ++it;
-        else
-            it = container.erase(it);
-    }
-}
 
 /** "Regions" of a window; used e.g. to determine direction(s) of drag when a
     window that has a drag-frame is clicked. */
