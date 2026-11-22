@@ -34,11 +34,14 @@ Hull
                 Number high = 7 condition = And [   // Limits the factory to producing only when there are less than 7 drones in system
                     Ship
                     InSystem id = Source.SystemID
-                    DesignHasHull name = "SH_DRONE_BODY"
+                    Or [
+                        DesignHasHull name = "SH_DRONE_BODY"
+                        DesignHasHull name = "SH_HUNTER_DRONE_BODY"
+                    ]
                 ]
             ]
             activation = Random probability = .1
-            effects = CreateShip designname = "SM_DRONE"
+            effects = [[SPAWN_DRONE]]
     ]
     icon = ""
     graphic = "icons/monsters/factory.png"
