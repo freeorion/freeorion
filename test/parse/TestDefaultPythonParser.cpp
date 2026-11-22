@@ -2,6 +2,7 @@
 
 #include "parse/Parse.h"
 #include "parse/PythonParser.h"
+#include "Empire/Government.h"
 #include "universe/BuildingType.h"
 #include "universe/ShipHull.h"
 #include "universe/Conditions.h"
@@ -385,6 +386,20 @@ BOOST_AUTO_TEST_CASE(parse_ship_hulls_full) {
             BOOST_REQUIRE_EQUAL(ship_hull_checksum, value);
         }
     }
+}
+
+BOOST_AUTO_TEST_CASE(parse_policies_full) {
+    PythonParser parser(m_python);
+
+    auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_scripting_dir / "macros");
+
+    auto policies_p = Pending::StartAsyncParsing(parse::policies<std::vector<Policy>>, m_scripting_dir / "policies");
+    auto policies_opt = Pending::WaitForPendingUnlocked(std::move(policies_p));
+
+    BOOST_REQUIRE(policies_opt);
+
+    const auto policies = *std::move(policies_opt);
+    BOOST_REQUIRE_EQUAL(52, policies.size());
 }
 
 BOOST_AUTO_TEST_SUITE_END()
