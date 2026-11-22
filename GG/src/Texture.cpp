@@ -18,7 +18,14 @@
 # include <boost/gil/extension/io/tiff_dynamic_io.hpp>
 #endif
 #if GG_HAVE_LIBPNG
+# if defined(_MSC_VER) && defined(BOOST_VERSION) && (BOOST_VERSION < 109300)
+#  pragma warning(push)
+#  pragma warning(disable : 5285)
+# endif
 # include <boost/gil/extension/io/png.hpp>
+# if defined(_MSC_VER) && defined(BOOST_VERSION) && (BOOST_VERSION < 109300)
+#  pragma warning(pop)
+# endif
 #endif
 #include <GG/GLClientAndServerBuffer.h>
 #include <GG/Texture.h>
