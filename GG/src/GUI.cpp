@@ -12,13 +12,19 @@
 #include <fstream>
 #include <functional>
 #include <iostream>
-#include <list>
 #include <thread>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/format.hpp>
 #include <boost/xpressive/xpressive.hpp>
 #if GG_HAVE_LIBPNG
+# if defined(_MSC_VER) && defined(BOOST_VERSION) && (BOOST_VERSION < 109300)
+#  pragma warning(push)
+#  pragma warning(disable : 5285)
+# endif
 # include <boost/gil/extension/io/png.hpp>
+# if defined(_MSC_VER) && defined(BOOST_VERSION) && (BOOST_VERSION < 109300)
+#  pragma warning(pop)
+# endif
 #endif
 #include <GG/BrowseInfoWnd.h>
 #include <GG/Cursor.h>
