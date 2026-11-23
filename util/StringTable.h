@@ -4,7 +4,7 @@
 //! @file
 //!     Declares the StringTable class.
 
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 #include <filesystem>
 #include <string>
 #include <set>
@@ -201,27 +201,26 @@ private:
     struct hasher {
         using is_transparent = void;
 
-        size_t operator()(const auto& key) const
-        { return boost::hash_range(key.begin(), key.end()); }
+        template <typename T>
+        [[nodiscard]] size_t operator()(const T& key) const noexcept
+        { return std::hash<T>{}(key); }
 
-        size_t operator()(const char* key) const {
-            const std::string_view sv{key};
-            return boost::hash_range(sv.begin(), sv.end());
-        }
+        [[nodiscard]] size_t operator()(const char* key) const noexcept
+        { return std::hash<std::string_view>{}(std::string_view{key}); }
     };
 
     struct equalizer {
         using is_transparent = void;
 
-        bool operator()(const auto& lhs, const auto& rhs) const noexcept
+        [[nodiscard]] bool operator()(const auto& lhs, const auto& rhs) const noexcept
         { return lhs.compare(rhs) == 0; }
 
-        bool operator()(const char* lhs, const auto& rhs) const noexcept
+        [[nodiscard]] bool operator()(const char* lhs, const auto& rhs) const noexcept
         { return rhs.compare(lhs) == 0; }
     };
 
     //! Mapping of translation entry keys to translated strings.
-    boost::unordered_map<std::string, std::string, hasher, equalizer> m_strings;
+    std::unordered_map<std::string, std::string, hasher, equalizer> m_strings;
 
     //! True if the StringTable was completely loaded and all references
     //! were successfully resolved.
