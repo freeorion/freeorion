@@ -42,13 +42,14 @@ def get_empire_name_generator():
 empire_name_generator = get_empire_name_generator()
 
 
-def get_starting_species_pool():
+def get_starting_species_pool(already_used=None):
     """
     Empire species pool generator, return random empire species and ensure somewhat even distribution
+    @param alreadyUsed - if set, then RULE_ALLOW_REPEATED_SPECIES is false and it contains the species already in use e.g. by player's choice
     """
     # fill the initial pool of playable species, without repetitions unless RULE_ALLOW_REPEATED_SPECIES is true
-    if not fo.getGameRules().getToggle("RULE_ALLOW_REPEATED_SPECIES"):
-        pool = fo.get_playable_species()
+    if already_used:
+        pool = [species for species in fo.get_playable_species() if species not in already_used]
     else:
         pool = fo.get_playable_species() * 2
 
@@ -64,10 +65,6 @@ def get_starting_species_pool():
             random.shuffle(pool)
         # pick and return next species, and remove it from our pool
         yield pool.pop()
-
-
-# generates starting species for empires, use next(starting_species_pool) to get next species
-starting_species_pool = get_starting_species_pool()
 
 
 def count_planets_in_systems(systems, planet_types_filter=HS_ACCEPTABLE_PLANET_TYPES):
@@ -543,7 +540,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: C901
 
 
 # noqa: C901
-def setup_empire(empire, empire_name, home_system, starting_species, player_name, gsd):  # noqa: C901
+def setup_empire(empire, empire_name, home_system, starting_species, player_name, gsd, starting_species_pool):  # noqa: C901
     """
     Sets up various aspects of an empire, like empire name, homeworld, etc.
     """
