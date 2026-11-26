@@ -82,6 +82,8 @@ public:
     bool AppHasMouseFocus() const override;
 
     void SetWindowTitle(const std::string& title);
+    void SetWindowIcon(const GG::Texture& icon);
+
     void SetVideoMode(GG::X width, GG::Y height, bool fullscreen, bool fake_mode_change);
 
     static SDLGUI*  GetGUI();                             ///< allows any code to access the gui framework by calling SDLGUI::GetGUI()
@@ -96,6 +98,18 @@ public:
     /** Returns the largest possible height if all displays are aligned vertically.
         Ideally it reports the actual desktop height using all displays.*/
     static int MaximumPossibleHeight();
+
+
+    using SDLSurfacePtr = std::unique_ptr<SDL_Surface, void(*)(SDL_Surface*)>;
+    /** Gets pixels of given \a texture from GPU and creates \c SDL_Surface from them,
+        removing possible non-power-of-two padding if \a remove_padding is \c true
+
+        \note Removing padding if needed is additional copy of data so might be omitted
+        if you want to use things like \c DefaultWidth() and \c DefaultHeight() with \c SDL_Rect
+        yourself for something like blitting to save on the additional copy.
+        */
+    static SDLSurfacePtr CreateSDLSurfaceFrom(const GG::Texture& texture, bool remove_padding = true);
+
 protected:
     void SetAppSize(GG::Pt size);
 
