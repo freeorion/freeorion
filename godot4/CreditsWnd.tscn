@@ -1,5 +1,31 @@
-[gd_scene format=3 uid="uid://bwi7e242vk2tv"]
+[gd_scene load_steps=2 format=3 uid="uid://bwi7e242vk2tv"]
+
+[ext_resource type="Script" uid="uid://dgewu0mj5rumd" path="res://CreditsWnd.gd" id="1_sgjh4"]
 
 [node name="CreditsWnd" type="Control"]
+clip_contents = true
 layout_mode = 3
 anchors_preset = 0
+script = ExtResource("1_sgjh4")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="Text" type="RichTextLabel" parent="."]
+auto_translate_mode = 2
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/normal_font_size = 21
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
