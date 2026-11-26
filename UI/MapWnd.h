@@ -110,6 +110,7 @@ public:
     /** Returns the id of the currently-selected object or INVALID_OBJECT_ID if no planet is selected */
     int SelectedSystemID() const;
     int SelectedPlanetID() const;
+    int SelectedBuildingID() const;
     int SelectedFleetID() const;
     int SelectedShipID() const;
 

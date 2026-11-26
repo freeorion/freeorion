@@ -74,6 +74,7 @@ public:
       * On UI clients, returns the ID of the object currently selected. */
     [[nodiscard]] virtual int SelectedSystemID() const { return INVALID_OBJECT_ID; }
     [[nodiscard]] virtual int SelectedPlanetID() const { return INVALID_OBJECT_ID; }
+    [[nodiscard]] virtual int SelectedBuildingID() const { return INVALID_OBJECT_ID; }
     [[nodiscard]] virtual int SelectedFleetID() const { return INVALID_OBJECT_ID; }
     [[nodiscard]] virtual int SelectedShipID() const { return INVALID_OBJECT_ID; }
 
