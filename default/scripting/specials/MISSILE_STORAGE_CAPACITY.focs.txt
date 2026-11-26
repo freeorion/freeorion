@@ -1,0 +1,6 @@
+Special
+    name = "MISSILE_STORAGE_CAPACITY"
+    description = "MISSILE_STORAGE_CAPACITY_DESC"
+    spawnrate = 0
+    spawnlimit = 0
+    graphic = "icons/ship_parts/nuclear_missile.png"
