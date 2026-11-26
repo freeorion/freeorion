@@ -1,0 +1,6 @@
+Article
+    name = "LOAD_GAME_TITLE"
+    category = "INTERFACE_TITLE"
+    short_description = "LOAD_GAME_SHORT_DESC"
+    description = "SAVE_LOAD_TEXT"
+    icon = ""
