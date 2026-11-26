@@ -61,3 +61,7 @@ func _safe_area_inset() -> float:
 			SafeArea.corner_radius(window, SafeArea.CORNER_TOP_LEFT), _turn_base_top
 		)
 	)
+
+
+func _on_btn_menu_pressed() -> void:
+	$ToolBar/BtnMenu.set_active(true)

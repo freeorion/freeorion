@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://cwuqf5m5b1k5p"]
+
+[ext_resource type="Script" uid="uid://bke6njjbqga6w" path="res://CUIIconButton.gd" id="1_l3ujt"]
+[ext_resource type="AudioStream" uid="uid://by5iw4qhrsbwk" path="res://assets/sound/button_rollover.ogg" id="1_m1o7b"]
+[ext_resource type="AudioStream" uid="uid://p03v0smrp5ln" path="res://assets/sound/button_click.ogg" id="2_l3ujt"]
+
+[node name="CUIIconButton" type="TextureButton"]
+ignore_texture_size = true
+stretch_mode = 0
+script = ExtResource("1_l3ujt")
+
+[node name="Rollover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_m1o7b")
+
+[node name="Click" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_l3ujt")

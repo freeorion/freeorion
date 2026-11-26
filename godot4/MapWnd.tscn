@@ -1,8 +1,12 @@
-[gd_scene load_steps=5 format=3 uid="uid://bbmlrg7wbu7cs"]
+[gd_scene load_steps=9 format=3 uid="uid://bbmlrg7wbu7cs"]
 
 [ext_resource type="Script" uid="uid://bhqrk7g1l6rwf" path="res://MapWnd.gd" id="1_gm06g"]
 [ext_resource type="AudioStream" uid="uid://3a4jg0i7pgkb" path="res://assets/sound/artificial_intelligence_v3.ogg" id="1_vno04"]
 [ext_resource type="PackedScene" uid="uid://bx4bc46ask5n6" path="res://CUIButton.tscn" id="2_jir7t"]
+[ext_resource type="PackedScene" uid="uid://cwuqf5m5b1k5p" path="res://CUIIconButton.tscn" id="4_s3soe"]
+[ext_resource type="Texture2D" uid="uid://cv5qegvxp6uns" path="res://assets/art/icons/buttons/menu.png" id="5_lbyv2"]
+[ext_resource type="Texture2D" uid="uid://damhrmy6ye4gh" path="res://assets/art/icons/buttons/menu_clicked.png" id="6_0upxd"]
+[ext_resource type="Texture2D" uid="uid://33c8y57np6fc" path="res://assets/art/icons/buttons/menu_mouseover.png" id="7_6bhq7"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_toolbar"]
 content_margin_left = 5.0
@@ -43,4 +47,20 @@ offset_top = 8.0
 offset_right = 13.0
 offset_bottom = 14.0
 
+[node name="BtnMenu" parent="ToolBar" instance=ExtResource("4_s3soe")]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -37.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = 37.0
+grow_horizontal = 0
+texture_normal = ExtResource("5_lbyv2")
+texture_pressed = ExtResource("6_0upxd")
+texture_hover = ExtResource("7_6bhq7")
+texture_disabled = ExtResource("5_lbyv2")
+
 [connection signal="pressed" from="ToolBar/BtnTurn" to="." method="_on_btn_turn_pressed"]
+[connection signal="pressed" from="ToolBar/BtnMenu" to="." method="_on_btn_menu_pressed"]
