@@ -286,7 +286,8 @@ def generate_classic_research_orders():  # noqa: C901
                 research_queue_list = get_research_queue_techs()
 
     #
-    # check to accelerate asteroid or GG tech
+    # check to accelerate asteroid or GG tech and Solar Generator
+    # Todo check colonization plans instead of have_asterods and have_gas_giant
     if True:  # just to help with cold-folding / organization
         if have_asteroids():
             insert_idx = (
@@ -334,14 +335,23 @@ def generate_classic_research_orders():  # noqa: C901
             if "PRO_ORBITAL_GEN" not in research_queue_list[: insert_idx + 1]:
                 res = fo.issueEnqueueTechOrder("PRO_ORBITAL_GEN", insert_idx)
                 num_techs_accelerated += 1
+                insert_idx += 1
                 debug(
                     "GasGiant: plan to colonize a gas giant, so attempted to fast-track %s, got result %d",
                     "PRO_ORBITAL_GEN",
                     res,
                 )
+                res = fo.issueEnqueueTechOrder("PRO_SOL_ORB_GEN", insert_idx)
+                num_techs_accelerated += 1
+                debug(
+                    "GasGiant: plan to research orbital generation, so attempted to fast-track %s, got result %d",
+                    "PRO_SOL_ORB_GEN",
+                    res,
+                )
                 research_queue_list = get_research_queue_techs()
     #
     # assess if our empire has any non-lousy colonizers, & boost gro_xeno_gen if we don't
+    # TODO - consider handling exobots here
     if True:  # just to help with cold-folding / organization
         if got_ggg_tech and got_sym_bio and (not got_xeno_gen):
             most_adequate = 0
