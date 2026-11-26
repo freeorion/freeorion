@@ -892,6 +892,30 @@ FLD_NEBULA_3
 FLD_NEBULA_3_DESC
 [[FLD_NEBULA_1_DESC]]
 
+FLD_NEBULA_4
+[[FLD_NEBULA_1]]
+
+FLD_NEBULA_4_DESC
+[[FLD_NEBULA_1_DESC]]
+
+FLD_NEBULA_5
+[[FLD_NEBULA_1]]
+
+FLD_NEBULA_5_DESC
+[[FLD_NEBULA_1_DESC]]
+
+FLD_NEBULA_6
+[[FLD_NEBULA_1]]
+
+FLD_NEBULA_6_DESC
+[[FLD_NEBULA_1_DESC]]
+
+FLD_NEBULA_7
+[[FLD_NEBULA_1]]
+
+FLD_NEBULA_7_DESC
+[[FLD_NEBULA_1_DESC]]
+
 FLD_SUBSPACE_RIFT
 Scissor Rift
 
@@ -909,6 +933,12 @@ Nanite Swarm
 
 FLD_NANITE_SWARM_DESC
 A swarm of ancient nanorobots that attach themselves to and attempts to repair the hulls of ships within the swarm. Ship [[metertype METER_STRUCTURE]] increases by [[value FLD_NANITE_SWARM_STRUCTURE_FLAT]] per turn, spread equally over ships within the swarm.
+
+FLD_CORROSIVE_NANITE_SWARM
+Corrosive Nanite Swarm
+
+FLD_NANITE_SWARM_DESC
+A swarm of ancient nanorobots that attach themselves to and attempt to metabolize the hulls of ships within the swarm. Ship [[metertype METER_STRUCTURE]] decreases by [[value FLD_NANITE_SWARM_STRUCTURE_FLAT]] per turn, spread equally over ships within the swarm.
 
 FLD_METEOR_BLIZZARD
 Meteor Blizzard
