@@ -19,6 +19,7 @@ Hull
     location = All
     effectsgroups = [
         [[GAS_GIANT_STEALTH_BONUS]]
+        [[HUNT_PLANET_TYPE(GasGiant,0.3)]]
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]

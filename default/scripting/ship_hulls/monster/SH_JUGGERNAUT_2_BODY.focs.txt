@@ -19,6 +19,7 @@ Hull
     tags = [ "PEDIA_HULL_MONSTER_JUGGERNAUT" ]
     location = All
     effectsgroups = [
+        [[HUNT_PLANET_TYPE(Asteroids,0.3)]]
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
